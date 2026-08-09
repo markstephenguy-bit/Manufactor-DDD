@@ -1,0 +1,33 @@
+version: 1
+status: pending
+updated_by: chatgpt
+purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
+
+findings:
+  - id: AUDIT-0001
+    severity: correction
+    subject: SESSION-HANDOFF blocking issue semantics
+    finding: blocking_issues must contain only issues whose unresolved record has blocking true.
+  - id: AUDIT-0002
+    severity: correction
+    subject: SESSION-HANDOFF next-action sequencing
+    finding: Do not hard-code the next issue after the current Mark question; re-evaluate unresolved issues after each domain-expert answer.
+
+required_actions:
+  - id: ACTION-0001
+    action: Remove ISSUE-0003 from SESSION-HANDOFF.yaml blocking_issues while ISSUE-0003 remains blocking false.
+  - id: ACTION-0002
+    action: Rewrite SESSION-HANDOFF.yaml next_action so that after Mark answers the current question Claude Code updates affected model records, records domain-expert provenance, resolves or updates affected issues, commits and pushes, then re-evaluates unresolved issues and asks the single highest-value question currently blocking strategic DDD.
+  - id: ACTION-0003
+    action: Add docs/ddd/GPT-AUDIT.yaml to the Claude Code operating loop. At session start and before asking Mark a new strategic question, check for status pending. Process applicable actions, then set status processed and record processed_commit.
+
+next_domain_question:
+  issue: ISSUE-0002
+  instruction: Continue asking Mark the existing ISSUE-0002 question after the audit corrections are applied. Do not answer it from repository evidence.
+
+do_not_do:
+  - do not gather more repository evidence for ISSUE-0002
+  - do not create Bounded Contexts yet
+  - do not treat this audit file as domain-expert evidence
+
+processed_commit: null
