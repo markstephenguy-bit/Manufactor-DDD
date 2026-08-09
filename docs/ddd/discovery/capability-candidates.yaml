@@ -1,0 +1,143 @@
+# ManuFactor DDD — Capability Candidates
+# Phase 3. Business capabilities only, independent of software organization
+# (§49). Built entirely from evidence already collected (evidence-index.yaml,
+# term-candidates.yaml) — no new evidence gathering per this phase's scope.
+# CustomerComplaints (shelved) and ReleaseOfProduct ("this is SAP, not a
+# ManuFactor Component") are excluded outright, not modeled as capabilities.
+
+capabilities:
+
+  - id: cap.document-signoff
+    name: Document Control / Equipment & Procedure Sign-Off
+    purpose: Capture formal sign-off records against templates (universal/hierarchy/equipment-local), with an approval workflow before a record is authoritative.
+    business_outcome: A trustworthy, retained record of who signed off on what, when, tied to a specific piece of equipment or procedure.
+    important_terms: [LTV Template, LTV Printed Instance, Site Safety Manager approval]
+    evidence: [ev.arch.addendum rev 1/4/40, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules" (SSM approval rule)]
+    confidence: high
+    status: candidate
+
+  - id: cap.maintenance-verification
+    name: Maintenance Verification (As Found As Left)
+    purpose: Record equipment condition before and after a specific maintenance event/work order.
+    business_outcome: A verified, timestamped record of equipment state tied to one real maintenance action, not a general periodic check.
+    important_terms: [AFAL, AFAL record, AFAL category-check]
+    evidence: [ev.arch.addendum rev 1/13, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules"]
+    confidence: high
+    status: candidate
+
+  - id: cap.shift-incident-reporting
+    name: Operational Shift & Incident Reporting
+    purpose: Capture what happened during a shift, or a specific downtime/incident event, as a discrete operational record.
+    business_outcome: A record of operational events usable for tracking, not real-time control.
+    important_terms: [Shift Report, Downtime/Incident Report]
+    evidence: [ev.arch.workbook "Build Order" Phase_B/B1, ev.arch.workbook "Decisions (ADRs)" Downtime/Incident MES routing]
+    confidence: medium
+    status: candidate
+
+  - id: cap.process-parameter-change
+    name: Process / Parameter Change Control
+    purpose: Not yet understood beyond its name and a Data-only Port reference.
+    business_outcome: Unknown from current evidence.
+    important_terms: []
+    evidence: [ev.arch.workbook "Components" (ParameterProcessChange row), ev.arch.workbook "Build Order" Phase_C]
+    confidence: low
+    status: unresolved
+
+  - id: cap.corrective-preventive-action
+    name: Corrective & Preventive Action (CAPA)
+    purpose: Resolve a quality/operational finding by routing corrective work to whichever system already owns that class of work (MP2 for asset-execution work, native handling for quality-type findings with no existing owner).
+    business_outcome: Findings get real corrective action, tracked to closure, without CAPA becoming a second owner of work another system already owns.
+    important_terms: [CAPA item, CAPA routing rule, CAPA-vs-Project origination]
+    evidence: [ev.arch.addendum "CAPA reframed" session 020, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules"]
+    confidence: high
+    status: candidate
+
+  - id: cap.project-tracking
+    name: Project Tracking
+    purpose: Track discrete improvement/capital projects as a unit of work distinct from a CAPA item.
+    business_outcome: Visibility into planned/in-progress projects, separately from corrective-action tracking.
+    important_terms: [CAPA-vs-Project origination]
+    evidence: [ev.arch.workbook "Components" (ProjectTracking row, "walked-concrete"), ev.arch.workbook "Data Gathering" item 22]
+    confidence: medium
+    status: candidate
+
+  - id: cap.training-competency
+    name: Training / Competency Records
+    purpose: Track training completion and competency, sourced from Moodle.
+    business_outcome: A record of who is trained/qualified for what.
+    important_terms: []
+    evidence: [ev.arch.workbook "Endpoints" (moodle-api/moodle-db), ev.arch.workbook "Constraints & Assumptions" A-05]
+    confidence: medium
+    status: candidate
+
+  - id: cap.workforce-scheduling
+    name: Workforce Scheduling & Absence
+    purpose: Represent crew/shift/supervisor structure and track absence categories (vacation, comp time, attendance points), augmented by BI-cube data.
+    business_outcome: An accurate picture of who is scheduled/available, and absence accounting.
+    important_terms: [Department, Crew, Shift, Supervisor]
+    evidence: [ev.arch.drawings.glossary, ev.arch.workbook "Constraints & Assumptions" A-06]
+    confidence: medium
+    status: candidate
+
+  - id: cap.asset-management
+    name: Asset Management
+    purpose: Track physical equipment condition and lifecycle (In-Service / In-Shop / Rebuilt / Scrapped), including runtime-hours/MTBS data.
+    business_outcome: Knowing an asset's current condition and history to inform maintenance and replacement decisions.
+    important_terms: [Operational Setting Logbook]
+    evidence: [ev.arch.workbook "Status Catalog Mappings", ev.arch.workbook "Data Gathering" items 13/14]
+    confidence: high
+    status: candidate
+
+  - id: cap.vehicle-management
+    name: Vehicle Management
+    purpose: Track mill vehicle condition and lifecycle (In-Service / In-Shop / Out-of-Service / Retired[?]), sourced from an unnamed mechanic-shop application.
+    business_outcome: Same shape of outcome as Asset Management, for vehicles specifically.
+    important_terms: []
+    evidence: [ev.arch.workbook "Status Catalog Mappings", ev.arch.workbook "Endpoints" mechanic-shop-app, ev.arch.workbook "Components" (deferred, no current traction)]
+    confidence: low — deferred, minimal real evidence beyond a near-identical status shape to Asset Management
+    status: candidate
+
+  - id: cap.inspections-calibration
+    name: Inspections & Calibration
+    purpose: Perform scheduled (calendar) or condition-triggered (mill-condition thresholds) inspections/calibrations against pass/fail criteria.
+    business_outcome: Confidence that equipment/processes meet required standards on a known cadence.
+    important_terms: []
+    evidence: [ev.arch.workbook "Rules" (calendar due-check, mill-condition threshold checks), ev.arch.workbook "Status Catalog Mappings", ev.arch.workbook "Notifications"]
+    confidence: high
+    status: candidate
+
+  - id: cap.risk-management
+    name: Risk Management
+    purpose: Not yet understood — "walked-thin" with only Data + Catalog Ports referenced, no business-fact evidence collected beyond its name.
+    business_outcome: Unknown from current evidence.
+    important_terms: []
+    evidence: [ev.arch.workbook "Components" (Risk row, "walked-thin")]
+    confidence: low
+    status: unresolved
+
+  - id: cap.environmental-compliance
+    name: Environmental Compliance Reporting
+    purpose: Produce Boiler/Kiln environmental forms.
+    business_outcome: Documented compliance with environmental requirements.
+    important_terms: []
+    evidence: [ev.arch.workbook "Data Gathering" item 21, ev.arch.workbook "Components" (Environmental row)]
+    confidence: low-medium
+    status: candidate
+
+  - id: cap.kiln-drying-operations
+    name: Kiln Drying Operations
+    purpose: Manage kiln drying process, including a not-yet-designed forecasting/analytics element.
+    business_outcome: Effective kiln scheduling/operation, informed by forecasting once designed.
+    important_terms: []
+    evidence: [ev.arch.workbook "Data Gathering" item 23, ev.arch.workbook "Components" (KilnDrying row)]
+    confidence: low-medium
+    status: unresolved
+
+  - id: cap.identity-access
+    name: Identity & Access
+    purpose: Recognize who is using the system (Windows Auth, Guest fallback) and govern what they are allowed to do (app-owned role/tier, not AD-group-derived).
+    business_outcome: The right person has the right access, without a login barrier blocking legitimate mill floor use.
+    important_terms: [Guest, Profile, app-owned permissions, Identity/Profile trust lifecycle]
+    evidence: [ev.arch.addendum rev 116/117/121/122, ev.code.dev_plan, ev.code.webapp_identity]
+    confidence: high
+    status: candidate
