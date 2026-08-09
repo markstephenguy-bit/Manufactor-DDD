@@ -1,66 +1,81 @@
 # ManuFactor DDD — Candidate Subdomains
-# Phase 4 (SPECIFICATION.md S50), tightened per ChatGPT's schema and three
-# challenge questions. All status: candidate. No new evidence gathered this
-# pass unless noted. Bounded Contexts not drawn yet (Phase 5). Not every
-# capability is placed — cap.project-tracking (unresolved) and
-# cap.risk-management (rejected) remain unplaced, not silently dropped.
+# Phase 4 (SPECIFICATION.md S50). All status: candidate. No new evidence
+# gathered this pass. Bounded Contexts not drawn yet (Phase 5). Detailed
+# reasoning behind non-obvious groupings/splits lives in docs/ddd/decisions/,
+# not here — boundary_rationale stays tight, per external audit feedback.
+# cap.project-tracking (unresolved) and cap.risk-management (rejected)
+# remain unplaced, not silently dropped.
 
 subdomains:
 
-  - id: subdomain.quality-compliance
-    name: Quality & Compliance
-    purpose: Ensure the mill's work meets required standards and produce the documented evidence that it does.
-    capabilities: [cap.safety-compliance-signoff, cap.corrective-preventive-action, cap.environmental-compliance]
+  - id: subdomain.safety-compliance-signoff
+    name: Safety Compliance & Procedure Sign-Off
+    purpose: Gate safety-related procedures/equipment through a formal approval workflow before a sign-off record is authoritative.
+    capabilities: [cap.safety-compliance-signoff]
     classification: core
     boundary_rationale: >
-      CAPA is nested here, not treated as a top-level domain area, on real
-      evidence rather than assumption: addendum session 020 explicitly
-      reframed CAPA as a capability that dispatches corrective-action work to
-      whichever system already owns that class of work, not a domain hub of
-      its own. Safety sign-off and environmental reporting share the same
-      underlying shape (produce evidence of meeting a standard or
-      regulation), which is what actually groups the three, not simply the
-      word "quality." Distinguished from Asset & Reliability by subject
-      (procedure/regulation compliance, not equipment condition) and from
-      Production Operations by intent (proving compliance, not recording
-      what happened operationally).
-    evidence: [ev.arch.addendum "CAPA reframed" session 020, ev.arch.addendum rev 1/4/40, ev.arch.workbook "Data Gathering" item 21]
+      Owns a proactive approval-gate workflow — Template lifecycle through
+      Site Safety Manager approval. Distinguished from CAPA by timing:
+      prevents via required sign-off, rather than reacting to a finding.
+      Split out from a broader "Quality & Compliance" grouping — see DDD-0001.
+    evidence: [ev.arch.addendum rev 1/4/40, ev.arch.workbook "Rules" (LTV SSM approval rule)]
     confidence: medium
+    status: candidate
+
+  - id: subdomain.corrective-preventive-action
+    name: Corrective & Preventive Action
+    purpose: Resolve a quality/operational finding by dispatching corrective work to whichever system already owns that class of work.
+    capabilities: [cap.corrective-preventive-action]
+    classification: core
+    boundary_rationale: >
+      Reactive dispatcher, not a domain hub (addendum session 020) —
+      distinguished from Safety Compliance's proactive gate shape by timing
+      and intent. Split out from a broader "Quality & Compliance" grouping —
+      see DDD-0001.
+    evidence: [ev.arch.addendum "CAPA reframed" session 020, ev.arch.workbook "Rules" (CAPA routing rule)]
+    confidence: medium
+    status: candidate
+
+  - id: subdomain.environmental-compliance
+    name: Environmental Compliance Reporting
+    purpose: Produce periodic regulatory compliance reporting (Boiler/Kiln forms).
+    capabilities: [cap.environmental-compliance]
+    classification: core
+    boundary_rationale: >
+      No shared vocabulary or rule structure links this to Safety Compliance
+      or CAPA beyond the generic "compliance" label — kept separate rather
+      than re-merged. Split out from a broader "Quality & Compliance"
+      grouping — see DDD-0001. Thin evidence; confidence reflects that.
+    evidence: [ev.arch.workbook "Data Gathering" item 21]
+    confidence: low
     status: candidate
 
   - id: subdomain.asset-reliability
     name: Asset & Reliability
-    purpose: Know what physical assets the mill has, what condition they're in, and verify they remain reliable and compliant at defined checkpoints.
+    purpose: Know what physical assets the mill has, their condition, and verify they remain reliable and compliant.
     capabilities: [cap.physical-asset-management, cap.equipment-reliability-verification]
     classification: core
     boundary_rationale: >
-      Kept separate from Quality & Compliance even though verification is
-      compliance-adjacent, on the evidence that asset condition and
-      compliance-verification are tracked with different triggers (lifecycle
-      state vs. post-maintenance/scheduled/condition-triggered check). The
-      Rules sheet itself lists AssetManagement and InspectionsCalibration
-      together under one due-check rule, supporting a real relationship
-      between the two capabilities inside this one subdomain rather than
-      either standing fully alone.
+      Owns asset lifecycle state and reliability/verification together — the
+      Rules sheet lists AssetManagement and InspectionsCalibration under one
+      due-check rule. Separate from the compliance subdomains (procedure/
+      regulation, not equipment state) and Production Operations.
     evidence: [ev.arch.workbook "Status Catalog Mappings", ev.arch.workbook "Rules"]
     confidence: medium
     status: candidate
 
   - id: subdomain.production-operations
     name: Production Operations
-    purpose: Manage the mill's production process itself and record what happens during production.
+    purpose: Manage the mill's production process and record what happens during production.
     capabilities: [cap.kiln-drying-operations, cap.operational-reporting]
     classification: core
     boundary_rationale: >
-      Distinct from the other core groups by being about the production
-      process and its operational record, not equipment condition or
-      standards compliance. Explicitly provisional: cap.operational-reporting
-      already carries a low-confidence fold-in of Process/Parameter Change
-      Control from Phase 3 (near-zero independent evidence beyond a Component
-      name and a Data Port) — that fold-in is not re-confirmed by this
-      subdomain grouping and should be treated as still open.
-    evidence: [ev.arch.drawings.mill_hierarchy, ev.arch.workbook "Build Order" Phase_B/B1, ev.arch.workbook "Components" (ParameterProcessChange row)]
-    confidence: medium overall, low specifically for the Process/Parameter Change portion
+      Owns the production process itself and its operational record, not
+      equipment condition or compliance. Process/Parameter Change Control's
+      inclusion in cap.operational-reporting remains provisional — near-zero
+      independent evidence, not re-confirmed by this grouping.
+    evidence: [ev.arch.drawings.mill_hierarchy, ev.arch.workbook "Build Order" Phase_B/B1]
+    confidence: medium overall, low for the Process/Parameter Change portion
     status: candidate
 
   - id: subdomain.people-workforce
@@ -69,31 +84,22 @@ subdomains:
     capabilities: [cap.training-competency, cap.workforce-scheduling]
     classification: supporting
     boundary_rationale: >
-      General HR/workforce-shaped need rather than mill-specific production,
-      asset, or compliance content — Kronos already owns a meaningful part of
-      absence tracking (A-06), narrowing ManuFactor's own distinctive
-      contribution. That narrower contribution is what supports a supporting,
-      not core, classification (S12.2), not simply that it "feels" less
-      important.
-    evidence: [ev.arch.workbook "Constraints & Assumptions" A-05, ev.arch.workbook "Constraints & Assumptions" A-06, ev.arch.drawings.glossary]
+      General HR-shaped need, not mill-specific — Kronos already owns part of
+      absence tracking, narrowing ManuFactor's real contribution. That
+      narrower contribution is what supports supporting over core.
+    evidence: [ev.arch.workbook "Constraints & Assumptions" A-05, ev.arch.workbook "Constraints & Assumptions" A-06]
     confidence: medium
     status: candidate
 
-  - id: subdomain.identity-platform
-    name: Identity & Platform
+  - id: subdomain.identity-access
+    name: Identity & Access
     purpose: Recognize who is using the system and govern what they can do.
     capabilities: [cap.identity-access]
     classification: generic
     boundary_rationale: >
-      Rejected in Phase 3 only as a peer major business capability, not as
-      nonexistent — real, well-evidenced content (Windows Auth, Guest
-      fallback, app-owned role table) that enables every other subdomain
-      rather than producing a business outcome of its own; the substrate's
-      own Ports sheet already classifies Identity.Login as platform-ambient,
-      not a capability-level Port. A genuine single-capability subdomain, not
-      a default one-capability-per-subdomain pattern — nothing else in the
-      current landscape is cross-cutting in the same way, which is itself the
-      justification for the 1:1 mapping here specifically.
-    evidence: [ev.arch.addendum rev 116/117/121/122, ev.arch.workbook "Ports" (Identity.Login = platform-ambient)]
+      Enables every other subdomain, produces no business outcome of its
+      own — the substrate's own Ports sheet classifies Identity.Login as
+      platform-ambient. Renamed from "Identity & Platform" — see DDD-0002.
+    evidence: [ev.arch.addendum rev 116/117/121/122, ev.arch.workbook "Ports"]
     confidence: high
     status: candidate
