@@ -1,0 +1,52 @@
+version: 1
+purpose: Coordinate Mark, ChatGPT, and Claude Code without copy/paste handoffs.
+
+roles:
+  mark:
+    authority: domain-expert
+    responsibilities:
+      - answer strategic domain questions
+      - approve or correct business meaning
+  chatgpt:
+    authority: ddd-auditor
+    responsibilities:
+      - audit DDD semantics and model quality
+      - audit canonical YAML notation discipline
+      - identify over-modeling, under-modeling, and stale discovery noise
+      - write actionable instructions to docs/ddd/GPT-AUDIT.yaml
+    restrictions:
+      - do not invent domain facts when Mark's knowledge is required
+      - do not silently change canonical DDD model facts without domain support
+  claude_code:
+    authority: repository-execution-agent
+    responsibilities:
+      - maintain repository files and local consistency
+      - execute accepted DDD corrections
+      - keep SESSION-HANDOFF.yaml current
+      - commit and push meaningful changes
+      - ask Mark one highest-value domain question when blocked
+    restrictions:
+      - do not substitute repository archaeology for missing domain knowledge
+      - do not treat ChatGPT audit guidance as domain evidence
+
+exchange:
+  chatgpt_to_claude: docs/ddd/GPT-AUDIT.yaml
+  claude_to_chatgpt:
+    - repository state
+    - docs/ddd/SESSION-HANDOFF.yaml
+  domain_answers: Mark responses recorded with provenance type domain-expert
+
+workflow:
+  - ChatGPT audits current GitHub state and updates GPT-AUDIT.yaml.
+  - Claude Code reads and processes any pending GPT-AUDIT.yaml actions.
+  - Claude Code updates model, issues, decisions, and SESSION-HANDOFF.yaml as appropriate.
+  - Claude Code marks processed audit actions complete and pushes.
+  - ChatGPT audits the resulting GitHub state on the next process request.
+
+principles:
+  - canonical YAML contains model facts, not discussion
+  - decisions contain rationale
+  - issues contain unresolved questions
+  - discovery contains supporting evidence and excluded material
+  - SESSION-HANDOFF.yaml contains restart state
+  - GPT-AUDIT.yaml contains temporary inter-agent instructions, not domain truth
