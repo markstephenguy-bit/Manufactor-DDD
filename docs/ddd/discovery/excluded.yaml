@@ -1,0 +1,25 @@
+excluded:
+
+  - id: term.shared-service
+    name: Shared Service
+    excluded_as: dead-terminology
+    reason: Depended on the resident API Host (ADR-005/006), formally dropped at addendum rev 48. No longer describes anything in the current architecture.
+    evidence: [ev.arch.drawings.glossary, ev.arch.addendum rev 48, ev.code.claude_md]
+
+  - id: term.issued-access-token
+    name: Issued Access Token
+    excluded_as: dead-terminology
+    reason: ADR-007's token-issuance mechanism was dropped alongside the API Host at addendum rev 48 — no network boundary remains for it to secure.
+    evidence: [ev.arch.drawings.glossary, ev.arch.addendum rev 48]
+
+  - id: term.dataproofnote
+    name: DataProofNote
+    excluded_as: technical-validation-artifact
+    reason: Entity's own source comment states it directly — "Deliberately throwaway." Built to prove the Data Port dispatch pipeline works, not a business concept.
+    evidence: [ev.code.data_entities]
+
+  - id: cap.risk-management
+    name: Risk Management
+    excluded_as: insufficient-evidence
+    reason: No business-fact evidence beyond a Component name and a Data+Catalog Port reference. May resurface later as a cross-cutting concern rather than its own capability, if real evidence appears.
+    evidence: [ev.arch.workbook "Components" (Risk row, "walked-thin")]

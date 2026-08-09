@@ -55,25 +55,6 @@ terms:
     questions: []
     status: candidate
 
-  - term: Shared Service
-    observed_meanings:
-      - meaning: "SUPERSEDED. Originally: a Port reached via API host -> Controller -> DI -> Adapter (ADR-005/006). Addendum rev 48 formally drops the resident API Host entirely (explicitly superseding ADR-004/006/007): no genuine external consumer of it was ever named, and Elsa's workflow state persists in Postgres rather than needing a resident singleton process, removing ADR-004's own justifying rubric. In its place: a Component's Handler constructs a Command/Query and sends it through the in-process dispatcher (MediatR at the time of rev 48, FreeMediator now per rev 125) directly to the target Port's Handler — no network hop. Platform/Ambient Ports (Identity.Login, Realtime, Observability, Security, DevOps, Testing, Governance.Config) are configured once at startup instead of dispatched per-call. Confirmed absent in current code (ManuFactor's own CLAUDE.md: 'there is no API Host and no HTTP boundary between deployables')."
-        sources: [ev.arch.drawings.glossary, ev.arch.addendum rev 48, ev.code.claude_md]
-    possible_contexts: ["(dead terminology — kept only so it isn't reintroduced by habit)"]
-    ambiguities: []
-    questions: []
-    status: rejected
-
-  - term: Issued Access Token
-    observed_meanings:
-      - meaning: "SUPERSEDED. ADR-007's whole token-issuance mechanism was dropped alongside the API Host at addendum rev 48 ('ManuFactor.ApiClient and ADR-007's whole token-issuance mechanism become unnecessary and are dropped with it') — there is no longer a network boundary for it to secure."
-        sources: [ev.arch.drawings.glossary, ev.arch.addendum rev 48]
-    possible_contexts: ["(dead terminology)"]
-    ambiguities: []
-    questions:
-      - "Rev 48 does note one narrow remaining cross-process case (a Cron-triggered background action signaling WebApp asynchronously) with candidates ranked (Postgres outbox table, top choice; AWS SQS; MSMQ; RabbitMQ/Kafka rejected as more than this scale needs) — not finalized as of the evidence read. Worth revisiting once the async/notification design work (already the subject of the ManuFactor-DDD redirect itself) resumes, but that is architecture, not domain modeling, and out of scope here per §68."
-    status: rejected
-
   - term: LTV
     observed_meanings:
       - meaning: "Consistently used as 'LTV Forms', 'LTV sign-off templates, QR-linked prints, scan-back+OCR+AI-interpret', 'LTV completion-log', 'LTV Template'. First concrete gap ManuFactor was built to close, at Georgia-Pacific's Diboll (TX410) mill. Sheets are printed for and signed off by everyone at the mill, floor workers included. Ties to Document Control and a Safety-related catalog grouping (ltvForms.safetyConduit)."
@@ -93,15 +74,6 @@ terms:
     questions:
       - "Named but explicitly 'not scoped' at genesis (rev 1) beyond the As-Found-As-Left concept and its work-order trigger (rev 13). Full behavior beyond that isn't yet inventoried from evidence — worth a dedicated look at the AfalModule.cs source and its current shell state before this can move past candidate."
     status: candidate
-
-  - term: DataProofNote
-    observed_meanings:
-      - meaning: "NOT domain content. The entity's own source comment states it directly: 'Deliberately throwaway (see Contracts/Data/DataProofContracts.cs).' Four fields only (Id, Note, CreatedAtUtc, CreatedByProfile) — a minimal diagnostic entity almost certainly built to prove the Data Port's dispatch pipeline works end-to-end during M0-M3, not a real business concept."
-        sources: [ev.code.data_entities]
-    possible_contexts: ["none — technical validation artifact, not a domain concept"]
-    ambiguities: []
-    questions: []
-    status: rejected
 
   - term: Form (form_engine)
     observed_meanings:
