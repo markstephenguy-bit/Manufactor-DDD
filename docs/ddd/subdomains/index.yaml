@@ -1,86 +1,99 @@
 # ManuFactor DDD — Candidate Subdomains
-# Phase 4 (§50). Grouped from capability-candidates.yaml's consolidated
-# landscape. All status: candidate — none of this is confirmed. No new
-# evidence gathered this pass. Bounded Contexts not drawn yet (Phase 5).
+# Phase 4 (SPECIFICATION.md S50), tightened per ChatGPT's schema and three
+# challenge questions. All status: candidate. No new evidence gathered this
+# pass unless noted. Bounded Contexts not drawn yet (Phase 5). Not every
+# capability is placed — cap.project-tracking (unresolved) and
+# cap.risk-management (rejected) remain unplaced, not silently dropped.
 
 subdomains:
 
   - id: subdomain.quality-compliance
     name: Quality & Compliance
-    description: Ensuring the mill's work meets required standards, and producing the documented evidence that it did — safety sign-off, corrective/preventive action, environmental regulatory reporting.
+    purpose: Ensure the mill's work meets required standards and produce the documented evidence that it does.
+    capabilities: [cap.safety-compliance-signoff, cap.corrective-preventive-action, cap.environmental-compliance]
     classification: core
-    business_capabilities: [cap.safety-compliance-signoff, cap.corrective-preventive-action, cap.environmental-compliance]
-    business_value: A unified, trustworthy compliance/quality record across previously disconnected paper and system-specific processes — directly matches ManuFactor's own stated reason to exist (a system of record above scattered mill systems).
-    differentiation: Distinguished from Asset & Reliability by subject — this group is about meeting a standard or procedure and proving it, not about the physical condition of equipment. Distinguished from Production Operations by intent — recording compliance, not recording what happened operationally.
-    scope: Safety procedure sign-off, corrective/preventive action tracking and routing, environmental compliance forms.
-    out_of_scope: Physical asset condition tracking (Asset & Reliability); day-to-day operational event capture (Production Operations).
-    domain_experts: [Mark Guy — Decision Authority; Site Safety Manager — not yet mapped to an individual]
-    candidate_bounded_contexts: []
+    boundary_rationale: >
+      CAPA is nested here, not treated as a top-level domain area, on real
+      evidence rather than assumption: addendum session 020 explicitly
+      reframed CAPA as a capability that dispatches corrective-action work to
+      whichever system already owns that class of work, not a domain hub of
+      its own. Safety sign-off and environmental reporting share the same
+      underlying shape (produce evidence of meeting a standard or
+      regulation), which is what actually groups the three, not simply the
+      word "quality." Distinguished from Asset & Reliability by subject
+      (procedure/regulation compliance, not equipment condition) and from
+      Production Operations by intent (proving compliance, not recording
+      what happened operationally).
+    evidence: [ev.arch.addendum "CAPA reframed" session 020, ev.arch.addendum rev 1/4/40, ev.arch.workbook "Data Gathering" item 21]
+    confidence: medium
     status: candidate
-    provenance: {sources: [{type: inference, description: "Grouped from capability-candidates.yaml; no new evidence gathered this pass"}], confidence: medium}
-    notes:
-      - "cap.project-tracking (status unresolved in Phase 3) is tentatively placed here given its close, unresolved relationship to CAPA — placement itself is not confirmed, only the observation that if Project Tracking is real, it most likely belongs in this group or is absorbed into CAPA."
 
   - id: subdomain.asset-reliability
     name: Asset & Reliability
-    description: Knowing what physical assets (equipment and vehicles) the mill has, what condition they're in, and verifying they remain reliable and compliant at defined checkpoints.
+    purpose: Know what physical assets the mill has, what condition they're in, and verify they remain reliable and compliant at defined checkpoints.
+    capabilities: [cap.physical-asset-management, cap.equipment-reliability-verification]
     classification: core
-    business_capabilities: [cap.physical-asset-management, cap.equipment-reliability-verification]
-    business_value: A consolidated view of asset condition and verification history, currently scattered across MP2 (partial CMMS coverage) and undocumented practice.
-    differentiation: Distinguished from Quality & Compliance by subject (physical equipment/vehicle state, not procedure/regulation compliance) — though the boundary is genuinely soft, since Equipment Reliability & Compliance Verification is itself a compliance-adjacent activity; kept separate on the evidence that asset condition and compliance-verification are tracked with different triggers and different owning Rules-sheet entries.
-    scope: Asset/vehicle condition and lifecycle state, maintenance verification, scheduled/condition-triggered inspection and calibration.
-    out_of_scope: Corrective action arising from a failed inspection (routes to Quality & Compliance's CAPA capability).
-    domain_experts: [Mark Guy; Reliability Manager — not yet mapped to an individual]
-    candidate_bounded_contexts: []
+    boundary_rationale: >
+      Kept separate from Quality & Compliance even though verification is
+      compliance-adjacent, on the evidence that asset condition and
+      compliance-verification are tracked with different triggers (lifecycle
+      state vs. post-maintenance/scheduled/condition-triggered check). The
+      Rules sheet itself lists AssetManagement and InspectionsCalibration
+      together under one due-check rule, supporting a real relationship
+      between the two capabilities inside this one subdomain rather than
+      either standing fully alone.
+    evidence: [ev.arch.workbook "Status Catalog Mappings", ev.arch.workbook "Rules"]
+    confidence: medium
     status: candidate
-    provenance: {sources: [{type: inference, description: "Grouped from capability-candidates.yaml"}], confidence: medium}
-    notes: []
 
   - id: subdomain.production-operations
     name: Production Operations
-    description: The mill's actual production process (kiln drying) and the operational record-keeping of what happens during production (shift status, downtime/incident, process changes).
+    purpose: Manage the mill's production process itself and record what happens during production.
+    capabilities: [cap.kiln-drying-operations, cap.operational-reporting]
     classification: core
-    business_capabilities: [cap.kiln-drying-operations, cap.operational-reporting]
-    business_value: Direct production-process management plus operational visibility — closest to the mill's literal core activity (per Mill Hierarchy: Sawmill, Planermill, Kilns).
-    differentiation: Distinguished from Quality & Compliance and Asset & Reliability by being about the production process itself and its operational record, not about equipment condition or standards compliance.
-    scope: Kiln drying process management, shift/incident/process-change reporting.
-    out_of_scope: Equipment condition (Asset & Reliability); compliance documentation (Quality & Compliance).
-    domain_experts: [Mark Guy]
-    candidate_bounded_contexts: []
+    boundary_rationale: >
+      Distinct from the other core groups by being about the production
+      process and its operational record, not equipment condition or
+      standards compliance. Explicitly provisional: cap.operational-reporting
+      already carries a low-confidence fold-in of Process/Parameter Change
+      Control from Phase 3 (near-zero independent evidence beyond a Component
+      name and a Data Port) — that fold-in is not re-confirmed by this
+      subdomain grouping and should be treated as still open.
+    evidence: [ev.arch.drawings.mill_hierarchy, ev.arch.workbook "Build Order" Phase_B/B1, ev.arch.workbook "Components" (ParameterProcessChange row)]
+    confidence: medium overall, low specifically for the Process/Parameter Change portion
     status: candidate
-    provenance: {sources: [{type: inference, description: "Grouped from capability-candidates.yaml"}], confidence: medium}
-    notes:
-      - "cap.operational-reporting itself carries a low-confidence merge (Process/Parameter Change Control folded in on thin evidence) — inherited here, not re-resolved."
 
   - id: subdomain.people-workforce
     name: People & Workforce
-    description: Training/competency records and workforce scheduling/absence tracking.
+    purpose: Track training/competency and workforce scheduling/absence.
+    capabilities: [cap.training-competency, cap.workforce-scheduling]
     classification: supporting
-    business_capabilities: [cap.training-competency, cap.workforce-scheduling]
-    business_value: Real, needed capability — but per cap.workforce-scheduling's own honest flag, Kronos already covers a meaningful part of absence tracking, so ManuFactor's distinctive contribution here is narrower than in the core groups above.
-    differentiation: Distinguished from all core groups by being general workforce/HR-shaped need rather than mill-specific production, asset, or compliance content — the classification test itself (§12) points toward supporting, not core.
-    scope: Training completion/competency, crew/shift/supervisor structure, absence category tracking.
-    out_of_scope: Anything already fully owned by Kronos.
-    domain_experts: [Mark Guy]
-    candidate_bounded_contexts: []
+    boundary_rationale: >
+      General HR/workforce-shaped need rather than mill-specific production,
+      asset, or compliance content — Kronos already owns a meaningful part of
+      absence tracking (A-06), narrowing ManuFactor's own distinctive
+      contribution. That narrower contribution is what supports a supporting,
+      not core, classification (S12.2), not simply that it "feels" less
+      important.
+    evidence: [ev.arch.workbook "Constraints & Assumptions" A-05, ev.arch.workbook "Constraints & Assumptions" A-06, ev.arch.drawings.glossary]
+    confidence: medium
     status: candidate
-    provenance: {sources: [{type: inference, description: "Grouped from capability-candidates.yaml"}], confidence: medium}
-    notes: []
 
   - id: subdomain.identity-platform
-    name: Identity & Platform (candidate)
-    description: Recognizing who is using the system and governing what they can do — an enabling mechanism, not a business capability with its own outcome.
+    name: Identity & Platform
+    purpose: Recognize who is using the system and govern what they can do.
+    capabilities: [cap.identity-access]
     classification: generic
-    business_capabilities: [cap.identity-access]
-    business_value: None distinct from enabling every other subdomain — classified generic precisely because it's commodity functionality (§12.3), not proprietary domain content.
-    differentiation: Every other group produces a business outcome of its own; this one only enables the others to function.
-    scope: Windows Auth, Guest fallback, app-owned role/tier assignment.
-    out_of_scope: Any business-domain decision about what a role is allowed to do within a specific capability (that belongs to the capability itself, this subdomain only carries the mechanism).
-    domain_experts: [Mark Guy]
-    candidate_bounded_contexts: []
+    boundary_rationale: >
+      Rejected in Phase 3 only as a peer major business capability, not as
+      nonexistent — real, well-evidenced content (Windows Auth, Guest
+      fallback, app-owned role table) that enables every other subdomain
+      rather than producing a business outcome of its own; the substrate's
+      own Ports sheet already classifies Identity.Login as platform-ambient,
+      not a capability-level Port. A genuine single-capability subdomain, not
+      a default one-capability-per-subdomain pattern — nothing else in the
+      current landscape is cross-cutting in the same way, which is itself the
+      justification for the 1:1 mapping here specifically.
+    evidence: [ev.arch.addendum rev 116/117/121/122, ev.arch.workbook "Ports" (Identity.Login = platform-ambient)]
+    confidence: high
     status: candidate
-    provenance: {sources: [{type: inference, description: "cap.identity-access was rejected as a business capability in Phase 3 but is real, well-evidenced content — placed here as a Generic subdomain per §12.3 rather than dropped"}], confidence: high}
-    notes: []
-
-# Explicitly not placed: cap.risk-management (rejected in Phase 3, no
-# business-fact evidence to group anywhere). Not forced into a subdomain.
