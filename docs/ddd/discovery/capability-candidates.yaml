@@ -1,52 +1,62 @@
 # ManuFactor DDD — Capability Candidates
-# Phase 3. Business capabilities only, independent of software organization
-# (§49). Built entirely from evidence already collected (evidence-index.yaml,
-# term-candidates.yaml) — no new evidence gathering per this phase's scope.
-# CustomerComplaints (shelved) and ReleaseOfProduct ("this is SAP, not a
-# ManuFactor Component") are excluded outright, not modeled as capabilities.
+# Phase 3, consolidation pass. Coarsened from the original 14 (which mirrored
+# the 13-Component structure too closely) by applying, to every candidate:
+# would this exist without the Component; is it major or a feature of
+# something larger; was a Component name kept out of convenience; do two
+# candidates belong to one capability; is this generic/supporting rather than
+# ManuFactor's real business domain. No new evidence gathered this pass.
 
 capabilities:
 
-  - id: cap.document-signoff
-    name: Document Control / Equipment & Procedure Sign-Off
-    purpose: Capture formal sign-off records against templates (universal/hierarchy/equipment-local), with an approval workflow before a record is authoritative.
-    business_outcome: A trustworthy, retained record of who signed off on what, when, tied to a specific piece of equipment or procedure.
+  - id: cap.safety-compliance-signoff
+    name: Safety Compliance & Procedure Sign-Off
+    purpose: Formal sign-off of safety-related procedures/equipment against approved templates, with an approval workflow before a record is authoritative.
+    business_outcome: A trustworthy, retained safety-compliance record — who signed off on what, when, approved by whom.
     important_terms: [LTV Template, LTV Printed Instance, Site Safety Manager approval]
-    evidence: [ev.arch.addendum rev 1/4/40, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules" (SSM approval rule)]
+    evidence: [ev.arch.addendum rev 1/4/40, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules"]
     confidence: high
     status: candidate
+    # Renamed from "Document Control" — the sign-off/retention/export mechanism
+    # itself (form_engine, §Glossary Q129) is generic infrastructure shared by
+    # any Component producing a Form; SAFETY is the real, non-generic business
+    # content behind LtvForms specifically (ltvForms.safetyConduit tie).
 
-  - id: cap.maintenance-verification
-    name: Maintenance Verification (As Found As Left)
-    purpose: Record equipment condition before and after a specific maintenance event/work order.
-    business_outcome: A verified, timestamped record of equipment state tied to one real maintenance action, not a general periodic check.
+  - id: cap.physical-asset-management
+    name: Physical Asset Management
+    purpose: Track physical asset condition and lifecycle (In-Service / In-Shop / Rebuilt-or-Retired / Scrapped), across mill equipment and vehicles alike.
+    business_outcome: Knowing an asset's current condition and history, for both maintenance and replacement decisions.
+    important_terms: [Operational Setting Logbook]
+    evidence: [ev.arch.workbook "Status Catalog Mappings" (AssetManagement + VehicleManagement rows), ev.arch.workbook "Data Gathering" items 13/14/17]
+    confidence: medium-high
+    status: candidate
+    # Consolidated: Asset Management + Vehicle Management. Near-identical
+    # status shape and purpose, differing only in asset class. One caveat
+    # honestly carried forward, not resolved: an unsourced recollection from
+    # broader project context suggests these may have been deliberately kept
+    # separate in an earlier session — not found in this repo's own evidence,
+    # so the merge stands on current evidence but should be verified with Mark
+    # before being treated as final.
+
+  - id: cap.equipment-reliability-verification
+    name: Equipment Reliability & Compliance Verification
+    purpose: Verify equipment is working correctly and remains compliant — after a maintenance action (As Found As Left), and on a calendar or condition-triggered schedule (calibration/inspection).
+    business_outcome: Confidence that equipment is in a known-good, verified, compliant state at defined checkpoints.
     important_terms: [AFAL, AFAL record, AFAL category-check]
-    evidence: [ev.arch.addendum rev 1/13, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules"]
-    confidence: high
+    evidence: [ev.arch.addendum rev 1/13, ev.arch.workbook "Rules" (AFAL category-check, calendar due-check, mill-condition threshold checks), ev.arch.workbook "Status Catalog Mappings" (InspectionsCalibration row), ev.arch.workbook "Notifications"]
+    confidence: medium-high
     status: candidate
-
-  - id: cap.shift-incident-reporting
-    name: Operational Shift & Incident Reporting
-    purpose: Capture what happened during a shift, or a specific downtime/incident event, as a discrete operational record.
-    business_outcome: A record of operational events usable for tracking, not real-time control.
-    important_terms: [Shift Report, Downtime/Incident Report]
-    evidence: [ev.arch.workbook "Build Order" Phase_B/B1, ev.arch.workbook "Decisions (ADRs)" Downtime/Incident MES routing]
-    confidence: medium
-    status: candidate
-
-  - id: cap.process-parameter-change
-    name: Process / Parameter Change Control
-    purpose: Not yet understood beyond its name and a Data-only Port reference.
-    business_outcome: Unknown from current evidence.
-    important_terms: []
-    evidence: [ev.arch.workbook "Components" (ParameterProcessChange row), ev.arch.workbook "Build Order" Phase_C]
-    confidence: low
-    status: unresolved
+    # Consolidated: AFAL (Maintenance Verification) + Inspections & Calibration.
+    # Distinct from Physical Asset Management: that capability answers "what do
+    # we have and what state is it in"; this one answers "how do we verify/
+    # check it," at different real trigger points (post-maintenance, scheduled,
+    # condition-triggered). The Rules sheet itself lists AssetManagement and
+    # InspectionsCalibration together under the same due-check rule, supporting
+    # the split from Physical Asset Management rather than a full merge into it.
 
   - id: cap.corrective-preventive-action
     name: Corrective & Preventive Action (CAPA)
-    purpose: Resolve a quality/operational finding by routing corrective work to whichever system already owns that class of work (MP2 for asset-execution work, native handling for quality-type findings with no existing owner).
-    business_outcome: Findings get real corrective action, tracked to closure, without CAPA becoming a second owner of work another system already owns.
+    purpose: Resolve a quality/operational finding by routing corrective work to whichever system already owns that class of work.
+    business_outcome: Findings get tracked corrective action to closure, without CAPA becoming a second owner of work another system already owns.
     important_terms: [CAPA item, CAPA routing rule, CAPA-vs-Project origination]
     evidence: [ev.arch.addendum "CAPA reframed" session 020, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules"]
     confidence: high
@@ -54,17 +64,36 @@ capabilities:
 
   - id: cap.project-tracking
     name: Project Tracking
-    purpose: Track discrete improvement/capital projects as a unit of work distinct from a CAPA item.
-    business_outcome: Visibility into planned/in-progress projects, separately from corrective-action tracking.
+    purpose: Track discrete improvement/capital projects, as distinct from a CAPA item.
+    business_outcome: Visibility into planned/in-progress project work, separate from corrective-action tracking — if that boundary is real.
     important_terms: [CAPA-vs-Project origination]
-    evidence: [ev.arch.workbook "Components" (ProjectTracking row, "walked-concrete"), ev.arch.workbook "Data Gathering" item 22]
+    evidence: [ev.arch.workbook "Components" (ProjectTracking row), ev.arch.workbook "Data Gathering" item 22]
+    confidence: low
+    status: unresolved
+    # Genuinely unresolved, not forced: the CAPA-vs-Project origination rule
+    # (whether a finding becomes a CAPA item, a Project, or nothing) is itself
+    # recorded as open — meaning this candidate's very right to exist as a
+    # separate capability from CAPA is unconfirmed, not just its details.
+
+  - id: cap.operational-reporting
+    name: Operational Reporting
+    purpose: Capture what happened operationally — a shift's status, a downtime/incident event, or a process/parameter change — as a discrete record.
+    business_outcome: Operational visibility across the mill, independent of any one piece of equipment.
+    important_terms: [Shift Report, Downtime/Incident Report]
+    evidence: [ev.arch.workbook "Build Order" Phase_B/B1, ev.arch.workbook "Decisions (ADRs)" Downtime/Incident MES routing, ev.arch.workbook "Components" (ParameterProcessChange row)]
     confidence: medium
     status: candidate
+    # Consolidated (tentatively): Shift/Incident Reporting + Process/Parameter
+    # Change Control. The latter had almost no independent evidence beyond a
+    # Component name and a Data Port — its real shape ("record something that
+    # happened/changed") matches this capability closely enough to fold in
+    # rather than keep as its own thin, unverifiable candidate. Marked
+    # candidate, not confirmed — genuinely thin evidence on the folded-in part.
 
   - id: cap.training-competency
     name: Training / Competency Records
     purpose: Track training completion and competency, sourced from Moodle.
-    business_outcome: A record of who is trained/qualified for what.
+    business_outcome: A record of who is trained/qualified for what, tied to safety/operational readiness.
     important_terms: []
     evidence: [ev.arch.workbook "Endpoints" (moodle-api/moodle-db), ev.arch.workbook "Constraints & Assumptions" A-05]
     confidence: medium
@@ -72,72 +101,70 @@ capabilities:
 
   - id: cap.workforce-scheduling
     name: Workforce Scheduling & Absence
-    purpose: Represent crew/shift/supervisor structure and track absence categories (vacation, comp time, attendance points), augmented by BI-cube data.
+    purpose: Represent crew/shift/supervisor structure and track absence categories (vacation, comp time, attendance points).
     business_outcome: An accurate picture of who is scheduled/available, and absence accounting.
     important_terms: [Department, Crew, Shift, Supervisor]
     evidence: [ev.arch.drawings.glossary, ev.arch.workbook "Constraints & Assumptions" A-06]
     confidence: medium
     status: candidate
-
-  - id: cap.asset-management
-    name: Asset Management
-    purpose: Track physical equipment condition and lifecycle (In-Service / In-Shop / Rebuilt / Scrapped), including runtime-hours/MTBS data.
-    business_outcome: Knowing an asset's current condition and history to inform maintenance and replacement decisions.
-    important_terms: [Operational Setting Logbook]
-    evidence: [ev.arch.workbook "Status Catalog Mappings", ev.arch.workbook "Data Gathering" items 13/14]
-    confidence: high
-    status: candidate
-
-  - id: cap.vehicle-management
-    name: Vehicle Management
-    purpose: Track mill vehicle condition and lifecycle (In-Service / In-Shop / Out-of-Service / Retired[?]), sourced from an unnamed mechanic-shop application.
-    business_outcome: Same shape of outcome as Asset Management, for vehicles specifically.
-    important_terms: []
-    evidence: [ev.arch.workbook "Status Catalog Mappings", ev.arch.workbook "Endpoints" mechanic-shop-app, ev.arch.workbook "Components" (deferred, no current traction)]
-    confidence: low — deferred, minimal real evidence beyond a near-identical status shape to Asset Management
-    status: candidate
-
-  - id: cap.inspections-calibration
-    name: Inspections & Calibration
-    purpose: Perform scheduled (calendar) or condition-triggered (mill-condition thresholds) inspections/calibrations against pass/fail criteria.
-    business_outcome: Confidence that equipment/processes meet required standards on a known cadence.
-    important_terms: []
-    evidence: [ev.arch.workbook "Rules" (calendar due-check, mill-condition threshold checks), ev.arch.workbook "Status Catalog Mappings", ev.arch.workbook "Notifications"]
-    confidence: high
-    status: candidate
-
-  - id: cap.risk-management
-    name: Risk Management
-    purpose: Not yet understood — "walked-thin" with only Data + Catalog Ports referenced, no business-fact evidence collected beyond its name.
-    business_outcome: Unknown from current evidence.
-    important_terms: []
-    evidence: [ev.arch.workbook "Components" (Risk row, "walked-thin")]
-    confidence: low
-    status: unresolved
+    # Honest flag, not resolved: Kronos already covers Vacation/Comp
+    # Time/Attendance Points at TX410 (A-06) — ManuFactor's own real
+    # contribution here may be narrower (native augmentation via BI-cube data)
+    # than for capabilities with no existing system-of-record. Worth
+    # confirming ManuFactor's actual value-add here before treating this as a
+    # major capability on the same footing as e.g. CAPA.
 
   - id: cap.environmental-compliance
     name: Environmental Compliance Reporting
-    purpose: Produce Boiler/Kiln environmental forms.
-    business_outcome: Documented compliance with environmental requirements.
+    purpose: Produce Boiler/Kiln environmental compliance forms.
+    business_outcome: Documented compliance with external environmental regulation — a real, regulation-driven responsibility independent of any software choice.
     important_terms: []
     evidence: [ev.arch.workbook "Data Gathering" item 21, ev.arch.workbook "Components" (Environmental row)]
-    confidence: low-medium
+    confidence: low
     status: candidate
+    # Kept despite thin evidence (only one real open fact: whether forms are
+    # ever physically printed) — regulatory compliance is inherently real
+    # business content, not a convenience holdover, even though little else
+    # about it is known yet.
 
   - id: cap.kiln-drying-operations
     name: Kiln Drying Operations
-    purpose: Manage kiln drying process, including a not-yet-designed forecasting/analytics element.
-    business_outcome: Effective kiln scheduling/operation, informed by forecasting once designed.
+    purpose: Manage the kiln drying production process.
+    business_outcome: Effective kiln scheduling and operation — a core lumber-production process step (Mill Hierarchy: Kilns area, Kiln Line 1-4), not a peripheral one.
     important_terms: []
-    evidence: [ev.arch.workbook "Data Gathering" item 23, ev.arch.workbook "Components" (KilnDrying row)]
-    confidence: low-medium
-    status: unresolved
+    evidence: [ev.arch.workbook "Data Gathering" item 23, ev.arch.workbook "Components" (KilnDrying row), ev.arch.drawings.mill_hierarchy]
+    confidence: medium
+    status: candidate
+    # Not merged into Operational Reporting — this is a production-process
+    # management responsibility, not a record-what-happened responsibility.
+    # The still-undesigned forecasting/analytics element may belong to a
+    # general Analytics capability rather than being Kiln Drying's own outcome
+    # — noted, not resolved.
+
+  - id: cap.risk-management
+    name: Risk Management
+    purpose: Not confirmed as a standalone capability.
+    business_outcome: Unknown — no business-fact evidence exists beyond the Component's name and a Data+Catalog Port reference.
+    important_terms: []
+    evidence: [ev.arch.workbook "Components" (Risk row, "walked-thin")]
+    confidence: low
+    status: rejected
+    # Demoted this pass, not deleted (per the specification's own §96 — never
+    # silently remove a candidate). "Risk" was preserved in the first pass
+    # purely because a Component with that name exists — the challenge
+    # questions surface no independent business-outcome evidence for it.
+    # Genuine possibility it resurfaces later as a cross-cutting concern
+    # (safety risk inside Safety Compliance, asset risk inside Physical Asset
+    # Management) rather than its own capability — not confirmed either way.
 
   - id: cap.identity-access
     name: Identity & Access
-    purpose: Recognize who is using the system (Windows Auth, Guest fallback) and govern what they are allowed to do (app-owned role/tier, not AD-group-derived).
-    business_outcome: The right person has the right access, without a login barrier blocking legitimate mill floor use.
+    purpose: Recognize who is using the system and govern what they can do.
+    business_outcome: Not modeled as a business capability with its own outcome — the substrate's own Ports classification already treats Identity.Login as platform-ambient (not a capability-level Port like the others), and its real content (Windows Auth, Guest fallback, app-owned role table) is an enabling/supporting mechanism, not a distinct business responsibility with an outcome of its own.
     important_terms: [Guest, Profile, app-owned permissions, Identity/Profile trust lifecycle]
-    evidence: [ev.arch.addendum rev 116/117/121/122, ev.code.dev_plan, ev.code.webapp_identity]
+    evidence: [ev.arch.addendum rev 116/117/121/122, ev.code.dev_plan, ev.code.webapp_identity, ev.arch.workbook "Ports" (Identity.Login = platform-ambient)]
     confidence: high
-    status: candidate
+    status: rejected
+    # Demoted this pass, not deleted. Real, well-evidenced content — just not
+    # a peer business capability. Likely candidate for a Generic-classified
+    # subdomain (§12.3) later, not for the capability landscape itself.
