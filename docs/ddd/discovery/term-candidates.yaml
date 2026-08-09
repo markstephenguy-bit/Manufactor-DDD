@@ -1,0 +1,209 @@
+# ManuFactor DDD — Term Candidates
+# Phase 2 (SPECIFICATION.md §48). Real business terms pulled from evidence,
+# with observed meanings, sources, and ambiguities recorded honestly.
+# Multiple/conflicting meanings are preserved deliberately, not resolved here.
+
+terms:
+
+  - term: Guest
+    observed_meanings:
+      - meaning: "Fallback identity when no Windows identity is present. Real, non-empty starting capabilities: LtvForms + Afal (more may be added later, Mark's call each time). Anonymous access allowed outright — nowhere in the app forces a login challenge. Nav currently shows all 13 Components since per-Component grant-gating (M7) doesn't exist yet — expected at this stage, not a defect."
+        sources: [ev.arch.addendum rev 122, ev.arch.addendum rev 123, ev.code.dev_plan]
+    possible_contexts: [identity/authorization, LtvForms, Afal]
+    ambiguities:
+      - "RESOLVED, not a live conflict: the recorded glossary's guest_profile entry ('effectively empty grant set') is explicitly superseded — addendum rev 122 records Mark directly correcting ADR-003's original wording as stale. The glossary file itself (drawings/glossary.json) has not been re-derived since; it still shows the old wording. This is a re-derivation gap in the substrate, not an open domain question."
+    questions: []
+    status: confirmed
+
+  - term: Profile
+    observed_meanings:
+      - meaning: "The identity record keyed by Windows username, created once trusted; that row IS the user's identity in the app. No in-app user-switching — the only way to load a different Profile is logging into Windows as that person. Holds no secrets, only role/basic info. Also the natural home for the role/tier field (app-owned permissions)."
+        sources: [ev.code.dev_plan, ev.arch.addendum rev 117, ev.arch.addendum rev 121]
+    possible_contexts: [identity/authorization]
+    ambiguities: []
+    questions: []
+    status: confirmed
+
+  - term: Identity/Profile trust lifecycle
+    observed_meanings:
+      - meaning: "A five-part, already-confirmed lifecycle: (1) Windows Auth's answer is trusted outright on every visit, no per-request re-verification. (2) The trusted Windows username is the lookup key for an existing Profile row — that row is the identity going forward. (3) LDAP enrichment (real name/email/department via System.DirectoryServices, endpoint dcbpict02.bpnet.gapac.com) runs exactly once, the first time a username is ever seen — never again for that person. It requires its own service-account credential; the end user's own Windows identity only proves who they are, not the app's right to query the directory. (4) No in-app switch-user feature exists — the only way to load a different Profile is logging into Windows as that person. (5) Safe to keep this simple specifically because the Profile holds no secrets, only role/basic info."
+        sources: [ev.arch.addendum rev 119, ev.arch.addendum rev 120, ev.arch.addendum rev 121]
+    possible_contexts: [identity/authorization, cross-cutting — likely relevant to every Component, not domain-specific to any one]
+    ambiguities: []
+    questions:
+      - "This reads as invariant-shaped (e.g. 'LDAP enrichment happens at most once per person') rather than a plain vocabulary term — worth carrying forward directly into Phase 10 (Invariant discovery) once strategic modeling reaches that context, rather than being re-discovered from scratch there."
+    status: confirmed
+
+  - term: app-owned permissions
+    observed_meanings:
+      - meaning: "ManuFactor owns permission/role assignment directly: an internal table mapping a recognized person to a role/tier (Guest/Normal User/Power User/Admin), assigned by an admin inside the app. No external system — not AD groups, not an HR system, nothing — is consulted. This replaces the AD-group premise entirely, not just its open unknowns (rev 116 invalidated the assumption itself; rev 117 supplied the real mechanism). The role/tier field lives on the same Profile row created at first Windows-identity sighting (M3), defaulting to Guest, promoted later by an admin — one mechanism, not two."
+        sources: [ev.arch.addendum rev 116, ev.arch.addendum rev 117, ev.arch.addendum rev 118]
+    possible_contexts: [identity/authorization]
+    ambiguities: []
+    questions: []
+    status: confirmed
+
+  - term: Component
+    observed_meanings:
+      - meaning: "ManuFactor's term for a gap-closing feature. Owns its own Domain content + Application-layer orchestration, shares common Ports/Adapters. Single-shape only."
+        sources: [ev.arch.drawings.glossary]
+      - meaning: "One of 13 currently-implemented namespace folders under ManuFactor.Components, each an IComponentModule: LtvForms, Afal, OperationalReporting, ParameterProcessChange, Capa, Training, Workforce, AssetManagement, InspectionsCalibration, Risk, Environmental, KilnDrying, ProjectTracking."
+        sources: [ev.code.components]
+    possible_contexts: ["(software-organization term, not yet evaluated as a domain term)"]
+    ambiguities:
+      - "This is explicitly a software-architecture unit, not a claim about domain boundaries. Per the specification's own §69/§97.3, this list must not be treated as 13 Bounded Contexts by default — each one needs independent semantic evaluation in Phase 5."
+    questions: []
+    status: candidate
+
+  - term: Shared Service
+    observed_meanings:
+      - meaning: "SUPERSEDED. Originally: a Port reached via API host -> Controller -> DI -> Adapter (ADR-005/006). Addendum rev 48 formally drops the resident API Host entirely (explicitly superseding ADR-004/006/007): no genuine external consumer of it was ever named, and Elsa's workflow state persists in Postgres rather than needing a resident singleton process, removing ADR-004's own justifying rubric. In its place: a Component's Handler constructs a Command/Query and sends it through the in-process dispatcher (MediatR at the time of rev 48, FreeMediator now per rev 125) directly to the target Port's Handler — no network hop. Platform/Ambient Ports (Identity.Login, Realtime, Observability, Security, DevOps, Testing, Governance.Config) are configured once at startup instead of dispatched per-call. Confirmed absent in current code (ManuFactor's own CLAUDE.md: 'there is no API Host and no HTTP boundary between deployables')."
+        sources: [ev.arch.drawings.glossary, ev.arch.addendum rev 48, ev.code.claude_md]
+    possible_contexts: ["(dead terminology — kept only so it isn't reintroduced by habit)"]
+    ambiguities: []
+    questions: []
+    status: rejected
+
+  - term: Issued Access Token
+    observed_meanings:
+      - meaning: "SUPERSEDED. ADR-007's whole token-issuance mechanism was dropped alongside the API Host at addendum rev 48 ('ManuFactor.ApiClient and ADR-007's whole token-issuance mechanism become unnecessary and are dropped with it') — there is no longer a network boundary for it to secure."
+        sources: [ev.arch.drawings.glossary, ev.arch.addendum rev 48]
+    possible_contexts: ["(dead terminology)"]
+    ambiguities: []
+    questions:
+      - "Rev 48 does note one narrow remaining cross-process case (a Cron-triggered background action signaling WebApp asynchronously) with candidates ranked (Postgres outbox table, top choice; AWS SQS; MSMQ; RabbitMQ/Kafka rejected as more than this scale needs) — not finalized as of the evidence read. Worth revisiting once the async/notification design work (already the subject of the ManuFactor-DDD redirect itself) resumes, but that is architecture, not domain modeling, and out of scope here per §68."
+    status: rejected
+
+  - term: LTV
+    observed_meanings:
+      - meaning: "Consistently used as 'LTV Forms', 'LTV sign-off templates, QR-linked prints, scan-back+OCR+AI-interpret', 'LTV completion-log', 'LTV Template'. First concrete gap ManuFactor was built to close, at Georgia-Pacific's Diboll (TX410) mill. Sheets are printed for and signed off by everyone at the mill, floor workers included. Ties to Document Control and a Safety-related catalog grouping (ltvForms.safetyConduit)."
+        sources: [ev.arch.addendum rev 1, ev.arch.addendum rev 4, ev.arch.addendum rev 40, ev.arch.sessions session-002.md, ev.arch.old_archive bi-data-sources.md, ev.arch.old_archive stakeholders.md]
+    possible_contexts: [LtvForms Component, Guest's first stated capability, Document Control, Safety]
+    ambiguities: []
+    questions:
+      - "What does LTV literally stand for? Checked exhaustively across both repos — the recorded glossary, DEV-PLAN.md, every addendum revision touching LTV (1, 4, 32, 35, 40, 116-125 range), and the pre-session-014 Old/ archive (session-002.md, session-006-seed.md, bi-data-sources.md, stakeholders.md) — the term is used constantly but never expanded anywhere in either repo. One real lead found: bi-data-sources.md references an external, un-inventoried source outside both repos — 'C:\\Projects\\LTV Procedures\\Procedures' — apparently GP's own pre-existing procedure documentation, separate from anything ManuFactor-arch or ManuFactor contain. Genuinely unresolved from the evidence available here; the actual definition likely exists in that external folder or only in Mark's own knowledge."
+    status: unresolved
+
+  - term: Afal
+    observed_meanings:
+      - meaning: "As Found As Left — a maintenance-verification concept. An AFAL check is tied to a specific maintenance event/work order, not a standalone periodic check. Confirmed NOT to live inside MP2 (the mill's actual CMMS)."
+        sources: [ev.arch.addendum rev 1, ev.arch.addendum rev 13, ev.arch.addendum "drawing:external_systems.MP2" entry]
+    possible_contexts: [Afal Component, Asset Management/maintenance domain]
+    ambiguities: []
+    questions:
+      - "Named but explicitly 'not scoped' at genesis (rev 1) beyond the As-Found-As-Left concept and its work-order trigger (rev 13). Full behavior beyond that isn't yet inventoried from evidence — worth a dedicated look at the AfalModule.cs source and its current shell state before this can move past candidate."
+    status: candidate
+
+  - term: DataProofNote
+    observed_meanings:
+      - meaning: "NOT domain content. The entity's own source comment states it directly: 'Deliberately throwaway (see Contracts/Data/DataProofContracts.cs).' Four fields only (Id, Note, CreatedAtUtc, CreatedByProfile) — a minimal diagnostic entity almost certainly built to prove the Data Port's dispatch pipeline works end-to-end during M0-M3, not a real business concept."
+        sources: [ev.code.data_entities]
+    possible_contexts: ["none — technical validation artifact, not a domain concept"]
+    ambiguities: []
+    questions: []
+    status: rejected
+
+  - term: Form (form_engine)
+    observed_meanings:
+      - meaning: "A Component classified as a Form (a written report/record that opines or relays operational information and needs retention) automatically gets Catalog registration, relational storage, Documents.Compose export/print, and standard Save/Edit CRUD — a named, reusable composition, not decided per instance. Confirmed 2026-07-17, Mark direct."
+        sources: [ev.arch.drawings.glossary]
+    possible_contexts: [LtvForms, and potentially other Components once evaluated against this same shape]
+    ambiguities: []
+    questions: []
+    status: candidate
+
+  - term: CAPA
+    observed_meanings:
+      - meaning: "Corrective and Preventive Action — a capability that dispatches corrective-action work items to whichever system already owns that class of work (e.g. CMMS for assets), not a domain hub of its own."
+        sources: [ev.arch.addendum]
+    possible_contexts: [Capa Component, quality/compliance domain]
+    ambiguities: []
+    questions: []
+    status: candidate
+
+  - term: mill hierarchy (Enterprise / Site / Area / Line / Cell)
+    observed_meanings:
+      - meaning: "Enterprise (top level, e.g. Lumber) > Site (physical mill location, e.g. Diboll/TX410, 12 sites total) > Area (named sub-division, e.g. Dry End/Green End/Kilns/Utility) > Line (named production sub-system, e.g. Planermill/Sawmill/Kiln Line 1-4) > Cell (leaf-level machine/station, e.g. Grader/Trimmer/Kiln 1, same concept as 'Machine Center'). Optional Cell Group between Line and Cell for by-product/support cells."
+        sources: [ev.arch.drawings.glossary, ev.arch.drawings.mill_hierarchy]
+    possible_contexts: [mill operations, cross-cutting reference data likely used by many Components]
+    ambiguities:
+      - "Area specifically has a recorded, still-open mapping problem: an external system's ('Lumber Tenet Ledger') 17 'mill areas' for TX410 do not map cleanly onto these 4 formal Areas — most correspond to Line or Cell level instead, and a few (log scales, log yard, warehouse, shipping) don't appear in this hierarchy at all. Deliberately deferred at discovery time (session 019) rather than resolved."
+    questions:
+      - "Does this DDD effort need to resolve the Tenet-Ledger-vs-formal-hierarchy mapping now, or can it stay deferred the way it was in the prior substrate?"
+    status: unresolved
+
+  - term: Department / Crew / Shift / Supervisor
+    observed_meanings:
+      - meaning: "Department: organizational grouping distinct from the physical hierarchy — 4 Production (Green End, Kiln(s), Dry End, Boiler), 10 Support (Millwrights, Electricians, Maintenance, Environmental, Supply House, Cleanup, HR, Safety, Roads and Grounds, Mill Management). Crew: informal grouping of Employees under one Supervisor, not GP-standardized, locally defined. Shift: numbered 1/2/3, independent per Employee and per Supervisor, not inherited from Crew. Supervisor: oversees a Crew informally, rotates between Shifts over time — the stable relationship is Employee-to-Supervisor, not Employee-to-Shift."
+        sources: [ev.arch.drawings.glossary]
+    possible_contexts: [Workforce Component, likely cross-cutting reference data]
+    ambiguities: []
+    questions: []
+    status: candidate
+
+  - term: manufactor.thing
+    observed_meanings:
+      - meaning: "A thin, cross-cutting parent identity — id + a coarse shared status category + links. Every capability's real item (a CAPA item, an LTV Printed Instance, etc.) grounds itself here as a child, each still owning its own real state machine underneath. Confirmed still current in the live Workbook — this predates the M0-M3 redirect but was named among 'facts that stay real' in the redirect mandate's own reasoning."
+        sources: [ev.arch.workbook "Catalog Entities" sheet]
+    possible_contexts: [cross-cutting — not owned by any single Component]
+    ambiguities: []
+    questions: []
+    status: candidate
+
+  - term: LTV Template / LTV Printed Instance
+    observed_meanings:
+      - meaning: "LTV Template: a 3-tier composition (universal/hierarchy/equipment-local), with lifecycle Draft -> SubmittedForApproval -> Approved -> Superseded. LTV Printed Instance: a manufactor.thing child, created at start (not at print time)."
+        sources: [ev.arch.workbook "Catalog Entities" sheet]
+    possible_contexts: [LtvForms]
+    ambiguities: []
+    questions:
+      - "This is the closest thing to a real Aggregate-shaped candidate found so far (named lifecycle states, a real transition to guard) — but per the specification's own §16.1, it is not enough to have states; the actual invariant behind each transition (e.g. what makes Approved -> Superseded valid) needs to be confirmed before this becomes more than a candidate."
+    status: candidate
+
+  - term: AFAL record
+    observed_meanings:
+      - meaning: "References an external MP2 work order ID as a plain field — explicitly no foreign key, no write-back to MP2."
+        sources: [ev.arch.workbook "Catalog Entities" sheet]
+    possible_contexts: [Afal]
+    ambiguities: []
+    questions: []
+    status: candidate
+
+  - term: CAPA item
+    observed_meanings:
+      - meaning: "Real recorded fields: reporter, description, category, status, root_cause (table capa_records)."
+        sources: [ev.arch.workbook "Catalog Entities" sheet]
+    possible_contexts: [Capa]
+    ambiguities: []
+    questions: []
+    status: candidate
+
+  - term: Shift Report / Downtime-Incident Report
+    observed_meanings:
+      - meaning: "Two distinct report types under OperationalReporting: 'Shift Report' (Phase_B, tests whether the Data mechanism generalizes to a second Component) and 'Downtime/Incident Report' (Phase_B1). Downtime/Incident MES routing is a Proposed decision: routes via Analytics/Data Lake rather than a live Integration read against MES."
+        sources: [ev.arch.workbook "Build Order" sheet, ev.arch.workbook "Decisions (ADRs)" sheet]
+    possible_contexts: [OperationalReporting]
+    ambiguities: []
+    questions: []
+    status: candidate
+
+  - term: Operational Setting Logbook
+    observed_meanings:
+      - meaning: "Referenced as an AssetManagement data source, with its own open question: is it a manual log or a live PLC/SCADA feed."
+        sources: [ev.arch.workbook "Data Gathering" sheet, item 14]
+    possible_contexts: [AssetManagement]
+    ambiguities: []
+    questions:
+      - "Source unconfirmed (manual vs. live PLC/SCADA) — recorded as open in Data Gathering item 14, not yet resolved."
+    status: unresolved
+
+  - term: Site Safety Manager
+    observed_meanings:
+      - meaning: "A per-Component authorization role (not a general tier) — approves LTV Template changes, receives Flagged-for-Review scans. Recorded mechanism: an AD Security Group, checked via User.IsInRole."
+        sources: [ev.arch.drawings.glossary]
+    possible_contexts: [LtvForms, identity/authorization]
+    ambiguities:
+      - "The recorded mechanism (AD Security Group) is now confirmed stale, not just possibly outdated — addendum rev 116 directly invalidates AD-group-based authorization as a premise for the whole app, not case by case. The role itself (approves LTV Template changes, receives Flagged-for-Review scans, distinct from Author/Admin per the recorded permission matrix) is very likely still real; only its *mechanism* needs re-deriving under the app-owned permissions model (rev 117: an internal role/tier table)."
+    questions:
+      - "Under the new app-owned mechanism, is Site Safety Manager one of the four tiers (Guest/Normal User/Power User/Admin), or a separate per-Component grant layered on top, as the glossary's authorization_tier entry originally described ('per-Component authorization is optional, layered on top')? Not yet resolved — the exact-AD-group-name question from the glossary's own notYetResolved note is now moot, since AD groups aren't the mechanism at all."
+    status: unresolved

@@ -1,0 +1,287 @@
+# ManuFactor DDD — Evidence Index
+# Phase 1 (SPECIFICATION.md §47). Inventory only — no reinterpretation into DDD
+# terms yet (no Bounded Context / Aggregate / Entity claims below).
+#
+# Granularity note: entries are grouped at a practical level (a Drawing, a
+# wrapper category, a component-stub set) rather than one entry per individual
+# file. Any group can be split into finer entries later if a specific file
+# inside it becomes directly relevant to a modeling decision.
+
+evidence:
+
+  # ---------------------------------------------------------------------
+  # ManuFactor-arch — architecture/discovery substrate
+  # ---------------------------------------------------------------------
+
+  - id: ev.arch.drawings.mill_hierarchy
+    type: previous-architecture-document
+    location: E:\projects\ManuFactor-arch\drawings\mill_hierarchy.json
+    description: Structured record of the mill's organizational/operational hierarchy.
+    relevance: Likely primary source for domain vision, scope, and subdomain discovery.
+    authority: high — Mark-directed substrate, current as of last validated fold.
+    notes: Derived from supplementals/addendum.jsonl by a Kernel fold, not hand-authored; re-derive if addendum has moved on.
+
+  - id: ev.arch.drawings.constraints
+    type: previous-architecture-document
+    location: E:\projects\ManuFactor-arch\drawings\constraints.json
+    description: Hard constraints and assumptions (open/resolved/invalidated).
+    relevance: Constraints may bound subdomain/context boundaries (e.g. deployment, licensing, auth constraints already settled).
+    authority: high
+    notes: ""
+
+  - id: ev.arch.drawings.external_systems
+    type: previous-architecture-document
+    location: E:\projects\ManuFactor-arch\drawings\external_systems.json
+    description: Catalog of external systems ManuFactor integrates with or sits above (ProTrack, PLCs, MES, SAP, etc.).
+    relevance: Primary source for external-actor and upstream/downstream integration evidence (§42).
+    authority: high
+    notes: External systems must not automatically become Bounded Contexts (§42) — evidence only.
+
+  - id: ev.arch.drawings.stakeholders
+    type: previous-architecture-document
+    location: E:\projects\ManuFactor-arch\drawings\stakeholders.json
+    description: Recorded stakeholders for the ManuFactor domain.
+    relevance: Domain Vision requires primary_stakeholders and domain_experts (§11).
+    authority: high
+    notes: ""
+
+  - id: ev.arch.drawings.architecture_kernel
+    type: previous-architecture-document
+    location: E:\projects\ManuFactor-arch\drawings\architecture_kernel.json
+    description: Architect Kernel process definition (7-step Kernel Procedure, Session-Start Self-Check).
+    relevance: Process evidence, not domain evidence — informs how ManuFactor-arch work was governed, not what the domain is.
+    authority: medium — process authority, not business-fact authority.
+    notes: ""
+
+  - id: ev.arch.drawings.developer_kernel
+    type: previous-architecture-document
+    location: E:\projects\ManuFactor-arch\drawings\developer_kernel.json
+    description: Developer Kernel process definition.
+    relevance: Same category as architecture_kernel — process, not domain.
+    authority: medium
+    notes: ""
+
+  - id: ev.arch.drawings.glossary
+    type: existing-terminology
+    location: E:\projects\ManuFactor-arch\drawings\glossary.json
+    description: Recorded glossary of terms from prior discovery.
+    relevance: Directly relevant to Phase 2 (Vocabulary extraction, §48) and Ubiquitous Language (§14) — but per §14, must be checked for contextual (not global) meaning; this glossary predates the bounded-context discipline and likely assumes one global definition per term.
+    authority: medium — real prior terminology, but its single-definition-per-term shape must be challenged, not inherited as-is.
+    notes: Prime candidate for the overloaded-term check in §14/§48.
+
+  - id: ev.arch.drawings.taxonomy
+    type: previous-architecture-document
+    location: E:\projects\ManuFactor-arch\drawings\taxonomy.json
+    description: 23-root capability/technology taxonomy built across sessions 022-024.
+    relevance: Candidate input to Phase 3 (Capability discovery, §49) — but per §69, taxonomy root != Subdomain, must be justified semantically, not inherited by name.
+    authority: medium-high — real, carefully built, but a technology-taxonomy shape, not a domain-capability shape by definition.
+    notes: ""
+
+  - id: ev.arch.drawings.failure_modes
+    type: previous-architecture-document
+    location: E:\projects\ManuFactor-arch\drawings\failure_modes.json
+    description: 9 recorded failure modes for the ManuFactor system.
+    relevance: May surface invariants (§20) — a failure mode often implies "this must never happen," which is invariant-shaped.
+    authority: medium-high
+    notes: ""
+
+  - id: ev.arch.drawings.build_order
+    type: previous-architecture-document
+    location: E:\projects\ManuFactor-arch\drawings\build_order.json
+    description: Phase/milestone readiness record (Phase 0.1-0.5 etc.), cross-referenced by ManuFactor's own DEV-PLAN.md.
+    relevance: Implementation sequencing evidence, not domain evidence. Per §69, build-order phase != Bounded Context.
+    authority: medium — real, but describes build sequencing, not domain structure.
+    notes: ""
+
+  - id: ev.arch.drawings.governance
+    type: previous-architecture-document
+    location: E:\projects\ManuFactor-arch\drawings\governance.json
+    description: Role charters and phase gates (Phase 1 Discovery, Implementation Gate, Developer Handoff Gate).
+    relevance: Process/governance evidence, not domain evidence.
+    authority: medium
+    notes: ""
+
+  - id: ev.arch.drawings.architecture_dsl
+    type: previous-architecture-document
+    location: E:\projects\ManuFactor-arch\drawings\architecture.dsl
+    description: Structurizr/C4-style DSL description of the prior architecture.
+    relevance: A prior architecture *projection* — per §4/§45, must not be read as defining bounded contexts, but may contain real component/relationship facts worth checking against other evidence.
+    authority: low-medium as a DDD source — it's an architecture notation, exactly the kind of thing §3/§4 says must not define the canonical model.
+    notes: Treat as implementation_refs-style evidence (§70) at most.
+
+  - id: ev.arch.addendum
+    type: decision-ledger
+    location: E:\projects\ManuFactor-arch\supplementals\addendum.jsonl
+    description: Append-only fact/decision ledger, 571 entries as of this inventory. The authoritative history of every decision, correction, and fact recorded across all ManuFactor-arch sessions, including the full CloudEvents redesign (rev 129-132), the work-stoppage (133), and the full redirect (134).
+    relevance: Single richest evidence source in the whole substrate — decisions, business rules, and corrections all live here in provenance-bearing form already.
+    authority: highest of any ManuFactor-arch file — this is the substrate's own source of truth, per ManuFactor-arch's own CLOSED-LOOP-PROCESS.
+    notes: Large (571 entries) — later phases should pull specific revision ranges rather than re-reading it whole each time. Revisions 116/117 (AD-groups/app-owned-permissions correction) and 122 (Guest capability list) are already known to be directly domain-relevant.
+
+  - id: ev.arch.workbook
+    type: live-database
+    location: E:\projects\ManuFactor-arch\ManuFactor-Architecture-Workbook.xlsx
+    description: Live spreadsheet database (as of session 024) for Taxonomy, Components, Ports, Wrappers, Technologies, Endpoints, and ~15 other architecture-fact categories.
+    relevance: Real, current, structured business/technical fact source — supersedes the older WORKING-LISTS.md/PORT-CONTRACTS.md/CLIENT-MAP.md/DATA-GATHERING-LIST.md/TAXONOMY-CANDIDATES.md files (kept only as historical reference, not treated as separate evidence here).
+    authority: high — the substrate's own designated live database.
+    notes: |
+      Read in full — all 23 sheets, not just a domain-filtered subset (an earlier pass wrongly pre-excluded several sheets without checking them first; corrected).
+      Domain-relevant content pulled into term-candidates.yaml: Components, Mill Hierarchy, Stakeholders, Glossary, Catalog Entities (manufactor.thing, LTV Template/Printed Instance, AFAL record, CAPA item).
+      Real business-fact material found in sheets not originally expected to carry it: Constraints & Assumptions (HC-04 confirms the no-App-ID/Windows-Auth-only constraint independently), Data Gathering (a real, still-open list of ~15 Business Fact items — e.g. #19 editing-a-stored-document semantics, #22 CAPA-vs-Project origination, #24 LTV Template merge/override mechanics, #27 Documents.Compose vs Catalog.Forms tension, #30-32 InspectionsCalibration status/roster/streaming questions — genuine domain open questions, not vocabulary terms, held here rather than force-fit into term-candidates.yaml; prime input for docs/ddd/issues/unresolved.yaml once that exists).
+      Failure Modes' guestOverGrant row still reads "Guest's permission set explicitly enumerated as effectively empty" — a second, independent instance of the same stale ADR-003 wording already resolved via addendum rev 122; corroborating, not a new conflict.
+      Technical/architecture sheets read and confirmed out of DDD-modeling scope per §68, not modeled further: Ports, Wrappers, Endpoints, Layers, Kernels & Gates, Build Order, Solution Structure, Decisions (ADRs), Dashboard, Legend.
+
+  - id: ev.arch.readme
+    type: documentation
+    location: E:\projects\ManuFactor-arch\README.md
+    description: One-paragraph orientation to the ManuFactor-arch repo.
+    relevance: Orientation only.
+    authority: medium
+    notes: ""
+
+  - id: ev.arch.session014log
+    type: previous-architecture-document
+    location: E:\projects\ManuFactor-arch\SESSION-014-LOG.md
+    description: Durable record of the reasoning behind the substrate's current (post-session-015) structure.
+    relevance: Process/substrate history, not domain content.
+    authority: medium
+    notes: ""
+
+  - id: ev.arch.closed_loop_process
+    type: documentation
+    location: E:\projects\ManuFactor-arch\CLOSED-LOOP-PROCESS.md
+    description: Defines what a Drawing/Supplemental entry is and how "current" state is derived.
+    relevance: Process only.
+    authority: medium
+    notes: ""
+
+  - id: ev.arch.efficacy_audit_prep
+    type: documentation
+    location: E:\projects\ManuFactor-arch\EFFICACY-AUDIT-PREP.md
+    description: Known untested claims and real gaps in the substrate, named honestly.
+    relevance: Useful as a caution list — flags where substrate content may be less reliable than it looks.
+    authority: medium
+    notes: ""
+
+  - id: ev.arch.collaboration_rules
+    type: documentation
+    location: E:\projects\ManuFactor-arch\.claude\COLLABORATION-RULES.md
+    description: 31 rules for how Mark works with an AI on ManuFactor, derived from real corrections across sessions.
+    relevance: Working-method evidence, not domain evidence. Still directly relevant to *how* this DDD work should proceed.
+    authority: high, for process; not applicable to domain facts.
+    notes: ""
+
+  - id: ev.arch.sessions
+    type: session-log
+    location: E:\projects\ManuFactor-arch\sessions\*.md, *-seed.md
+    description: Per-session narrative logs and handoff seeds, sessions 001-027 (~44 files).
+    relevance: Narrative evidence of how and why decisions were made — useful for provenance and for recovering reasoning behind a Drawing/addendum entry.
+    authority: medium — narrative, not itself canonical, but often the only record of *why*.
+    notes: session-026.md and session-027-seed.md are of special, immediate relevance — they record the CloudEvents/non-blocking-design finding and the full-redirect mandate that this DDD effort itself grew out of.
+
+  - id: ev.arch.old_archive
+    type: previous-architecture-document
+    location: E:\projects\ManuFactor-arch\Old\**
+    description: Frozen, byte-exact, read-only snapshot of the repo as it stood before session 014 (docs, ADR-001 through ADR-012, discovery log, diagrams).
+    relevance: Historical only. Contains the original ADRs (e.g. ADR-001 PostgreSQL over SQL Server, ADR-003 Guest profile security-over-usability) and the full Q1-145 discovery-log reasoning chain, which never got fully converted into the current substrate.
+    authority: low-medium — real historical reasoning, but explicitly superseded; check against current addendum before trusting anything here as still true.
+    notes: Worth a dedicated pass later specifically for the unconverted Q1-145 discovery log, per ManuFactor-arch's own CLAUDE.md admission that this conversion was never finished.
+
+  # ---------------------------------------------------------------------
+  # ManuFactor — code repository (implementation)
+  # ---------------------------------------------------------------------
+
+  - id: ev.code.claude_md
+    type: dev-instructions
+    location: E:\projects\ManuFactor\CLAUDE.md
+    description: Session instructions for the code repo — solution shape (7 active projects), environments, hard boundaries (wrapper law, no VS-project creation, Components-reference-Contracts-only).
+    relevance: Confirms real, current implementation facts: MudBlazor Blazor Server, FreeMediator (not MediatR, licensing swap rev 125), Windows Auth via Negotiate, Docker dev / IIS+Windows-Services publish, no API Host/no HTTP boundary between deployables.
+    authority: high — describes actually-built, current state, not aspiration.
+    notes: ""
+
+  - id: ev.code.dev_plan
+    type: milestone-plan
+    location: E:\projects\ManuFactor\DEV-PLAN.md
+    description: Milestone outline M0-M8+ (LTV Forms first), with the "architecture-as-we-go" protocol and per-milestone done-when criteria.
+    relevance: Rich source of real business/technical facts stated inline with each milestone (e.g. Guest's real starting capabilities, the trust model for Windows Auth, the M2 dispatch-pipeline behavior). Implementation sequencing, not domain structure, per §69.
+    authority: high for the facts stated within it; milestone structure itself is not domain evidence.
+    notes: Only first ~150 lines read in this pass (through M2) — M3 onward not yet inventoried in detail.
+
+  - id: ev.code.contracts_ports
+    type: existing-source-code
+    location: E:\projects\ManuFactor\ManuFactor\ManuFactor.Contracts\**\*.cs
+    description: Port interface definitions and Command/Query contracts — IComponentModule (Kernel), IDocumentsComposePort, ICatalogPort, IPrintingPort, IRulesPort, IIntegrationPort, IIntegrationWorkflowsPort, IAnalyticsPort, IIntelligencePort, INotificationPort, IDataPort, IIdentityPermissionsPort, plus ProfileContracts, DataProofContracts, StorageContracts.
+    relevance: Real, currently-built technical boundary shapes. Per §69, a Port interface != a DDD Aggregate/Entity/Repository — must be evaluated semantically, not renamed into DDD vocabulary.
+    authority: high as evidence of current implementation; not authoritative for domain semantics.
+    notes: ""
+
+  - id: ev.code.adapters_wrappers
+    type: existing-source-code
+    location: E:\projects\ManuFactor\ManuFactor\ManuFactor.Adapters\Wrappers\**\*.cs
+    description: Technology wrapper classes by class — RelationalData (ClickHouse, SqlClient, Adomd, ManuFactorDbContext/Postgres), NetworkProtocol (Http, TcpSocket, PowerAutomate, DirectoryServices/LDAP), StorageBackup (S3), InProcessEngine (DocumentCompose, RuleEvaluation, WorkflowEngine, QrCode, Zpl, Scheduling, Notification, Validation).
+    relevance: Confirms real external-system integration points (LDAP → AD, S3-compatible storage, etc.) — relevant to external-actor and integration-contract evidence.
+    authority: high as implementation fact; not domain-semantic authority.
+    notes: ""
+
+  - id: ev.code.adapters_handlers
+    type: existing-source-code
+    location: E:\projects\ManuFactor\ManuFactor\ManuFactor.Adapters\Handlers\**\*.cs
+    description: FreeMediator dispatch handlers — ProfileHandlers, StorageHandlers, DataProofHandlers.
+    relevance: Real business-operation entry points already built; likely maps close to real Commands/Queries (§21, §27) once evaluated, but must not be assumed 1:1 without the aggregate/invariant reasoning in §16.1.
+    authority: high as implementation fact.
+    notes: ""
+
+  - id: ev.code.adapters_pipeline
+    type: existing-source-code
+    location: E:\projects\ManuFactor\ManuFactor\ManuFactor.Adapters\Pipeline\LoggingBehavior.cs, ManuFactor.Adapters\Validators\StoreDocumentCommandValidator.cs
+    description: Cross-cutting dispatch pipeline behaviors (logging, FluentValidation).
+    relevance: Application/infrastructure concern, not domain content per §68/§28.
+    authority: high as implementation fact; out of DDD-model scope per se.
+    notes: ""
+
+  - id: ev.code.data_entities
+    type: database
+    location: E:\projects\ManuFactor\ManuFactor\ManuFactor.Adapters\Data\Entities\*.cs, Data\Configurations\*.cs
+    description: EF Core entities and configurations — Profile, StoredDocument, DataProofNote.
+    relevance: Real persisted shapes. Per §44/§69, table/class != Entity or Aggregate automatically — must be evaluated against domain semantics, especially DataProofNote given the unresolved "linked document" gap noted in session 026/027-seed.
+    authority: high as implementation fact; not domain-semantic authority.
+    notes: DataProofNote is a strong candidate for direct relevance to the still-open linked-vs-stored-document question.
+
+  - id: ev.code.components
+    type: existing-source-code
+    location: E:\projects\ManuFactor\ManuFactor\ManuFactor.Components\**\*.cs
+    description: 13 Component module stubs — LtvForms, Afal, OperationalReporting, ParameterProcessChange, Capa, Training, Workforce, AssetManagement, InspectionsCalibration, Risk, Environmental, KilnDrying, ProjectTracking. Each implements IComponentModule; per prior session notes most are still shells (no business logic yet) except where explicitly built.
+    relevance: Direct candidate list for Phase 3 capability discovery (§49) and Phase 4 subdomain discovery (§50) — but per §45/§69, "existing application/module structure" must not be assumed to equal Subdomain or Bounded Context boundaries without semantic justification.
+    authority: high as a name/scope inventory; low as a boundary authority (must be independently justified, not inherited).
+    notes: This is the single most important item to explicitly NOT auto-convert into 13 bounded contexts — that would be exactly the "project-to-context mapping" anti-pattern §97.3 warns against.
+
+  - id: ev.code.webapp_identity
+    type: existing-source-code
+    location: E:\projects\ManuFactor\ManuFactor\ManuFactor.WebApp\Identity\GuestFallbackMiddleware.cs
+    description: Windows Auth (Negotiate) with Guest-identity fallback, built and verified at M1.
+    relevance: Real identity/trust-model facts already decided (rev 116/117 app-owned permissions, Guest capability list rev 122, trust model from session 026) live partly in DEV-PLAN.md prose and partly here.
+    authority: high as implementation fact.
+    notes: ""
+
+  - id: ev.code.architecture_tests
+    type: tests
+    location: E:\projects\ManuFactor\ManuFactor\ManuFactor.ArchitectureTests\BoundaryTests.cs
+    description: NetArchTest-based fitness functions enforcing Components-reference-Contracts-only, the wrapper law (externalClientEncapsulationRule), no-duplicate-capability rule, and WebApp-is-binding-only.
+    relevance: These tests encode real, currently-enforced structural rules — useful as corroborating evidence for constraints, not as domain content.
+    authority: high as a statement of enforced technical constraint.
+    notes: ""
+
+  - id: ev.code.workers
+    type: existing-source-code
+    location: E:\projects\ManuFactor\ManuFactor\ManuFactor.CronEtl\Worker.cs, ManuFactor.CronJobs\Worker.cs
+    description: Windows Service worker stubs for scheduled ETL and general jobs.
+    relevance: Confirms a real split between request-driven work (WebApp) and scheduled/background work (CronEtl/CronJobs) already exists at the deployment level.
+    authority: medium — deployment-shape fact, not domain content.
+    notes: ""
+
+  - id: ev.code.apphost_dormant
+    type: existing-source-code
+    location: E:\projects\ManuFactor\ManuFactor\ManuFactor.AppHost\**, ManuFactor.ServiceDefaults\**
+    description: .NET Aspire orchestration projects.
+    relevance: Explicitly flagged in ManuFactor's own CLAUDE.md as dormant/unused — included here only so it isn't mistakenly treated as active evidence.
+    authority: none for current domain/architecture facts.
+    notes: Do not use as evidence of an active orchestration pattern.
