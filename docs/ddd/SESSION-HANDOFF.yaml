@@ -1,0 +1,24 @@
+model_state: early strategic DDD — Phases 1-4 substantially done, Phase 5 (Bounded Context discovery) not started
+current_phase: Phase 4 complete for the unblocked portion; three capabilities intentionally unplaced pending domain input
+last_completed: Subdomain candidates locked to fixed schema; discovery noise purged to excluded.yaml; unresolved.yaml created; SESSION-HANDOFF.yaml created
+current_focus: Resolving open issues with Mark, one question at a time, before Phase 5 starts
+blocking_issues:
+  - ISSUE-0002
+  - ISSUE-0001
+  - ISSUE-0003
+next_action: Ask Mark ISSUE-0002. On answer — update the relevant capability/subdomain records with provenance type domain-expert, commit, push, then ask ISSUE-0001.
+files_to_read:
+  - docs/ddd/issues/unresolved.yaml
+  - docs/ddd/discovery/capability-candidates.yaml
+  - docs/ddd/subdomains/index.yaml
+files_not_needed:
+  - docs/ddd/SPECIFICATION.md (unless a rule is disputed)
+  - docs/ddd/discovery/excluded.yaml (historical only)
+  - ManuFactor-arch (evidence gathering is paused — do not re-enter)
+  - ManuFactor (evidence gathering is paused — do not re-enter)
+recent_decisions:
+  - DDD-0001: split Quality & Compliance into three subdomains (superseded by DDD-0003)
+  - DDD-0002: renamed Identity & Platform to Identity & Access
+  - DDD-0003: walked back DDD-0001's split — three capabilities left unplaced, ISSUE-0002 created instead
+domain_expert_answers: []
+last_commit: 41e26ad229f123466aeed40f8d3fbdbdf2b6eb85
