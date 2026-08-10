@@ -1,33 +1,47 @@
 version: 1
-status: processed
+status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
 
 findings:
-  - id: AUDIT-0001
+  - id: AUDIT-0003
     severity: correction
-    subject: SESSION-HANDOFF blocking issue semantics
-    finding: blocking_issues must contain only issues whose unresolved record has blocking true.
-  - id: AUDIT-0002
+    subject: ISSUE-0002 interpretation
+    finding: Mark confirmed Safety Sign-Off, CAPA, and Environmental are separate business responsibilities. He did not confirm that each responsibility is a separate Subdomain. The current three confirmed Subdomain records overstate the domain-expert answer.
+  - id: AUDIT-0004
     severity: correction
-    subject: SESSION-HANDOFF next-action sequencing
-    finding: Do not hard-code the next issue after the current Mark question; re-evaluate unresolved issues after each domain-expert answer.
+    subject: CAPA domain placement
+    finding: Mark explicitly said CAPA is a quality aspect. Preserve that as domain truth. Do not equate CAPA itself with the full Quality Subdomain unless Mark establishes that boundary.
+  - id: AUDIT-0005
+    severity: correction
+    subject: ISO 9001 semantics
+    finding: ISO 9001:2015 places corrective action within the Quality Management System and uses risk-based thinking for prevention. Treat ISO as supporting vocabulary/rules for Quality, not as evidence that CAPA and Project Tracking define separate Subdomains.
+  - id: AUDIT-0006
+    severity: process
+    subject: Phase 5 readiness
+    finding: Do not start Bounded Context discovery from falsely confirmed Subdomain boundaries. First restore uncertainty at the Subdomain level while retaining Mark's confirmed capability/business-responsibility facts.
 
 required_actions:
-  - id: ACTION-0001
-    action: Remove ISSUE-0003 from SESSION-HANDOFF.yaml blocking_issues while ISSUE-0003 remains blocking false.
-  - id: ACTION-0002
-    action: Rewrite SESSION-HANDOFF.yaml next_action so that after Mark answers the current question Claude Code updates affected model records, records domain-expert provenance, resolves or updates affected issues, commits and pushes, then re-evaluates unresolved issues and asks the single highest-value question currently blocking strategic DDD.
-  - id: ACTION-0003
-    action: Add docs/ddd/GPT-AUDIT.yaml to the Claude Code operating loop. At session start and before asking Mark a new strategic question, check for status pending. Process applicable actions, then set status processed and record processed_commit.
+  - id: ACTION-0004
+    action: Change Safety Compliance & Procedure Sign-Off, Quality-CAPA, and Environmental Compliance from confirmed Subdomains back to candidate or unresolved strategic placement unless there is separate domain-expert evidence establishing each as a Subdomain boundary. Do not discard Mark's confirmation that the responsibilities themselves are separate.
+  - id: ACTION-0005
+    action: Record CAPA as belonging to the Quality domain area/aspect. Do not name the Subdomain "Quality — Corrective & Preventive Action" as though CAPA exhausts Quality. Represent CAPA as a capability/process within a candidate Quality domain area until the broader Quality boundary is elicited.
+  - id: ACTION-0006
+    action: Re-open the strategic question at the correct abstraction level: what other responsibilities belong to Quality besides CAPA, and what defines the Quality boundary? Do not ask whether CAPA is distinct from Project Tracking again.
+  - id: ACTION-0007
+    action: Keep Project Tracking distinct as a capability candidate based on Mark's Quality/CAPA clarification, but do not claim ISO 9001 itself establishes the Project Tracking boundary.
+  - id: ACTION-0008
+    action: Update SESSION-HANDOFF.yaml after corrections. Phase 5 remains blocked only by unresolved strategic Subdomain boundaries that materially affect Bounded Context discovery.
 
 next_domain_question:
-  issue: ISSUE-0002
-  instruction: Continue asking Mark the existing ISSUE-0002 question after the audit corrections are applied. Do not answer it from repository evidence.
+  issue: quality-boundary
+  instruction: Ask Mark one concise question aimed at identifying the broader Quality domain boundary, not CAPA usage. Example intent: "Besides CAPA, what Quality responsibilities do you expect ManuFactor to own or support?"
 
 do_not_do:
-  - do not gather more repository evidence for ISSUE-0002
   - do not create Bounded Contexts yet
-  - do not treat this audit file as domain-expert evidence
+  - do not reinterpret "separate responsibilities" as "separate Subdomains"
+  - do not ask Mark again how CAPA is used relative to projects
+  - do not treat ISO 9001 as a DDD boundary definition
+  - do not gather broad repository evidence before asking the domain question
 
-processed_commit: 58cafef
+processed_commit: null
