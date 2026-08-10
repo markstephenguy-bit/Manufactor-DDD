@@ -1,148 +1,61 @@
-version: 16
+version: 17
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
 
 findings:
-  - id: AUDIT-0003
-    severity: correction
-    subject: ISSUE-0002 interpretation
-    finding: Mark confirmed Safety Sign-Off, CAPA, and Environmental are separate business responsibilities. He did not confirm that each responsibility is a separate Subdomain.
-  - id: AUDIT-0004
-    severity: correction
-    subject: CAPA domain placement
-    finding: Mark explicitly said CAPA is a quality aspect. CAPA does not define the full Quality Subdomain.
-  - id: AUDIT-0005
-    severity: correction
-    subject: ISO 9001 semantics
-    finding: ISO 9001 supplies supporting Quality vocabulary/rules only. It does not establish ManuFactor DDD boundaries.
-  - id: AUDIT-0007
-    severity: domain-correction
-    subject: QMS ownership model
-    finding: There is no monolithic QMS that ManuFactor owns or replaces. QMS-shaped responsibilities must be evaluated individually because GP systems such as CMMS, SAP ERP, and others may already own them.
-  - id: AUDIT-0008
-    severity: domain-correction
-    subject: ManuFactor system role
-    finding: ManuFactor is a gap filler, current-system reader, and data aggregator. Displaying, reading, correlating, or aggregating responsibility data does not establish ownership of that responsibility.
-  - id: AUDIT-0010
-    severity: verified-correction
-    subject: strategic subdomain rollback
-    finding: Current docs/ddd/subdomains/index.yaml has already rolled Safety Compliance & Procedure Sign-Off, Quality, and Environmental Compliance Reporting back to candidate status and explicitly avoids treating separate responsibilities as confirmed Subdomains.
-  - id: AUDIT-0011
-    severity: consistency
-    subject: missing blocking issue
-    finding: SESSION-HANDOFF.yaml lists quality-responsibility-discovery as a blocking issue, but docs/ddd/issues/unresolved.yaml does not contain that issue.
-  - id: AUDIT-0012
-    severity: consistency
-    subject: Product Quality Verification placement
-    finding: Mark's evidence establishes Product Quality Verification as Quality work, and the capability is already recorded as cap.product-quality-verification. The candidate Quality domain area currently lists only CAPA, leaving the active strategic model internally incomplete.
-  - id: AUDIT-0013
-    severity: notation
-    subject: capability confirmation semantics
-    finding: cap.safety-compliance-signoff, cap.corrective-preventive-action, and cap.environmental-compliance may remain confirmed capabilities because Mark confirmed the responsibilities themselves. Their confirmed capability status must not be interpreted as confirmed Subdomain status.
-  - id: AUDIT-0014
-    severity: domain-evidence
-    subject: product quality target classes
-    finding: Mark states that target sizes are mill- and machine-specific, while planed finished-lumber target sizes are standard market sizes. GP employs SPIB to monitor finished sizes. This establishes distinct target contexts within Product Quality Verification but does not establish a separate Subdomain boundary or ManuFactor ownership.
-  - id: AUDIT-0015
-    severity: domain-evidence
-    subject: process target governance
-    finding: Machine setups dictate process target sizes. These are maintained at mill level with Lumber Division monitoring. Different machine/process paths can have different target and acceptance logic, including canter vs edger targets and trimmer board-inside-a-board acceptance.
-  - id: AUDIT-0016
-    severity: process-correction
-    subject: strategic discovery depth
-    finding: Product Quality Verification has enough evidence for strategic DDD. Do not continue asking Mark about storage mechanisms, recipes, spreadsheets, machine configuration details, or other implementation-level target-source questions unless a later strategic boundary question materially requires them.
-  - id: AUDIT-0017
-    severity: domain-confirmation
-    subject: Quality candidate strategic placement
-    finding: Mark confirmed that Quality should proceed as the broader candidate Subdomain containing CAPA and Product Quality Verification, while additional Quality responsibilities remain open for later discovery and do not need exhaustive enumeration before strategic discovery progresses.
-  - id: AUDIT-0018
-    severity: domain-evidence
-    subject: Safety strategic breadth
-    finding: Mark states that Safety is a department at every mill. This is evidence that Safety Sign-Off is not the whole Safety business area. Organizational structure supports a broader Safety domain-area candidate, but department structure alone must not be treated as proof of a DDD Subdomain boundary.
-  - id: AUDIT-0019
-    severity: domain-confirmation
-    subject: Safety Environmental and HR candidate placement
-    finding: Mark confirmed that Safety, Environmental, and HR should each proceed as broader candidate strategic domain areas, with currently known responsibilities placed inside them and additional responsibilities left open for later discovery. This confirms candidate strategic placement, not Bounded Contexts and not exhaustive capability scope.
-  - id: AUDIT-0020
-    severity: process-correction
-    subject: governing modeling specification
-    finding: ManuFactor_DDD_Modeling_Specification.docx is the normative DDD modeling and notation specification for this project and must guide strategic discovery together with the canonical repository state. It must not be omitted from future session startup guidance.
-  - id: AUDIT-0021
-    severity: domain-confirmation
-    subject: Maintenance Reliability candidate placement
-    finding: Mark confirmed Maintenance/Reliability as the broader candidate strategic domain area. The existing CMMS may own much of the operational maintenance work while ManuFactor fills gaps and reads or aggregates selected asset/reliability information. Existing-system ownership does not eliminate the business domain area and does not imply ManuFactor owns all of it.
-  - id: AUDIT-0022
-    severity: domain-evidence
-    subject: Maintenance Reliability gap-filler role
-    finding: Mark clarified the ManuFactor gap in Maintenance/Reliability with a concrete example: extract data from an existing database and use Apache Superset to examine that data in novel ways. Model this as data access, aggregation, and analytical use around an existing domain/system of record, not as ManuFactor taking ownership of maintenance workflows or creating a separate analytics Subdomain from the tooling example.
-  - id: AUDIT-0023
-    severity: domain-confirmation
-    subject: Operations candidate strategic placement
-    finding: Mark confirmed Operations as the broader candidate strategic domain area for mill-operating gaps. The previous name Production Operations was misleading because it sounded like ERP/production-execution scope. Operations should contain currently known operational-reporting and kiln-related gaps without implying ManuFactor owns production execution or ERP functions.
-  - id: AUDIT-0024
-    severity: domain-correction
-    subject: Projects Continuous Improvement placement
-    finding: Mark initially accepted Projects / Continuous Improvement as a broader area but then clarified that he prefers it under Operations. Therefore Projects / Continuous Improvement must not be modeled as a peer strategic Subdomain; it is an Operations responsibility/capability grouping, with Project Tracking as a known capability within that Operations scope.
-  - id: AUDIT-0025
-    severity: domain-correction
-    subject: Identity Access strategic placement
-    finding: Mark states Identity & Access is shared platform infrastructure. It must not remain in the ManuFactor business-domain Subdomain map.
+  - id: AUDIT-0026
+    severity: strategic-consolidation
+    subject: Phase 4 whole-domain map
+    finding: ChatGPT completed a whole-domain Phase 4 consolidation under ManuFactor_DDD_Modeling_Specification.docx rather than continuing capability-by-capability interrogation. The active candidate business Subdomains are Operations, Quality, Maintenance / Reliability, Safety, Environmental, and Human Resources.
+  - id: AUDIT-0027
+    severity: strategic-correction
+    subject: Operations scope
+    finding: Operations represents ManuFactor gaps under mill operations, not ERP/MES/production-execution ownership. cap.project-tracking belongs directly under Operations; Projects / Continuous Improvement is not a required intermediate or peer Subdomain.
+  - id: AUDIT-0028
+    severity: strategic-correction
+    subject: non-domain infrastructure and tooling
+    finding: Identity & Access is shared platform infrastructure and subdomain.identity-access is rejected as a business Subdomain. Superset/analytics and reusable platform mechanisms must not become peer business Subdomains merely because ManuFactor uses them.
+  - id: AUDIT-0029
+    severity: strategic-classification
+    subject: candidate classifications
+    finding: The consolidated map currently classifies Operations and Quality as core candidates; Safety, Environmental, and Maintenance / Reliability as supporting candidates; Human Resources as generic candidate. These classifications are Phase 4 recommendations based on differentiation/proprietary-domain-knowledge criteria from the specification and remain challengeable until later evidence warrants confirmation.
+  - id: AUDIT-0030
+    severity: structural-correction
+    subject: top-level Domain record
+    finding: The repository lacked the specification-required single top-level Domain record. ChatGPT created docs/ddd/domain/domain.yaml from Mark's established domain evidence: ManuFactor is a gap filler, existing-system reader, data aggregator, and analytical enabler that must not duplicate established system ownership unnecessarily.
+  - id: AUDIT-0031
+    severity: phase-readiness
+    subject: Phase 4 blockers
+    finding: No known domain-expert question currently blocks completion of the Phase 4 strategic map. ISSUE-0003 about Vehicle Management versus Physical Asset Management remains nonblocking and does not change the current Maintenance / Reliability Subdomain placement.
 
 required_actions:
-  - id: ACTION-0013
-    action: Preserve the current rollback in docs/ddd/subdomains/index.yaml. Do not recreate Safety, CAPA, or Environmental as confirmed Subdomains from ISSUE-0002 evidence.
-  - id: ACTION-0014
-    action: Add a blocking unresolved issue for quality-responsibility-discovery using the repository's existing fixed issue schema. It must state that Quality remains a candidate strategic boundary, with additional responsibilities open for later discovery, and that Phase 5 remains blocked until the other material strategic boundaries are sufficiently understood.
-  - id: ACTION-0015
-    action: Add cap.product-quality-verification to the capabilities of candidate subdomain.quality alongside cap.corrective-preventive-action.
-  - id: ACTION-0016
-    action: Preserve CAPA as a capability/process within candidate Quality. Do not rename Quality so CAPA appears to exhaust the domain.
-  - id: ACTION-0017
-    action: Review active strategic decisions/issues for any surviving statement that separate Safety, CAPA, and Environmental responsibilities prove separate confirmed Subdomains, or that ISO/QMS grouping defines a ManuFactor boundary. Correct only such surviving active statements; do not restart broad evidence archaeology.
-  - id: ACTION-0018
-    action: Update SESSION-HANDOFF.yaml after these consistency corrections. Preserve Phase 4 as active and Phase 5 as blocked until remaining material strategic boundaries are sufficiently understood. Preserve ChatGPT as owner of strategic domain questions.
-  - id: ACTION-0019
-    action: Record Mark's Product Quality Verification evidence in the appropriate discovery record: process/target dimensions may be mill- and machine-specific; planed finished-lumber target sizes are standard market sizes; SPIB is employed to monitor finished sizes. Do not infer that SPIB owns ManuFactor Quality, that finished-size monitoring exhausts Product Quality Verification, or that this evidence defines a Subdomain boundary.
-  - id: ACTION-0020
-    action: Extend the Product Quality Verification discovery record with Mark's governance evidence: machine setups dictate process target sizes; mill personnel maintain them locally; Lumber Division monitors them; target/acceptance logic differs by machine and process path, including canter vs edger targets and trimmer board-inside-a-board acceptance. Keep this as domain evidence, not a new Subdomain or Bounded Context conclusion.
-  - id: ACTION-0021
-    action: Stop Product Quality Verification target-source discovery at the strategic level. Do not create an unresolved issue about the physical or technical source of record for those target values unless a future strategic modeling decision actually depends on it.
-  - id: ACTION-0022
-    action: Update subdomain.quality so its candidate boundary explicitly includes cap.corrective-preventive-action and cap.product-quality-verification. Keep status candidate. Record that additional Quality responsibilities may be added later and are not required to be exhaustively discovered before continuing Phase 4.
-  - id: ACTION-0023
-    action: Replace the overly narrow strategic candidate name Safety Compliance & Procedure Sign-Off with broader candidate Safety containing cap.safety-compliance-signoff. Keep status candidate and do not infer organizational and DDD boundaries are identical.
-  - id: ACTION-0024
-    action: Replace the overly narrow strategic candidate Environmental Compliance Reporting with broader candidate Environmental containing cap.environmental-compliance. Keep status candidate; additional Environmental responsibilities remain open.
-  - id: ACTION-0025
-    action: Rename/reframe the current People & Workforce strategic candidate as HR or Human Resources if consistent with the repository metamodel/naming discipline, preserving currently known workforce/training capabilities inside it. Keep status candidate and leave additional HR responsibilities open. Do not infer that existing HR systems imply ManuFactor ownership.
-  - id: ACTION-0026
-    action: Update CLAUDE.md and SESSION-HANDOFF.yaml so ManuFactor_DDD_Modeling_Specification.docx is explicitly required as the normative modeling/notation authority for every strategic DDD session before active canonical model files are interpreted. Do not duplicate its detailed rules into canonical YAML.
-  - id: ACTION-0027
-    action: Reframe subdomain.asset-reliability as broader candidate Maintenance/Reliability, preserving the currently relevant physical-asset and equipment-reliability capabilities as known responsibilities. Keep status candidate. Explicitly preserve that CMMS ownership of operational maintenance work and ManuFactor's reader/aggregator/gap-filler role are system-responsibility facts, not reasons to remove the strategic domain area.
-  - id: ACTION-0028
-    action: Record the Maintenance/Reliability gap-filler example in discovery/decision material: ManuFactor may extract maintenance/reliability data from existing databases and make it available for novel analysis in Superset or comparable analytical tooling. Do not create an Analytics Subdomain solely because Superset is used, and do not imply ManuFactor owns CMMS maintenance workflows.
-  - id: ACTION-0029
-    action: Rename/reframe subdomain.production-operations as broader candidate Operations. Preserve cap.operational-reporting and cap.kiln-drying-operations as currently known responsibilities unless later evidence separates them. Add cap.project-tracking within Operations and record Projects / Continuous Improvement as an Operations responsibility grouping, not a peer Subdomain. Keep status candidate. Explicitly state that Operations represents ManuFactor gaps under mill operations and does not imply ERP, MES, production planning, production execution, or other existing-system ownership.
-  - id: ACTION-0031
-    action: Remove subdomain.identity-access from the business-domain Subdomain map. Preserve Identity & Access only as shared platform infrastructure in the appropriate non-domain documentation if needed. Do not promote it to a generic business Subdomain.
-  - id: ACTION-0032
-    action: After applying all pending strategic reframes, audit the Phase 4 candidate map against ManuFactor_DDD_Modeling_Specification.docx for missing material domain areas, unsupported classifications, stale names, and remaining blockers. Do not begin Phase 5 until that audit is complete and ChatGPT confirms the strategic map is sufficiently coherent.
+  - id: ACTION-0033
+    action: Audit active DDD artifacts for stale strategic names and relationships after the consolidation. Remove or correct active references that still treat Safety Compliance & Procedure Sign-Off, Environmental Compliance Reporting, Asset & Reliability, Production Operations, People & Workforce, Projects / Continuous Improvement, or Identity & Access as the current peer Subdomain names/placements. Preserve historical decision evidence rather than rewriting history.
+  - id: ACTION-0034
+    action: Validate docs/ddd/domain/domain.yaml and docs/ddd/subdomains/index.yaml against the repository's current fixed schema/notation discipline and ManuFactor DDD specification. Do not invent new fields solely to make files look more complete.
+  - id: ACTION-0035
+    action: Check capability coverage mechanically: every non-rejected capability in discovery/capability-candidates.yaml must be represented by exactly one active candidate Subdomain unless explicitly cross-domain or unresolved. Identity & Access remains rejected infrastructure.
+  - id: ACTION-0036
+    action: Update supporting discovery material only where necessary to preserve Mark's already-recorded 2026-08-10 evidence and the final direct placement of Project Tracking under Operations. Do not resume broad evidence archaeology.
+  - id: ACTION-0037
+    action: Produce or update the validation report required by the specification, explicitly distinguishing Phase 4 strategic-map validation from future Bounded Context/tactical validation. Record any remaining warnings or failures rather than claiming the DDD is complete.
+  - id: ACTION-0038
+    action: Update SESSION-HANDOFF.yaml only if the validation pass changes current readiness. If no material Phase 4 blocker is found, record Phase 4 as sufficiently complete to begin Phase 5 Bounded Context discovery.
 
 next_domain_question:
   owner: chatgpt
-  subject: phase-4-completeness
-  instruction: Claude Code must not ask strategic questions. After applying the pending corrections, ChatGPT should inspect the resulting whole-domain candidate map and ask Mark only if a material business area is still missing or ambiguous enough to affect Phase 5.
+  subject: none-currently-blocking
+  instruction: Do not ask Mark another strategic question merely to continue discovery. Ask only if the whole-map validation exposes a material ambiguity that cannot be resolved from existing evidence and would change Phase 5 semantic-boundary work.
 
 do_not_do:
-  - do not create Bounded Contexts yet
-  - do not reinterpret separate responsibilities as separate Subdomains
-  - do not ask Mark strategic domain questions
-  - do not treat department structure, existing-system ownership, ISO 9001, SPIB, Superset, or generic QMS grouping as a DDD boundary definition
-  - do not model a monolithic QMS as ManuFactor-owned
-  - do not assume ManuFactor owns a responsibility because it reads, displays, correlates, aggregates, or analyzes its data
-  - do not gather broad repository evidence; evidence lookup must be tied to a material strategic responsibility question
-  - do not continue implementation-level inquiry into Product Quality Verification target storage or configuration
-  - do not omit ManuFactor_DDD_Modeling_Specification.docx from future strategic DDD startup guidance
+  - do not return to small capability-by-capability questioning as the default Phase 4 method
+  - do not create Projects / Continuous Improvement as a peer Subdomain or required layer under Operations
+  - do not restore Identity & Access as a business Subdomain
+  - do not create Analytics/Superset as a business Subdomain from tooling evidence
+  - do not infer ManuFactor ownership from data access, reporting, correlation, aggregation, or analysis
+  - do not treat organizational departments or existing applications as Bounded Contexts
+  - do not start tactical DDD modeling
+  - do not claim the entire ManuFactor DDD is complete
 
 processed_commit: null
