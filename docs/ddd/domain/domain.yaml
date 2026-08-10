@@ -1,0 +1,46 @@
+id: domain.manufactor
+name: ManuFactor
+vision: Fill operational business-process and information gaps across GP mills while respecting the authority of existing enterprise and mill systems.
+business_purpose: Provide a coherent operational gap-filling domain that can capture missing work and records, read and correlate existing-system data, aggregate information across systems, and enable analysis without duplicating established systems of record.
+scope:
+  - Operations gaps, including operational reporting, kiln-related work, and project tracking where existing systems do not satisfy the business need
+  - Quality gaps, including CAPA coordination and product quality verification
+  - Maintenance and Reliability gaps around assets, verification, data access, correlation, and analysis
+  - Safety gaps such as compliance and procedure sign-off
+  - Environmental gaps such as compliance reporting
+  - Human Resources gaps around training, competency, workforce scheduling, and absence information
+  - Reading, correlating, aggregating, and analyzing data from existing GP systems when needed to satisfy these business gaps
+out_of_scope:
+  - Replacing SAP ERP, MES, CMMS, HR/workforce platforms, or other established systems merely because ManuFactor consumes their data
+  - Owning a monolithic QMS
+  - Treating shared platform infrastructure such as Identity and Access as a business subdomain
+  - Treating analytical tooling such as Superset as a business subdomain
+  - Redefining enterprise-owned workflows solely to centralize them in ManuFactor
+primary_stakeholders:
+  - Mill Operations
+  - Quality
+  - Maintenance and Reliability
+  - Safety
+  - Environmental
+  - Human Resources
+  - Mill and Lumber Division leadership
+  - Personnel who need cross-system operational information and gap-filling workflows
+domain_experts:
+  - Mark
+success_characteristics:
+  - Business gaps can be modeled and supported without duplicating authoritative systems unnecessarily
+  - Existing-system data can be accessed, correlated, aggregated, and analyzed in ways the source systems do not provide
+  - ManuFactor-owned records clearly distinguish their authority from data owned elsewhere
+  - Mill-specific operational and quality knowledge is represented where it materially affects business behavior
+  - The domain can expand to additional gaps without forcing unrelated responsibilities into one application-defined boundary
+status: candidate
+provenance:
+  sources:
+    - type: domain-expert
+      reference: Mark direct, 2026-08-09 through 2026-08-10
+      description: Mark defined ManuFactor as a gap filler, current-system reader, data aggregator, and analytical enabler rather than a replacement for GP enterprise systems, and confirmed the current major business areas.
+    - type: decision
+      reference: DDD-0004 and DDD-0005
+      description: Existing strategic corrections establish that responsibilities, external standards, and system boundaries do not automatically define ManuFactor DDD boundaries.
+  confidence: high
+  status: candidate
