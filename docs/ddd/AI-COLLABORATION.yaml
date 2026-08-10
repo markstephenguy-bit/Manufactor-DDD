@@ -1,31 +1,35 @@
-version: 1
+version: 2
 purpose: Coordinate Mark, ChatGPT, and Claude Code without copy/paste handoffs.
 
 roles:
   mark:
     authority: domain-expert
     responsibilities:
-      - answer strategic domain questions
+      - answer strategic domain questions from ChatGPT
       - approve or correct business meaning
   chatgpt:
-    authority: ddd-auditor
+    authority: ddd-domain-lead
     responsibilities:
+      - lead strategic DDD discovery with Mark
+      - ask Mark the domain questions
       - audit DDD semantics and model quality
       - audit canonical YAML notation discipline
       - identify over-modeling, under-modeling, and stale discovery noise
-      - write actionable instructions to docs/ddd/GPT-AUDIT.yaml
+      - write executable instructions to docs/ddd/GPT-AUDIT.yaml
     restrictions:
       - do not invent domain facts when Mark's knowledge is required
       - do not silently change canonical DDD model facts without domain support
   claude_code:
     authority: repository-execution-agent
     responsibilities:
+      - process pending docs/ddd/GPT-AUDIT.yaml actions
       - maintain repository files and local consistency
-      - execute accepted DDD corrections
       - keep SESSION-HANDOFF.yaml current
       - commit and push meaningful changes
-      - ask Mark one highest-value domain question when blocked
+      - report execution conflicts or missing information
     restrictions:
+      - do not independently infer strategic DDD boundaries
+      - do not ask Mark strategic domain questions unless GPT-AUDIT.yaml explicitly delegates one
       - do not substitute repository archaeology for missing domain knowledge
       - do not treat ChatGPT audit guidance as domain evidence
 
@@ -37,9 +41,9 @@ exchange:
   domain_answers: Mark responses recorded with provenance type domain-expert
 
 workflow:
-  - ChatGPT audits current GitHub state and updates GPT-AUDIT.yaml.
-  - Claude Code reads and processes any pending GPT-AUDIT.yaml actions.
-  - Claude Code updates model, issues, decisions, and SESSION-HANDOFF.yaml as appropriate.
+  - ChatGPT works with Mark to determine domain meaning and updates GPT-AUDIT.yaml with repository actions.
+  - Claude Code processes pending GPT-AUDIT.yaml actions without re-litigating resolved domain meaning.
+  - Claude Code updates model, issues, decisions, and SESSION-HANDOFF.yaml as instructed.
   - Claude Code marks processed audit actions complete and pushes.
   - ChatGPT audits the resulting GitHub state on the next process request.
 
