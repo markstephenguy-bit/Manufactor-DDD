@@ -38,6 +38,15 @@ capabilities:
     status: confirmed
     decision_refs: [DDD-0005]
 
+  - id: cap.product-quality-verification
+    name: Product Quality Verification
+    purpose: Verify lumber against applicable quality targets when a possible quality problem is suspected.
+    business_outcome: A repeatable quality check with known targets and retained results instead of an ad hoc unrecorded measurement.
+    important_terms: [quality target, caliper measurement, quality check]
+    evidence: ["domain-expert: Mark, direct, 2026-08-09"]
+    confidence: high
+    status: candidate
+
   - id: cap.project-tracking
     name: Project Tracking
     purpose: Track discrete improvement/capital projects not triggered by a Nonconformity.
