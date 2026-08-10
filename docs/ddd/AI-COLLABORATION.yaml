@@ -1,5 +1,5 @@
-version: 2
-purpose: Coordinate Mark, ChatGPT, and Claude Code without copy/paste handoffs.
+version: 3
+purpose: Coordinate Mark, ChatGPT, and optional Claude Code execution without copy/paste handoffs.
 
 roles:
   mark:
@@ -12,45 +12,51 @@ roles:
     responsibilities:
       - lead strategic DDD discovery with Mark
       - ask Mark the domain questions
+      - read and update the canonical DDD repository directly through GitHub when the required repository operation is available
       - audit DDD semantics and model quality
       - audit canonical YAML notation discipline
       - identify over-modeling, under-modeling, and stale discovery noise
-      - write executable instructions to docs/ddd/GPT-AUDIT.yaml
+      - keep SESSION-HANDOFF.yaml sufficient for a new ChatGPT session to resume from GitHub
+      - use targeted evidence from ManuFactor-arch and Manufactor when authorized by the handoff/current discovery question
     restrictions:
       - do not invent domain facts when Mark's knowledge is required
       - do not silently change canonical DDD model facts without domain support
   claude_code:
-    authority: repository-execution-agent
+    authority: optional-repository-execution-agent
+    use_when:
+      - local repository operations are required
+      - broad mechanical changes are safer or faster locally
+      - builds, tests, generators, scripts, or code execution are required
+      - a repository operation is unavailable through ChatGPT's GitHub connection
     responsibilities:
-      - process pending docs/ddd/GPT-AUDIT.yaml actions
-      - maintain repository files and local consistency
-      - keep SESSION-HANDOFF.yaml current
-      - commit and push meaningful changes
+      - execute explicit repository instructions from ChatGPT when brought online
+      - maintain local consistency, run required checks, commit, and push
       - report execution conflicts or missing information
     restrictions:
       - do not independently infer strategic DDD boundaries
-      - do not ask Mark strategic domain questions unless GPT-AUDIT.yaml explicitly delegates one
+      - do not ask Mark strategic domain questions unless explicitly delegated by ChatGPT
       - do not substitute repository archaeology for missing domain knowledge
       - do not treat ChatGPT audit guidance as domain evidence
 
 exchange:
-  chatgpt_to_claude: docs/ddd/GPT-AUDIT.yaml
-  claude_to_chatgpt:
-    - repository state
-    - docs/ddd/SESSION-HANDOFF.yaml
+  canonical_state: markstephenguy-bit/Manufactor-DDD
+  evidence_repositories:
+    - markstephenguy-bit/ManuFactor-arch
+    - markstephenguy-bit/Manufactor
   domain_answers: Mark responses recorded with provenance type domain-expert
+  optional_cc_instructions: docs/ddd/GPT-AUDIT.yaml
 
 workflow:
-  - ChatGPT works with Mark to determine domain meaning and updates GPT-AUDIT.yaml with repository actions.
-  - Claude Code processes pending GPT-AUDIT.yaml actions without re-litigating resolved domain meaning.
-  - Claude Code updates model, issues, decisions, and SESSION-HANDOFF.yaml as instructed.
-  - Claude Code marks processed audit actions complete and pushes.
-  - ChatGPT audits the resulting GitHub state on the next process request.
+  - ChatGPT reads SESSION-HANDOFF.yaml and the current canonical files from GitHub.
+  - ChatGPT works directly with Mark to determine domain meaning.
+  - ChatGPT updates affected canonical, issue, decision, discovery, audit, and handoff files directly when GitHub operations are sufficient.
+  - Claude Code is brought online only when local execution adds value or is required.
+  - A new ChatGPT session must be able to resume from SESSION-HANDOFF.yaml plus the files it lists without relying on conversational memory or Claude Code state.
 
 principles:
   - canonical YAML contains model facts, not discussion
   - decisions contain rationale
   - issues contain unresolved questions
   - discovery contains supporting evidence and excluded material
-  - SESSION-HANDOFF.yaml contains restart state
-  - GPT-AUDIT.yaml contains temporary inter-agent instructions, not domain truth
+  - SESSION-HANDOFF.yaml contains authoritative restart state for ChatGPT
+  - GPT-AUDIT.yaml contains temporary execution/audit instructions and must not be treated as domain truth
