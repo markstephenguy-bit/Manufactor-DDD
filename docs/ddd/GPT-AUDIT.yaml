@@ -1,4 +1,4 @@
-version: 14
+version: 15
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -80,6 +80,14 @@ findings:
     severity: domain-confirmation
     subject: Operations candidate strategic placement
     finding: Mark confirmed Operations as the broader candidate strategic domain area for mill-operating gaps. The previous name Production Operations was misleading because it sounded like ERP/production-execution scope. Operations should contain currently known operational-reporting and kiln-related gaps without implying ManuFactor owns production execution or ERP functions.
+  - id: AUDIT-0024
+    severity: domain-confirmation
+    subject: Projects Continuous Improvement candidate placement
+    finding: Mark confirmed Projects / Continuous Improvement as the broader candidate strategic domain area. Project Tracking is one known capability within it, not merely a cross-domain utility.
+  - id: AUDIT-0025
+    severity: domain-correction
+    subject: Identity Access strategic placement
+    finding: Mark states Identity & Access is shared platform infrastructure. It must not remain in the ManuFactor business-domain Subdomain map.
 
 required_actions:
   - id: ACTION-0013
@@ -116,11 +124,17 @@ required_actions:
     action: Record the Maintenance/Reliability gap-filler example in discovery/decision material: ManuFactor may extract maintenance/reliability data from existing databases and make it available for novel analysis in Superset or comparable analytical tooling. Do not create an Analytics Subdomain solely because Superset is used, and do not imply ManuFactor owns CMMS maintenance workflows.
   - id: ACTION-0029
     action: Rename/reframe subdomain.production-operations as broader candidate Operations. Preserve cap.operational-reporting and cap.kiln-drying-operations as currently known responsibilities unless later evidence separates them. Keep status candidate. Explicitly state that Operations represents ManuFactor gaps under mill operations and does not imply ERP, MES, production planning, production execution, or other existing-system ownership.
+  - id: ACTION-0030
+    action: Add broader candidate Projects / Continuous Improvement to the strategic Subdomain map and place cap.project-tracking within it as a currently known capability. Keep status candidate and do not imply Project Tracking exhausts the domain area.
+  - id: ACTION-0031
+    action: Remove subdomain.identity-access from the business-domain Subdomain map. Preserve Identity & Access only as shared platform infrastructure in the appropriate non-domain documentation if needed. Do not promote it to a generic business Subdomain.
+  - id: ACTION-0032
+    action: After applying all pending strategic reframes, audit the Phase 4 candidate map against ManuFactor_DDD_Modeling_Specification.docx for missing material domain areas, unsupported classifications, stale names, and remaining blockers. Do not begin Phase 5 until that audit is complete and ChatGPT confirms the strategic map is sufficiently coherent.
 
 next_domain_question:
   owner: chatgpt
-  subject: remaining-strategic-boundaries
-  instruction: Claude Code must not ask strategic questions. ChatGPT should now review the remaining candidate map against ManuFactor_DDD_Modeling_Specification.docx and ask Mark only the next material strategic placement question needed to complete Phase 4 challenge.
+  subject: phase-4-completeness
+  instruction: Claude Code must not ask strategic questions. After applying the pending corrections, ChatGPT should inspect the resulting whole-domain candidate map and ask Mark only if a material business area is still missing or ambiguous enough to affect Phase 5.
 
 do_not_do:
   - do not create Bounded Contexts yet
