@@ -1,30 +1,43 @@
 # ManuFactor-DDD — Claude Code Instructions
 
-This repository exists to build and maintain the canonical Domain-Driven Design model of ManuFactor, under a normative specification authored by Mark. This is not a general architecture-discovery repo — it has one governing document, and that document is binding.
+This repository exists to build and maintain the canonical Domain-Driven Design model of ManuFactor. Mark is the domain expert. ChatGPT is the DDD/domain-discovery lead. Claude Code is the repository execution agent.
 
 ## Read first, every session — in this order only
 
 1. This file.
-2. **`docs/ddd/SESSION-HANDOFF.yaml`** — the actual restart point. States current phase, what's blocking, the next single action, and exactly which files matter right now.
-3. **`docs/ddd/GPT-AUDIT.yaml`** — if `status: pending`, process applicable actions before continuing domain work. This file is audit/control guidance, not domain evidence.
-4. Only the files `SESSION-HANDOFF.yaml`'s `files_to_read` lists.
+2. `docs/ddd/SESSION-HANDOFF.yaml`.
+3. `docs/ddd/GPT-AUDIT.yaml`.
+4. `docs/ddd/AI-COLLABORATION.yaml`.
+5. Only the files listed by `SESSION-HANDOFF.yaml` under `files_to_read`.
 
-Do not reread the full `docs/ddd/SPECIFICATION.md`, the discovery files, or the evidence repos (`ManuFactor-arch`, `ManuFactor`) unless the handoff explicitly says it's necessary. `SESSION-HANDOFF.yaml` is kept current after every meaningful change specifically so a new session doesn't have to re-derive state from scratch — trust it over re-deriving.
+Do not reread the full specification, discovery corpus, ManuFactor-arch, or ManuFactor unless the handoff or GPT-AUDIT explicitly requires it.
 
-Before asking Mark a new strategic question, check `docs/ddd/GPT-AUDIT.yaml` again. If pending, process applicable actions first, then mark it processed and record the commit that contains the completed changes.
+## Execution role
 
-See `docs/ddd/AI-COLLABORATION.yaml` for the division of responsibilities between Mark, ChatGPT, and Claude Code.
+If `docs/ddd/GPT-AUDIT.yaml` has `status: pending`, process its applicable actions first.
+
+Do not independently infer strategic DDD boundaries.
+Do not ask Mark strategic domain questions unless GPT-AUDIT.yaml explicitly delegates one.
+Do not reinterpret or expand a Mark domain answer beyond the instruction recorded by ChatGPT.
+Do not search additional evidence to replace missing domain knowledge unless explicitly instructed.
+
+If an instruction cannot be executed safely because required information is missing or contradictory, report the conflict and stop that action rather than inventing an answer.
+
+After processing:
+- update affected model/issues/decisions/handoff files;
+- mark GPT-AUDIT processed with the resulting commit reference;
+- commit and push.
 
 ## Canonical YAML discipline
 
-Fixed-schema, terse records only. No narrative comments, no arbitrary fields — do not add a field without changing the metamodel first. Detailed reasoning belongs in `docs/ddd/decisions/`, `docs/ddd/issues/`, or `docs/ddd/discovery/` — never accumulated inside a canonical record. Excluded/dead material lives in `docs/ddd/discovery/excluded.yaml`, out of active candidate files.
+Fixed-schema, terse records only. No narrative comments and no arbitrary fields. Do not add a field without changing the metamodel first. Detailed reasoning belongs in `docs/ddd/decisions/`, `docs/ddd/issues/`, or `docs/ddd/discovery/`.
+
+Canonical YAML records model facts. Decisions record why. Issues record unknowns. Discovery records evidence. SESSION-HANDOFF records restart state. GPT-AUDIT records temporary inter-agent execution instructions.
 
 ## Domain authority
 
-Mark is the primary domain expert. Repository evidence helps recover and test the model; it does not substitute for his knowledge. When a strategic boundary can't be determined confidently from evidence, ask one precise question at a time — never invent the answer, never present a questionnaire, never search for more evidence first as a substitute for asking.
-
-ChatGPT audit instructions are not domain evidence. They may correct process, DDD semantics, notation, or modeling discipline, but business meaning must still come from domain evidence or Mark.
+Mark is the source of domain truth when domain-expert input is required. ChatGPT conducts the domain-discovery dialogue with Mark and translates it into DDD guidance. ChatGPT audit/control instructions are not themselves domain evidence.
 
 ## Push
 
-Commit and push to GitHub automatically after each meaningful change — Mark audits this repo via GitHub, not the local working directory.
+Commit and push automatically after each meaningful completed change so ChatGPT can audit GitHub directly.
