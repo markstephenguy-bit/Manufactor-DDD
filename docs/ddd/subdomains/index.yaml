@@ -1,72 +1,72 @@
 subdomains:
 
   - id: subdomain.safety-compliance-signoff
-    name: Safety Compliance & Procedure Sign-Off
-    purpose: Gate safety-related procedures/equipment through a formal approval workflow before a sign-off record is authoritative.
+    name: Safety
+    purpose: Represent Safety business responsibilities where ManuFactor fills gaps, records or supports work, or reads and aggregates information from existing GP systems.
     capabilities: [cap.safety-compliance-signoff]
-    classification: core
-    boundary_rationale: Mark confirmed Safety Sign-Off is a separate business responsibility, but not that it is a separate ManuFactor Subdomain.
-    evidence: ["domain-expert: Mark, direct, ISSUE-0002"]
-    confidence: medium
+    classification: supporting
+    boundary_rationale: Mark confirmed Safety is a broader mill business area and department; Safety Compliance & Procedure Sign-Off is one known responsibility within it, not the whole domain. Department structure is supporting evidence only, not the DDD boundary definition.
+    evidence: ["domain-expert: Mark, direct, ISSUE-0002", "domain-expert: Mark, direct, 2026-08-10 Safety broader-area confirmation"]
+    confidence: high
     status: candidate
     decision_refs: [DDD-0004]
     issue_refs: []
 
   - id: subdomain.quality
     name: Quality
-    purpose: Candidate domain area for Quality responsibilities that ManuFactor may fill, read, or aggregate when existing GP systems do not fully satisfy the need.
-    capabilities: [cap.corrective-preventive-action]
+    purpose: Represent Quality responsibilities and mill-specific quality knowledge where ManuFactor fills gaps, captures missing records, or reads and aggregates information from existing GP systems.
+    capabilities: [cap.corrective-preventive-action, cap.product-quality-verification]
     classification: core
-    boundary_rationale: Mark states CAPA is a quality aspect, but there is no ManuFactor-owned monolithic QMS. Other Quality responsibilities must be discovered individually and may already be owned by GP systems.
-    evidence: ["domain-expert: Mark, direct, ISSUE-0002", "domain-expert: Mark, direct, QMS ownership clarification"]
-    confidence: medium
+    boundary_rationale: Mark confirmed CAPA is a Quality aspect and Product Quality Verification is Quality work. Quality contains mill- and machine/process-specific knowledge, while no ManuFactor-owned monolithic QMS exists and additional Quality responsibilities may remain outside ManuFactor or in other GP systems.
+    evidence: ["domain-expert: Mark, direct, ISSUE-0002", "domain-expert: Mark, direct, QMS ownership clarification", "domain-expert: Mark, direct, 2026-08-09 product-quality evidence", "domain-expert: Mark, direct, 2026-08-10 Quality broader-area confirmation"]
+    confidence: high
     status: candidate
     decision_refs: [DDD-0004, DDD-0005]
     issue_refs: []
 
   - id: subdomain.environmental-compliance
-    name: Environmental Compliance Reporting
-    purpose: Produce periodic regulatory compliance reporting.
+    name: Environmental
+    purpose: Represent Environmental business responsibilities where ManuFactor fills compliance/reporting gaps or reads and aggregates information from existing GP systems.
     capabilities: [cap.environmental-compliance]
-    classification: core
-    boundary_rationale: Mark confirmed Environmental Compliance is a separate business responsibility, but not that it is a separate ManuFactor Subdomain.
-    evidence: ["domain-expert: Mark, direct, ISSUE-0002"]
-    confidence: medium
+    classification: supporting
+    boundary_rationale: Mark confirmed Environmental is a broader business area; Environmental Compliance Reporting is one known responsibility within it and does not exhaust the domain.
+    evidence: ["domain-expert: Mark, direct, ISSUE-0002", "domain-expert: Mark, direct, 2026-08-10 Environmental broader-area confirmation"]
+    confidence: high
     status: candidate
     decision_refs: [DDD-0004]
     issue_refs: []
 
   - id: subdomain.asset-reliability
-    name: Asset & Reliability
-    purpose: Know what physical assets the mill has, their condition, and verify they remain reliable and compliant.
+    name: Maintenance / Reliability
+    purpose: Represent maintenance, asset, and reliability responsibilities relevant to ManuFactor gaps while existing systems such as the CMMS may remain authoritative for operational maintenance work.
     capabilities: [cap.physical-asset-management, cap.equipment-reliability-verification]
-    classification: core
-    boundary_rationale: Owns asset lifecycle state and reliability/verification together. Separate from Production Operations by subject.
-    evidence: [ev.arch.workbook "Status Catalog Mappings", ev.arch.workbook "Rules"]
-    confidence: medium
+    classification: supporting
+    boundary_rationale: Mark confirmed Maintenance/Reliability as the broader business area. ManuFactor may extract, correlate, aggregate, and analyze existing maintenance/reliability data, including novel analysis through tools such as Superset, without taking ownership of CMMS workflows.
+    evidence: [ev.arch.workbook "Status Catalog Mappings", ev.arch.workbook "Rules", "domain-expert: Mark, direct, 2026-08-10 Maintenance/Reliability confirmation", "domain-expert: Mark, direct, 2026-08-10 Superset gap-filler example"]
+    confidence: high
     status: candidate
     decision_refs: []
     issue_refs: [ISSUE-0003]
 
   - id: subdomain.production-operations
-    name: Production Operations
-    purpose: Manage the mill's production process and record what happens during production.
-    capabilities: [cap.kiln-drying-operations, cap.operational-reporting]
+    name: Operations
+    purpose: Represent gaps under mill operations that ManuFactor must fill without implying ownership of ERP, MES, production planning, or production-execution responsibilities already handled elsewhere.
+    capabilities: [cap.kiln-drying-operations, cap.operational-reporting, cap.project-tracking]
     classification: core
-    boundary_rationale: Owns the production process and its operational record, not equipment condition or compliance.
-    evidence: [ev.arch.drawings.mill_hierarchy, ev.arch.workbook "Build Order" Phase_B/B1]
-    confidence: medium
+    boundary_rationale: Mark rejected the ERP-like implication of Production Operations and confirmed Operations as the broader area for mill-operating gaps. Project Tracking stands directly as an Operations capability; Projects / Continuous Improvement is not required as an intermediate domain grouping.
+    evidence: [ev.arch.drawings.mill_hierarchy, ev.arch.workbook "Build Order" Phase_B/B1, "domain-expert: Mark, direct, 2026-08-10 Operations confirmation", "domain-expert: Mark, direct, 2026-08-10 Project Tracking placement correction"]
+    confidence: high
     status: candidate
     decision_refs: []
     issue_refs: []
 
   - id: subdomain.people-workforce
-    name: People & Workforce
-    purpose: Track training/competency and workforce scheduling/absence.
+    name: Human Resources
+    purpose: Represent workforce, training, competency, scheduling, and absence-related gaps relevant to ManuFactor while existing HR/workforce systems may remain authoritative for their records and workflows.
     capabilities: [cap.training-competency, cap.workforce-scheduling]
-    classification: supporting
-    boundary_rationale: General HR-shaped need; Kronos already owns part of absence tracking, narrowing ManuFactor's contribution.
-    evidence: [ev.arch.workbook "Constraints & Assumptions" A-05, ev.arch.workbook "Constraints & Assumptions" A-06]
+    classification: generic
+    boundary_rationale: Mark confirmed HR as the broader business area. The currently known capabilities are largely standard workforce concerns, with ManuFactor filling gaps or reading existing systems rather than establishing a proprietary HR model.
+    evidence: [ev.arch.workbook "Constraints & Assumptions" A-05, ev.arch.workbook "Constraints & Assumptions" A-06, "domain-expert: Mark, direct, 2026-08-10 HR broader-area confirmation"]
     confidence: medium
     status: candidate
     decision_refs: []
@@ -74,12 +74,12 @@ subdomains:
 
   - id: subdomain.identity-access
     name: Identity & Access
-    purpose: Recognize who is using the system and govern what they can do.
+    purpose: Shared platform infrastructure for recognizing users and governing access.
     capabilities: [cap.identity-access]
     classification: generic
-    boundary_rationale: Enables every other subdomain; produces no business outcome of its own.
-    evidence: [ev.arch.addendum rev 116/117/121/122, ev.arch.workbook "Ports"]
+    boundary_rationale: Mark explicitly classified Identity & Access as shared platform infrastructure rather than part of ManuFactor's business-domain map.
+    evidence: [ev.arch.addendum rev 116/117/121/122, ev.arch.workbook "Ports", "domain-expert: Mark, direct, 2026-08-10"]
     confidence: high
-    status: candidate
+    status: rejected
     decision_refs: [DDD-0002]
     issue_refs: []
