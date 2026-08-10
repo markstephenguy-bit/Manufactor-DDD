@@ -1,0 +1,62 @@
+id: bc.reliability-verification
+name: Reliability Verification
+purpose: Verify equipment at defined checkpoints and retain evidence that it was found known-good/compliant or failed verification.
+subdomain: subdomain.asset-reliability
+model_statement: Within Reliability Verification, a Verification is a discrete assessment fact with its own criteria, checkpoint, and result; it references an Asset but does not itself define the Asset's complete lifecycle.
+responsibilities:
+  - Represent scheduled, post-maintenance, or condition-triggered verification checkpoints.
+  - Capture AFAL/category-check criteria and results.
+  - Retain verification evidence.
+  - Communicate verified/failed outcomes to Asset Lifecycle or corrective/maintenance work through explicit relationships.
+scope:
+  - Equipment verification checkpoints
+  - AFAL/category checks
+  - Known-good/compliance verification records
+  - Verification-result history
+out_of_scope:
+  - Full asset lifecycle/condition ownership
+  - MP2 work-request/work-order lifecycle
+  - CAPA lifecycle
+owned_concepts:
+  - Reliability Verification
+  - Verification Checkpoint
+  - AFAL Record
+  - AFAL Category Check
+  - Verification Result
+external_concepts:
+  - Asset
+  - MP2 Work Request
+  - MP2 Work Order
+ubiquitous_language:
+  - AFAL
+  - verification
+  - checkpoint
+  - category-check
+  - known-good
+  - compliant
+  - failed verification
+business_rules:
+  - Verification records must preserve checkpoint, applicable criteria/category, and result.
+  - Verification result and Asset condition are distinct concepts.
+  - Any effect of a verification on Asset Lifecycle state must be expressed through an explicit cross-context rule.
+owner: unresolved
+domain_experts: [Mark]
+integration_surface:
+  - References assets from Asset Lifecycle.
+  - May correlate to MP2 maintenance work.
+  - May produce findings consumed by Corrective Action where applicable.
+upstream_dependencies:
+  - bc.asset-lifecycle
+downstream_consumers:
+  - bc.corrective-action
+status: candidate
+provenance:
+  sources:
+    - type: existing-model
+      reference: ManuFactor-arch addendum/workbook AFAL rules and status mappings
+      description: Existing evidence establishes verification/checkpoint concepts distinct from persistent asset lifecycle.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-10
+      description: MP2 lacks meaningful asset management, supporting separate ManuFactor-owned Asset Lifecycle and verification semantics.
+  confidence: high
+  status: candidate
