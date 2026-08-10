@@ -14,7 +14,7 @@ subdomains:
       - Treating the Safety department itself as a software or Bounded Context boundary
       - Assuming ManuFactor owns Safety responsibilities already authoritative in another GP system
     domain_experts: [Mark]
-    candidate_bounded_contexts: []
+    candidate_bounded_contexts: [bc.safety-signoff]
     status: candidate
     provenance:
       sources:
@@ -40,7 +40,7 @@ subdomains:
       - Replacing authoritative GP systems merely because Quality consumes their data
       - Treating ISO 9001 or SPIB organizational boundaries as ManuFactor DDD boundaries
     domain_experts: [Mark]
-    candidate_bounded_contexts: []
+    candidate_bounded_contexts: [bc.quality-verification, bc.corrective-action]
     status: candidate
     provenance:
       sources:
@@ -67,7 +67,7 @@ subdomains:
       - Treating regulatory or departmental organization as a Bounded Context definition
       - Assuming ManuFactor owns all environmental compliance work
     domain_experts: [Mark]
-    candidate_bounded_contexts: []
+    candidate_bounded_contexts: [bc.environmental-compliance]
     status: candidate
     provenance:
       sources:
@@ -92,7 +92,7 @@ subdomains:
       - Replacing the CMMS as the system of record for operational maintenance work
       - Creating an Analytics or Superset business Subdomain from tooling choices
     domain_experts: [Mark]
-    candidate_bounded_contexts: []
+    candidate_bounded_contexts: [bc.asset-lifecycle, bc.reliability-verification]
     status: candidate
     provenance:
       sources:
@@ -121,7 +121,7 @@ subdomains:
       - Owning ERP, MES, production planning, or production-execution responsibilities solely because ManuFactor uses related data
       - Requiring Projects / Continuous Improvement as an intermediate or peer Subdomain
     domain_experts: [Mark]
-    candidate_bounded_contexts: []
+    candidate_bounded_contexts: [bc.operations-record, bc.kiln-operations, bc.project-tracking]
     status: candidate
     provenance:
       sources:
@@ -148,7 +148,7 @@ subdomains:
     out_of_scope:
       - Replacing established HR, learning, timekeeping, or workforce systems solely to centralize data in ManuFactor
     domain_experts: [Mark]
-    candidate_bounded_contexts: []
+    candidate_bounded_contexts: [bc.training-competency, bc.workforce-availability]
     status: candidate
     provenance:
       sources:
