@@ -1,0 +1,37 @@
+subject: bc.kiln-operations
+status: domain-evidence
+domain_expert: Mark
+date: 2026-08-10
+
+current_gaps:
+  - Replace Excel-based kiln scheduling and operations tracking with a system that preserves an operational history.
+  - Correlate kiln scheduling and operating records with downstream board-moisture measurements produced by ProTrack moisture-meter software at the planer.
+  - Read ProTrack moisture-meter data from its existing database without treating ManuFactor as the source of that measurement data.
+  - Provide dashboards and analytical views that improve understanding of kiln operation versus actual downstream board moisture.
+  - Support additional kiln data-collection and process-control gaps as they are discovered.
+
+semantic_ownership:
+  manufactor_kiln_operations:
+    - Kiln scheduling and operating records that replace the current Excel gap.
+    - Historical kiln-operation lifecycle and changes needed to preserve what was scheduled and what actually occurred.
+    - Correlation between kiln operational history and downstream moisture results.
+    - Kiln-specific derived information and operational understanding built from those correlations.
+  external_sources:
+    - system: ProTrack moisture-meter software
+      authority: Source database for planer moisture-meter measurements.
+      manufactor_role: Read and correlate measurements; do not redefine measurement-source authority merely because ManuFactor analyzes the data.
+
+boundary_conclusion:
+  candidate: bc.kiln-operations
+  result: retain-strong-candidate
+  rationale: Kiln Operations has its own scheduling and operating lifecycle, historical-record requirements, process terminology, and correlation rules. The business gap is not merely reporting an externally owned kiln process. ManuFactor must replace an Excel-based operating model with a persistent domain record and relate that record to externally sourced downstream moisture outcomes.
+  dashboard_note: Dashboarding is a projection/read model over kiln operational and moisture-correlation data, not a separate Bounded Context.
+  future_scope_note: Additional data-collection and process-control responsibilities may extend this context when their rules and ownership are discovered; they should not be invented in advance.
+
+boundary_indicators:
+  - A kiln schedule or operating record has lifecycle and correction/history semantics that do not exist in ProTrack moisture measurements.
+  - A moisture measurement describes downstream board condition; it does not itself state which kiln schedule, run, or operating decisions produced that condition.
+  - Correlation requires an explicit semantic relationship between kiln operational history and planer moisture results.
+  - Operations Record may summarize kiln events but does not own kiln scheduling/process state.
+
+confidence: high
