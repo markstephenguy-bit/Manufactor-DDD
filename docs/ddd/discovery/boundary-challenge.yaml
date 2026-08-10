@@ -1,7 +1,7 @@
 boundary_challenges:
 
   - context: bc.operations-record
-    merge_test: Do not merge with Kiln Operations or Project Tracking. Their lifecycles and business meanings differ: historical operational facts versus process operation versus planned project work.
+    merge_test: Do not merge with Kiln Operations, Project Tracking, or operational workforce contexts. Their lifecycles and business meanings differ: historical operational facts versus process operation versus planned project work versus staffing readiness.
     split_test: Keep the current candidate intact for now, but challenge the overloaded term Incident during language discovery because Safety/Maintenance/Quality incidents may not share Operations semantics.
     domain_not_software_test: Boundary is based on record/fact semantics, not a module or report screen.
     ownership_test: ManuFactor can own the operational record it creates while referenced subject matter remains owned elsewhere.
@@ -10,16 +10,16 @@ boundary_challenges:
     result: retain-candidate
 
   - context: bc.kiln-operations
-    merge_test: Do not merge with Environmental Compliance; operating a kiln and any future environmental use of kiln facts would have different rules and lifecycle ownership. Do not merge with Operations Record because operation versus historical reporting differs.
-    split_test: No supported split yet.
-    domain_not_software_test: Candidate is justified only if ManuFactor has a meaningful kiln-operation model; existing kiln software/system boundaries are not sufficient.
-    ownership_test: unresolved — existing evidence says manage kiln drying process, but Mark has not yet established how much kiln operational authority ManuFactor actually owns versus reads/fills around another system.
-    language_change: Kiln and operating parameters are interpreted operationally here; any future Environmental context may apply different compliance semantics.
-    invariants_candidate: Scheduling/operating decisions must use the valid kiln-process state and parameters if ManuFactor owns those decisions.
-    result: retain-candidate-with-material-ownership-question
+    merge_test: Do not merge with Operations Record or external ProTrack moisture measurement semantics. Scheduling/operating a kiln, preserving kiln history, and interpreting drying outcomes form a distinct model.
+    split_test: Do not split dashboards/analytics from Kiln Operations; they are projections of the kiln model and correlated source facts. Additional process-control concerns should split only if later language/rules/lifecycle require it.
+    domain_not_software_test: Boundary is justified by the real operational gap of replacing Excel scheduling/operations with a persistent model and coordinating that history with downstream moisture outcomes, not by existing application boundaries.
+    ownership_test: resolved — ManuFactor owns the kiln scheduling/operations record and correlation semantics. ProTrack remains authoritative for planer moisture measurements stored in its database.
+    language_change: Schedule, run/charge, operating history, moisture result, drying performance, and actual board moisture have Kiln Operations meanings distinct from ProTrack's source-record model.
+    invariants_candidate: Kiln scheduling/operation history must be retained; correlated moisture outcomes must preserve provenance to ProTrack and must not rewrite source measurements; dashboards must derive from the model rather than become authoritative state.
+    result: retain-strong-candidate
 
   - context: bc.project-tracking
-    merge_test: Do not merge with Corrective Action. Mark's existing distinction is trigger and lifecycle: ordinary improvement/capital project work is not inherently Nonconformity-driven CAPA work.
+    merge_test: Do not merge with Corrective Action. Ordinary improvement/capital project work is not inherently Nonconformity-driven CAPA work.
     split_test: No supported split yet.
     domain_not_software_test: Candidate rests on a project lifecycle, not on a ProjectTracking module name.
     ownership_test: ManuFactor candidate owner of project tracking where the gap exists.
@@ -29,7 +29,7 @@ boundary_challenges:
 
   - context: bc.quality-verification
     merge_test: Do not merge with Corrective Action. Measurement/acceptance and nonconformity remediation have distinct triggers, rules, language, and lifecycle.
-    split_test: Do not split targets from checks yet. Target selection is part of interpreting a check; later evidence could reveal externally governed target/reference data but that does not currently justify a second Bounded Context.
+    split_test: Do not split targets from checks yet. Target selection is part of interpreting a check.
     domain_not_software_test: Boundary follows quality acceptance meaning and contextual mill/machine/process rules.
     ownership_test: ManuFactor can own quality-check records and evaluation semantics where the current process has no system; external standards and machine setup remain referenced authorities for their own facts.
     language_change: Target, acceptable, measurement, failure, and Nonconformity change meaning at the Corrective Action boundary.
@@ -82,37 +82,36 @@ boundary_challenges:
     result: defer-until-concrete-gap
 
   - context: bc.training-competency
-    merge_test: Keep separate from Workforce Availability. Being trained/qualified and being scheduled/available are different predicates with different evidence and lifecycle.
-    split_test: No supported split yet.
-    domain_not_software_test: Moodle is evidence/source, not the boundary.
-    ownership_test: unresolved — if ManuFactor only mirrors Moodle completion with no local competency semantics, this may be a translated external/read model rather than a full ManuFactor-owned Bounded Context.
-    language_change: Completion, training, qualified, and competent may not be synonyms and must be stabilized later.
-    invariants_candidate: ManuFactor must not assert qualification beyond the authoritative evidence/rules it is permitted to interpret.
-    result: retain-candidate-with-ownership-warning
+    merge_test: Keep separate from Operational Workforce Availability. Qualification/coverage answers who can perform a job; workforce availability answers who can cover a job at a particular time.
+    split_test: Do not split onboarding from cross-operator training yet; both currently contribute to the operational training/qualification model.
+    domain_not_software_test: Moodle and HR categorization are sources/classifications, not the boundary. The boundary follows the operational need to know training depth across crews and jobs.
+    ownership_test: resolved — ManuFactor owns the operational interpretation of training/qualification coverage needed for onboarding and crew-depth planning, while learning systems remain authoritative for their source completion records.
+    language_change: Training completion, qualification, cross-training, crew depth, and trained-for must be distinguished from source LMS terminology where necessary.
+    invariants_candidate: Operational qualification/coverage must be supported by appropriate training/qualification evidence and must remain traceable to its source rather than being inferred from availability alone.
+    result: retain-strong-candidate-under-operations
 
   - context: bc.workforce-availability
-    merge_test: Keep separate from Training and Competency. Crew/shift/absence availability is time-assignment state, not qualification evidence.
-    split_test: Crew structure versus absence could later split if owned by different external authorities and local semantics diverge, but current evidence is insufficient.
-    domain_not_software_test: Kronos/timekeeping or HR application boundaries do not define this candidate.
-    ownership_test: unresolved — if ManuFactor only consumes workforce state without local scheduling/availability rules, this may be an external/read-model concern rather than a full ManuFactor-owned Bounded Context.
-    language_change: Shift, crew, supervisor, scheduled, absent, and available may have Operations-specific versus HR-specific meanings.
-    invariants_candidate: Derived operational availability must remain distinguishable from authoritative HR/timekeeping absence records.
-    result: retain-candidate-with-ownership-warning
+    merge_test: Keep separate from Operational Training and Qualification. Availability is time/crew specific and consumes qualification information rather than defining it.
+    split_test: Vacation planning and sick-call replacement remain together for now because both answer operational staffing coverage across time; split later only if lifecycle/rules diverge materially.
+    domain_not_software_test: HR/timekeeping applications provide personnel facts but do not define the boundary. The actual gap is operational coverage planning that is not adequately software represented.
+    ownership_test: resolved — ManuFactor owns operational vacation scheduling/coverage and replacement-readiness semantics; external HR/timekeeping systems remain authoritative for personnel facts they own.
+    language_change: Vacation, absence, available, coverage, replacement operator, and staffing gap have operational meanings distinct from HR payroll/leave administration.
+    invariants_candidate: A proposed replacement must be both available for the required time and sufficiently qualified for the job; operational coverage decisions must not rewrite authoritative HR absence records.
+    result: retain-strong-candidate-under-operations
 
 whole_map_result:
-  candidate_context_count: 10
+  active_candidate_context_count: 10
   deferred_context_count: 1
-  strong_candidates: [bc.operations-record, bc.project-tracking, bc.quality-verification, bc.corrective-action, bc.reliability-verification, bc.safety-signoff]
-  ownership_challenge_candidates: [bc.kiln-operations, bc.asset-lifecycle, bc.training-competency, bc.workforce-availability]
+  strong_candidates: [bc.kiln-operations, bc.quality-verification, bc.corrective-action, bc.reliability-verification, bc.safety-signoff, bc.training-competency, bc.workforce-availability]
+  retained_candidates: [bc.operations-record, bc.project-tracking, bc.asset-lifecycle]
+  ownership_challenge_candidates: [bc.asset-lifecycle]
   deferred_contexts: [bc.environmental-compliance]
   unsupported_merges: []
   unsupported_splits: []
   material_domain_questions:
-    - subject: kiln-operation-authority
-      question: Does ManuFactor actually own meaningful kiln scheduling/operating decisions and lifecycle, or is its kiln role primarily reading existing systems, reporting, analysis, and other gap-filling around an externally owned kiln-operation model?
+    - subject: asset-lifecycle-authority
+      question: Does ManuFactor own any meaningful physical-asset lifecycle/status that the CMMS does not own, or is Asset Lifecycle primarily a translated/correlated view of externally authoritative asset data?
   deferred_nonblocking_questions:
     - Environmental Compliance Bounded Context remains deferred until a concrete ManuFactor Environmental gap is identified
     - ISSUE-0003 Vehicle Management versus Physical Asset Management
-    - Exact CMMS versus ManuFactor asset-state authority
-    - Whether Training/Competency includes local competency determination beyond consumed learning completion data
-    - Exact workforce/timekeeping authority split
+    - Exact authority for changing asset state after Reliability Verification
