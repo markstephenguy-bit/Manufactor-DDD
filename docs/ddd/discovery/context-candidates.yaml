@@ -130,18 +130,23 @@ context_candidates:
     status: candidate
 
   - id: bc.safety-signoff
-    name: Safety Sign-Off
+    name: LTV Form Management
     subdomain: subdomain.safety-compliance-signoff
     responsibilities:
-      - Manage safety-related template/instance sign-off and approval semantics where ManuFactor fills the gap.
-      - Establish when a safety sign-off record becomes authoritative.
-    language_cohesion: LTV Template, LTV Printed Instance, Site Safety Manager approval, sign-off, authoritative record.
-    model_cohesion: Template-instance-approval rules form a cohesive safety record model with a distinct authorization lifecycle.
-    lifecycle_ownership: Owns ManuFactor safety sign-off record lifecycle; does not own the entire Safety business area.
+      - Maintain the LTV forms/templates needed by the Safety process.
+      - Produce printable LTV form instances.
+      - Track, retain, and manage printed/issued LTV forms and their history.
+      - Support approval or sign-off where a specific LTV form process requires it.
+    language_cohesion: LTV Form, LTV Template, LTV Printed Instance, print, issue, form status, approval, sign-off.
+    model_cohesion: Managed form definitions/templates, printable instances, form history, and applicable lifecycle states form the actual ManuFactor Safety gap; approval/sign-off is subordinate to the broader form-management lifecycle.
+    lifecycle_ownership: Owns ManuFactor's LTV form/template and printed/issued-instance lifecycle; does not own the entire Safety business area.
     boundary_indicators:
-      - A safety finding may be referenced by Corrective Action or Operations Record without merging the models.
+      - The need exists even when the immediate action is simply producing and managing a printed LTV form.
+      - Approval/sign-off may occur for a form instance without defining the entire context.
+      - Corrective Action or Operations Record may reference an LTV form without owning the LTV form lifecycle.
     adjacent_contexts: [bc.corrective-action, bc.operations-record]
-    ambiguities: []
+    ambiguities:
+      - Later rule discovery should identify which LTV form types require approval/sign-off and which are primarily print/manage workflows.
     confidence: high
     status: candidate
 
