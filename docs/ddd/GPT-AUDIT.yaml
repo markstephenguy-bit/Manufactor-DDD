@@ -1,4 +1,4 @@
-version: 10
+version: 11
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -64,6 +64,10 @@ findings:
     severity: domain-confirmation
     subject: Safety Environmental and HR candidate placement
     finding: Mark confirmed that Safety, Environmental, and HR should each proceed as broader candidate strategic domain areas, with currently known responsibilities placed inside them and additional responsibilities left open for later discovery. This confirms candidate strategic placement, not Bounded Contexts and not exhaustive capability scope.
+  - id: AUDIT-0020
+    severity: process-correction
+    subject: governing modeling specification
+    finding: ManuFactor_DDD_Modeling_Specification.docx is the normative DDD modeling and notation specification for this project and must guide strategic discovery together with the canonical repository state. It must not be omitted from future session startup guidance.
 
 required_actions:
   - id: ACTION-0013
@@ -92,11 +96,13 @@ required_actions:
     action: Replace the overly narrow strategic candidate Environmental Compliance Reporting with broader candidate Environmental containing cap.environmental-compliance. Keep status candidate; additional Environmental responsibilities remain open.
   - id: ACTION-0025
     action: Rename/reframe the current People & Workforce strategic candidate as HR or Human Resources if consistent with the repository metamodel/naming discipline, preserving currently known workforce/training capabilities inside it. Keep status candidate and leave additional HR responsibilities open. Do not infer that existing HR systems imply ManuFactor ownership.
+  - id: ACTION-0026
+    action: Update CLAUDE.md and SESSION-HANDOFF.yaml so ManuFactor_DDD_Modeling_Specification.docx is explicitly required as the normative modeling/notation authority for every strategic DDD session before active canonical model files are interpreted. Do not duplicate its detailed rules into canonical YAML.
 
 next_domain_question:
   owner: chatgpt
   subject: remaining-strategic-boundaries
-  instruction: Claude Code must not ask strategic questions. ChatGPT will now examine the remaining active candidate Subdomains and ask Mark only about material strategic placements still necessary before Phase 5.
+  instruction: Claude Code must not ask strategic questions. ChatGPT will examine the remaining active candidate Subdomains and ask Mark only about material strategic placements still necessary before Phase 5, following ManuFactor_DDD_Modeling_Specification.docx.
 
 do_not_do:
   - do not create Bounded Contexts yet
@@ -107,5 +113,6 @@ do_not_do:
   - do not assume ManuFactor owns a responsibility because it reads, displays, correlates, or aggregates its data
   - do not gather broad repository evidence; evidence lookup must be tied to a material strategic responsibility question
   - do not continue implementation-level inquiry into Product Quality Verification target storage or configuration
+  - do not omit ManuFactor_DDD_Modeling_Specification.docx from future strategic DDD startup guidance
 
 processed_commit: null
