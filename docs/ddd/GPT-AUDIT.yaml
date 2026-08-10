@@ -1,4 +1,4 @@
-version: 7
+version: 8
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -52,31 +52,37 @@ findings:
     severity: process-correction
     subject: strategic discovery depth
     finding: Product Quality Verification has enough evidence for strategic DDD. Do not continue asking Mark about storage mechanisms, recipes, spreadsheets, machine configuration details, or other implementation-level target-source questions unless a later strategic boundary question materially requires them.
+  - id: AUDIT-0017
+    severity: domain-confirmation
+    subject: Quality candidate strategic placement
+    finding: Mark confirmed that Quality should proceed as the broader candidate Subdomain containing CAPA and Product Quality Verification, while additional Quality responsibilities remain open for later discovery and do not need exhaustive enumeration before strategic discovery progresses.
 
 required_actions:
   - id: ACTION-0013
     action: Preserve the current rollback in docs/ddd/subdomains/index.yaml. Do not recreate Safety, CAPA, or Environmental as confirmed Subdomains from ISSUE-0002 evidence.
   - id: ACTION-0014
-    action: Add a blocking unresolved issue for quality-responsibility-discovery using the repository's existing fixed issue schema. It must state that the broader Quality strategic boundary and responsibility ownership remain unresolved and that Phase 5 Bounded Context discovery is blocked until material Quality boundaries are sufficiently understood.
+    action: Add a blocking unresolved issue for quality-responsibility-discovery using the repository's existing fixed issue schema. It must state that Quality remains a candidate strategic boundary, with additional responsibilities open for later discovery, and that Phase 5 remains blocked until the other material strategic boundaries are sufficiently understood.
   - id: ACTION-0015
-    action: Add cap.product-quality-verification to the capabilities of candidate subdomain.quality. This records only that Product Quality Verification belongs in the Quality domain area; it does not confirm the Quality Subdomain boundary or ManuFactor ownership.
+    action: Add cap.product-quality-verification to the capabilities of candidate subdomain.quality alongside cap.corrective-preventive-action.
   - id: ACTION-0016
-    action: Preserve CAPA as a capability/process within the candidate Quality domain area. Do not rename the Quality candidate so CAPA appears to exhaust Quality.
+    action: Preserve CAPA as a capability/process within candidate Quality. Do not rename Quality so CAPA appears to exhaust the domain.
   - id: ACTION-0017
     action: Review active strategic decisions/issues for any surviving statement that separate Safety, CAPA, and Environmental responsibilities prove separate confirmed Subdomains, or that ISO/QMS grouping defines a ManuFactor boundary. Correct only such surviving active statements; do not restart broad evidence archaeology.
   - id: ACTION-0018
-    action: Update SESSION-HANDOFF.yaml after these consistency corrections. Preserve Phase 4 as active and Phase 5 as blocked. Preserve ChatGPT as owner of strategic domain questions.
+    action: Update SESSION-HANDOFF.yaml after these consistency corrections. Preserve Phase 4 as active and Phase 5 as blocked until remaining material strategic boundaries are sufficiently understood. Preserve ChatGPT as owner of strategic domain questions.
   - id: ACTION-0019
     action: Record Mark's Product Quality Verification evidence in the appropriate discovery record: process/target dimensions may be mill- and machine-specific; planed finished-lumber target sizes are standard market sizes; SPIB is employed to monitor finished sizes. Do not infer that SPIB owns ManuFactor Quality, that finished-size monitoring exhausts Product Quality Verification, or that this evidence defines a Subdomain boundary.
   - id: ACTION-0020
     action: Extend the Product Quality Verification discovery record with Mark's governance evidence: machine setups dictate process target sizes; mill personnel maintain them locally; Lumber Division monitors them; target/acceptance logic differs by machine and process path, including canter vs edger targets and trimmer board-inside-a-board acceptance. Keep this as domain evidence, not a new Subdomain or Bounded Context conclusion.
   - id: ACTION-0021
     action: Stop Product Quality Verification target-source discovery at the strategic level. Do not create an unresolved issue about the physical or technical source of record for those target values unless a future strategic modeling decision actually depends on it.
+  - id: ACTION-0022
+    action: Update subdomain.quality so its candidate boundary explicitly includes cap.corrective-preventive-action and cap.product-quality-verification. Keep status candidate. Record that additional Quality responsibilities may be added later and are not required to be exhaustively discovered before continuing Phase 4.
 
 next_domain_question:
   owner: chatgpt
-  subject: quality-strategic-boundary
-  instruction: Claude Code must not ask the question. ChatGPT may ask Mark only a strategic question about whether Quality should presently be modeled as the broader domain area containing CAPA and Product Quality Verification, without attempting exhaustive Quality capability discovery before progressing.
+  subject: safety-strategic-placement
+  instruction: Claude Code must not ask the question. ChatGPT will ask Mark whether Safety Compliance & Procedure Sign-Off belongs within a broader Safety domain area or whether the currently known responsibility itself represents the meaningful strategic boundary. Do not infer a Subdomain from responsibility separation alone.
 
 do_not_do:
   - do not create Bounded Contexts yet
