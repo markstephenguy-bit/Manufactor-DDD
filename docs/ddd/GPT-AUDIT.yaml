@@ -1,4 +1,4 @@
-version: 9
+version: 10
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -60,6 +60,10 @@ findings:
     severity: domain-evidence
     subject: Safety strategic breadth
     finding: Mark states that Safety is a department at every mill. This is evidence that Safety Sign-Off is not the whole Safety business area. Organizational structure supports a broader Safety domain-area candidate, but department structure alone must not be treated as proof of a DDD Subdomain boundary.
+  - id: AUDIT-0019
+    severity: domain-confirmation
+    subject: Safety Environmental and HR candidate placement
+    finding: Mark confirmed that Safety, Environmental, and HR should each proceed as broader candidate strategic domain areas, with currently known responsibilities placed inside them and additional responsibilities left open for later discovery. This confirms candidate strategic placement, not Bounded Contexts and not exhaustive capability scope.
 
 required_actions:
   - id: ACTION-0013
@@ -83,12 +87,16 @@ required_actions:
   - id: ACTION-0022
     action: Update subdomain.quality so its candidate boundary explicitly includes cap.corrective-preventive-action and cap.product-quality-verification. Keep status candidate. Record that additional Quality responsibilities may be added later and are not required to be exhaustively discovered before continuing Phase 4.
   - id: ACTION-0023
-    action: Replace the overly narrow strategic candidate name Safety Compliance & Procedure Sign-Off with a broader candidate Safety domain area containing cap.safety-compliance-signoff. Keep the boundary candidate, not confirmed. Record that the mill Safety department is supporting evidence for broader business scope, not proof that organizational and DDD boundaries are identical.
+    action: Replace the overly narrow strategic candidate name Safety Compliance & Procedure Sign-Off with broader candidate Safety containing cap.safety-compliance-signoff. Keep status candidate and do not infer organizational and DDD boundaries are identical.
+  - id: ACTION-0024
+    action: Replace the overly narrow strategic candidate Environmental Compliance Reporting with broader candidate Environmental containing cap.environmental-compliance. Keep status candidate; additional Environmental responsibilities remain open.
+  - id: ACTION-0025
+    action: Rename/reframe the current People & Workforce strategic candidate as HR or Human Resources if consistent with the repository metamodel/naming discipline, preserving currently known workforce/training capabilities inside it. Keep status candidate and leave additional HR responsibilities open. Do not infer that existing HR systems imply ManuFactor ownership.
 
 next_domain_question:
   owner: chatgpt
-  subject: safety-candidate-strategic-placement
-  instruction: Claude Code must not ask the question. ChatGPT will ask Mark whether Safety should proceed as the broader candidate domain area containing Safety Compliance & Procedure Sign-Off, with other Safety responsibilities left open for later discovery rather than exhaustively enumerated now.
+  subject: remaining-strategic-boundaries
+  instruction: Claude Code must not ask strategic questions. ChatGPT will now examine the remaining active candidate Subdomains and ask Mark only about material strategic placements still necessary before Phase 5.
 
 do_not_do:
   - do not create Bounded Contexts yet
