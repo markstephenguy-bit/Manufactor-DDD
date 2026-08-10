@@ -1,0 +1,50 @@
+id: bc.project-tracking
+name: Project Tracking
+purpose: Track discrete operational improvement or capital projects whose lifecycle is not inherently driven by a Nonconformity.
+subdomain: subdomain.production-operations
+model_statement: Within Project Tracking, a Project is planned operational work with its own milestones, tasks/actions, status, and completion semantics; it is not a CAPA item merely because corrective work can later become project work.
+responsibilities:
+  - Track project lifecycle, status, milestones, and work items.
+  - Preserve distinction between planned/improvement work and Nonconformity-driven corrective work.
+scope:
+  - Operational improvement projects
+  - Capital projects
+  - Project milestones and task/action tracking
+out_of_scope:
+  - CAPA/nonconformity lifecycle
+  - Maintenance work-order ownership
+  - Generic enterprise portfolio management not tied to ManuFactor operational gaps
+owned_concepts:
+  - Project
+  - Project Milestone
+  - Project Task/Action
+external_concepts:
+  - CAPA item
+  - Asset
+ubiquitous_language:
+  - Project
+  - milestone
+  - task/action
+  - planned work
+  - capital work
+  - improvement work
+business_rules:
+  - Project status and completion belong to the project lifecycle and must not be inferred from CAPA closure or maintenance work status without an explicit relationship.
+  - A Project is not a CAPA item solely because it may address a problem.
+owner: unresolved
+domain_experts: [Mark]
+integration_surface:
+  - May reference CAPA, assets, or maintenance work without owning those lifecycles.
+upstream_dependencies: []
+downstream_consumers: []
+status: candidate
+provenance:
+  sources:
+    - type: domain-expert
+      reference: Mark direct, 2026-08-10
+      description: Mark placed Project Tracking directly under Operations and rejected an unnecessary Projects / Continuous Improvement grouping.
+    - type: decision
+      reference: DDD-0005
+      description: Existing decision distinguishes Project Tracking from CAPA by trigger and lifecycle.
+  confidence: medium
+  status: candidate
