@@ -1,10 +1,10 @@
 model_state: early strategic DDD — Phase 4 reopened for strategic boundary correction and responsibility discovery before Bounded Context discovery
 current_phase: Phase 4 — discover responsibilities and system ownership one capability at a time; Phase 5 is blocked until material boundaries are sufficiently understood
-last_completed: Mark clarified that ManuFactor does not own or replace a monolithic QMS; QMS-shaped responsibilities may be owned by existing GP systems and must be evaluated individually
-current_focus: Discover Quality/QMS-shaped responsibilities individually, determine existing-system authority vs ManuFactor gap/read/aggregate role, and avoid treating ISO/QMS grouping as a ManuFactor boundary
+last_completed: Product Quality Verification gap captured from Mark direct — checks are ad hoc, unscheduled, target knowledge may be unavailable, and results are not recorded
+current_focus: Continue Quality/QMS-shaped responsibility discovery individually, determine existing-system authority vs ManuFactor gap/read/aggregate role, and avoid treating ISO/QMS grouping as a ManuFactor boundary
 blocking_issues:
   - quality-responsibility-discovery
-next_action: Choose the next high-value Quality/QMS-shaped responsibility, perform a targeted evidence lookup in markstephenguy-bit/ManuFactor-arch and markstephenguy-bit/Manufactor for existing ownership or integration evidence, then ask Mark one domain question only for knowledge the evidence cannot establish. Do not start Phase 5 yet.
+next_action: Choose the next high-value Quality/QMS-shaped responsibility, perform targeted evidence lookup in markstephenguy-bit/ManuFactor-arch and markstephenguy-bit/Manufactor where useful, then ask Mark one domain question only for business knowledge or ownership decisions the evidence cannot establish. Do not start Phase 5 yet.
 files_to_read:
   - docs/ddd/GPT-AUDIT.yaml
   - docs/ddd/AI-COLLABORATION.yaml
@@ -30,5 +30,7 @@ domain_expert_answers:
     answer: Safety Sign-Off, CAPA, and Environmental are separate business responsibilities; CAPA is a quality aspect
   - subject: qms-ownership
     answer: There is no QMS; QMS components may be handled by GP systems such as CMMS, SAP ERP, and others; ManuFactor is a gap filler, current-system reader, and data aggregator; QMS responsibilities must be evaluated individually
+  - subject: product-quality-verification-current-state
+    answer: If someone in a quasi-QC role suspects a lumber quality problem, they may manually measure lumber with a caliper; they may not know the applicable targets; there is no system or schedule for performing the check and no system for recording the result
 session_resume: Read this file and files_to_read from the canonical repository. Strategic domain questions are asked directly by ChatGPT. Prior chat memory and Claude Code state are not required.
 last_direct_update: 2026-08-09
