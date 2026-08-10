@@ -96,19 +96,20 @@ context_candidates:
     name: Asset Lifecycle
     subdomain: subdomain.asset-reliability
     responsibilities:
-      - Represent physical asset identity, current lifecycle/condition state, and relevant history where ManuFactor fills a gap.
-      - Correlate asset information from existing systems without replacing the CMMS lifecycle when it remains authoritative.
-    language_cohesion: Asset, equipment, vehicle, condition, lifecycle state, operational setting/history.
-    model_cohesion: Persistent asset identity and lifecycle are distinct from individual verification/check records.
-    lifecycle_ownership: Candidate owner only for ManuFactor-specific asset state not already authoritative in CMMS; otherwise acts as a translated/read model of external authority.
+      - Represent physical asset identity, meaningful lifecycle/condition state, and retained asset history that MP2 does not provide.
+      - Correlate maintenance work-request/work-order activity from MP2 to the richer ManuFactor asset model without treating MP2 as authoritative for asset-management semantics it does not contain.
+    language_cohesion: Asset, equipment, vehicle, condition, lifecycle state, operational setting/history, work request, work order.
+    model_cohesion: Persistent asset identity, condition, lifecycle, and history form a model distinct from MP2 maintenance transactions and from individual Reliability Verification records.
+    lifecycle_ownership: ManuFactor can own meaningful asset-management state and history because MP2's practical role is limited to posting work requests and work orders against machine assets; MP2 remains authoritative for its own WR/WO records.
     boundary_indicators:
+      - MP2 asset references identify where maintenance work is posted but do not supply a meaningful asset lifecycle model.
       - Reliability Verification evaluates an asset at a checkpoint but does not define the full asset lifecycle.
       - Operations and Quality reference machines/equipment with context-specific meanings without owning asset lifecycle.
     adjacent_contexts: [bc.reliability-verification, bc.kiln-operations, bc.operations-record, bc.quality-verification, bc.project-tracking]
     ambiguities:
       - ISSUE-0003 remains open for Vehicle Management versus Physical Asset Management but does not invalidate this broader candidate context.
-      - Exact split between authoritative external CMMS state and ManuFactor-owned asset state requires Phase 6 ownership challenge.
-    confidence: medium
+      - Later modeling must establish which specific asset states/history are ManuFactor-owned versus merely correlated from MP2 or other sources.
+    confidence: high
     status: candidate
 
   - id: bc.reliability-verification
@@ -119,13 +120,13 @@ context_candidates:
       - Retain AFAL/check verification evidence where ManuFactor owns the gap.
     language_cohesion: AFAL, verification, checkpoint, category-check, known-good state, post-maintenance verification.
     model_cohesion: Verification has a discrete assessment lifecycle and rules distinct from the asset's persistent lifecycle.
-    lifecycle_ownership: Owns verification record lifecycle and verification result semantics; references assets owned by Asset Lifecycle/CMMS.
+    lifecycle_ownership: Owns verification record lifecycle and verification result semantics; references assets owned by Asset Lifecycle and may correlate to MP2 maintenance work.
     boundary_indicators:
-      - A failed verification can affect asset status or trigger corrective work, but the verification record remains its own fact.
+      - A failed verification can affect ManuFactor asset state or trigger corrective/maintenance work, but the verification record remains its own fact.
     adjacent_contexts: [bc.asset-lifecycle, bc.corrective-action, bc.operations-record]
     ambiguities:
-      - The exact business authority for changing asset state as a consequence of failed verification is unresolved and should be challenged in Phase 6.
-    confidence: medium
+      - The exact rule by which a failed verification changes Asset Lifecycle state or generates MP2 work remains to be modeled later.
+    confidence: high
     status: candidate
 
   - id: bc.safety-signoff
