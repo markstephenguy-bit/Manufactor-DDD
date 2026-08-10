@@ -1,0 +1,57 @@
+id: bc.training-competency
+name: Operational Training and Qualification
+purpose: Represent operational training coverage and cross-operator qualification depth needed to keep mill crews capable of performing required jobs.
+subdomain: subdomain.production-operations
+model_statement: Within Operational Training and Qualification, qualification means operationally usable evidence that a person can perform a mill job; source learning completion records from Moodle or other systems are evidence inputs and are not automatically identical to operational qualification.
+responsibilities:
+  - Represent onboarding-related operational training coverage.
+  - Maintain cross-operator training/qualification relationships across crews and jobs.
+  - Show depth of qualified coverage for operational positions.
+  - Consume source learning records without surrendering operational qualification semantics to the source LMS.
+scope:
+  - Onboarding training coverage
+  - Operator qualification
+  - Cross-training matrix
+  - Crew/job qualification depth
+out_of_scope:
+  - LMS course administration
+  - Payroll/HR administration
+  - Time-specific staffing availability and vacation coverage
+owned_concepts:
+  - Operational Qualification
+  - Cross-Training Relationship
+  - Training/Qualification Matrix
+  - Crew Qualification Depth
+external_concepts:
+  - Person
+  - Moodle Training Completion
+  - Job/Position
+ubiquitous_language:
+  - onboarding
+  - operator training
+  - qualification
+  - cross-training
+  - training matrix
+  - crew depth
+  - trained-for
+business_rules:
+  - Operational qualification must be supported by appropriate evidence and remain traceable to that evidence.
+  - Source training completion is not automatically equivalent to operational qualification unless the domain rule says it is.
+  - Availability does not imply qualification.
+owner: unresolved
+domain_experts: [Mark]
+integration_surface:
+  - Consumes learning-completion facts from Moodle or other learning sources.
+  - Supplies qualification/coverage information to Operational Workforce Availability.
+upstream_dependencies:
+  - Moodle or other learning system
+downstream_consumers:
+  - bc.workforce-availability
+status: candidate
+provenance:
+  sources:
+    - type: domain-expert
+      reference: Mark direct, 2026-08-10
+      description: Mark described training across mill activities, onboarding emphasis, and a cross-operator training matrix used to understand crew depth and replacement capability.
+  confidence: high
+  status: candidate
