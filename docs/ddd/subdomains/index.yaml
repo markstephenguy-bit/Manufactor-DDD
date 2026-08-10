@@ -2,84 +2,186 @@ subdomains:
 
   - id: subdomain.safety-compliance-signoff
     name: Safety
-    purpose: Represent Safety business responsibilities where ManuFactor fills gaps, records or supports work, or reads and aggregates information from existing GP systems.
-    capabilities: [cap.safety-compliance-signoff]
+    description: Safety business responsibilities relevant to ManuFactor gap-filling, records, and cross-system information use.
     classification: supporting
-    boundary_rationale: Mark confirmed Safety is a broader mill business area and department; Safety Compliance & Procedure Sign-Off is one known responsibility within it, not the whole domain. Department structure is supporting evidence only, not the DDD boundary definition.
-    evidence: ["domain-expert: Mark, direct, ISSUE-0002", "domain-expert: Mark, direct, 2026-08-10 Safety broader-area confirmation"]
-    confidence: high
+    business_capabilities: [cap.safety-compliance-signoff]
+    business_value: Preserve trustworthy safety work and records where existing GP systems do not fully satisfy the mill need.
+    differentiation: Safety is important to mill operation but the currently known ManuFactor work does not establish proprietary Safety domain knowledge as a principal differentiator.
+    scope:
+      - Safety Compliance & Procedure Sign-Off
+      - Additional Safety gaps discovered later where ManuFactor has a legitimate business role
+    out_of_scope:
+      - Treating the Safety department itself as a software or Bounded Context boundary
+      - Assuming ManuFactor owns Safety responsibilities already authoritative in another GP system
+    domain_experts: [Mark]
+    candidate_bounded_contexts: []
     status: candidate
-    decision_refs: [DDD-0004]
-    issue_refs: []
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, ISSUE-0002 and 2026-08-10
+          description: Mark confirmed Safety as a broader mill business area and Safety Sign-Off as one responsibility within it.
+      confidence: high
+      status: candidate
 
   - id: subdomain.quality
     name: Quality
-    purpose: Represent Quality responsibilities and mill-specific quality knowledge where ManuFactor fills gaps, captures missing records, or reads and aggregates information from existing GP systems.
-    capabilities: [cap.corrective-preventive-action, cap.product-quality-verification]
+    description: Quality responsibilities and mill-specific quality knowledge where ManuFactor fills workflow, recording, verification, correlation, or information gaps.
     classification: core
-    boundary_rationale: Mark confirmed CAPA is a Quality aspect and Product Quality Verification is Quality work. Quality contains mill- and machine/process-specific knowledge, while no ManuFactor-owned monolithic QMS exists and additional Quality responsibilities may remain outside ManuFactor or in other GP systems.
-    evidence: ["domain-expert: Mark, direct, ISSUE-0002", "domain-expert: Mark, direct, QMS ownership clarification", "domain-expert: Mark, direct, 2026-08-09 product-quality evidence", "domain-expert: Mark, direct, 2026-08-10 Quality broader-area confirmation"]
-    confidence: high
+    business_capabilities: [cap.corrective-preventive-action, cap.product-quality-verification]
+    business_value: Make quality problems, verification, corrective work, and contextual mill quality knowledge usable and traceable where existing systems leave gaps.
+    differentiation: Product-quality rules vary by mill, machine, and process context, creating domain-specific knowledge that materially affects how ManuFactor must behave.
+    scope:
+      - Corrective & Preventive Action coordination
+      - Product Quality Verification
+      - Additional Quality gaps discovered later
+    out_of_scope:
+      - Owning a monolithic QMS
+      - Replacing authoritative GP systems merely because Quality consumes their data
+      - Treating ISO 9001 or SPIB organizational boundaries as ManuFactor DDD boundaries
+    domain_experts: [Mark]
+    candidate_bounded_contexts: []
     status: candidate
-    decision_refs: [DDD-0004, DDD-0005]
-    issue_refs: []
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, ISSUE-0002 and 2026-08-09 through 2026-08-10
+          description: Mark identified CAPA as a Quality aspect, established Product Quality Verification as Quality work, and supplied mill/machine/process-specific quality knowledge.
+        - type: decision
+          reference: DDD-0004 and DDD-0005
+          description: Prior QMS-shaped grouping was corrected so responsibilities and external standards do not define boundaries by themselves.
+      confidence: high
+      status: candidate
 
   - id: subdomain.environmental-compliance
     name: Environmental
-    purpose: Represent Environmental business responsibilities where ManuFactor fills compliance/reporting gaps or reads and aggregates information from existing GP systems.
-    capabilities: [cap.environmental-compliance]
+    description: Environmental business responsibilities where ManuFactor fills compliance, record, reporting, or information-access gaps.
     classification: supporting
-    boundary_rationale: Mark confirmed Environmental is a broader business area; Environmental Compliance Reporting is one known responsibility within it and does not exhaust the domain.
-    evidence: ["domain-expert: Mark, direct, ISSUE-0002", "domain-expert: Mark, direct, 2026-08-10 Environmental broader-area confirmation"]
-    confidence: high
+    business_capabilities: [cap.environmental-compliance]
+    business_value: Preserve required environmental compliance information when existing processes or systems do not fully meet the mill need.
+    differentiation: The known work is domain-specific and important but does not currently establish Environmental modeling as a principal ManuFactor differentiator.
+    scope:
+      - Environmental Compliance Reporting
+      - Additional Environmental gaps discovered later
+    out_of_scope:
+      - Treating regulatory or departmental organization as a Bounded Context definition
+      - Assuming ManuFactor owns all environmental compliance work
+    domain_experts: [Mark]
+    candidate_bounded_contexts: []
     status: candidate
-    decision_refs: [DDD-0004]
-    issue_refs: []
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, ISSUE-0002 and 2026-08-10
+          description: Mark confirmed Environmental as a broader business area and Environmental Compliance Reporting as one responsibility within it.
+      confidence: high
+      status: candidate
 
   - id: subdomain.asset-reliability
     name: Maintenance / Reliability
-    purpose: Represent maintenance, asset, and reliability responsibilities relevant to ManuFactor gaps while existing systems such as the CMMS may remain authoritative for operational maintenance work.
-    capabilities: [cap.physical-asset-management, cap.equipment-reliability-verification]
+    description: Maintenance, physical-asset, and reliability responsibilities relevant to ManuFactor gaps while existing systems such as the CMMS may remain operationally authoritative.
     classification: supporting
-    boundary_rationale: Mark confirmed Maintenance/Reliability as the broader business area. ManuFactor may extract, correlate, aggregate, and analyze existing maintenance/reliability data, including novel analysis through tools such as Superset, without taking ownership of CMMS workflows.
-    evidence: [ev.arch.workbook "Status Catalog Mappings", ev.arch.workbook "Rules", "domain-expert: Mark, direct, 2026-08-10 Maintenance/Reliability confirmation", "domain-expert: Mark, direct, 2026-08-10 Superset gap-filler example"]
-    confidence: high
+    business_capabilities: [cap.physical-asset-management, cap.equipment-reliability-verification]
+    business_value: Expose and support reliability information and missing workflows without duplicating the CMMS, including cross-system correlation and novel analysis of existing maintenance data.
+    differentiation: The domain is mill-specific and operationally important, but much of the authoritative maintenance workflow exists in established systems; ManuFactor differentiates mainly by filling the gaps around them.
+    scope:
+      - Physical Asset Management gaps
+      - Equipment Reliability & Compliance Verification gaps
+      - Reading, correlating, aggregating, and analyzing maintenance/reliability data where useful
+    out_of_scope:
+      - Replacing the CMMS as the system of record for operational maintenance work
+      - Creating an Analytics or Superset business Subdomain from tooling choices
+    domain_experts: [Mark]
+    candidate_bounded_contexts: []
     status: candidate
-    decision_refs: []
-    issue_refs: [ISSUE-0003]
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Mark confirmed Maintenance/Reliability as the broader area and described database extraction plus Superset analysis as a representative gap-filling pattern.
+        - type: existing-model
+          reference: ManuFactor-arch workbook Status Catalog Mappings and Rules
+          description: Existing evidence supports physical-asset and equipment-reliability responsibilities.
+      confidence: high
+      status: candidate
 
   - id: subdomain.production-operations
     name: Operations
-    purpose: Represent gaps under mill operations that ManuFactor must fill without implying ownership of ERP, MES, production planning, or production-execution responsibilities already handled elsewhere.
-    capabilities: [cap.kiln-drying-operations, cap.operational-reporting, cap.project-tracking]
+    description: Mill-operating responsibilities and gaps that ManuFactor supports without claiming ownership of ERP, MES, production planning, or production execution already handled elsewhere.
     classification: core
-    boundary_rationale: Mark rejected the ERP-like implication of Production Operations and confirmed Operations as the broader area for mill-operating gaps. Project Tracking stands directly as an Operations capability; Projects / Continuous Improvement is not required as an intermediate domain grouping.
-    evidence: [ev.arch.drawings.mill_hierarchy, ev.arch.workbook "Build Order" Phase_B/B1, "domain-expert: Mark, direct, 2026-08-10 Operations confirmation", "domain-expert: Mark, direct, 2026-08-10 Project Tracking placement correction"]
-    confidence: high
+    business_capabilities: [cap.kiln-drying-operations, cap.operational-reporting, cap.project-tracking]
+    business_value: Fill practical mill-operating gaps and provide operational information or workflows that established systems do not provide adequately.
+    differentiation: Operations is central to ManuFactor's mill-specific problem space and is where many gap-filling workflows and operational knowledge directly support how the mill runs.
+    scope:
+      - Operational Reporting
+      - Kiln Drying Operations gaps
+      - Project Tracking
+      - Additional mill-operating gaps discovered later
+    out_of_scope:
+      - Owning ERP, MES, production planning, or production-execution responsibilities solely because ManuFactor uses related data
+      - Requiring Projects / Continuous Improvement as an intermediate or peer Subdomain
+    domain_experts: [Mark]
+    candidate_bounded_contexts: []
     status: candidate
-    decision_refs: []
-    issue_refs: []
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Mark confirmed Operations as the broader area for operational gaps and placed Project Tracking directly under Operations.
+        - type: existing-model
+          reference: ManuFactor-arch mill hierarchy and Build Order Phase_B/B1
+          description: Existing evidence supports operational reporting and kiln-related responsibilities.
+      confidence: high
+      status: candidate
 
   - id: subdomain.people-workforce
     name: Human Resources
-    purpose: Represent workforce, training, competency, scheduling, and absence-related gaps relevant to ManuFactor while existing HR/workforce systems may remain authoritative for their records and workflows.
-    capabilities: [cap.training-competency, cap.workforce-scheduling]
+    description: Workforce, training, competency, scheduling, and absence-related responsibilities relevant to ManuFactor gaps while existing HR/workforce systems may remain authoritative.
     classification: generic
-    boundary_rationale: Mark confirmed HR as the broader business area. The currently known capabilities are largely standard workforce concerns, with ManuFactor filling gaps or reading existing systems rather than establishing a proprietary HR model.
-    evidence: [ev.arch.workbook "Constraints & Assumptions" A-05, ev.arch.workbook "Constraints & Assumptions" A-06, "domain-expert: Mark, direct, 2026-08-10 HR broader-area confirmation"]
-    confidence: medium
+    business_capabilities: [cap.training-competency, cap.workforce-scheduling]
+    business_value: Make workforce and competency information usable where existing systems leave operational gaps.
+    differentiation: The currently known concerns are largely commodity HR/workforce capabilities; no proprietary Human Resources model has yet been established for ManuFactor.
+    scope:
+      - Training / Competency Records gaps
+      - Workforce Scheduling & Absence gaps
+      - Additional HR gaps discovered later
+    out_of_scope:
+      - Replacing established HR, learning, timekeeping, or workforce systems solely to centralize data in ManuFactor
+    domain_experts: [Mark]
+    candidate_bounded_contexts: []
     status: candidate
-    decision_refs: []
-    issue_refs: []
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Mark confirmed HR as the broader business area.
+        - type: existing-model
+          reference: ManuFactor-arch Constraints & Assumptions A-05 and A-06
+          description: Existing evidence supports training/competency and workforce/absence concerns.
+      confidence: medium
+      status: candidate
 
   - id: subdomain.identity-access
     name: Identity & Access
-    purpose: Shared platform infrastructure for recognizing users and governing access.
-    capabilities: [cap.identity-access]
+    description: Shared platform infrastructure for recognizing users and governing access; retained as a rejected historical candidate so the modeling correction remains explicit.
     classification: generic
-    boundary_rationale: Mark explicitly classified Identity & Access as shared platform infrastructure rather than part of ManuFactor's business-domain map.
-    evidence: [ev.arch.addendum rev 116/117/121/122, ev.arch.workbook "Ports", "domain-expert: Mark, direct, 2026-08-10"]
-    confidence: high
+    business_capabilities: [cap.identity-access]
+    business_value: Enables access control but does not itself constitute a ManuFactor business-domain outcome.
+    differentiation: Commodity platform infrastructure rather than proprietary domain knowledge.
+    scope:
+      - Historical traceability of the rejected candidate
+    out_of_scope:
+      - Active ManuFactor business-domain Subdomain map
+    domain_experts: [Mark]
+    candidate_bounded_contexts: []
     status: rejected
-    decision_refs: [DDD-0002]
-    issue_refs: []
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Mark explicitly classified Identity & Access as shared platform infrastructure rather than a business Subdomain.
+        - type: decision
+          reference: DDD-0002
+          description: Earlier Identity & Access modeling is retained for history but superseded by the domain-expert correction.
+      confidence: high
+      status: rejected
