@@ -1,4 +1,4 @@
-version: 2
+version: 3
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -20,6 +20,18 @@ findings:
     severity: process
     subject: Domain-question ownership
     finding: ChatGPT now owns strategic domain discovery with Mark. Claude Code executes repository changes and must not independently ask Mark strategic questions unless explicitly delegated here.
+  - id: AUDIT-0007
+    severity: domain-correction
+    subject: QMS ownership model
+    finding: Mark states there is no QMS system that ManuFactor owns or replaces. QMS-shaped responsibilities must be evaluated individually because existing GP technology may already own some of them, including CMMS, SAP ERP, and other systems.
+  - id: AUDIT-0008
+    severity: domain-correction
+    subject: ManuFactor system role
+    finding: ManuFactor is a gap filler, current-system reader, and data aggregator. A responsibility appearing in ISO/QMS vocabulary does not imply ManuFactor owns that responsibility or that the responsibilities form one ManuFactor Subdomain or Bounded Context.
+  - id: AUDIT-0009
+    severity: process
+    subject: Evidence-before-question discipline
+    finding: Before ChatGPT asks Mark about a QMS-shaped responsibility, targeted evidence may be gathered from markstephenguy-bit/ManuFactor-arch and markstephenguy-bit/Manufactor to determine whether an existing GP system or previously designed integration already owns, supplies, or constrains that responsibility. Manufactor-DDD remains the canonical DDD source of truth.
 
 required_actions:
   - id: ACTION-0004
@@ -32,17 +44,25 @@ required_actions:
     action: Update SESSION-HANDOFF.yaml after corrections. Phase 5 remains blocked by unresolved strategic Subdomain boundaries that materially affect Bounded Context discovery.
   - id: ACTION-0009
     action: Update SESSION-HANDOFF.yaml to state that ChatGPT asks Mark strategic domain questions and Claude Code waits for GPT-AUDIT instructions rather than asking Mark directly.
+  - id: ACTION-0010
+    action: Record the domain principle that ManuFactor does not own or replace a monolithic QMS. QMS-shaped responsibilities are discovered individually and may be owned by existing GP systems, filled by ManuFactor where a gap exists, read from authoritative systems, aggregated across systems, or remain outside ManuFactor.
+  - id: ACTION-0011
+    action: Review any canonical or decision records that currently imply a single Quality/QMS ownership boundary and weaken or correct them so ISO/QMS grouping is not treated as a ManuFactor Subdomain boundary.
+  - id: ACTION-0012
+    action: Update SESSION-HANDOFF.yaml to authorize targeted evidence lookup in markstephenguy-bit/ManuFactor-arch and markstephenguy-bit/Manufactor before asking Mark a QMS-responsibility question. Do not authorize broad archaeology; lookup must be tied to the specific responsibility under discovery.
 
 next_domain_question:
   owner: chatgpt
-  subject: quality-boundary
-  instruction: Claude Code must not ask this question. ChatGPT will elicit what responsibilities belong to Quality beyond CAPA and then write the resulting repository actions here.
+  subject: quality-responsibility-discovery
+  instruction: Claude Code must not ask a strategic domain question. After these corrections are processed, ChatGPT will inspect targeted evidence in ManuFactor-arch and Manufactor for the next QMS-shaped responsibility, then ask Mark only for business knowledge or ownership decisions not established by that evidence.
 
 do_not_do:
   - do not create Bounded Contexts yet
   - do not reinterpret separate responsibilities as separate Subdomains
   - do not ask Mark strategic domain questions
   - do not treat ISO 9001 as a DDD boundary definition
-  - do not gather broad repository evidence unless explicitly instructed
+  - do not model a monolithic QMS as a ManuFactor-owned system or boundary
+  - do not assume ManuFactor owns a responsibility merely because it must display, read, correlate, or aggregate its data
+  - do not gather broad repository evidence; targeted evidence lookup for the current responsibility is allowed
 
 processed_commit: null
