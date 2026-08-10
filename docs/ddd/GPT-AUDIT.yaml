@@ -1,61 +1,35 @@
-version: 17
-status: pending
+version: 18
+status: processed
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
 
-findings:
-  - id: AUDIT-0026
-    severity: strategic-consolidation
-    subject: Phase 4 whole-domain map
-    finding: ChatGPT completed a whole-domain Phase 4 consolidation under ManuFactor_DDD_Modeling_Specification.docx rather than continuing capability-by-capability interrogation. The active candidate business Subdomains are Operations, Quality, Maintenance / Reliability, Safety, Environmental, and Human Resources.
-  - id: AUDIT-0027
-    severity: strategic-correction
-    subject: Operations scope
-    finding: Operations represents ManuFactor gaps under mill operations, not ERP/MES/production-execution ownership. cap.project-tracking belongs directly under Operations; Projects / Continuous Improvement is not a required intermediate or peer Subdomain.
-  - id: AUDIT-0028
-    severity: strategic-correction
-    subject: non-domain infrastructure and tooling
-    finding: Identity & Access is shared platform infrastructure and subdomain.identity-access is rejected as a business Subdomain. Superset/analytics and reusable platform mechanisms must not become peer business Subdomains merely because ManuFactor uses them.
-  - id: AUDIT-0029
-    severity: strategic-classification
-    subject: candidate classifications
-    finding: The consolidated map currently classifies Operations and Quality as core candidates; Safety, Environmental, and Maintenance / Reliability as supporting candidates; Human Resources as generic candidate. These classifications are Phase 4 recommendations based on differentiation/proprietary-domain-knowledge criteria from the specification and remain challengeable until later evidence warrants confirmation.
-  - id: AUDIT-0030
-    severity: structural-correction
-    subject: top-level Domain record
-    finding: The repository lacked the specification-required single top-level Domain record. ChatGPT created docs/ddd/domain/domain.yaml from Mark's established domain evidence: ManuFactor is a gap filler, existing-system reader, data aggregator, and analytical enabler that must not duplicate established system ownership unnecessarily.
-  - id: AUDIT-0031
-    severity: phase-readiness
-    subject: Phase 4 blockers
-    finding: No known domain-expert question currently blocks completion of the Phase 4 strategic map. ISSUE-0003 about Vehicle Management versus Physical Asset Management remains nonblocking and does not change the current Maintenance / Reliability Subdomain placement.
+completion:
+  summary: Phase 4 whole-domain strategic consolidation and validation completed.
+  completed_actions:
+    - Canonical top-level Domain record exists and follows the normative specification.
+    - Canonical Subdomain records were aligned to the normative specification schema.
+    - Active candidate business Subdomains are Operations, Quality, Maintenance / Reliability, Safety, Environmental, and Human Resources.
+    - Project Tracking is directly under Operations; Projects / Continuous Improvement is not a peer or required intermediate Subdomain.
+    - Identity & Access is rejected from the business-domain Subdomain map and retained only as shared platform infrastructure/history.
+    - Every non-rejected discovered business capability is represented by exactly one active candidate Subdomain.
+    - Phase 4 validation report was created at docs/ddd/reports/validation-report.md.
+    - SESSION-HANDOFF.yaml was advanced to Phase 5 Bounded Context discovery.
+  validation_result: PASS WITH WARNINGS
+  phase_5_ready: true
+  strategic_stable: false
+  remaining_nonblocking_issue: ISSUE-0003
 
-required_actions:
-  - id: ACTION-0033
-    action: Audit active DDD artifacts for stale strategic names and relationships after the consolidation. Remove or correct active references that still treat Safety Compliance & Procedure Sign-Off, Environmental Compliance Reporting, Asset & Reliability, Production Operations, People & Workforce, Projects / Continuous Improvement, or Identity & Access as the current peer Subdomain names/placements. Preserve historical decision evidence rather than rewriting history.
-  - id: ACTION-0034
-    action: Validate docs/ddd/domain/domain.yaml and docs/ddd/subdomains/index.yaml against the repository's current fixed schema/notation discipline and ManuFactor DDD specification. Do not invent new fields solely to make files look more complete.
-  - id: ACTION-0035
-    action: Check capability coverage mechanically: every non-rejected capability in discovery/capability-candidates.yaml must be represented by exactly one active candidate Subdomain unless explicitly cross-domain or unresolved. Identity & Access remains rejected infrastructure.
-  - id: ACTION-0036
-    action: Update supporting discovery material only where necessary to preserve Mark's already-recorded 2026-08-10 evidence and the final direct placement of Project Tracking under Operations. Do not resume broad evidence archaeology.
-  - id: ACTION-0037
-    action: Produce or update the validation report required by the specification, explicitly distinguishing Phase 4 strategic-map validation from future Bounded Context/tactical validation. Record any remaining warnings or failures rather than claiming the DDD is complete.
-  - id: ACTION-0038
-    action: Update SESSION-HANDOFF.yaml only if the validation pass changes current readiness. If no material Phase 4 blocker is found, record Phase 4 as sufficiently complete to begin Phase 5 Bounded Context discovery.
-
-next_domain_question:
+next_domain_work:
   owner: chatgpt
-  subject: none-currently-blocking
-  instruction: Do not ask Mark another strategic question merely to continue discovery. Ask only if the whole-map validation exposes a material ambiguity that cannot be resolved from existing evidence and would change Phase 5 semantic-boundary work.
+  phase: Phase 5 — Bounded Context Discovery
+  instruction: Conduct a whole-map semantic-boundary discovery/challenge pass. Do not map departments, applications, modules, databases, or systems directly to Bounded Contexts. Ask Mark only when ambiguity materially affects concept meaning, authority, or boundary placement.
 
 do_not_do:
-  - do not return to small capability-by-capability questioning as the default Phase 4 method
-  - do not create Projects / Continuous Improvement as a peer Subdomain or required layer under Operations
+  - do not replay Phase 4 capability-by-capability interrogation
+  - do not restore Projects / Continuous Improvement as a Subdomain
   - do not restore Identity & Access as a business Subdomain
-  - do not create Analytics/Superset as a business Subdomain from tooling evidence
-  - do not infer ManuFactor ownership from data access, reporting, correlation, aggregation, or analysis
-  - do not treat organizational departments or existing applications as Bounded Contexts
-  - do not start tactical DDD modeling
-  - do not claim the entire ManuFactor DDD is complete
+  - do not create Analytics or Superset as a business Subdomain
+  - do not infer ManuFactor ownership merely from reading, reporting, aggregating, correlating, or analyzing external-system data
+  - do not begin tactical aggregate/entity modeling before semantic Bounded Context discovery provides a justified boundary
 
-processed_commit: null
+processed_commit: ed0cade02bcaadd0d788194ae9c2cdc2fe882b8d
