@@ -84,6 +84,16 @@ terms:
     questions: []
     status: candidate
 
+  - term: Nonconformity / Correction / Corrective Action (ISO 9001:2015 clause 10.2)
+    observed_meanings:
+      - meaning: "Nonconformity: any failure to meet a requirement (customer, regulatory, ISO 9001, or the organization's own procedure). Correction: immediate action to eliminate a detected nonconformity. Corrective Action: action to eliminate the nonconformity's root cause, to prevent recurrence — distinct from Correction. Standalone 'Preventive Action' was folded into risk-based thinking (clause 6.1) in the 2015 revision, not kept as a separate CAPA step."
+        sources: ["external-standard: ISO 9001:2015 clause 10.2"]
+    possible_contexts: [Quality/CAPA]
+    ambiguities:
+      - "Not yet confirmed whether GP's real ManuFactor CAPA usage matches this nonconformity-driven definition, or is used more broadly."
+    questions: []
+    status: candidate
+
   - term: CAPA
     observed_meanings:
       - meaning: "Corrective and Preventive Action — a capability that dispatches corrective-action work items to whichever system already owns that class of work (e.g. CMMS for assets), not a domain hub of its own."

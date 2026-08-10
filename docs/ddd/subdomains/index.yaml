@@ -18,7 +18,7 @@ subdomains:
     capabilities: [cap.corrective-preventive-action]
     classification: core
     boundary_rationale: Confirmed separate by Mark direct — "CAPA is a quality aspect."
-    evidence: ["domain-expert: Mark, direct, ISSUE-0002"]
+    evidence: ["domain-expert: Mark, direct, ISSUE-0002", "external-standard: ISO 9001:2015 clause 10.2"]
     confidence: high
     status: confirmed
     decision_refs: [DDD-0004]
