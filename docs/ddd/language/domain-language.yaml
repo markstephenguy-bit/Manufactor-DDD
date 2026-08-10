@@ -1,0 +1,100 @@
+language_terms:
+  - id: language.domain.manufactor-gap
+    term: ManuFactor Gap
+    context: domain.manufactor
+    definition: A business-process, information, record, coordination, analysis, or control need that is not adequately satisfied by existing GP systems and for which ManuFactor has a legitimate role.
+    business_meaning: Defines why ManuFactor exists without implying that every adjacent business responsibility or source system becomes ManuFactor-owned.
+    synonyms: [gap]
+    discouraged_synonyms: [module, missing application, replacement system]
+    examples:
+      - Excel-based kiln scheduling that lacks retained operational history
+      - Vacation/crew coverage planning that is not adequately software represented
+      - Correlating ProTrack moisture facts to kiln history for drying-performance understanding
+    counterexamples:
+      - Replacing MP2 merely because ManuFactor reads its work orders
+      - Creating a separate Analytics Subdomain because Superset is used
+    related_concepts: [Source Authority, External Source Fact]
+    ambiguities: []
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-09 through 2026-08-10
+          description: Mark repeatedly defined ManuFactor as a gap filler, current-system reader, data aggregator, and analytical enabler.
+      confidence: high
+      status: candidate
+
+  - id: language.domain.source-authority
+    term: Source Authority
+    context: domain.manufactor
+    definition: The context or external system that remains authoritative for the meaning and lifecycle of a fact it owns, even when ManuFactor consumes, correlates, displays, or interprets that fact.
+    business_meaning: Prevents data consumption from being mistaken for domain ownership.
+    synonyms: [authoritative source]
+    discouraged_synonyms: [system of record when used without semantic clarification]
+    examples:
+      - ProTrack is source authority for the planer moisture measurements it records
+      - MP2 is source authority for its WR/WO transaction records
+      - Learning systems remain source authority for their course-completion records
+    counterexamples:
+      - Assuming MP2 owns ManuFactor Asset Condition because it references the same machine
+      - Assuming ProTrack owns Kiln Operations because its moisture data is used in a kiln dashboard
+    related_concepts: [External Source Fact, Translation Boundary]
+    ambiguities: []
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Current systems retain authority for the facts they actually own while ManuFactor fills semantic and operational gaps around them.
+      confidence: high
+      status: candidate
+
+  - id: language.domain.external-source-fact
+    term: External Source Fact
+    context: domain.manufactor
+    definition: A fact consumed from an existing external system whose source meaning and provenance must be preserved when ManuFactor uses it.
+    business_meaning: Allows ManuFactor to correlate and interpret existing data without silently rewriting or absorbing its original authority.
+    synonyms: [source fact]
+    discouraged_synonyms: [local domain state]
+    examples:
+      - A ProTrack moisture measurement
+      - An MP2 work order
+      - A learning-system course completion
+      - An HR/timekeeping absence fact
+    counterexamples:
+      - A ManuFactor-owned Operational Coverage decision
+      - A ManuFactor-owned Asset Condition state
+    related_concepts: [Source Authority, Translation Boundary]
+    ambiguities: []
+    status: candidate
+    provenance:
+      sources:
+        - type: decision
+          reference: Phase 7 Context Map
+          description: Cross-context contracts preserve external authority while allowing local semantic interpretation.
+      confidence: high
+      status: candidate
+
+  - id: language.domain.translation-boundary
+    term: Translation Boundary
+    context: domain.manufactor
+    definition: The semantic boundary at which a consumed concept is converted into the receiving context's meaning without pretending the two contexts share one model.
+    business_meaning: Protects local domain meaning when external or adjacent-context terminology differs.
+    synonyms: [semantic translation]
+    discouraged_synonyms: [data mapping when semantic change is involved]
+    examples:
+      - Translating ProTrack measurement identity into Kiln Operations drying-performance correlation
+      - Interpreting learning completion as evidence toward Operational Qualification
+      - Treating a Failed Quality Check as distinct from a Corrective Action Nonconformity until an explicit rule transitions it
+    counterexamples:
+      - Renaming a database column with no change in business meaning
+    related_concepts: [Source Authority, External Source Fact]
+    ambiguities: []
+    status: candidate
+    provenance:
+      sources:
+        - type: existing-model
+          reference: docs/ddd/context-map/context-map.yaml
+          description: Phase 7 established explicit semantic translation requirements across significant boundaries.
+      confidence: high
+      status: candidate
