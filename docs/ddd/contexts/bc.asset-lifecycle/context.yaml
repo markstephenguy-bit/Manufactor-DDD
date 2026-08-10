@@ -1,0 +1,60 @@
+id: bc.asset-lifecycle
+name: Asset Lifecycle
+purpose: Provide the meaningful asset identity, condition, lifecycle, and retained history that MP2 does not provide while correlating MP2 maintenance work to those assets.
+subdomain: subdomain.asset-reliability
+model_statement: Within Asset Lifecycle, an Asset has ManuFactor-owned identity, condition, lifecycle state, and history semantics; MP2 work requests/work orders are external maintenance transactions associated to the asset and do not define its full lifecycle model.
+responsibilities:
+  - Represent physical asset identity and meaningful lifecycle/condition state.
+  - Retain asset history and operational-setting history where needed.
+  - Correlate MP2 work requests/work orders to assets.
+  - Expose asset identity/state to Operations, Quality, and Reliability Verification without transferring lifecycle ownership.
+scope:
+  - Physical asset identity
+  - Asset condition and lifecycle state
+  - Retained asset history
+  - Correlation to MP2 WR/WO activity
+out_of_scope:
+  - Ownership of MP2 work-request/work-order lifecycle
+  - Reliability verification/checkpoint lifecycle
+  - Treating MP2 asset references as the complete asset-management model
+owned_concepts:
+  - Asset
+  - Asset Condition
+  - Asset Lifecycle State
+  - Asset History
+  - Operational Setting History
+external_concepts:
+  - MP2 Work Request
+  - MP2 Work Order
+ubiquitous_language:
+  - asset
+  - equipment
+  - vehicle
+  - condition
+  - lifecycle state
+  - asset history
+  - operational setting
+business_rules:
+  - MP2 WR/WO records remain authoritative for their own maintenance-transaction lifecycle.
+  - ManuFactor asset state/history must not be silently derived from MP2 transaction status unless an explicit domain rule establishes that effect.
+  - Reliability Verification may influence asset state only through explicit cross-context rules.
+owner: unresolved
+domain_experts: [Mark]
+integration_surface:
+  - Correlates MP2 WR/WO records to assets.
+  - Supplies asset identity/state references to Operations, Quality, Kiln Operations, and Reliability Verification.
+upstream_dependencies:
+  - MP2 maintenance system
+downstream_consumers:
+  - bc.reliability-verification
+  - bc.kiln-operations
+  - bc.quality-verification
+  - bc.operations-record
+status: candidate
+provenance:
+  sources:
+    - type: domain-expert
+      reference: Mark direct, 2026-08-10
+      description: Mark clarified that MP2 contains no meaningful asset management beyond posting WR/WO to machine assets, leaving meaningful asset lifecycle semantics as a ManuFactor gap.
+  confidence: high
+  status: candidate
