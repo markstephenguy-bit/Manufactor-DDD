@@ -1,0 +1,62 @@
+id: bc.workforce-availability
+name: Operational Workforce Availability
+purpose: Plan and understand operational staffing coverage across vacations, absences, crews, and shifts using both availability and qualification information.
+subdomain: subdomain.production-operations
+model_statement: Within Operational Workforce Availability, coverage means that a person is both available for the required time and qualified for the required job; HR/timekeeping absence facts are inputs and do not themselves determine operational replacement readiness.
+responsibilities:
+  - Represent vacation scheduling where no adequate software process exists.
+  - Represent crew/shift availability for mill operations.
+  - Identify qualified replacement options when an operator is absent.
+  - Preserve operational staffing-gap and coverage decisions without rewriting HR/timekeeping source records.
+scope:
+  - Vacation scheduling for operational coverage
+  - Crew/shift availability
+  - Sick-call replacement readiness
+  - Staffing-gap and coverage planning
+out_of_scope:
+  - Payroll or leave administration
+  - Source HR/timekeeping absence-record ownership
+  - Defining operational qualification itself
+owned_concepts:
+  - Operational Availability
+  - Staffing Gap
+  - Replacement Option
+  - Operational Coverage Plan
+  - Vacation Coverage Plan
+external_concepts:
+  - Person
+  - HR/Timekeeping Absence Fact
+  - Operational Qualification
+  - Crew
+  - Shift
+ubiquitous_language:
+  - vacation
+  - absence
+  - available
+  - replacement operator
+  - coverage
+  - staffing gap
+  - crew
+  - shift
+business_rules:
+  - A proposed replacement must be available for the required time and sufficiently qualified for the job.
+  - Operational coverage decisions must not rewrite authoritative HR/timekeeping absence records.
+  - Qualification is consumed from Operational Training and Qualification rather than inferred from availability.
+owner: unresolved
+domain_experts: [Mark]
+integration_surface:
+  - Consumes personnel/absence facts from HR or timekeeping sources.
+  - Consumes qualification/coverage facts from Operational Training and Qualification.
+upstream_dependencies:
+  - bc.training-competency
+  - HR/timekeeping source systems
+downstream_consumers:
+  - Mill Operations
+status: candidate
+provenance:
+  sources:
+    - type: domain-expert
+      reference: Mark direct, 2026-08-10
+      description: Mark described unsystematized vacation scheduling and the need to know which qualified operator can cover a position when someone calls in sick.
+  confidence: high
+  status: candidate
