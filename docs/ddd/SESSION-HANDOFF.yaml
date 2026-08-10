@@ -1,11 +1,11 @@
-model_state: early strategic DDD — Phase 4 reopened for strategic boundary correction and responsibility discovery before Bounded Context discovery
-current_phase: Phase 4 — discover responsibilities and system ownership one capability at a time; Phase 5 is blocked until material boundaries are sufficiently understood
-last_completed: Product Quality Verification refined — applicable quality targets vary by mill and relevant machine/process context
-current_focus: Continue Quality/QMS-shaped responsibility discovery individually, determine existing-system authority vs ManuFactor gap/read/aggregate role, and avoid treating ISO/QMS grouping as a ManuFactor boundary
-blocking_issues:
-  - quality-responsibility-discovery
-next_action: Continue Product Quality Verification discovery by determining who defines/maintains the mill- and machine-specific targets and whether those targets exist in any authoritative source. Then continue to the next Quality responsibility. Do not start Phase 5 yet.
+model_state: strategic DDD — Phase 4 whole-domain subdomain consolidation completed; cross-file validation and readiness check remain before Phase 5
+current_phase: Phase 4 — whole-domain strategic map consolidated under the normative DDD specification; no known blocking domain question remains
+last_completed: Whole-domain candidate Subdomain map consolidated from current capabilities and Mark's 2026-08-10 domain answers
+current_focus: Validate the consolidated Phase 4 map for completeness, classification support, stale cross-file references, and consistency; then determine readiness for Phase 5 Bounded Context discovery
+blocking_issues: []
+next_action: Perform the Phase 4 completeness/consistency audit across canonical and supporting DDD artifacts. If no material semantic boundary is missing, close Phase 4 as sufficiently complete and begin Phase 5 Bounded Context discovery under the specification. Do not return to capability-by-capability interrogation unless a material boundary question requires it.
 files_to_read:
+  - docs/ddd/SPECIFICATION.md
   - docs/ddd/GPT-AUDIT.yaml
   - docs/ddd/AI-COLLABORATION.yaml
   - docs/ddd/issues/unresolved.yaml
@@ -21,18 +21,61 @@ execution_model:
   claude_code: optional execution agent for local operations, broad mechanical edits, builds, tests, scripts, or unavailable GitHub operations
 recent_decisions:
   - DDD-0001: original Quality and Compliance split; superseded
-  - DDD-0002: Identity and Access naming
+  - DDD-0002: Identity and Access naming; current strategic placement rejected as business Subdomain because Mark classifies it as shared platform infrastructure
   - DDD-0003: walked back the original Quality and Compliance split
-  - DDD-0004: prior promotion of Safety, Quality/CAPA, and Environmental to confirmed subdomains is under correction because Mark confirmed separate responsibilities, not separate subdomains
+  - DDD-0004: separate responsibilities do not by themselves establish separate Subdomains
   - DDD-0005: CAPA vocabulary and trigger clarified; ISO semantics are not a DDD boundary definition
-domain_expert_answers:
-  - subject: business-responsibility-separation
-    answer: Safety Sign-Off, CAPA, and Environmental are separate business responsibilities; CAPA is a quality aspect
-  - subject: qms-ownership
-    answer: There is no QMS; QMS components may be handled by GP systems such as CMMS, SAP ERP, and others; ManuFactor is a gap filler, current-system reader, and data aggregator; QMS responsibilities must be evaluated individually
-  - subject: product-quality-verification-current-state
-    answer: If someone in a quasi-QC role suspects a lumber quality problem, they may manually measure lumber with a caliper; they may not know the applicable targets; there is no system or schedule for performing the check and no system for recording the result
-  - subject: product-quality-target-context
-    answer: Quality targets differ mill to mill because they are relative to the machines in the different parts of each mill
-session_resume: Read this file and files_to_read from the canonical repository. Strategic domain questions are asked directly by ChatGPT. Prior chat memory and Claude Code state are not required.
-last_direct_update: 2026-08-09
+strategic_map:
+  - name: Operations
+    id: subdomain.production-operations
+    status: candidate
+    known_capabilities: [cap.kiln-drying-operations, cap.operational-reporting, cap.project-tracking]
+    classification: core
+  - name: Quality
+    id: subdomain.quality
+    status: candidate
+    known_capabilities: [cap.corrective-preventive-action, cap.product-quality-verification]
+    classification: core
+  - name: Maintenance / Reliability
+    id: subdomain.asset-reliability
+    status: candidate
+    known_capabilities: [cap.physical-asset-management, cap.equipment-reliability-verification]
+    classification: supporting
+  - name: Safety
+    id: subdomain.safety-compliance-signoff
+    status: candidate
+    known_capabilities: [cap.safety-compliance-signoff]
+    classification: supporting
+  - name: Environmental
+    id: subdomain.environmental-compliance
+    status: candidate
+    known_capabilities: [cap.environmental-compliance]
+    classification: supporting
+  - name: Human Resources
+    id: subdomain.people-workforce
+    status: candidate
+    known_capabilities: [cap.training-competency, cap.workforce-scheduling]
+    classification: generic
+excluded_from_business_subdomain_map:
+  - name: Identity & Access
+    id: subdomain.identity-access
+    reason: Mark identifies it as shared platform infrastructure
+  - name: Projects / Continuous Improvement
+    reason: Mark states no intermediate grouping is needed; Project Tracking stands directly under Operations
+  - name: Analytics
+    reason: Superset/data-analysis examples are gap-filling mechanisms within business domains, not evidence of a separate Analytics Subdomain
+important_domain_facts:
+  - ManuFactor is a gap filler, current-system reader, data aggregator, and analytical enabler around existing GP systems; reading or analyzing data does not imply ownership of the source business workflow
+  - There is no ManuFactor-owned monolithic QMS
+  - Quality contains CAPA and Product Quality Verification; additional Quality responsibilities may remain open without blocking strategic progress
+  - Product Quality Verification uses contextual mill/machine/process targets; finished planed sizes use standard market sizes and SPIB monitors finished sizes
+  - Safety, Environmental, and HR are broader business areas; currently known capabilities do not exhaust them
+  - Maintenance/Reliability remains a business domain even where CMMS owns operational maintenance workflows
+  - Operations means gaps under mill operations and must not imply ERP/MES/production-execution ownership
+  - Project Tracking belongs directly under Operations; Projects / Continuous Improvement is not required as a separate grouping
+specification_authority:
+  source_document: ManuFactor_DDD_Modeling_Specification.docx
+  repository_specification: docs/ddd/SPECIFICATION.md
+  rule: Establish the whole-domain strategic map first; request domain input only for unresolved decisions that materially affect semantic boundaries or domain meaning
+session_resume: Read the normative specification first, then this handoff and listed files. Continue with whole-map validation, not small capability-by-capability questioning.
+last_direct_update: 2026-08-10
