@@ -1,4 +1,4 @@
-version: 1
+version: 2
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -7,7 +7,7 @@ findings:
   - id: AUDIT-0003
     severity: correction
     subject: ISSUE-0002 interpretation
-    finding: Mark confirmed Safety Sign-Off, CAPA, and Environmental are separate business responsibilities. He did not confirm that each responsibility is a separate Subdomain. The current three confirmed Subdomain records overstate the domain-expert answer.
+    finding: Mark confirmed Safety Sign-Off, CAPA, and Environmental are separate business responsibilities. He did not confirm that each responsibility is a separate Subdomain. The current confirmed Subdomain records overstate the domain-expert answer.
   - id: AUDIT-0004
     severity: correction
     subject: CAPA domain placement
@@ -15,33 +15,34 @@ findings:
   - id: AUDIT-0005
     severity: correction
     subject: ISO 9001 semantics
-    finding: ISO 9001:2015 places corrective action within the Quality Management System and uses risk-based thinking for prevention. Treat ISO as supporting vocabulary/rules for Quality, not as evidence that CAPA and Project Tracking define separate Subdomains.
+    finding: Treat ISO 9001 as supporting Quality vocabulary/rules, not as a DDD boundary definition and not as evidence for the Project Tracking boundary.
   - id: AUDIT-0006
     severity: process
-    subject: Phase 5 readiness
-    finding: Do not start Bounded Context discovery from falsely confirmed Subdomain boundaries. First restore uncertainty at the Subdomain level while retaining Mark's confirmed capability/business-responsibility facts.
+    subject: Domain-question ownership
+    finding: ChatGPT now owns strategic domain discovery with Mark. Claude Code executes repository changes and must not independently ask Mark strategic questions unless explicitly delegated here.
 
 required_actions:
   - id: ACTION-0004
-    action: Change Safety Compliance & Procedure Sign-Off, Quality-CAPA, and Environmental Compliance from confirmed Subdomains back to candidate or unresolved strategic placement unless there is separate domain-expert evidence establishing each as a Subdomain boundary. Do not discard Mark's confirmation that the responsibilities themselves are separate.
+    action: Change Safety Compliance & Procedure Sign-Off, Quality-CAPA, and Environmental Compliance from confirmed Subdomains back to candidate or unresolved strategic placement unless separate domain-expert evidence establishes each Subdomain boundary. Preserve Mark's confirmation that these are separate business responsibilities.
   - id: ACTION-0005
-    action: Record CAPA as belonging to the Quality domain area/aspect. Do not name the Subdomain "Quality — Corrective & Preventive Action" as though CAPA exhausts Quality. Represent CAPA as a capability/process within a candidate Quality domain area until the broader Quality boundary is elicited.
-  - id: ACTION-0006
-    action: Re-open the strategic question at the correct abstraction level: what other responsibilities belong to Quality besides CAPA, and what defines the Quality boundary? Do not ask whether CAPA is distinct from Project Tracking again.
+    action: Record CAPA as belonging to the Quality domain area/aspect. Do not name a Subdomain "Quality — Corrective & Preventive Action" as though CAPA exhausts Quality. Represent CAPA as a capability/process within a candidate Quality domain area until ChatGPT elicits the broader Quality boundary from Mark.
   - id: ACTION-0007
-    action: Keep Project Tracking distinct as a capability candidate based on Mark's Quality/CAPA clarification, but do not claim ISO 9001 itself establishes the Project Tracking boundary.
+    action: Keep Project Tracking distinct as a capability candidate, but do not claim ISO 9001 establishes its boundary.
   - id: ACTION-0008
-    action: Update SESSION-HANDOFF.yaml after corrections. Phase 5 remains blocked only by unresolved strategic Subdomain boundaries that materially affect Bounded Context discovery.
+    action: Update SESSION-HANDOFF.yaml after corrections. Phase 5 remains blocked by unresolved strategic Subdomain boundaries that materially affect Bounded Context discovery.
+  - id: ACTION-0009
+    action: Update SESSION-HANDOFF.yaml to state that ChatGPT asks Mark strategic domain questions and Claude Code waits for GPT-AUDIT instructions rather than asking Mark directly.
 
 next_domain_question:
-  issue: quality-boundary
-  instruction: Ask Mark one concise question aimed at identifying the broader Quality domain boundary, not CAPA usage. Example intent: "Besides CAPA, what Quality responsibilities do you expect ManuFactor to own or support?"
+  owner: chatgpt
+  subject: quality-boundary
+  instruction: Claude Code must not ask this question. ChatGPT will elicit what responsibilities belong to Quality beyond CAPA and then write the resulting repository actions here.
 
 do_not_do:
   - do not create Bounded Contexts yet
-  - do not reinterpret "separate responsibilities" as "separate Subdomains"
-  - do not ask Mark again how CAPA is used relative to projects
+  - do not reinterpret separate responsibilities as separate Subdomains
+  - do not ask Mark strategic domain questions
   - do not treat ISO 9001 as a DDD boundary definition
-  - do not gather broad repository evidence before asking the domain question
+  - do not gather broad repository evidence unless explicitly instructed
 
 processed_commit: null
