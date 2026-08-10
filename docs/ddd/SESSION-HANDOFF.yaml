@@ -1,18 +1,25 @@
-model_state: strategic DDD — Phase 5 whole-map Bounded Context discovery completed at candidate level; Phase 6 boundary challenge started across all candidates
-current_phase: Phase 6 — challenge candidate Bounded Contexts for semantic cohesion, ownership, lifecycle, and external-system boundaries
-last_completed: Whole-map candidate Bounded Context discovery and first boundary challenge across all six active Subdomains
-current_focus: Resolve only material ownership ambiguities that can change whether a candidate is a true ManuFactor Bounded Context versus an external/read-model concern
-blocking_issues:
-  - kiln-operation-authority
-next_action: Ask Mark the single material question about kiln-operation authority. Do not ask about CMMS/HR source mechanics unless their ownership ambiguity becomes material to confirming a boundary. After that answer, update the candidate set and continue Phase 6 whole-map challenge.
+model_state: strategic DDD — Phase 5 Bounded Context discovery and Phase 6 whole-map boundary challenge completed at candidate level; ten supported candidate contexts are now canonical
+current_phase: Phase 7 — Context Map discovery
+last_completed: Canonical candidate Bounded Context records created for all currently supported ManuFactor semantic boundaries; Environmental Compliance deferred for lack of a concrete gap
+current_focus: Map semantic influence, upstream/downstream direction, translation requirements, and integration contracts among candidate contexts and external systems without inferring DDD relationship patterns from runtime call direction
+blocking_issues: []
+next_action: Build the whole candidate Context Map. Start with known relationships: ProTrack -> Kiln Operations; MP2 -> Asset Lifecycle; Asset Lifecycle <-> Reliability Verification semantics; Quality Verification -> Corrective Action when an explicit Nonconformity transition applies; Operational Training and Qualification -> Operational Workforce Availability; and references from Operations Record without transferring ownership. Mark unknown patterns as unresolved rather than guessing.
 files_to_read:
   - docs/ddd/SPECIFICATION.md
-  - docs/ddd/reports/validation-report.md
   - docs/ddd/discovery/context-candidates.yaml
   - docs/ddd/discovery/boundary-challenge.yaml
-  - docs/ddd/issues/unresolved.yaml
-  - docs/ddd/discovery/capability-candidates.yaml
   - docs/ddd/subdomains/index.yaml
+  - docs/ddd/contexts/bc.operations-record/context.yaml
+  - docs/ddd/contexts/bc.kiln-operations/context.yaml
+  - docs/ddd/contexts/bc.project-tracking/context.yaml
+  - docs/ddd/contexts/bc.quality-verification/context.yaml
+  - docs/ddd/contexts/bc.corrective-action/context.yaml
+  - docs/ddd/contexts/bc.asset-lifecycle/context.yaml
+  - docs/ddd/contexts/bc.reliability-verification/context.yaml
+  - docs/ddd/contexts/bc.safety-signoff/context.yaml
+  - docs/ddd/contexts/bc.training-competency/context.yaml
+  - docs/ddd/contexts/bc.workforce-availability/context.yaml
+  - docs/ddd/issues/unresolved.yaml
 repository_roles:
   canonical: markstephenguy-bit/Manufactor-DDD
   evidence:
@@ -21,49 +28,42 @@ repository_roles:
 execution_model:
   chatgpt: DDD/domain-discovery lead and normal GitHub repository editor
   claude_code: optional execution agent for local operations, broad mechanical edits, builds, tests, scripts, or unavailable GitHub operations
-strategic_map:
-  - name: Operations
-    id: subdomain.production-operations
-    candidate_bounded_contexts: [bc.operations-record, bc.kiln-operations, bc.project-tracking]
-  - name: Quality
-    id: subdomain.quality
-    candidate_bounded_contexts: [bc.quality-verification, bc.corrective-action]
-  - name: Maintenance / Reliability
-    id: subdomain.asset-reliability
-    candidate_bounded_contexts: [bc.asset-lifecycle, bc.reliability-verification]
-  - name: Safety
-    id: subdomain.safety-compliance-signoff
-    candidate_bounded_contexts: [bc.safety-signoff]
-  - name: Environmental
-    id: subdomain.environmental-compliance
-    candidate_bounded_contexts: [bc.environmental-compliance]
-  - name: Human Resources
-    id: subdomain.people-workforce
-    candidate_bounded_contexts: [bc.training-competency, bc.workforce-availability]
-bounded_context_discovery:
-  candidate_count: 11
-  strong_candidates: [bc.operations-record, bc.project-tracking, bc.quality-verification, bc.corrective-action, bc.reliability-verification, bc.safety-signoff, bc.environmental-compliance]
-  ownership_challenge_candidates: [bc.kiln-operations, bc.asset-lifecycle, bc.training-competency, bc.workforce-availability]
-  important_boundary_findings:
-    - Subdomains do not map one-to-one to Bounded Contexts.
-    - Quality Verification and Corrective Action have distinct language, triggers, and lifecycle and should remain separate candidates.
-    - Project Tracking is distinct from Corrective Action because planned/improvement work is not inherently Nonconformity-driven.
-    - Asset Lifecycle and Reliability Verification are distinct candidate models: persistent asset state versus discrete verification evidence.
-    - Training/Competency and Workforce Availability are distinct semantics even if both consume HR systems.
-    - Safety Sign-Off and Environmental Compliance each currently form one cohesive candidate context, not the whole parent Subdomain.
-    - Operations Record must not become authoritative for every subject referenced in an operational report.
-    - External systems and departments do not define Bounded Context boundaries.
-material_domain_question:
-  subject: kiln-operation-authority
-  question: Does ManuFactor actually own meaningful kiln scheduling/operating decisions and lifecycle, or is its kiln role primarily reading existing systems, reporting, analysis, and other gap-filling around an externally owned kiln-operation model?
-deferred_nonblocking_questions:
+active_subdomains:
+  - Operations
+  - Quality
+  - Maintenance / Reliability
+  - Safety
+  - Environmental
+rejected_or_deferred_subdomain_candidates:
+  - Human Resources: rejected for currently known ManuFactor gaps because training/qualification and staffing-availability gaps are operational semantics using HR/personnel facts
+  - Identity & Access: rejected as business Subdomain; shared platform infrastructure
+candidate_bounded_contexts:
+  - bc.operations-record
+  - bc.kiln-operations
+  - bc.project-tracking
+  - bc.quality-verification
+  - bc.corrective-action
+  - bc.asset-lifecycle
+  - bc.reliability-verification
+  - bc.safety-signoff
+  - bc.training-competency
+  - bc.workforce-availability
+deferred_contexts:
+  - bc.environmental-compliance: Environmental remains a business area, but no concrete current ManuFactor Environmental gap supplies a justified model/lifecycle
+important_boundary_findings:
+  - Kiln Operations owns retained kiln scheduling/operations history and correlation to downstream ProTrack moisture outcomes; ProTrack remains authoritative for source moisture measurements.
+  - Asset Lifecycle owns meaningful asset identity/condition/lifecycle/history missing from MP2; MP2 remains authoritative for its WR/WO records posted to machine assets.
+  - Reliability Verification owns verification/checkpoint evidence and is distinct from Asset Lifecycle.
+  - Operational Training and Qualification owns the operational interpretation of training coverage/cross-operator depth; Moodle/learning systems remain source authorities for their records.
+  - Operational Workforce Availability owns vacation/coverage/replacement-readiness semantics and consumes qualification plus HR/timekeeping facts.
+  - Quality Verification and Corrective Action remain distinct models.
+  - Operations Record is authoritative for the operational record it creates, not for every referenced subject.
+open_nonblocking_issues:
   - ISSUE-0003: Vehicle Management versus Physical Asset Management
-  - Exact CMMS versus ManuFactor asset-state authority unless needed to confirm Asset Lifecycle
-  - Whether Training/Competency includes local competency determination beyond consumed learning completion data
-  - Exact workforce/timekeeping authority split
+  - Exact cross-context transition rules such as failed verification changing asset state and failed quality checks becoming Nonconformities belong to later rule/context-map work
 specification_authority:
   source_document: ManuFactor_DDD_Modeling_Specification.docx
   repository_specification: docs/ddd/SPECIFICATION.md
-  rule: Bounded Contexts are semantic/model boundaries. Challenge language cohesion, model cohesion, rules, ownership, lifecycle ownership, integration boundaries, conflicting meanings, and source-of-truth responsibility.
-session_resume: Continue from the whole-map context candidate and boundary-challenge files. Do not restart capability-by-capability decomposition. Ask only the recorded material kiln authority question unless new evidence changes the whole-map challenge.
+  rule: Phase 7 must establish explicit context relationships, direction where applicable, semantic dependency, translation requirement, ownership, and integration contract; unknown relationship patterns remain unresolved rather than guessed
+session_resume: Begin the whole candidate Context Map. Do not reopen resolved Phase 5 ownership questions unless new evidence contradicts them.
 last_direct_update: 2026-08-10
