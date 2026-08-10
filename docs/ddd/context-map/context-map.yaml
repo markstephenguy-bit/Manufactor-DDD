@@ -1,0 +1,159 @@
+context_map:
+  id: context-map.manufactor
+  name: ManuFactor Context Map
+  status: candidate
+  relationships:
+    - id: rel.protrack-moisture-to-kiln-operations
+      upstream: external.protrack-moisture
+      downstream: bc.kiln-operations
+      relationship_type: unresolved
+      description: Kiln Operations consumes authoritative ProTrack planer moisture measurements and correlates them to retained kiln schedules/runs and drying history.
+      model_influence: ProTrack supplies source measurement facts; Kiln Operations interprets those facts in the context of drying performance without importing ProTrack's model as its own.
+      integration_contracts: [contract.protrack-moisture-to-kiln-operations]
+      translation_boundary: Required. ProTrack measurement identity/context must be translated into the correlation model used by Kiln Operations while preserving source provenance.
+      organizational_notes: ProTrack is an external existing system; its software boundary does not define the Kiln Operations Bounded Context.
+      status: candidate
+      provenance:
+        sources:
+          - type: domain-expert
+            reference: Mark direct, 2026-08-10
+            description: ManuFactor must coordinate planer moisture records stored by ProTrack with kiln scheduling/operations history.
+        confidence: high
+        status: candidate
+
+    - id: rel.mp2-maintenance-to-asset-lifecycle
+      upstream: external.mp2-maintenance
+      downstream: bc.asset-lifecycle
+      relationship_type: unresolved
+      description: Asset Lifecycle consumes MP2 work-request/work-order history and machine-asset references for correlation with the richer ManuFactor asset model.
+      model_influence: MP2 influences Asset Lifecycle only through authoritative maintenance-work facts; MP2 does not define ManuFactor asset lifecycle/condition semantics.
+      integration_contracts: [contract.mp2-maintenance-to-asset-lifecycle]
+      translation_boundary: Required. MP2 machine references and WR/WO semantics must be mapped to ManuFactor asset identity without treating MP2 as the complete asset model.
+      organizational_notes: MP2 remains the maintenance work system for its WR/WO records.
+      status: candidate
+      provenance:
+        sources:
+          - type: domain-expert
+            reference: Mark direct, 2026-08-10
+            description: MP2 has no meaningful asset-management model beyond posting WR/WO to machine assets.
+        confidence: high
+        status: candidate
+
+    - id: rel.asset-lifecycle-to-reliability-verification
+      upstream: bc.asset-lifecycle
+      downstream: bc.reliability-verification
+      relationship_type: unresolved
+      description: Reliability Verification depends on Asset Lifecycle for the identity and relevant context of the asset being verified.
+      model_influence: Asset Lifecycle defines asset identity/lifecycle meaning; Reliability Verification uses that identity while maintaining its own checkpoint/result semantics.
+      integration_contracts: [contract.asset-lifecycle-to-reliability-verification]
+      translation_boundary: Required at the semantic boundary so asset-state concepts are not confused with verification-state concepts.
+      organizational_notes: Both contexts are in Maintenance / Reliability but remain distinct models.
+      status: candidate
+      provenance:
+        sources:
+          - type: domain-expert
+            reference: Mark direct, 2026-08-10
+            description: Asset lifecycle and reliability verification were established as distinct responsibilities and lifecycles.
+        confidence: high
+        status: candidate
+
+    - id: rel.reliability-verification-to-asset-lifecycle
+      upstream: bc.reliability-verification
+      downstream: bc.asset-lifecycle
+      relationship_type: unresolved
+      description: Completed reliability verification results may influence Asset Lifecycle condition/state/history, subject to explicit asset-state transition rules.
+      model_influence: Reliability Verification publishes the verification fact; Asset Lifecycle decides what that fact means for asset lifecycle/state.
+      integration_contracts: [contract.reliability-verification-to-asset-lifecycle]
+      translation_boundary: Required. Verification status must not be treated as synonymous with asset condition/state.
+      organizational_notes: Exact state-transition rules remain future rule modeling rather than a reason to merge the contexts.
+      status: candidate
+      provenance:
+        sources:
+          - type: domain-expert
+            reference: Mark direct, 2026-08-10
+            description: Verification results are separate facts; any resulting asset state belongs to Asset Lifecycle.
+        confidence: high
+        status: candidate
+
+    - id: rel.quality-verification-to-corrective-action
+      upstream: bc.quality-verification
+      downstream: bc.corrective-action
+      relationship_type: unresolved
+      description: Quality Verification may supply a failed/unacceptable quality finding that Corrective Action can evaluate as a possible Nonconformity trigger.
+      model_influence: Quality Verification owns measurement/check meaning; Corrective Action owns Nonconformity and CAPA meaning.
+      integration_contracts: [contract.quality-verification-to-corrective-action]
+      translation_boundary: Required. A failed check is not automatically a Nonconformity; an explicit transition rule must translate the finding into Corrective Action semantics.
+      organizational_notes: Both contexts belong to Quality but have distinct triggers and lifecycles.
+      status: candidate
+      provenance:
+        sources:
+          - type: domain-expert
+            reference: Mark direct, 2026-08-09 through 2026-08-10
+            description: Product Quality Verification and CAPA are distinct Quality responsibilities.
+        confidence: high
+        status: candidate
+
+    - id: rel.training-qualification-to-workforce-availability
+      upstream: bc.training-competency
+      downstream: bc.workforce-availability
+      relationship_type: unresolved
+      description: Operational Workforce Availability consumes operational qualification/cross-training coverage to determine who can validly cover an absent or scheduled operator position.
+      model_influence: Training and Qualification defines who is capable of a job; Workforce Availability combines capability with time/crew availability to make coverage decisions.
+      integration_contracts: [contract.training-qualification-to-workforce-availability]
+      translation_boundary: Minimal but explicit. Workforce Availability may consume qualification terms directly where meanings are shared, but it must not redefine qualification rules.
+      organizational_notes: Both are Operations contexts even though source facts may originate in HR or learning systems.
+      status: candidate
+      provenance:
+        sources:
+          - type: domain-expert
+            reference: Mark direct, 2026-08-10
+            description: Cross-operator training depth is used to identify who can step into a job when someone calls in sick.
+        confidence: high
+        status: candidate
+
+    - id: rel.learning-source-to-training-qualification
+      upstream: external.learning-system
+      downstream: bc.training-competency
+      relationship_type: unresolved
+      description: Operational Training and Qualification consumes learning/training completion evidence from existing learning systems.
+      model_influence: External learning systems define their own completion records; the ManuFactor context interprets evidence into operational qualification/coverage where justified.
+      integration_contracts: [contract.learning-source-to-training-qualification]
+      translation_boundary: Required. Training completion and operational qualification are not assumed to be identical concepts.
+      organizational_notes: Moodle or another learning system is a source system, not the Bounded Context boundary.
+      status: candidate
+      provenance:
+        sources:
+          - type: domain-expert
+            reference: Mark direct, 2026-08-10
+            description: Training spans mill activities and is heavy in onboarding; the operational gap is qualification/cross-training coverage.
+        confidence: high
+        status: candidate
+
+    - id: rel.hr-timekeeping-to-workforce-availability
+      upstream: external.hr-timekeeping
+      downstream: bc.workforce-availability
+      relationship_type: unresolved
+      description: Operational Workforce Availability consumes authoritative personnel absence/leave facts where available while owning vacation/coverage and replacement-readiness semantics.
+      model_influence: HR/timekeeping source facts constrain operational availability but do not define the operational staffing-coverage model.
+      integration_contracts: [contract.hr-timekeeping-to-workforce-availability]
+      translation_boundary: Required. HR absence/leave administration and operational coverage/availability are different meanings.
+      organizational_notes: HR systems remain authoritative for their personnel records; ManuFactor fills the operational scheduling/coverage gap.
+      status: candidate
+      provenance:
+        sources:
+          - type: domain-expert
+            reference: Mark direct, 2026-08-10
+            description: Vacation scheduling is not software represented and sick-call replacement requires combining availability with qualification.
+        confidence: high
+        status: candidate
+
+  intentionally_unmapped_or_deferred:
+    - context: bc.operations-record
+      reason: It can reference facts from many contexts, but no specific significant integration contract is yet established; references alone must not imply model ownership or a guessed DDD relationship.
+    - context: bc.project-tracking
+      reason: No cross-context interaction is currently strong enough to justify an explicit relationship beyond possible references to assets or corrective work.
+    - context: bc.safety-signoff
+      display_name: LTV Form Management
+      reason: The real gap is form/template/printed-instance management; no material cross-context integration has yet been established.
+    - context: bc.environmental-compliance
+      reason: Deferred because no concrete current ManuFactor Environmental gap establishes a Bounded Context.
