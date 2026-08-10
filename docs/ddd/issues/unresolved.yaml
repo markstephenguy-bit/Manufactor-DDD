@@ -1,15 +1,5 @@
 issues:
 
-  - id: ISSUE-0001
-    title: Is CAPA-tracked work distinct from Project Tracking?
-    description: Whether a finding becomes a CAPA item, a Project, or nothing is an open business rule — not yet written. ISO 9001:2015 clause 10.2 defines CAPA as specifically triggered by a Nonconformity (a failure to meet a requirement) — unconfirmed whether GP's real usage matches this, with Project Tracking reserved for work not triggered by a nonconformity.
-    affected_objects: [cap.corrective-preventive-action, cap.project-tracking]
-    evidence: [ev.arch.workbook "Data Gathering" item 22, "external-standard: ISO 9001:2015 clause 10.2"]
-    possible_answers: [CAPA is strictly nonconformity-triggered per ISO 9001 and Project Tracking is everything else, CAPA and Project Tracking are separate on some other real basis, CAPA subsumes Project Tracking, Project Tracking is not a real ManuFactor capability]
-    blocking: true
-    needed_input: domain-expert
-    status: open
-
   - id: ISSUE-0003
     title: Should Vehicle Management merge into Physical Asset Management?
     description: >

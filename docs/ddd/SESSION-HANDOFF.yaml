@@ -1,10 +1,9 @@
-model_state: early strategic DDD — Phases 1-4 substantially done, Phase 5 (Bounded Context discovery) not started
-current_phase: Phase 4 — 7 confirmed/candidate subdomains; resolving remaining blocking issues before Phase 5
-last_completed: ISSUE-0002 resolved (Mark direct) — Safety, Quality/CAPA, and Environmental confirmed as three separate subdomains
-current_focus: Resolving blocking issues with Mark, one question at a time, before Phase 5 starts
-blocking_issues:
-  - ISSUE-0001
-next_action: After Mark answers the current question — update affected model records with domain-expert provenance, resolve/update affected issues in unresolved.yaml, commit, push. Then re-evaluate unresolved.yaml for remaining blocking:true issues and ask the single highest-value one. Do not hard-code a fixed question sequence.
+model_state: early strategic DDD — Phases 1-4 done for all placed capabilities; no blocking issues remain
+current_phase: Phase 4 complete for placed capabilities; Phase 5 (Bounded Context discovery) not yet started, awaiting explicit go-ahead
+last_completed: ISSUE-0001 resolved (Mark direct + ISO 9001:2015 clause 10.2) — CAPA defined by the Nonconformity trigger, Project Tracking distinct
+current_focus: No blocking issues remain (ISSUE-0003 is non-blocking, still open). Report status, await direction on whether to proceed to Phase 5 or address ISSUE-0003 first.
+blocking_issues: []
+next_action: Report that no blocking issues remain and ask whether to proceed to Phase 5 (Bounded Context discovery) or resolve ISSUE-0003 (non-blocking) first. Do not proceed to Phase 5 unprompted.
 files_to_read:
   - docs/ddd/issues/unresolved.yaml
   - docs/ddd/discovery/capability-candidates.yaml
@@ -19,7 +18,10 @@ recent_decisions:
   - DDD-0002: renamed Identity & Platform to Identity & Access
   - DDD-0003: walked back DDD-0001's split — three capabilities left unplaced, ISSUE-0002 created instead
   - DDD-0004: ISSUE-0002 resolved by Mark direct — three subdomains restored with domain-expert provenance
+  - DDD-0005: ISSUE-0001 resolved — CAPA defined by ISO 9001 Nonconformity trigger, Project Tracking distinct
 domain_expert_answers:
   - issue: ISSUE-0002
     answer: "separate. capa is a quality aspect."
-last_commit: 2b5cf83
+  - issue: ISSUE-0001
+    answer: "CAPA is quality (ISO 9001 QMS) — Nonconformity-triggered; Project Tracking is not."
+last_commit: c27a6aa

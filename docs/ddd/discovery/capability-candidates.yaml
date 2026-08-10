@@ -30,23 +30,23 @@ capabilities:
 
   - id: cap.corrective-preventive-action
     name: Corrective & Preventive Action (CAPA)
-    purpose: Resolve a quality/operational finding by routing corrective work to whichever system already owns that class of work.
+    purpose: Resolve a Nonconformity (ISO 9001:2015 clause 10.2) by root-cause corrective action, routing the work to whichever system already owns that class of work.
     business_outcome: Findings tracked to closure without CAPA becoming a second owner of work another system already owns.
-    important_terms: [CAPA item, CAPA routing rule, CAPA-vs-Project origination]
-    evidence: [ev.arch.addendum "CAPA reframed" session 020, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules", "domain-expert: Mark, direct, ISSUE-0002"]
+    important_terms: [CAPA item, CAPA routing rule, Nonconformity, Correction, Corrective Action]
+    evidence: [ev.arch.addendum "CAPA reframed" session 020, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules", "domain-expert: Mark, direct, ISSUE-0002", "external-standard: ISO 9001:2015 clause 10.2"]
     confidence: high
     status: confirmed
-    issue_refs: [ISSUE-0001]
+    decision_refs: [DDD-0005]
 
   - id: cap.project-tracking
     name: Project Tracking
-    purpose: Track discrete improvement/capital projects, as distinct from a CAPA item.
-    business_outcome: Unknown whether distinct from CAPA-tracked work.
-    important_terms: [CAPA-vs-Project origination]
-    evidence: [ev.arch.workbook "Components" (ProjectTracking row), ev.arch.workbook "Data Gathering" item 22]
-    confidence: low
-    status: unresolved
-    issue_refs: [ISSUE-0001]
+    purpose: Track discrete improvement/capital projects not triggered by a Nonconformity.
+    business_outcome: Visibility into planned/capital work, distinct from CAPA by trigger — CAPA responds to a failure against a requirement, Project Tracking does not.
+    important_terms: [Nonconformity]
+    evidence: [ev.arch.workbook "Components" (ProjectTracking row), ev.arch.workbook "Data Gathering" item 22, "domain-expert: Mark, direct, ISSUE-0002", "external-standard: ISO 9001:2015 clause 10.2"]
+    confidence: medium
+    status: candidate
+    decision_refs: [DDD-0005]
 
   - id: cap.operational-reporting
     name: Operational Reporting
