@@ -1,0 +1,446 @@
+domain_concepts:
+  - id: concept.operations-record.operational-record
+    name: Operational Record
+    bounded_context: bc.operations-record
+    definition: A retained ManuFactor record of an operational fact or reported occurrence.
+    identity_semantics: Has stable identity as a specific retained record independent of later corrections.
+    lifecycle: Created from an operational report or occurrence, retained, and corrected through history-preserving semantics.
+    state: [recorded, corrected]
+    behaviors: [record operational fact, preserve correction history, reference external subjects]
+    rules:
+      - Referencing an external subject does not transfer that subject's lifecycle ownership.
+    relationships: [Shift Report, Downtime/Incident Report, Process/Parameter Change Record]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.operations-record/context.yaml
+          description: Operations Record establishes retained operational facts as its authoritative model.
+      confidence: high
+      status: candidate
+
+  - id: concept.operations-record.operational-incident
+    name: Operational Incident
+    bounded_context: bc.operations-record
+    definition: An operationally significant occurrence recorded by Operations Record without implying Safety, Reliability, Quality, or CAPA semantics.
+    identity_semantics: Identified through the operational record that captures the occurrence.
+    lifecycle: Observed/reported, recorded, and retained as an operational fact.
+    state: [reported, retained]
+    behaviors: [describe occurrence, reference affected subjects]
+    rules:
+      - An Operational Incident is not automatically a Nonconformity or failed verification.
+    relationships: [Operational Record]
+    candidate_model_role: concept-only
+    status: candidate
+    provenance:
+      sources:
+        - type: ubiquitous-language
+          reference: language.operations-record.operational-incident
+          description: Phase 8 stabilized the context-specific incident meaning.
+      confidence: medium
+      status: candidate
+
+  - id: concept.kiln-operations.kiln-schedule
+    name: Kiln Schedule
+    bounded_context: bc.kiln-operations
+    definition: The retained plan for kiln usage and drying work that replaces spreadsheet-only scheduling.
+    identity_semantics: Represents a specific schedule/planning state over defined kiln work and time; exact identity boundary remains to be refined.
+    lifecycle: Planned, revised with retained history, executed through kiln runs/charges, and preserved for later analysis.
+    state: [planned, revised, executed, historical]
+    behaviors: [schedule kiln work, revise schedule, associate kiln run]
+    rules:
+      - Schedule history must be retained rather than overwritten as ephemeral spreadsheet state.
+    relationships: [Kiln Run/Charge, Kiln Operating Record]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: The kiln gap includes replacing Excel scheduling/operations with a system that keeps history.
+      confidence: high
+      status: candidate
+
+  - id: concept.kiln-operations.kiln-run
+    name: Kiln Run/Charge
+    bounded_context: bc.kiln-operations
+    definition: A retained kiln-operating unit that anchors scheduling, operating history, and downstream drying-outcome correlation.
+    identity_semantics: Must distinguish one kiln run/charge from another so downstream moisture outcomes can be correlated; exact business key remains unresolved.
+    lifecycle: Scheduled, operated, completed, then retained for downstream outcome correlation and analysis.
+    state: [scheduled, active, completed, historical]
+    behaviors: [associate operating records, associate schedule, correlate moisture outcomes]
+    rules:
+      - Correlated moisture outcomes must retain provenance to ProTrack source measurements.
+    relationships: [Kiln Schedule, Kiln Operating Record, Moisture Outcome]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: ubiquitous-language
+          reference: language.kiln-operations.kiln-run
+          description: Phase 8 established the run/charge as the operational anchor for drying history.
+      confidence: high
+      status: candidate
+
+  - id: concept.kiln-operations.moisture-outcome
+    name: Moisture Outcome
+    bounded_context: bc.kiln-operations
+    definition: Kiln-operational interpretation of authoritative downstream ProTrack moisture measurements correlated to a kiln run/charge.
+    identity_semantics: Derived from a defined set of source measurements and their correlation to a kiln run; not independently authoritative from those sources.
+    lifecycle: Created through correlation, recalculated when source/correlation evidence changes, retained as an analytical operational interpretation.
+    state: [derived, revised]
+    behaviors: [correlate source measurements, summarize drying outcome]
+    rules:
+      - Must preserve provenance to source ProTrack measurements.
+      - Must not rewrite source measurements.
+    relationships: [Kiln Run/Charge, external.protrack-moisture]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: ubiquitous-language
+          reference: language.kiln-operations.moisture-outcome
+          description: Phase 8 distinguishes kiln moisture outcome from raw ProTrack measurement records.
+      confidence: high
+      status: candidate
+
+  - id: concept.project-tracking.project
+    name: Project
+    bounded_context: bc.project-tracking
+    definition: A discrete planned improvement or capital-work effort whose lifecycle is not inherently triggered by a Nonconformity.
+    identity_semantics: Persists as the same project across planning, execution, status changes, and completion.
+    lifecycle: Proposed, planned, active, completed or cancelled.
+    state: [proposed, planned, active, completed, cancelled]
+    behaviors: [plan work, track milestone, update status, complete project]
+    rules:
+      - A project is not automatically a CAPA item merely because corrective work may reference or create one.
+    relationships: [Milestone, Project Action]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.project-tracking/context.yaml
+          description: Project Tracking owns a planned-work lifecycle distinct from CAPA.
+      confidence: medium
+      status: candidate
+
+  - id: concept.quality-verification.quality-check
+    name: Quality Check
+    bounded_context: bc.quality-verification
+    definition: A contextual product-quality verification performed against the target applicable to a mill, machine, and process path.
+    identity_semantics: A specific verification occurrence with retained measurement/evaluation evidence.
+    lifecycle: Initiated, measured, evaluated, retained.
+    state: [initiated, measured, acceptable, failed]
+    behaviors: [select applicable target, capture measurement, evaluate result]
+    rules:
+      - Must use the target applicable to the relevant mill/machine/process context.
+      - A failed Quality Check is not automatically a Nonconformity.
+    relationships: [Quality Measurement, Applicable Quality Target, Quality Verification Result]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-09
+          description: Mark described ad hoc caliper measurements, missing target visibility, and no retained check record.
+      confidence: high
+      status: candidate
+
+  - id: concept.quality-verification.applicable-quality-target
+    name: Applicable Quality Target
+    bounded_context: bc.quality-verification
+    definition: The quality criterion selected for a product check according to the relevant mill, machine, and process context.
+    identity_semantics: Identified by the contextual rule/source that makes the target applicable; exact target configuration representation remains unresolved.
+    lifecycle: Established or sourced, applied to checks, superseded when the applicable process target changes while historical applicability remains traceable.
+    state: [applicable, superseded]
+    behaviors: [resolve target for context]
+    rules:
+      - Historical quality checks must remain interpretable against the target applicable when evaluated.
+    relationships: [Quality Check, Mill, Machine, Process Path]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-09
+          description: Quality targets differ by mill and machine/process context.
+      confidence: high
+      status: candidate
+
+  - id: concept.corrective-action.nonconformity
+    name: Nonconformity
+    bounded_context: bc.corrective-action
+    definition: A finding accepted into the Corrective Action remediation lifecycle because a requirement was not met.
+    identity_semantics: Persists as the same remediation-triggering finding across correction, root-cause, routing, and closure.
+    lifecycle: Accepted, corrected/contained as appropriate, analyzed, corrective action coordinated, closed.
+    state: [open, under-analysis, corrective-action-active, closed]
+    behaviors: [record correction, analyze root cause, coordinate corrective action, route work, close]
+    rules:
+      - Findings from other contexts require an explicit transition rule before becoming Nonconformities.
+    relationships: [Correction, Corrective Action, CAPA Item]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: ubiquitous-language
+          reference: language.corrective-action.nonconformity
+          description: Phase 8 stabilized Nonconformity as a Corrective Action concept rather than a synonym for every failure.
+      confidence: high
+      status: candidate
+
+  - id: concept.corrective-action.corrective-action
+    name: Corrective Action
+    bounded_context: bc.corrective-action
+    definition: Action coordinated to address the cause of a Nonconformity and prevent recurrence, while execution work may belong to another context/system.
+    identity_semantics: Identified as a specific action associated with a Nonconformity and its remediation lifecycle.
+    lifecycle: Proposed, routed/assigned, executed externally or locally as applicable, verified for closure.
+    state: [proposed, routed, active, completed, accepted-for-closure]
+    behaviors: [route work, track action, evaluate closure evidence]
+    rules:
+      - Coordination ownership does not imply ownership of the routed work's internal lifecycle.
+    relationships: [Nonconformity, Routing Rule]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.corrective-action/context.yaml
+          description: Corrective Action owns CAPA coordination and closure semantics.
+      confidence: high
+      status: candidate
+
+  - id: concept.asset-lifecycle.asset
+    name: Asset
+    bounded_context: bc.asset-lifecycle
+    definition: A physical mill asset with ManuFactor-owned identity, meaningful condition/lifecycle state, and retained history.
+    identity_semantics: Must remain stable across changing condition, maintenance work, operational settings, and verification history; mapping to MP2 machine references is external correlation.
+    lifecycle: Established, operated/maintained, changes condition/state over time, eventually retired or otherwise leaves active service.
+    state: [active, condition-dependent, retired]
+    behaviors: [record lifecycle change, record condition, associate external maintenance work, retain history]
+    rules:
+      - MP2 WR/WO status must not silently define asset lifecycle state.
+      - Verification results influence Asset state only through explicit rules.
+    relationships: [Asset Condition, Asset Lifecycle State, Asset History, MP2 Work Request, MP2 Work Order]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: MP2 has no meaningful asset-management model beyond posting WR/WO to machine assets.
+      confidence: high
+      status: candidate
+
+  - id: concept.asset-lifecycle.asset-condition
+    name: Asset Condition
+    bounded_context: bc.asset-lifecycle
+    definition: The meaningful current condition of an Asset within ManuFactor's asset lifecycle model.
+    identity_semantics: Describes an Asset rather than having independent business identity.
+    lifecycle: Changes only through explicit asset-condition rules and becomes part of retained Asset history.
+    state: unresolved
+    behaviors: [describe asset condition]
+    rules:
+      - A single failed verification is not automatically identical to Asset Condition.
+    relationships: [Asset, Verification Result]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: ubiquitous-language
+          reference: language.asset-lifecycle.asset-condition
+          description: Phase 8 separates Asset Condition from MP2 transaction status and verification result.
+      confidence: high
+      status: candidate
+
+  - id: concept.reliability-verification.verification
+    name: Reliability Verification
+    bounded_context: bc.reliability-verification
+    definition: A discrete equipment assessment performed at a defined checkpoint against applicable AFAL/category criteria.
+    identity_semantics: A specific verification occurrence for an Asset at a checkpoint/time with preserved evidence.
+    lifecycle: Triggered, performed, resulted, retained.
+    state: [scheduled, in-progress, passed, failed]
+    behaviors: [apply criteria, capture category checks, determine result, publish result]
+    rules:
+      - Verification Result and Asset Condition remain distinct concepts.
+    relationships: [Verification Checkpoint, AFAL Category Check, Verification Result, Asset]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: ubiquitous-language
+          reference: language.reliability-verification.verification
+          description: Phase 8 stabilized Verification as a discrete assessment fact.
+      confidence: high
+      status: candidate
+
+  - id: concept.reliability-verification.verification-result
+    name: Verification Result
+    bounded_context: bc.reliability-verification
+    definition: The retained outcome of a Reliability Verification against its applicable criteria.
+    identity_semantics: Belongs to a specific Verification and is not independently identified from it.
+    lifecycle: Produced when verification criteria are evaluated and retained as evidence.
+    state: [passed, failed]
+    behaviors: [communicate verification outcome]
+    rules:
+      - Any effect on Asset Lifecycle must cross an explicit rule/relationship.
+    relationships: [Reliability Verification, Asset Condition]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.reliability-verification/context.yaml
+          description: Reliability Verification owns result semantics, distinct from asset lifecycle state.
+      confidence: high
+      status: candidate
+
+  - id: concept.ltv-form-management.form-template
+    name: LTV Form Template
+    bounded_context: bc.safety-signoff
+    definition: The managed, versioned LTV form definition used to produce printable/issued LTV form instances.
+    identity_semantics: Has stable template identity across revisions, with each version distinguishable for traceability.
+    lifecycle: Created/introduced, revised/versioned, made applicable, superseded/retired while historical versions remain traceable.
+    state: [draft-or-managed, current, superseded, retired]
+    behaviors: [revise template, publish current version, produce printed instance]
+    rules:
+      - Printed instances must remain traceable to the exact template version used.
+    relationships: [LTV Printed Instance]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: ubiquitous-language
+          reference: language.ltv-form-management.ltv-form-template
+          description: Phase 8 established template and printed instance as distinct meanings.
+      confidence: high
+      status: candidate
+
+  - id: concept.ltv-form-management.printed-instance
+    name: LTV Printed Instance
+    bounded_context: bc.safety-signoff
+    definition: A specific printable/issued LTV form produced from a particular LTV Form Template version and tracked through its applicable form lifecycle.
+    identity_semantics: Each issued/printed form instance is individually traceable to its template/version and use.
+    lifecycle: Generated, printed/issued, optionally completed/approved/signed off, retained/historical.
+    state: [generated, printed-or-issued, completed, approved-or-signed-if-required, retained]
+    behaviors: [print or issue, record completion, record applicable approval/sign-off, retain history]
+    rules:
+      - Printing does not itself imply approval/sign-off.
+      - Must retain template-version provenance.
+    relationships: [LTV Form Template, LTV Form Status]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: The real Safety gap is printing and managing LTV forms.
+      confidence: high
+      status: candidate
+
+  - id: concept.training-qualification.operational-qualification
+    name: Operational Qualification
+    bounded_context: bc.training-competency
+    definition: Operationally usable evidence that a specific person can perform a specific mill job or role.
+    identity_semantics: Defined by the person-job qualification relationship and its supporting evidence; exact record identity remains tactical-modeling work.
+    lifecycle: Established from acceptable evidence, maintained/reviewed, and may expire or be withdrawn if domain rules require.
+    state: [unqualified, qualified, unresolved-expiration]
+    behaviors: [establish qualification, relate evidence, report crew/job depth]
+    rules:
+      - Learning completion is not automatically equivalent to Operational Qualification.
+      - Availability does not imply qualification.
+    relationships: [Person, Job/Position, Learning Completion, Cross-Training Relationship]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: ubiquitous-language
+          reference: language.training-qualification.operational-qualification
+          description: Phase 8 stabilized operational qualification independently from source LMS completion.
+      confidence: high
+      status: candidate
+
+  - id: concept.training-qualification.cross-training-relationship
+    name: Cross-Training Relationship
+    bounded_context: bc.training-competency
+    definition: The operational relationship indicating that a person has qualification/coverage capability for a job beyond their ordinary assignment.
+    identity_semantics: Defined by a person-job pairing plus qualification evidence and status.
+    lifecycle: Established, maintained, potentially withdrawn/superseded as qualification changes.
+    state: [active, inactive]
+    behaviors: [contribute to training matrix, contribute to crew-depth calculation]
+    rules:
+      - Must be supported by Operational Qualification evidence.
+    relationships: [Operational Qualification, Training/Qualification Matrix]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Cross-operator training matrix is needed to understand depth across crews.
+      confidence: high
+      status: candidate
+
+  - id: concept.workforce-availability.operational-availability
+    name: Operational Availability
+    bounded_context: bc.workforce-availability
+    definition: Whether a person can be considered for staffing at a required date/shift given schedule, vacation, absence, and other time constraints.
+    identity_semantics: A contextual determination about a person and time need rather than an independently persistent person identity.
+    lifecycle: Evaluated/re-evaluated as source schedule, vacation, and absence facts change.
+    state: [available, unavailable]
+    behaviors: [evaluate availability for time need]
+    rules:
+      - Availability alone does not establish qualification or valid coverage.
+    relationships: [Person, Vacation Coverage Plan, Staffing Gap]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: ubiquitous-language
+          reference: language.workforce-availability.operational-availability
+          description: Phase 8 stabilized the time-specific operational meaning of availability.
+      confidence: high
+      status: candidate
+
+  - id: concept.workforce-availability.staffing-gap
+    name: Staffing Gap
+    bounded_context: bc.workforce-availability
+    definition: An operational need for a job/position at a given time that is not currently covered by the planned/available qualified workforce.
+    identity_semantics: Defined by the affected job/time/crew need; exact persistence identity remains unresolved.
+    lifecycle: Detected, candidate replacements evaluated, covered or left unresolved.
+    state: [open, covered, unresolved]
+    behaviors: [identify replacement options, apply qualification and availability]
+    rules:
+      - A valid replacement must be both available and sufficiently qualified.
+    relationships: [Operational Availability, Operational Qualification, Replacement Option, Operational Coverage Plan]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Sick calls create an operational need to find who can step in and perform the job.
+      confidence: high
+      status: candidate
+
+  - id: concept.workforce-availability.replacement-option
+    name: Replacement Option
+    bounded_context: bc.workforce-availability
+    definition: A person considered capable of covering a Staffing Gap because qualification and availability conditions are satisfied or can be evaluated.
+    identity_semantics: Defined in relation to a Staffing Gap and candidate Person; not yet confirmed as independently persistent.
+    lifecycle: Proposed, evaluated, selected/rejected or becomes obsolete when staffing facts change.
+    state: [candidate, valid, invalid, selected]
+    behaviors: [evaluate qualification, evaluate availability, select replacement]
+    rules:
+      - A valid Replacement Option must satisfy both qualification and availability requirements.
+    relationships: [Staffing Gap, Operational Qualification, Operational Availability]
+    candidate_model_role: unresolved
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: The registry must support finding who can step into an absent operator's job.
+      confidence: high
+      status: candidate
