@@ -40,9 +40,9 @@ capabilities:
 
   - id: cap.product-quality-verification
     name: Product Quality Verification
-    purpose: Verify lumber against applicable quality targets when a possible quality problem is suspected.
-    business_outcome: A repeatable quality check with known targets and retained results instead of an ad hoc unrecorded measurement.
-    important_terms: [quality target, caliper measurement, quality check]
+    purpose: Verify lumber against applicable quality targets that are specific to the mill and relevant machine/process context when a possible quality problem is suspected.
+    business_outcome: A repeatable quality check with the correct contextual targets and retained results instead of an ad hoc unrecorded measurement.
+    important_terms: [quality target, mill context, machine context, process context, caliper measurement, quality check]
     evidence: ["domain-expert: Mark, direct, 2026-08-09"]
     confidence: high
     status: candidate
