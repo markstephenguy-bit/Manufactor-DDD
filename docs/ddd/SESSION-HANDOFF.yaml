@@ -1,13 +1,15 @@
-model_state: strategic DDD — Phase 4 whole-domain subdomain consolidation completed; cross-file validation and readiness check remain before Phase 5
-current_phase: Phase 4 — whole-domain strategic map consolidated under the normative DDD specification; no known blocking domain question remains
-last_completed: Whole-domain candidate Subdomain map consolidated from current capabilities and Mark's 2026-08-10 domain answers
-current_focus: Validate the consolidated Phase 4 map for completeness, classification support, stale cross-file references, and consistency; then determine readiness for Phase 5 Bounded Context discovery
+model_state: strategic DDD — Phase 4 whole-domain Subdomain discovery validated with warnings; ready to begin Phase 5 Bounded Context discovery
+current_phase: Phase 5 — discover and challenge Bounded Contexts across the validated Phase 4 strategic map
+last_completed: Phase 4 whole-domain validation completed; normative Subdomain schema corrected; validation report created with PASS WITH WARNINGS
+current_focus: Discover semantic/model boundaries without mapping departments, applications, databases, modules, or existing systems directly to Bounded Contexts
 blocking_issues: []
-next_action: Perform the Phase 4 completeness/consistency audit across canonical and supporting DDD artifacts. If no material semantic boundary is missing, close Phase 4 as sufficiently complete and begin Phase 5 Bounded Context discovery under the specification. Do not return to capability-by-capability interrogation unless a material boundary question requires it.
+next_action: Begin Phase 5 Bounded Context discovery across the whole strategic map. Prioritize Operations and Quality because they currently contain the strongest domain-specific ManuFactor behavior, while explicitly testing interactions with Maintenance / Reliability, Safety, Environmental, and Human Resources. Ask Mark only when an ambiguity materially changes semantic ownership or a proposed boundary.
 files_to_read:
   - docs/ddd/SPECIFICATION.md
+  - docs/ddd/reports/validation-report.md
   - docs/ddd/GPT-AUDIT.yaml
   - docs/ddd/AI-COLLABORATION.yaml
+  - docs/ddd/domain/domain.yaml
   - docs/ddd/issues/unresolved.yaml
   - docs/ddd/discovery/capability-candidates.yaml
   - docs/ddd/subdomains/index.yaml
@@ -73,9 +75,17 @@ important_domain_facts:
   - Maintenance/Reliability remains a business domain even where CMMS owns operational maintenance workflows
   - Operations means gaps under mill operations and must not imply ERP/MES/production-execution ownership
   - Project Tracking belongs directly under Operations; Projects / Continuous Improvement is not required as a separate grouping
+validation_state:
+  report: docs/ddd/reports/validation-report.md
+  phase_4_result: PASS WITH WARNINGS
+  phase_4_ready_for_phase_5: true
+  strategic_stable: false
+  reason_not_strategic_stable: Major Bounded Contexts, contextual language, context ownership, relationships, and integrations have not yet been established.
+open_nonblocking_issues:
+  - ISSUE-0003: Vehicle Management versus Physical Asset Management placement; does not change current Maintenance / Reliability Subdomain placement
 specification_authority:
   source_document: ManuFactor_DDD_Modeling_Specification.docx
   repository_specification: docs/ddd/SPECIFICATION.md
-  rule: Establish the whole-domain strategic map first; request domain input only for unresolved decisions that materially affect semantic boundaries or domain meaning
-session_resume: Read the normative specification first, then this handoff and listed files. Continue with whole-map validation, not small capability-by-capability questioning.
+  rule: Establish semantic boundaries from domain meaning and authority, not from departments, applications, modules, databases, or implementation topology
+session_resume: Read the normative specification first, then this handoff and listed files. Phase 4 is complete enough to proceed. Start Phase 5 with a whole-map Bounded Context discovery/challenge pass rather than small implementation-driven decomposition.
 last_direct_update: 2026-08-10
