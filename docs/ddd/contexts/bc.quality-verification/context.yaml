@@ -1,0 +1,58 @@
+id: bc.quality-verification
+name: Quality Verification
+purpose: Evaluate lumber against the applicable quality target for its mill, machine, and process context and retain the verification evidence.
+subdomain: subdomain.quality
+model_statement: Within Quality Verification, a quality check is a contextual measurement interpreted against the target applicable to its mill/machine/process path; a failed check is a verification fact and is not automatically identical to a Corrective Action Nonconformity.
+responsibilities:
+  - Determine the applicable quality target for the relevant mill/machine/process context.
+  - Capture product measurements and checks.
+  - Interpret measurements against applicable targets.
+  - Retain verification results and evidence.
+scope:
+  - Product quality measurements
+  - Contextual target selection
+  - Quality check evaluation
+  - Verification-result history
+out_of_scope:
+  - CAPA/root-cause/remediation lifecycle
+  - Ownership of machine setup itself
+  - Ownership of external market standards or SPIB governance
+owned_concepts:
+  - Quality Check
+  - Quality Measurement
+  - Quality Verification Result
+  - Applicable Quality Target
+external_concepts:
+  - Mill
+  - Machine
+  - Process path
+  - External finished-size standard
+ubiquitous_language:
+  - quality target
+  - quality check
+  - measurement
+  - mill context
+  - machine context
+  - process context
+  - finished size
+business_rules:
+  - A quality result must be evaluated against the target applicable to its mill/machine/process context.
+  - Verification evidence must preserve the measurement and evaluation basis.
+  - A failed check does not become a Corrective Action Nonconformity without an explicit domain transition/rule.
+owner: unresolved
+domain_experts: [Mark]
+integration_surface:
+  - References machine/process context from Operations or Asset Lifecycle as needed.
+  - May produce a finding consumed by Corrective Action when domain rules require it.
+upstream_dependencies:
+  - bc.asset-lifecycle
+downstream_consumers:
+  - bc.corrective-action
+status: candidate
+provenance:
+  sources:
+    - type: domain-expert
+      reference: Mark direct, 2026-08-09 through 2026-08-10
+      description: Mark described ad hoc caliper checks, missing target visibility/recording, and mill/machine/process-specific target semantics.
+  confidence: high
+  status: candidate
