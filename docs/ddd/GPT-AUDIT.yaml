@@ -1,4 +1,4 @@
-version: 6
+version: 7
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -43,11 +43,15 @@ findings:
   - id: AUDIT-0014
     severity: domain-evidence
     subject: product quality target classes
-    finding: Mark states that target sizes are mill- and machine-specific, while planed finished-lumber target sizes are standard market sizes. GP employs SPIB to monitor finished sizes. This establishes distinct target authorities/contexts within Product Quality Verification but does not establish a separate Subdomain boundary or ManuFactor ownership.
+    finding: Mark states that target sizes are mill- and machine-specific, while planed finished-lumber target sizes are standard market sizes. GP employs SPIB to monitor finished sizes. This establishes distinct target contexts within Product Quality Verification but does not establish a separate Subdomain boundary or ManuFactor ownership.
   - id: AUDIT-0015
     severity: domain-evidence
     subject: process target governance
-    finding: Mark states that machine setups dictate target sizes. These targets are maintained at the mill level with Lumber Division monitoring. Different process paths require different targets and acceptance logic; for example, a canter board and an edger board have different target sizes, and a trimmer optimizer uses board-inside-a-board determination to decide whether a board can pass out of the green end. Treat target meaning as process/machine contextual, not as one global lumber-size rule.
+    finding: Machine setups dictate process target sizes. These are maintained at mill level with Lumber Division monitoring. Different machine/process paths can have different target and acceptance logic, including canter vs edger targets and trimmer board-inside-a-board acceptance.
+  - id: AUDIT-0016
+    severity: process-correction
+    subject: strategic discovery depth
+    finding: Product Quality Verification has enough evidence for strategic DDD. Do not continue asking Mark about storage mechanisms, recipes, spreadsheets, machine configuration details, or other implementation-level target-source questions unless a later strategic boundary question materially requires them.
 
 required_actions:
   - id: ACTION-0013
@@ -66,11 +70,13 @@ required_actions:
     action: Record Mark's Product Quality Verification evidence in the appropriate discovery record: process/target dimensions may be mill- and machine-specific; planed finished-lumber target sizes are standard market sizes; SPIB is employed to monitor finished sizes. Do not infer that SPIB owns ManuFactor Quality, that finished-size monitoring exhausts Product Quality Verification, or that this evidence defines a Subdomain boundary.
   - id: ACTION-0020
     action: Extend the Product Quality Verification discovery record with Mark's governance evidence: machine setups dictate process target sizes; mill personnel maintain them locally; Lumber Division monitors them; target/acceptance logic differs by machine and process path, including canter vs edger targets and trimmer board-inside-a-board acceptance. Keep this as domain evidence, not a new Subdomain or Bounded Context conclusion.
+  - id: ACTION-0021
+    action: Stop Product Quality Verification target-source discovery at the strategic level. Do not create an unresolved issue about the physical or technical source of record for those target values unless a future strategic modeling decision actually depends on it.
 
 next_domain_question:
   owner: chatgpt
-  subject: process-target-source-of-record
-  instruction: Claude Code must not ask this question. ChatGPT will ask Mark whether these mill/machine target values and acceptance rules are explicitly stored in a controlled machine configuration, recipe, document, spreadsheet, database, or other source of record, or whether some are effectively known only through machine setup and local operating knowledge.
+  subject: quality-strategic-boundary
+  instruction: Claude Code must not ask the question. ChatGPT may ask Mark only a strategic question about whether Quality should presently be modeled as the broader domain area containing CAPA and Product Quality Verification, without attempting exhaustive Quality capability discovery before progressing.
 
 do_not_do:
   - do not create Bounded Contexts yet
@@ -79,6 +85,7 @@ do_not_do:
   - do not treat ISO 9001, SPIB, or generic QMS grouping as a DDD boundary definition
   - do not model a monolithic QMS as ManuFactor-owned
   - do not assume ManuFactor owns a responsibility because it reads, displays, correlates, or aggregates its data
-  - do not gather broad repository evidence; evidence lookup must be tied to the specific responsibility under discovery
+  - do not gather broad repository evidence; evidence lookup must be tied to a material strategic responsibility question
+  - do not continue implementation-level inquiry into Product Quality Verification target storage or configuration
 
 processed_commit: null
