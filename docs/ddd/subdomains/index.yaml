@@ -1,5 +1,41 @@
 subdomains:
 
+  - id: subdomain.safety-compliance-signoff
+    name: Safety Compliance & Procedure Sign-Off
+    purpose: Gate safety-related procedures/equipment through a formal approval workflow before a sign-off record is authoritative.
+    capabilities: [cap.safety-compliance-signoff]
+    classification: core
+    boundary_rationale: Confirmed separate from Quality/CAPA and Environmental by Mark direct.
+    evidence: ["domain-expert: Mark, direct, ISSUE-0002"]
+    confidence: high
+    status: confirmed
+    decision_refs: [DDD-0004]
+    issue_refs: []
+
+  - id: subdomain.quality-capa
+    name: Quality — Corrective & Preventive Action
+    purpose: Resolve quality/operational findings by routing corrective work to whichever system already owns that class of work.
+    capabilities: [cap.corrective-preventive-action]
+    classification: core
+    boundary_rationale: Confirmed separate by Mark direct — "CAPA is a quality aspect."
+    evidence: ["domain-expert: Mark, direct, ISSUE-0002"]
+    confidence: high
+    status: confirmed
+    decision_refs: [DDD-0004]
+    issue_refs: [ISSUE-0001]
+
+  - id: subdomain.environmental-compliance
+    name: Environmental Compliance Reporting
+    purpose: Produce periodic regulatory compliance reporting.
+    capabilities: [cap.environmental-compliance]
+    classification: core
+    boundary_rationale: Confirmed separate from Safety and Quality/CAPA by Mark direct; content beyond this remains thin.
+    evidence: ["domain-expert: Mark, direct, ISSUE-0002"]
+    confidence: medium
+    status: confirmed
+    decision_refs: [DDD-0004]
+    issue_refs: []
+
   - id: subdomain.asset-reliability
     name: Asset & Reliability
     purpose: Know what physical assets the mill has, their condition, and verify they remain reliable and compliant.

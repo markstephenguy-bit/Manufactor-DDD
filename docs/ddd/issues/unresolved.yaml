@@ -10,25 +10,6 @@ issues:
     needed_input: domain-expert
     status: open
 
-  - id: ISSUE-0002
-    title: Are Safety Sign-Off, CAPA, and Environmental Compliance one domain, several, or does CAPA sit inside another domain as a shared process?
-    description: >
-      Repository evidence shows no shared vocabulary or rule structure across
-      Safety Compliance & Procedure Sign-Off, Corrective & Preventive Action,
-      and Environmental Compliance Reporting beyond the general "produce
-      compliance evidence" behavior. That absence of evidence for a grouping
-      is not evidence the three are separate Subdomains either — both are
-      structural claims the current evidence cannot support. CAPA specifically
-      may be a cross-cutting process (findings from Safety, Environmental, or
-      Asset/Reliability work all feeding one reactive mechanism) rather than
-      its own Subdomain.
-    affected_objects: [cap.safety-compliance-signoff, cap.corrective-preventive-action, cap.environmental-compliance]
-    evidence: [ev.arch.addendum "CAPA reframed" session 020, ev.arch.addendum rev 1/4/40, ev.arch.workbook "Data Gathering" item 21]
-    possible_answers: [three separate Subdomains, one broader Quality/Compliance Subdomain, CAPA as a cross-cutting process inside multiple Subdomains rather than a Subdomain itself, some other grouping not yet considered]
-    blocking: true
-    needed_input: domain-expert
-    status: open
-
   - id: ISSUE-0003
     title: Should Vehicle Management merge into Physical Asset Management?
     description: >

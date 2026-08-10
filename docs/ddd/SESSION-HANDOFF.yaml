@@ -1,12 +1,11 @@
 model_state: early strategic DDD — Phases 1-4 substantially done, Phase 5 (Bounded Context discovery) not started
-current_phase: Phase 4 complete for the unblocked portion; three capabilities intentionally unplaced pending domain input
-last_completed: Subdomain candidates locked to fixed schema; discovery noise purged to excluded.yaml; unresolved.yaml created; SESSION-HANDOFF.yaml created
+current_phase: Phase 4 — 7 confirmed/candidate subdomains; resolving remaining open issues one at a time before Phase 5
+last_completed: ISSUE-0002 resolved (Mark direct) — Safety, Quality/CAPA, and Environmental confirmed as three separate subdomains
 current_focus: Resolving open issues with Mark, one question at a time, before Phase 5 starts
 blocking_issues:
-  - ISSUE-0002
   - ISSUE-0001
   - ISSUE-0003
-next_action: Ask Mark ISSUE-0002. On answer — update the relevant capability/subdomain records with provenance type domain-expert, commit, push, then ask ISSUE-0001.
+next_action: Ask Mark ISSUE-0001 (is CAPA-tracked work distinct from Project Tracking). On answer — update the relevant capability/subdomain records with provenance type domain-expert, commit, push, then ask ISSUE-0003.
 files_to_read:
   - docs/ddd/issues/unresolved.yaml
   - docs/ddd/discovery/capability-candidates.yaml
@@ -20,5 +19,8 @@ recent_decisions:
   - DDD-0001: split Quality & Compliance into three subdomains (superseded by DDD-0003)
   - DDD-0002: renamed Identity & Platform to Identity & Access
   - DDD-0003: walked back DDD-0001's split — three capabilities left unplaced, ISSUE-0002 created instead
-domain_expert_answers: []
-last_commit: 41e26ad229f123466aeed40f8d3fbdbdf2b6eb85
+  - DDD-0004: ISSUE-0002 resolved by Mark direct — three subdomains restored with domain-expert provenance
+domain_expert_answers:
+  - issue: ISSUE-0002
+    answer: "separate. capa is a quality aspect."
+last_commit: a979a1e

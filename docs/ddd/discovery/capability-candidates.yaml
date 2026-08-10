@@ -5,9 +5,9 @@ capabilities:
     purpose: Formal sign-off of safety-related procedures/equipment against approved templates, with an approval workflow before a record is authoritative.
     business_outcome: A trustworthy, retained safety-compliance record.
     important_terms: [LTV Template, LTV Printed Instance, Site Safety Manager approval]
-    evidence: [ev.arch.addendum rev 1/4/40, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules"]
+    evidence: [ev.arch.addendum rev 1/4/40, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules", "domain-expert: Mark, direct, ISSUE-0002"]
     confidence: high
-    status: candidate
+    status: confirmed
 
   - id: cap.physical-asset-management
     name: Physical Asset Management
@@ -33,9 +33,9 @@ capabilities:
     purpose: Resolve a quality/operational finding by routing corrective work to whichever system already owns that class of work.
     business_outcome: Findings tracked to closure without CAPA becoming a second owner of work another system already owns.
     important_terms: [CAPA item, CAPA routing rule, CAPA-vs-Project origination]
-    evidence: [ev.arch.addendum "CAPA reframed" session 020, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules"]
-    confidence: medium
-    status: candidate
+    evidence: [ev.arch.addendum "CAPA reframed" session 020, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules", "domain-expert: Mark, direct, ISSUE-0002"]
+    confidence: high
+    status: confirmed
     issue_refs: [ISSUE-0001]
 
   - id: cap.project-tracking
@@ -80,9 +80,9 @@ capabilities:
     purpose: Produce Boiler/Kiln environmental compliance forms.
     business_outcome: Documented compliance with environmental regulation.
     important_terms: []
-    evidence: [ev.arch.workbook "Data Gathering" item 21, ev.arch.workbook "Components" (Environmental row)]
-    confidence: low
-    status: candidate
+    evidence: [ev.arch.workbook "Data Gathering" item 21, ev.arch.workbook "Components" (Environmental row), "domain-expert: Mark, direct, ISSUE-0002"]
+    confidence: medium
+    status: confirmed
 
   - id: cap.kiln-drying-operations
     name: Kiln Drying Operations
