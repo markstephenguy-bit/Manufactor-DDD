@@ -1,17 +1,16 @@
-model_state: strategic DDD — candidate Bounded Contexts, Context Map, Integration Contracts, and contextual Ubiquitous Language established
-current_phase: Phase 9 — Domain Concept modeling
-last_completed: Phase 8 whole-map Ubiquitous Language stabilization created contextual language records for boundary-sensitive terms plus domain-wide vocabulary for ManuFactor Gap, Source Authority, External Source Fact, and Translation Boundary
-current_focus: Identify the major domain concepts inside each candidate Bounded Context without prematurely classifying every noun as Entity, Aggregate, Value Object, or Domain Service
+model_state: strategic DDD established at candidate level; Context Map, Integration Contracts, contextual Ubiquitous Language, and first whole-map Domain Concept model are canonical
+current_phase: Phase 10 — Aggregate and invariant discovery
+last_completed: Phase 9 whole-map Domain Concept pass created 21 canonical candidate Domain Concepts across the ten supported Bounded Contexts without prematurely forcing tactical roles
+current_focus: Discover the smallest consistency boundaries required by real business invariants; challenge whether each concept belongs inside an Aggregate, remains reference data, or is coordinated across Aggregates/contexts
 blocking_issues: []
-next_action: Perform a whole-map Domain Concept pass across all ten supported candidate Bounded Contexts. Start with concepts already supported by the context models and language records. Record identity semantics, lifecycle, state, behaviors, rules, relationships, and candidate model role only where evidence supports it. Preserve unresolved tactical classification rather than inventing it.
+next_action: Perform a whole-map aggregate/invariant pass. For each candidate Aggregate answer the specification tests: what invariant requires consistent change, what is the root, what must be atomic, which members can change only through the root, and why the Aggregate cannot be smaller. Leave candidates unresolved where those answers are not supported. Do not create Aggregates merely because concepts are related or stored together.
 files_to_read:
   - docs/ddd/SPECIFICATION.md
+  - docs/ddd/concepts/index.yaml
   - docs/ddd/context-map/context-map.yaml
   - docs/ddd/integration-contracts/index.yaml
   - docs/ddd/language/domain-language.yaml
   - docs/ddd/language/ubiquitous-language.yaml
-  - docs/ddd/discovery/context-candidates.yaml
-  - docs/ddd/discovery/boundary-challenge.yaml
   - docs/ddd/subdomains/index.yaml
   - docs/ddd/contexts/bc.operations-record/context.yaml
   - docs/ddd/contexts/bc.kiln-operations/context.yaml
@@ -54,31 +53,40 @@ candidate_bounded_contexts:
   - bc.workforce-availability
 deferred_contexts:
   - bc.environmental-compliance: Environmental remains a business area, but no concrete current ManuFactor Environmental gap supplies a justified model/lifecycle
-context_map:
-  canonical: docs/ddd/context-map/context-map.yaml
-  integration_contracts: docs/ddd/integration-contracts/index.yaml
-  established_relationships:
-    - external.protrack-moisture -> bc.kiln-operations
-    - external.mp2-maintenance -> bc.asset-lifecycle
-    - bc.asset-lifecycle -> bc.reliability-verification
-    - bc.reliability-verification -> bc.asset-lifecycle
-    - bc.quality-verification -> bc.corrective-action
-    - bc.training-competency -> bc.workforce-availability
-    - external.learning-system -> bc.training-competency
-    - external.hr-timekeeping -> bc.workforce-availability
-language_model:
-  domain_language: docs/ddd/language/domain-language.yaml
-  contextual_language: docs/ddd/language/ubiquitous-language.yaml
-  major_stabilized_distinctions:
-    - Operational Incident is not automatically a Nonconformity, failed verification, or asset failure.
-    - Failed Quality Check is not automatically a Corrective Action Nonconformity.
-    - Reliability Verification result is not Asset Condition.
-    - Operational Qualification is not source course completion and is not Availability.
-    - Operational Availability is not Qualification; Operational Coverage requires both.
-    - Kiln Operations Moisture Outcome is an operational interpretation of source ProTrack measurements, not the source measurement itself.
-    - LTV Form Template and LTV Printed Instance are distinct; Sign-Off is only a possible instance lifecycle state/action.
-    - ManuFactor Gap does not imply replacement-system ownership.
-    - Source Authority remains with the context/system that owns the original fact lifecycle.
+concept_model:
+  canonical: docs/ddd/concepts/index.yaml
+  concept_count: 21
+  modeling_rule: Candidate model roles remain unresolved unless identity/lifecycle/invariant evidence already supports a stronger classification.
+  important_concepts:
+    - Operational Record
+    - Operational Incident
+    - Kiln Schedule
+    - Kiln Run/Charge
+    - Moisture Outcome
+    - Project
+    - Quality Check
+    - Applicable Quality Target
+    - Nonconformity
+    - Corrective Action
+    - Asset
+    - Asset Condition
+    - Reliability Verification
+    - Verification Result
+    - LTV Form Template
+    - LTV Printed Instance
+    - Operational Qualification
+    - Cross-Training Relationship
+    - Operational Availability
+    - Staffing Gap
+    - Replacement Option
+important_tactical_constraints:
+  - Do not aggregate concepts just because they have parent-child relationships or database foreign keys.
+  - Quality Check and Nonconformity remain cross-context concepts with an explicit translation/transition boundary.
+  - Verification Result and Asset Condition remain cross-context concepts with explicit transition rules still unresolved.
+  - ProTrack source measurements remain external authority; Moisture Outcome is a Kiln Operations interpretation.
+  - MP2 WR/WO records remain external authority; Asset owns richer ManuFactor lifecycle semantics.
+  - LTV Form Template and LTV Printed Instance have separate identity/lifecycle semantics even if they ultimately participate in one Aggregate.
+  - Operational Qualification and Operational Availability are distinct inputs to staffing coverage.
 open_nonblocking_issues:
   - ISSUE-0003: Vehicle Management versus Physical Asset Management
   - Exact domain rules for failed verification changing asset state
@@ -88,6 +96,6 @@ open_nonblocking_issues:
 specification_authority:
   source_document: ManuFactor_DDD_Modeling_Specification.docx
   repository_specification: docs/ddd/SPECIFICATION.md
-  rule: Phase 9 begins with Domain Concepts; do not mechanically convert nouns into tactical DDD patterns before invariants and identity/lifecycle evidence justify them.
-session_resume: Begin a whole-map Domain Concept pass. Do not jump directly to Aggregates or Entities. Preserve unresolved model roles until later invariant discovery supports tactical classification.
+  rule: Aggregate modeling must be driven by invariants and atomic consistency requirements, not structural convenience.
+session_resume: Start Phase 10 from docs/ddd/concepts/index.yaml and perform a whole-map aggregate/invariant challenge. Ask Mark only if a genuinely material business invariant cannot be determined from existing evidence.
 last_direct_update: 2026-08-10
