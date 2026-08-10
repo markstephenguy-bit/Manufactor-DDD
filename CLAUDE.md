@@ -5,12 +5,15 @@ This repository exists to build and maintain the canonical Domain-Driven Design 
 ## Read first, every session — in this order only
 
 1. This file.
-2. `docs/ddd/SESSION-HANDOFF.yaml`.
-3. `docs/ddd/GPT-AUDIT.yaml`.
-4. `docs/ddd/AI-COLLABORATION.yaml`.
-5. Only the files listed by `SESSION-HANDOFF.yaml` under `files_to_read`.
+2. `docs/ddd/SPECIFICATION.md` — normative modeling and notation authority. Read it completely before interpreting or changing the DDD model.
+3. `docs/ddd/SESSION-HANDOFF.yaml`.
+4. `docs/ddd/GPT-AUDIT.yaml`.
+5. `docs/ddd/AI-COLLABORATION.yaml`.
+6. Only the additional files listed by `SESSION-HANDOFF.yaml` under `files_to_read`.
 
-Do not reread the full specification, discovery corpus, ManuFactor-arch, or ManuFactor unless the handoff or GPT-AUDIT explicitly requires it.
+`ManuFactor_DDD_Modeling_Specification.docx` is the normative source document used by ChatGPT; `docs/ddd/SPECIFICATION.md` is the repository modeling specification that Claude Code must follow. Do not treat the specification as optional background material.
+
+Do not reread the full discovery corpus, ManuFactor-arch, or ManuFactor unless the handoff or GPT-AUDIT explicitly requires it.
 
 ## Execution role
 
