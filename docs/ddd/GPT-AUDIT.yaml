@@ -1,4 +1,4 @@
-version: 5
+version: 6
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -44,6 +44,10 @@ findings:
     severity: domain-evidence
     subject: product quality target classes
     finding: Mark states that target sizes are mill- and machine-specific, while planed finished-lumber target sizes are standard market sizes. GP employs SPIB to monitor finished sizes. This establishes distinct target authorities/contexts within Product Quality Verification but does not establish a separate Subdomain boundary or ManuFactor ownership.
+  - id: AUDIT-0015
+    severity: domain-evidence
+    subject: process target governance
+    finding: Mark states that machine setups dictate target sizes. These targets are maintained at the mill level with Lumber Division monitoring. Different process paths require different targets and acceptance logic; for example, a canter board and an edger board have different target sizes, and a trimmer optimizer uses board-inside-a-board determination to decide whether a board can pass out of the green end. Treat target meaning as process/machine contextual, not as one global lumber-size rule.
 
 required_actions:
   - id: ACTION-0013
@@ -60,11 +64,13 @@ required_actions:
     action: Update SESSION-HANDOFF.yaml after these consistency corrections. Preserve Phase 4 as active and Phase 5 as blocked. Preserve ChatGPT as owner of strategic domain questions.
   - id: ACTION-0019
     action: Record Mark's Product Quality Verification evidence in the appropriate discovery record: process/target dimensions may be mill- and machine-specific; planed finished-lumber target sizes are standard market sizes; SPIB is employed to monitor finished sizes. Do not infer that SPIB owns ManuFactor Quality, that finished-size monitoring exhausts Product Quality Verification, or that this evidence defines a Subdomain boundary.
+  - id: ACTION-0020
+    action: Extend the Product Quality Verification discovery record with Mark's governance evidence: machine setups dictate process target sizes; mill personnel maintain them locally; Lumber Division monitors them; target/acceptance logic differs by machine and process path, including canter vs edger targets and trimmer board-inside-a-board acceptance. Keep this as domain evidence, not a new Subdomain or Bounded Context conclusion.
 
 next_domain_question:
   owner: chatgpt
-  subject: mill-machine-target-governance
-  instruction: Claude Code must not ask this question. ChatGPT will ask Mark where mill- and machine-specific target sizes are maintained today and who has authority to establish or change them.
+  subject: process-target-source-of-record
+  instruction: Claude Code must not ask this question. ChatGPT will ask Mark whether these mill/machine target values and acceptance rules are explicitly stored in a controlled machine configuration, recipe, document, spreadsheet, database, or other source of record, or whether some are effectively known only through machine setup and local operating knowledge.
 
 do_not_do:
   - do not create Bounded Contexts yet
