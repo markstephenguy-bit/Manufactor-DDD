@@ -1,11 +1,10 @@
 model_state: early strategic DDD — Phases 1-4 substantially done, Phase 5 (Bounded Context discovery) not started
-current_phase: Phase 4 — 7 confirmed/candidate subdomains; resolving remaining open issues one at a time before Phase 5
+current_phase: Phase 4 — 7 confirmed/candidate subdomains; resolving remaining blocking issues before Phase 5
 last_completed: ISSUE-0002 resolved (Mark direct) — Safety, Quality/CAPA, and Environmental confirmed as three separate subdomains
-current_focus: Resolving open issues with Mark, one question at a time, before Phase 5 starts
+current_focus: Resolving blocking issues with Mark, one question at a time, before Phase 5 starts
 blocking_issues:
   - ISSUE-0001
-  - ISSUE-0003
-next_action: Ask Mark ISSUE-0001 (is CAPA-tracked work distinct from Project Tracking). On answer — update the relevant capability/subdomain records with provenance type domain-expert, commit, push, then ask ISSUE-0003.
+next_action: After Mark answers the current question — update affected model records with domain-expert provenance, resolve/update affected issues in unresolved.yaml, commit, push. Then re-evaluate unresolved.yaml for remaining blocking:true issues and ask the single highest-value one. Do not hard-code a fixed question sequence.
 files_to_read:
   - docs/ddd/issues/unresolved.yaml
   - docs/ddd/discovery/capability-candidates.yaml
@@ -23,4 +22,4 @@ recent_decisions:
 domain_expert_answers:
   - issue: ISSUE-0002
     answer: "separate. capa is a quality aspect."
-last_commit: a979a1e
+last_commit: 2b5cf83
