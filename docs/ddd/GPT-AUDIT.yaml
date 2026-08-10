@@ -1,4 +1,4 @@
-version: 3
+version: 4
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -7,62 +7,67 @@ findings:
   - id: AUDIT-0003
     severity: correction
     subject: ISSUE-0002 interpretation
-    finding: Mark confirmed Safety Sign-Off, CAPA, and Environmental are separate business responsibilities. He did not confirm that each responsibility is a separate Subdomain. The current confirmed Subdomain records overstate the domain-expert answer.
+    finding: Mark confirmed Safety Sign-Off, CAPA, and Environmental are separate business responsibilities. He did not confirm that each responsibility is a separate Subdomain.
   - id: AUDIT-0004
     severity: correction
     subject: CAPA domain placement
-    finding: Mark explicitly said CAPA is a quality aspect. Preserve that as domain truth. Do not equate CAPA itself with the full Quality Subdomain unless Mark establishes that boundary.
+    finding: Mark explicitly said CAPA is a quality aspect. CAPA does not define the full Quality Subdomain.
   - id: AUDIT-0005
     severity: correction
     subject: ISO 9001 semantics
-    finding: Treat ISO 9001 as supporting Quality vocabulary/rules, not as a DDD boundary definition and not as evidence for the Project Tracking boundary.
-  - id: AUDIT-0006
-    severity: process
-    subject: Domain-question ownership
-    finding: ChatGPT now owns strategic domain discovery with Mark. Claude Code executes repository changes and must not independently ask Mark strategic questions unless explicitly delegated here.
+    finding: ISO 9001 supplies supporting Quality vocabulary/rules only. It does not establish ManuFactor DDD boundaries.
   - id: AUDIT-0007
     severity: domain-correction
     subject: QMS ownership model
-    finding: Mark states there is no QMS system that ManuFactor owns or replaces. QMS-shaped responsibilities must be evaluated individually because existing GP technology may already own some of them, including CMMS, SAP ERP, and other systems.
+    finding: There is no monolithic QMS that ManuFactor owns or replaces. QMS-shaped responsibilities must be evaluated individually because GP systems such as CMMS, SAP ERP, and others may already own them.
   - id: AUDIT-0008
     severity: domain-correction
     subject: ManuFactor system role
-    finding: ManuFactor is a gap filler, current-system reader, and data aggregator. A responsibility appearing in ISO/QMS vocabulary does not imply ManuFactor owns that responsibility or that the responsibilities form one ManuFactor Subdomain or Bounded Context.
-  - id: AUDIT-0009
-    severity: process
-    subject: Evidence-before-question discipline
-    finding: Before ChatGPT asks Mark about a QMS-shaped responsibility, targeted evidence may be gathered from markstephenguy-bit/ManuFactor-arch and markstephenguy-bit/Manufactor to determine whether an existing GP system or previously designed integration already owns, supplies, or constrains that responsibility. Manufactor-DDD remains the canonical DDD source of truth.
+    finding: ManuFactor is a gap filler, current-system reader, and data aggregator. Displaying, reading, correlating, or aggregating responsibility data does not establish ownership of that responsibility.
+  - id: AUDIT-0010
+    severity: verified-correction
+    subject: strategic subdomain rollback
+    finding: Current docs/ddd/subdomains/index.yaml has already rolled Safety Compliance & Procedure Sign-Off, Quality, and Environmental Compliance Reporting back to candidate status and explicitly avoids treating separate responsibilities as confirmed Subdomains.
+  - id: AUDIT-0011
+    severity: consistency
+    subject: missing blocking issue
+    finding: SESSION-HANDOFF.yaml lists quality-responsibility-discovery as a blocking issue, but docs/ddd/issues/unresolved.yaml does not contain that issue.
+  - id: AUDIT-0012
+    severity: consistency
+    subject: Product Quality Verification placement
+    finding: Mark's evidence establishes Product Quality Verification as Quality work, and the capability is already recorded as cap.product-quality-verification. The candidate Quality domain area currently lists only CAPA, leaving the active strategic model internally incomplete.
+  - id: AUDIT-0013
+    severity: notation
+    subject: capability confirmation semantics
+    finding: cap.safety-compliance-signoff, cap.corrective-preventive-action, and cap.environmental-compliance may remain confirmed capabilities because Mark confirmed the responsibilities themselves. Their confirmed capability status must not be interpreted as confirmed Subdomain status.
 
 required_actions:
-  - id: ACTION-0004
-    action: Change Safety Compliance & Procedure Sign-Off, Quality-CAPA, and Environmental Compliance from confirmed Subdomains back to candidate or unresolved strategic placement unless separate domain-expert evidence establishes each Subdomain boundary. Preserve Mark's confirmation that these are separate business responsibilities.
-  - id: ACTION-0005
-    action: Record CAPA as belonging to the Quality domain area/aspect. Do not name a Subdomain "Quality — Corrective & Preventive Action" as though CAPA exhausts Quality. Represent CAPA as a capability/process within a candidate Quality domain area until ChatGPT elicits the broader Quality boundary from Mark.
-  - id: ACTION-0007
-    action: Keep Project Tracking distinct as a capability candidate, but do not claim ISO 9001 establishes its boundary.
-  - id: ACTION-0008
-    action: Update SESSION-HANDOFF.yaml after corrections. Phase 5 remains blocked by unresolved strategic Subdomain boundaries that materially affect Bounded Context discovery.
-  - id: ACTION-0009
-    action: Update SESSION-HANDOFF.yaml to state that ChatGPT asks Mark strategic domain questions and Claude Code waits for GPT-AUDIT instructions rather than asking Mark directly.
-  - id: ACTION-0010
-    action: Record the domain principle that ManuFactor does not own or replace a monolithic QMS. QMS-shaped responsibilities are discovered individually and may be owned by existing GP systems, filled by ManuFactor where a gap exists, read from authoritative systems, aggregated across systems, or remain outside ManuFactor.
-  - id: ACTION-0011
-    action: Review any canonical or decision records that currently imply a single Quality/QMS ownership boundary and weaken or correct them so ISO/QMS grouping is not treated as a ManuFactor Subdomain boundary.
-  - id: ACTION-0012
-    action: Update SESSION-HANDOFF.yaml to authorize targeted evidence lookup in markstephenguy-bit/ManuFactor-arch and markstephenguy-bit/Manufactor before asking Mark a QMS-responsibility question. Do not authorize broad archaeology; lookup must be tied to the specific responsibility under discovery.
+  - id: ACTION-0013
+    action: Preserve the current rollback in docs/ddd/subdomains/index.yaml. Do not recreate Safety, CAPA, or Environmental as confirmed Subdomains from ISSUE-0002 evidence.
+  - id: ACTION-0014
+    action: Add a blocking unresolved issue for quality-responsibility-discovery using the repository's existing fixed issue schema. It must state that the broader Quality strategic boundary and responsibility ownership remain unresolved and that Phase 5 Bounded Context discovery is blocked until material Quality boundaries are sufficiently understood.
+  - id: ACTION-0015
+    action: Add cap.product-quality-verification to the capabilities of candidate subdomain.quality. This records only that Product Quality Verification belongs in the Quality domain area; it does not confirm the Quality Subdomain boundary or ManuFactor ownership.
+  - id: ACTION-0016
+    action: Preserve CAPA as a capability/process within the candidate Quality domain area. Do not rename the Quality candidate so CAPA appears to exhaust Quality.
+  - id: ACTION-0017
+    action: Review active strategic decisions/issues for any surviving statement that separate Safety, CAPA, and Environmental responsibilities prove separate confirmed Subdomains, or that ISO/QMS grouping defines a ManuFactor boundary. Correct only such surviving active statements; do not restart broad evidence archaeology.
+  - id: ACTION-0018
+    action: Update SESSION-HANDOFF.yaml after these consistency corrections. Preserve Phase 4 as active and Phase 5 as blocked. Preserve ChatGPT as owner of strategic domain questions.
 
 next_domain_question:
   owner: chatgpt
-  subject: quality-responsibility-discovery
-  instruction: Claude Code must not ask a strategic domain question. After these corrections are processed, ChatGPT will inspect targeted evidence in ManuFactor-arch and Manufactor for the next QMS-shaped responsibility, then ask Mark only for business knowledge or ownership decisions not established by that evidence.
+  subject: product-quality-target-authority
+  evidence_check: Targeted searches of markstephenguy-bit/ManuFactor-arch and markstephenguy-bit/Manufactor did not establish an authoritative owner/source for mill- and machine-specific lumber quality targets.
+  instruction: Claude Code must not ask this question. ChatGPT will ask Mark who defines and maintains those targets and whether they exist in any authoritative system or controlled source.
 
 do_not_do:
   - do not create Bounded Contexts yet
   - do not reinterpret separate responsibilities as separate Subdomains
   - do not ask Mark strategic domain questions
-  - do not treat ISO 9001 as a DDD boundary definition
-  - do not model a monolithic QMS as a ManuFactor-owned system or boundary
-  - do not assume ManuFactor owns a responsibility merely because it must display, read, correlate, or aggregate its data
-  - do not gather broad repository evidence; targeted evidence lookup for the current responsibility is allowed
+  - do not treat ISO 9001 or generic QMS grouping as a DDD boundary definition
+  - do not model a monolithic QMS as ManuFactor-owned
+  - do not assume ManuFactor owns a responsibility because it reads, displays, correlates, or aggregates its data
+  - do not gather broad repository evidence; evidence lookup must be tied to the specific responsibility under discovery
 
 processed_commit: null
