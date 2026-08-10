@@ -1,0 +1,61 @@
+id: bc.kiln-operations
+name: Kiln Operations
+purpose: Replace spreadsheet-based kiln scheduling/operations with a retained operational model and correlate drying history with downstream moisture outcomes.
+subdomain: subdomain.production-operations
+model_statement: Within Kiln Operations, kiln schedules, runs/charges, operating history, and drying-performance correlations are the authoritative ManuFactor model; ProTrack moisture records are external source facts correlated into this model, not re-owned or rewritten by it.
+responsibilities:
+  - Manage kiln scheduling and operating records that are currently spreadsheet based.
+  - Preserve kiln run/charge and operating history.
+  - Correlate downstream planer moisture measurements from ProTrack with the kiln run/history that produced the lumber.
+  - Support derived operational views of drying performance and actual board moisture.
+  - Extend to additional kiln data-collection and process-control gaps as concrete rules emerge.
+scope:
+  - Kiln scheduling
+  - Kiln run/charge history
+  - Operating parameters and retained process records
+  - Correlation of downstream moisture outcomes to kiln history
+  - Drying-performance projections and dashboards
+out_of_scope:
+  - Ownership or mutation of ProTrack moisture source records
+  - Treating dashboards as authoritative domain state
+  - General operational reporting unrelated to kiln process semantics
+  - Environmental compliance modeling unless a concrete Environmental gap is later established
+owned_concepts:
+  - Kiln Schedule
+  - Kiln Run/Charge
+  - Kiln Operating Record
+  - Drying Performance Correlation
+external_concepts:
+  - ProTrack Moisture Measurement
+  - Planer moisture-meter record
+  - Asset
+ubiquitous_language:
+  - kiln
+  - drying schedule
+  - run/charge
+  - operating parameters
+  - drying process
+  - moisture result
+  - drying performance
+business_rules:
+  - Kiln scheduling and operation history must be retained rather than overwritten as an ephemeral spreadsheet state.
+  - Correlated moisture outcomes must preserve provenance to ProTrack and must not rewrite source measurements.
+  - Dashboards and analytical views are projections of the model, not authoritative state.
+owner: unresolved
+domain_experts: [Mark]
+integration_surface:
+  - Consume ProTrack planer moisture measurements from its database.
+  - Reference physical kiln/assets from Asset Lifecycle where needed.
+upstream_dependencies:
+  - ProTrack moisture data source
+  - bc.asset-lifecycle
+downstream_consumers:
+  - Operational dashboards and analytical projections
+status: candidate
+provenance:
+  sources:
+    - type: domain-expert
+      reference: Mark direct, 2026-08-10
+      description: Mark identified the kiln gaps as replacing Excel scheduling/operations with retained records, correlating to ProTrack moisture data, dashboards, and future process-control/data-collection needs.
+  confidence: high
+  status: candidate
