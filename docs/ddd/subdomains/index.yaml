@@ -55,25 +55,25 @@ subdomains:
 
   - id: subdomain.environmental-compliance
     name: Environmental
-    description: Environmental business responsibilities where ManuFactor fills compliance, record, reporting, or information-access gaps.
+    description: Environmental business responsibilities where ManuFactor may eventually fill compliance, record, reporting, or information-access gaps.
     classification: supporting
     business_capabilities: [cap.environmental-compliance]
-    business_value: Preserve required environmental compliance information when existing processes or systems do not fully meet the mill need.
-    differentiation: The known work is domain-specific and important but does not currently establish Environmental modeling as a principal ManuFactor differentiator.
+    business_value: Preserve the Environmental business area in the strategic map without inventing a ManuFactor-owned model before a concrete gap exists.
+    differentiation: Environmental is a real mill responsibility, but no concrete current ManuFactor Environmental gap is established strongly enough to justify a Bounded Context.
     scope:
-      - Environmental Compliance Reporting
-      - Additional Environmental gaps discovered later
+      - Future Environmental gaps when concrete language, rules, lifecycle, and ownership are known
     out_of_scope:
       - Treating regulatory or departmental organization as a Bounded Context definition
       - Assuming ManuFactor owns all environmental compliance work
+      - Creating an Environmental Bounded Context solely from historical form/report evidence
     domain_experts: [Mark]
     candidate_bounded_contexts: [bc.environmental-compliance]
     status: candidate
     provenance:
       sources:
         - type: domain-expert
-          reference: Mark direct, ISSUE-0002 and 2026-08-10
-          description: Mark confirmed Environmental as a broader business area and Environmental Compliance Reporting as one responsibility within it.
+          reference: Mark direct, 2026-08-10
+          description: Mark confirmed Environmental as a broader business area but later stated he cannot currently identify a concrete ManuFactor Environmental gap.
       confidence: high
       status: candidate
 
@@ -107,27 +107,32 @@ subdomains:
 
   - id: subdomain.production-operations
     name: Operations
-    description: Mill-operating responsibilities and gaps that ManuFactor supports without claiming ownership of ERP, MES, production planning, or production execution already handled elsewhere.
+    description: Mill-operating responsibilities and gaps that ManuFactor supports without claiming ownership of ERP, MES, production planning, HR systems, or other established systems that provide source facts.
     classification: core
-    business_capabilities: [cap.kiln-drying-operations, cap.operational-reporting, cap.project-tracking]
+    business_capabilities: [cap.kiln-drying-operations, cap.operational-reporting, cap.project-tracking, cap.training-competency, cap.workforce-scheduling]
     business_value: Fill practical mill-operating gaps and provide operational information or workflows that established systems do not provide adequately.
-    differentiation: Operations is central to ManuFactor's mill-specific problem space and is where many gap-filling workflows and operational knowledge directly support how the mill runs.
+    differentiation: Operations is central to ManuFactor's mill-specific problem space and is where gap-filling workflows combine operational process knowledge with facts sourced from other systems.
     scope:
       - Operational Reporting
       - Kiln Drying Operations gaps
       - Project Tracking
+      - Operational workforce readiness, including onboarding/training coverage, vacation planning, crew depth, and replacement capability for absent operators
       - Additional mill-operating gaps discovered later
     out_of_scope:
-      - Owning ERP, MES, production planning, or production-execution responsibilities solely because ManuFactor uses related data
+      - Owning ERP, MES, production planning, production-execution, learning-management, or HR-system responsibilities solely because ManuFactor uses related data
       - Requiring Projects / Continuous Improvement as an intermediate or peer Subdomain
+      - Treating personnel-related source data as proof that an operational gap belongs to an HR Bounded Context
     domain_experts: [Mark]
-    candidate_bounded_contexts: [bc.operations-record, bc.kiln-operations, bc.project-tracking]
+    candidate_bounded_contexts: [bc.operations-record, bc.kiln-operations, bc.project-tracking, bc.training-competency, bc.workforce-availability]
     status: candidate
     provenance:
       sources:
         - type: domain-expert
           reference: Mark direct, 2026-08-10
           description: Mark confirmed Operations as the broader area for operational gaps and placed Project Tracking directly under Operations.
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10 workforce clarification
+          description: Mark clarified that training, vacation scheduling, cross-operator training depth, and sick-call replacement are Operations gaps that happen to depend on HR-related information.
         - type: existing-model
           reference: ManuFactor-arch mill hierarchy and Build Order Phase_B/B1
           description: Existing evidence supports operational reporting and kiln-related responsibilities.
@@ -136,30 +141,27 @@ subdomains:
 
   - id: subdomain.people-workforce
     name: Human Resources
-    description: Workforce, training, competency, scheduling, and absence-related responsibilities relevant to ManuFactor gaps while existing HR/workforce systems may remain authoritative.
+    description: Historical candidate retained for traceability after domain clarification showed that currently known ManuFactor workforce/training gaps are Operations concerns that consume HR-related facts rather than an HR-owned domain model.
     classification: generic
-    business_capabilities: [cap.training-competency, cap.workforce-scheduling]
-    business_value: Make workforce and competency information usable where existing systems leave operational gaps.
-    differentiation: The currently known concerns are largely commodity HR/workforce capabilities; no proprietary Human Resources model has yet been established for ManuFactor.
+    business_capabilities: []
+    business_value: No active ManuFactor business capability is currently assigned here.
+    differentiation: Existing HR, learning, and timekeeping systems may remain authoritative for personnel facts; current ManuFactor gaps concern operational readiness and staffing decisions.
     scope:
-      - Training / Competency Records gaps
-      - Workforce Scheduling & Absence gaps
-      - Additional HR gaps discovered later
+      - Historical traceability of the earlier HR candidate
+      - Future genuinely HR-owned gaps if discovered later
     out_of_scope:
-      - Replacing established HR, learning, timekeeping, or workforce systems solely to centralize data in ManuFactor
+      - Current operational training coverage, vacation planning, crew-depth, or operator-replacement gaps
+      - Treating Moodle, Kronos, or personnel data as a reason to create an HR Bounded Context
     domain_experts: [Mark]
-    candidate_bounded_contexts: [bc.training-competency, bc.workforce-availability]
-    status: candidate
+    candidate_bounded_contexts: []
+    status: rejected
     provenance:
       sources:
         - type: domain-expert
-          reference: Mark direct, 2026-08-10
-          description: Mark confirmed HR as the broader business area.
-        - type: existing-model
-          reference: ManuFactor-arch Constraints & Assumptions A-05 and A-06
-          description: Existing evidence supports training/competency and workforce/absence concerns.
-      confidence: medium
-      status: candidate
+          reference: Mark direct, 2026-08-10 workforce clarification
+          description: Mark clarified that the known training and workforce gaps are operational gaps that fall into an HR category, not a separate HR-owned ManuFactor model.
+      confidence: high
+      status: rejected
 
   - id: subdomain.identity-access
     name: Identity & Access
