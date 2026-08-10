@@ -1,4 +1,4 @@
-version: 8
+version: 9
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -56,6 +56,10 @@ findings:
     severity: domain-confirmation
     subject: Quality candidate strategic placement
     finding: Mark confirmed that Quality should proceed as the broader candidate Subdomain containing CAPA and Product Quality Verification, while additional Quality responsibilities remain open for later discovery and do not need exhaustive enumeration before strategic discovery progresses.
+  - id: AUDIT-0018
+    severity: domain-evidence
+    subject: Safety strategic breadth
+    finding: Mark states that Safety is a department at every mill. This is evidence that Safety Sign-Off is not the whole Safety business area. Organizational structure supports a broader Safety domain-area candidate, but department structure alone must not be treated as proof of a DDD Subdomain boundary.
 
 required_actions:
   - id: ACTION-0013
@@ -78,17 +82,19 @@ required_actions:
     action: Stop Product Quality Verification target-source discovery at the strategic level. Do not create an unresolved issue about the physical or technical source of record for those target values unless a future strategic modeling decision actually depends on it.
   - id: ACTION-0022
     action: Update subdomain.quality so its candidate boundary explicitly includes cap.corrective-preventive-action and cap.product-quality-verification. Keep status candidate. Record that additional Quality responsibilities may be added later and are not required to be exhaustively discovered before continuing Phase 4.
+  - id: ACTION-0023
+    action: Replace the overly narrow strategic candidate name Safety Compliance & Procedure Sign-Off with a broader candidate Safety domain area containing cap.safety-compliance-signoff. Keep the boundary candidate, not confirmed. Record that the mill Safety department is supporting evidence for broader business scope, not proof that organizational and DDD boundaries are identical.
 
 next_domain_question:
   owner: chatgpt
-  subject: safety-strategic-placement
-  instruction: Claude Code must not ask the question. ChatGPT will ask Mark whether Safety Compliance & Procedure Sign-Off belongs within a broader Safety domain area or whether the currently known responsibility itself represents the meaningful strategic boundary. Do not infer a Subdomain from responsibility separation alone.
+  subject: safety-candidate-strategic-placement
+  instruction: Claude Code must not ask the question. ChatGPT will ask Mark whether Safety should proceed as the broader candidate domain area containing Safety Compliance & Procedure Sign-Off, with other Safety responsibilities left open for later discovery rather than exhaustively enumerated now.
 
 do_not_do:
   - do not create Bounded Contexts yet
   - do not reinterpret separate responsibilities as separate Subdomains
   - do not ask Mark strategic domain questions
-  - do not treat ISO 9001, SPIB, or generic QMS grouping as a DDD boundary definition
+  - do not treat department structure, ISO 9001, SPIB, or generic QMS grouping as a DDD boundary definition
   - do not model a monolithic QMS as ManuFactor-owned
   - do not assume ManuFactor owns a responsibility because it reads, displays, correlates, or aggregates its data
   - do not gather broad repository evidence; evidence lookup must be tied to a material strategic responsibility question
