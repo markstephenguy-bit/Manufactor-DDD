@@ -1,10 +1,10 @@
 model_state: early strategic DDD — Phase 4 reopened for strategic boundary correction and responsibility discovery before Bounded Context discovery
 current_phase: Phase 4 — discover responsibilities and system ownership one capability at a time; Phase 5 is blocked until material boundaries are sufficiently understood
-last_completed: Product Quality Verification gap captured from Mark direct — checks are ad hoc, unscheduled, target knowledge may be unavailable, and results are not recorded
+last_completed: Product Quality Verification refined — applicable quality targets vary by mill and relevant machine/process context
 current_focus: Continue Quality/QMS-shaped responsibility discovery individually, determine existing-system authority vs ManuFactor gap/read/aggregate role, and avoid treating ISO/QMS grouping as a ManuFactor boundary
 blocking_issues:
   - quality-responsibility-discovery
-next_action: Choose the next high-value Quality/QMS-shaped responsibility, perform targeted evidence lookup in markstephenguy-bit/ManuFactor-arch and markstephenguy-bit/Manufactor where useful, then ask Mark one domain question only for business knowledge or ownership decisions the evidence cannot establish. Do not start Phase 5 yet.
+next_action: Continue Product Quality Verification discovery by determining who defines/maintains the mill- and machine-specific targets and whether those targets exist in any authoritative source. Then continue to the next Quality responsibility. Do not start Phase 5 yet.
 files_to_read:
   - docs/ddd/GPT-AUDIT.yaml
   - docs/ddd/AI-COLLABORATION.yaml
@@ -32,5 +32,7 @@ domain_expert_answers:
     answer: There is no QMS; QMS components may be handled by GP systems such as CMMS, SAP ERP, and others; ManuFactor is a gap filler, current-system reader, and data aggregator; QMS responsibilities must be evaluated individually
   - subject: product-quality-verification-current-state
     answer: If someone in a quasi-QC role suspects a lumber quality problem, they may manually measure lumber with a caliper; they may not know the applicable targets; there is no system or schedule for performing the check and no system for recording the result
+  - subject: product-quality-target-context
+    answer: Quality targets differ mill to mill because they are relative to the machines in the different parts of each mill
 session_resume: Read this file and files_to_read from the canonical repository. Strategic domain questions are asked directly by ChatGPT. Prior chat memory and Claude Code state are not required.
 last_direct_update: 2026-08-09
