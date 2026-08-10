@@ -1,4 +1,4 @@
-version: 11
+version: 12
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -68,6 +68,10 @@ findings:
     severity: process-correction
     subject: governing modeling specification
     finding: ManuFactor_DDD_Modeling_Specification.docx is the normative DDD modeling and notation specification for this project and must guide strategic discovery together with the canonical repository state. It must not be omitted from future session startup guidance.
+  - id: AUDIT-0021
+    severity: domain-confirmation
+    subject: Maintenance Reliability candidate placement
+    finding: Mark confirmed Maintenance/Reliability as the broader candidate strategic domain area. The existing CMMS may own much of the operational maintenance work while ManuFactor fills gaps and reads or aggregates selected asset/reliability information. Existing-system ownership does not eliminate the business domain area and does not imply ManuFactor owns all of it.
 
 required_actions:
   - id: ACTION-0013
@@ -98,17 +102,19 @@ required_actions:
     action: Rename/reframe the current People & Workforce strategic candidate as HR or Human Resources if consistent with the repository metamodel/naming discipline, preserving currently known workforce/training capabilities inside it. Keep status candidate and leave additional HR responsibilities open. Do not infer that existing HR systems imply ManuFactor ownership.
   - id: ACTION-0026
     action: Update CLAUDE.md and SESSION-HANDOFF.yaml so ManuFactor_DDD_Modeling_Specification.docx is explicitly required as the normative modeling/notation authority for every strategic DDD session before active canonical model files are interpreted. Do not duplicate its detailed rules into canonical YAML.
+  - id: ACTION-0027
+    action: Reframe subdomain.asset-reliability as broader candidate Maintenance/Reliability, preserving the currently relevant physical-asset and equipment-reliability capabilities as known responsibilities. Keep status candidate. Explicitly preserve that CMMS ownership of operational maintenance work and ManuFactor's reader/aggregator/gap-filler role are system-responsibility facts, not reasons to remove the strategic domain area.
 
 next_domain_question:
   owner: chatgpt
-  subject: remaining-strategic-boundaries
-  instruction: Claude Code must not ask strategic questions. ChatGPT will examine the remaining active candidate Subdomains and ask Mark only about material strategic placements still necessary before Phase 5, following ManuFactor_DDD_Modeling_Specification.docx.
+  subject: production-operations-strategic-placement
+  instruction: Claude Code must not ask the question. ChatGPT will ask Mark whether Production Operations is a meaningful broader strategic domain area for ManuFactor, containing currently known operational reporting and kiln-drying responsibilities without requiring exhaustive enumeration before Phase 5.
 
 do_not_do:
   - do not create Bounded Contexts yet
   - do not reinterpret separate responsibilities as separate Subdomains
   - do not ask Mark strategic domain questions
-  - do not treat department structure, ISO 9001, SPIB, or generic QMS grouping as a DDD boundary definition
+  - do not treat department structure, existing-system ownership, ISO 9001, SPIB, or generic QMS grouping as a DDD boundary definition
   - do not model a monolithic QMS as ManuFactor-owned
   - do not assume ManuFactor owns a responsibility because it reads, displays, correlates, or aggregates its data
   - do not gather broad repository evidence; evidence lookup must be tied to a material strategic responsibility question
