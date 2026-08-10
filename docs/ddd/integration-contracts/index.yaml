@@ -1,0 +1,204 @@
+integration_contracts:
+  - id: contract.protrack-moisture-to-kiln-operations
+    name: ProTrack Moisture Results to Kiln Operations
+    provider_context: external.protrack-moisture
+    consumer_context: bc.kiln-operations
+    purpose: Provide authoritative planer moisture measurements for correlation with retained kiln schedules/runs and drying history.
+    interaction_style: batch
+    published_model:
+      - ProTrack moisture measurement records
+      - Source measurement identity and recorded context available from the ProTrack database
+    operations:
+      - Read moisture measurement records for correlation and analysis
+    events: []
+    compatibility_policy: Kiln Operations must preserve ProTrack source provenance and must not rewrite source measurements.
+    translation_required: true
+    failure_semantics: Missing or uncorrelatable ProTrack records remain explicitly uncorrelated; Kiln Operations must not fabricate a kiln-run association.
+    ownership: ProTrack owns source moisture measurements; Kiln Operations owns correlation to kiln history and drying-performance interpretation.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: ProTrack moisture meter software stores planer moisture data in a database; ManuFactor must coordinate those records with kiln scheduling/operations history and dashboards.
+      confidence: high
+      status: candidate
+
+  - id: contract.mp2-maintenance-to-asset-lifecycle
+    name: MP2 Maintenance Work to Asset Lifecycle
+    provider_context: external.mp2-maintenance
+    consumer_context: bc.asset-lifecycle
+    purpose: Correlate MP2 work requests and work orders posted to machine assets with the richer ManuFactor asset lifecycle/history model.
+    interaction_style: batch
+    published_model:
+      - MP2 work request records
+      - MP2 work order records
+      - MP2 machine-asset references used by those records
+    operations:
+      - Read maintenance work history for asset correlation
+    events: []
+    compatibility_policy: Asset Lifecycle must preserve MP2 ownership of WR/WO records and must not treat MP2 asset references as the complete ManuFactor asset model.
+    translation_required: true
+    failure_semantics: Unmatched MP2 asset references remain unresolved rather than silently creating incorrect asset identity.
+    ownership: MP2 owns WR/WO transactions; Asset Lifecycle owns meaningful ManuFactor asset identity, condition, lifecycle, and retained history.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: MP2 contains no meaningful asset management beyond posting work requests and work orders to machine assets.
+      confidence: high
+      status: candidate
+
+  - id: contract.asset-lifecycle-to-reliability-verification
+    name: Asset Identity to Reliability Verification
+    provider_context: bc.asset-lifecycle
+    consumer_context: bc.reliability-verification
+    purpose: Provide the asset identity and relevant lifecycle/condition context needed to perform and retain a reliability verification against the correct asset.
+    interaction_style: shared-reference-data
+    published_model:
+      - Asset identity
+      - Relevant asset state/reference facts needed for verification
+    operations:
+      - Resolve the asset being verified
+    events: []
+    compatibility_policy: Reliability Verification may reference Asset Lifecycle facts but must not mutate Asset Lifecycle state directly.
+    translation_required: true
+    failure_semantics: A verification cannot claim a valid asset association when the asset identity cannot be resolved.
+    ownership: Asset Lifecycle owns asset identity/lifecycle meaning; Reliability Verification owns verification/checkpoint meaning.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: ManuFactor owns meaningful asset semantics while Reliability Verification is a separate verification lifecycle.
+      confidence: high
+      status: candidate
+
+  - id: contract.reliability-verification-to-asset-lifecycle
+    name: Reliability Result to Asset Lifecycle
+    provider_context: bc.reliability-verification
+    consumer_context: bc.asset-lifecycle
+    purpose: Make completed verification results available to Asset Lifecycle when a verification may affect the asset's meaningful condition/state/history.
+    interaction_style: event
+    published_model:
+      - Verification identity
+      - Verification result
+      - Verified asset reference
+      - Checkpoint/criteria context needed to interpret the result
+    operations: []
+    events:
+      - Verification completed or failed semantic fact; exact domain-event name remains unresolved
+    compatibility_policy: Asset Lifecycle must interpret the verification result under its own asset-state rules; a failed verification does not automatically imply a specific asset state until that rule is modeled.
+    translation_required: true
+    failure_semantics: If the resulting asset-state rule is unresolved, retain the verification fact without inventing an asset-state transition.
+    ownership: Reliability Verification owns the result fact; Asset Lifecycle owns any resulting asset lifecycle/state change.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Reliability Verification is distinct from Asset Lifecycle; exact state-change rules remain later modeling work.
+      confidence: high
+      status: candidate
+
+  - id: contract.quality-verification-to-corrective-action
+    name: Quality Finding to Corrective Action
+    provider_context: bc.quality-verification
+    consumer_context: bc.corrective-action
+    purpose: Provide quality-check evidence that may support creation of a Nonconformity and entry into the corrective-action lifecycle.
+    interaction_style: event
+    published_model:
+      - Quality check identity
+      - Measurement/result evidence
+      - Applicable target/context
+      - Failed or unacceptable evaluation where applicable
+    operations: []
+    events:
+      - Quality verification failure/finding semantic fact; exact domain-event name remains unresolved
+    compatibility_policy: Corrective Action must not treat every failed quality check as a Nonconformity automatically; the transition rule remains explicit and separately governed.
+    translation_required: true
+    failure_semantics: Where the Nonconformity rule is not satisfied or not yet known, retain the Quality Verification fact without creating a CAPA item by inference.
+    ownership: Quality Verification owns the check and result; Corrective Action owns Nonconformity/CAPA lifecycle semantics.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-09 through 2026-08-10
+          description: Product Quality Verification and CAPA are distinct Quality responsibilities with different lifecycle semantics.
+      confidence: high
+      status: candidate
+
+  - id: contract.training-qualification-to-workforce-availability
+    name: Operational Qualification to Workforce Availability
+    provider_context: bc.training-competency
+    consumer_context: bc.workforce-availability
+    purpose: Provide operational qualification/coverage facts so staffing and replacement decisions can identify people who are capable of performing the required job.
+    interaction_style: shared-reference-data
+    published_model:
+      - Person/job operational qualification
+      - Cross-training coverage
+      - Qualification evidence/reference
+    operations:
+      - Determine whether a person is operationally qualified for a job
+    events: []
+    compatibility_policy: Workforce Availability consumes qualification as a prerequisite but does not redefine training/qualification rules.
+    translation_required: false
+    failure_semantics: A person without sufficient qualification evidence must not be proposed as a qualified replacement solely because they are available.
+    ownership: Operational Training and Qualification owns qualification meaning; Operational Workforce Availability owns time/crew coverage decisions.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Cross-operator training depth is needed so the mill can identify who can step into a job when an operator is unavailable.
+      confidence: high
+      status: candidate
+
+  - id: contract.learning-source-to-training-qualification
+    name: Learning Records to Operational Qualification
+    provider_context: external.learning-system
+    consumer_context: bc.training-competency
+    purpose: Supply source training/completion evidence used by ManuFactor's operational qualification and cross-training model.
+    interaction_style: batch
+    published_model:
+      - Learning/training completion records
+    operations:
+      - Read completion evidence
+    events: []
+    compatibility_policy: Source completion is evidence and must not be assumed to equal operational qualification unless an explicit rule says so.
+    translation_required: true
+    failure_semantics: Missing or ambiguous completion evidence must remain unresolved rather than creating unsupported qualification.
+    ownership: Learning systems own their completion records; Operational Training and Qualification owns the mill-operational interpretation of qualification/coverage.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Training spans mill activities and onboarding; the operational gap is the qualification/cross-training view, while learning records may come from existing systems.
+      confidence: high
+      status: candidate
+
+  - id: contract.hr-timekeeping-to-workforce-availability
+    name: Personnel Availability Facts to Workforce Availability
+    provider_context: external.hr-timekeeping
+    consumer_context: bc.workforce-availability
+    purpose: Supply authoritative personnel facts such as absence/leave status where available so ManuFactor can make operational coverage decisions without redefining HR administration.
+    interaction_style: batch
+    published_model:
+      - Personnel absence/leave facts available from authoritative source systems
+    operations:
+      - Read personnel availability inputs
+    events: []
+    compatibility_policy: Operational Workforce Availability may derive staffing coverage but must not rewrite authoritative HR/payroll/leave records.
+    translation_required: true
+    failure_semantics: Missing personnel facts remain unknown; operational availability must not be fabricated from absence of source data.
+    ownership: External HR/timekeeping systems own the personnel facts they record; Operational Workforce Availability owns vacation/coverage/replacement-readiness semantics that ManuFactor manages.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Vacation scheduling is not adequately software represented, while the business need is operational staffing coverage and sick-call replacement.
+      confidence: high
+      status: candidate
