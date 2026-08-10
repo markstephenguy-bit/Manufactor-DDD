@@ -1,0 +1,283 @@
+language_terms:
+  - id: language.operations-record.operational-incident
+    term: Operational Incident
+    context: bc.operations-record
+    definition: An occurrence reported in Operations Record because something operationally significant happened during mill work.
+    business_meaning: Preserves what was reported to have happened; it does not by itself establish a Safety finding, equipment failure, Quality failure, or Nonconformity.
+    synonyms: [Downtime/Incident occurrence]
+    discouraged_synonyms: [Nonconformity, failed verification, asset failure]
+    examples: [A downtime or incident occurrence recorded on a shift report]
+    counterexamples: [A CAPA Nonconformity merely because the word incident was used, a failed AFAL verification]
+    related_concepts: [Operational Record, Downtime/Incident Report]
+    ambiguities: [The word incident may also be used informally in Safety, Maintenance, or Quality with different meanings.]
+    status: candidate
+    provenance:
+      sources:
+        - type: existing-model
+          reference: docs/ddd/contexts/bc.operations-record/context.yaml
+          description: Operations Record owns reporting semantics without taking lifecycle ownership of referenced subject matter.
+      confidence: medium
+      status: candidate
+
+  - id: language.corrective-action.nonconformity
+    term: Nonconformity
+    context: bc.corrective-action
+    definition: A finding accepted into the Corrective Action remediation lifecycle because a requirement was not met.
+    business_meaning: Triggers correction/root-cause/corrective-action coordination and eventual closure semantics.
+    synonyms: []
+    discouraged_synonyms: [incident, failed check, failed verification, defect]
+    examples: [A quality finding explicitly transitioned into Corrective Action under the applicable rule]
+    counterexamples: [Every failed quality check, every downtime incident, every failed reliability verification]
+    related_concepts: [Correction, Corrective Action, CAPA Item]
+    ambiguities: [The exact rules that promote findings from other contexts into Nonconformities remain to be modeled.]
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, ISSUE-0002
+          description: CAPA is a Quality responsibility with its own trigger and lifecycle.
+        - type: decision
+          reference: DDD-0005
+          description: Clarified CAPA and Nonconformity semantics.
+      confidence: high
+      status: candidate
+
+  - id: language.quality-verification.failed-quality-check
+    term: Failed Quality Check
+    context: bc.quality-verification
+    definition: A quality verification result in which the observed measurement or condition does not satisfy the applicable quality target for the relevant mill/machine/process context.
+    business_meaning: Records an unacceptable verification result; it is evidence that may lead to further action but is not automatically a Corrective Action Nonconformity.
+    synonyms: [Unacceptable Quality Check]
+    discouraged_synonyms: [Nonconformity, CAPA item]
+    examples: [A caliper measurement evaluated outside the applicable target]
+    counterexamples: [A Corrective Action record created after root-cause work has begun]
+    related_concepts: [Quality Check, Quality Measurement, Applicable Quality Target]
+    ambiguities: [The transition rule from failed check to Nonconformity remains unresolved.]
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-09 through 2026-08-10
+          description: Quality checks are contextual measurements against mill/machine/process targets.
+      confidence: high
+      status: candidate
+
+  - id: language.reliability-verification.verification
+    term: Verification
+    context: bc.reliability-verification
+    definition: A discrete assessment performed at a defined checkpoint using applicable AFAL/category criteria to determine a verification result for equipment.
+    business_meaning: Establishes what was checked, under which criteria, and the result at that checkpoint; it does not define the asset's complete lifecycle state.
+    synonyms: [Reliability Verification]
+    discouraged_synonyms: [asset condition, inspection unless specifically used by the business]
+    examples: [A post-maintenance AFAL category check]
+    counterexamples: [The long-term condition or lifecycle state of the machine]
+    related_concepts: [Verification Checkpoint, Verification Result, AFAL Record]
+    ambiguities: []
+    status: candidate
+    provenance:
+      sources:
+        - type: existing-model
+          reference: ManuFactor-arch AFAL evidence
+          description: AFAL/checkpoint evidence establishes discrete verification semantics.
+      confidence: high
+      status: candidate
+
+  - id: language.reliability-verification.failed-verification
+    term: Failed Verification
+    context: bc.reliability-verification
+    definition: A Verification whose result does not satisfy the applicable checkpoint criteria.
+    business_meaning: A retained verification fact that may influence Asset Lifecycle or trigger maintenance/corrective work through explicit rules.
+    synonyms: []
+    discouraged_synonyms: [asset failed, asset condition, Nonconformity]
+    examples: [An AFAL category check that does not meet the required condition]
+    counterexamples: [A machine being permanently classified as failed solely because one verification failed]
+    related_concepts: [Verification Result, Asset Condition]
+    ambiguities: [The exact rule for changing Asset Lifecycle state or creating maintenance work remains unresolved.]
+    status: candidate
+    provenance:
+      sources:
+        - type: existing-model
+          reference: docs/ddd/contexts/bc.reliability-verification/context.yaml
+          description: Verification result and Asset condition are explicitly separate concepts.
+      confidence: high
+      status: candidate
+
+  - id: language.asset-lifecycle.asset-condition
+    term: Asset Condition
+    context: bc.asset-lifecycle
+    definition: The ManuFactor-owned meaningful condition of a physical asset as part of its retained lifecycle/history model.
+    business_meaning: Expresses the asset's condition independently from MP2 work-order status and independently from the result of any one Reliability Verification.
+    synonyms: [condition]
+    discouraged_synonyms: [work order status, verification result]
+    examples: [A retained condition state supported by asset history and explicit domain rules]
+    counterexamples: [An MP2 work order being open, a single failed AFAL check]
+    related_concepts: [Asset Lifecycle State, Asset History, Verification Result]
+    ambiguities: [Specific condition-state vocabulary and transition rules remain future domain-rule work.]
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: MP2 does not contain meaningful asset management beyond WR/WO posting to machine assets.
+      confidence: high
+      status: candidate
+
+  - id: language.training-qualification.operational-qualification
+    term: Operational Qualification
+    context: bc.training-competency
+    definition: Operationally usable evidence that a person can perform a specific mill job or role.
+    business_meaning: Supports onboarding, cross-training depth, and replacement capability; source course completion may contribute evidence but is not automatically equivalent.
+    synonyms: [qualified-for, trained-for when the local rule treats them equivalently]
+    discouraged_synonyms: [course completion, availability]
+    examples: [An operator shown in the cross-training matrix as able to perform a planer position]
+    counterexamples: [A person merely being present on shift, a Moodle completion with no established operational qualification rule]
+    related_concepts: [Cross-Training Relationship, Training/Qualification Matrix]
+    ambiguities: [Later rule discovery must establish when completion, demonstrated ability, and authorization are equivalent or distinct.]
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Cross-operator training depth is needed to know who can step into another job.
+      confidence: high
+      status: candidate
+
+  - id: language.workforce-availability.operational-availability
+    term: Operational Availability
+    context: bc.workforce-availability
+    definition: Whether a person can be considered for operational staffing at the required date/shift based on relevant schedule, vacation, absence, and other time constraints.
+    business_meaning: Answers whether the person is available in time; it does not establish whether the person is qualified for the job.
+    synonyms: [available]
+    discouraged_synonyms: [qualified, coverage]
+    examples: [An operator not on vacation and available for the shift]
+    counterexamples: [A qualified operator who is absent, a present employee who is not qualified for the required position]
+    related_concepts: [Operational Qualification, Staffing Gap, Replacement Option]
+    ambiguities: []
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Vacation scheduling and sick-call replacement are operational gaps.
+      confidence: high
+      status: candidate
+
+  - id: language.workforce-availability.coverage
+    term: Operational Coverage
+    context: bc.workforce-availability
+    definition: A staffing condition in which the required job/time need can be met by a person who is both operationally available and sufficiently qualified.
+    business_meaning: Combines qualification and availability into the operational answer to a staffing need.
+    synonyms: [coverage]
+    discouraged_synonyms: [availability, qualification]
+    examples: [A qualified cross-trained operator is available to cover an absent operator's position]
+    counterexamples: [A person is available but not qualified, a person is qualified but on vacation]
+    related_concepts: [Operational Availability, Operational Qualification, Replacement Option]
+    ambiguities: []
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: The replacement registry must identify who can actually step into the job when someone is absent.
+      confidence: high
+      status: candidate
+
+  - id: language.kiln-operations.kiln-run
+    term: Kiln Run/Charge
+    context: bc.kiln-operations
+    definition: A retained kiln-operating unit that connects scheduling and operating history to the lumber subsequently evaluated through downstream moisture measurements.
+    business_meaning: Provides the historical operational anchor needed to understand drying performance and correlate planer moisture outcomes.
+    synonyms: [run, charge]
+    discouraged_synonyms: [batch unless the mill uses it equivalently]
+    examples: [A scheduled kiln charge with retained operating history later correlated to ProTrack moisture measurements]
+    counterexamples: [A ProTrack moisture measurement record by itself]
+    related_concepts: [Kiln Schedule, Kiln Operating Record, Drying Performance Correlation]
+    ambiguities: [Exact identity/correlation keys between kiln history and downstream lumber/moisture records remain to be discovered.]
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Kiln gaps include persistent scheduling/operations records coordinated with planer moisture data.
+      confidence: high
+      status: candidate
+
+  - id: language.kiln-operations.moisture-outcome
+    term: Moisture Outcome
+    context: bc.kiln-operations
+    definition: The operational interpretation of downstream planer moisture measurements when correlated back to kiln run/history.
+    business_meaning: Helps the mill understand actual board moisture and drying performance without changing the source ProTrack measurement.
+    synonyms: [moisture result when used in kiln-operational analysis]
+    discouraged_synonyms: [ProTrack Moisture Measurement]
+    examples: [A distribution or result derived from ProTrack measurements and associated to a kiln run]
+    counterexamples: [The raw authoritative moisture-meter row stored by ProTrack]
+    related_concepts: [ProTrack Moisture Measurement, Drying Performance Correlation]
+    ambiguities: []
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: The kiln dashboard must connect operations to actual board moisture from ProTrack.
+      confidence: high
+      status: candidate
+
+  - id: language.ltv-form-management.ltv-form-template
+    term: LTV Form Template
+    context: bc.safety-signoff
+    definition: The managed form definition/version used to produce printable LTV form instances.
+    business_meaning: Controls what is printed and provides the versioned origin to which an issued/printed instance remains traceable.
+    synonyms: [LTV Template]
+    discouraged_synonyms: [LTV Printed Instance]
+    examples: [The current managed version used to print an LTV form]
+    counterexamples: [A completed paper/form instance produced from the template]
+    related_concepts: [LTV Form, LTV Printed Instance]
+    ambiguities: []
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: The real Safety gap is LTV form printing and managing those forms.
+      confidence: high
+      status: candidate
+
+  - id: language.ltv-form-management.ltv-printed-instance
+    term: LTV Printed Instance
+    context: bc.safety-signoff
+    definition: A specific printable/issued LTV form produced from a particular managed LTV Form Template version.
+    business_meaning: Represents the individual form instance that is tracked and retained and may later carry completion, approval, or sign-off state where applicable.
+    synonyms: [issued LTV form]
+    discouraged_synonyms: [LTV Template]
+    examples: [A form printed for a specific use and traceable to template version 3]
+    counterexamples: [The reusable template definition]
+    related_concepts: [LTV Form Template, LTV Form Status, LTV Form History]
+    ambiguities: []
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: LTV form printing and management are the actual ManuFactor gap.
+      confidence: high
+      status: candidate
+
+  - id: language.ltv-form-management.sign-off
+    term: Sign-Off
+    context: bc.safety-signoff
+    definition: A possible lifecycle state or action on an LTV Printed Instance when the applicable LTV process requires acknowledgment or approval.
+    business_meaning: Adds required state to the managed form instance but does not define the LTV Form Management context itself.
+    synonyms: [approval when the local process uses the terms equivalently]
+    discouraged_synonyms: [printing, issuing]
+    examples: [A required manager approval on a particular LTV form instance]
+    counterexamples: [The act of printing the form]
+    related_concepts: [LTV Printed Instance, LTV Form Status]
+    ambiguities: [Specific LTV form types may have different approval/sign-off requirements.]
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Sign-off is secondary to the actual LTV printing/form-management gap.
+      confidence: high
+      status: candidate
