@@ -1,0 +1,54 @@
+id: bc.operations-record
+name: Operations Record
+purpose: Preserve ManuFactor-owned records of operational facts without taking ownership of every subject referenced by those records.
+subdomain: subdomain.production-operations
+model_statement: Within Operations Record, a report is an authoritative ManuFactor record of what was reported to have happened operationally; it is not automatically authoritative for the lifecycle of equipment, people, Quality, Safety, or other referenced concepts.
+responsibilities:
+  - Capture shift reports, downtime/incident reports, and process/parameter-change records.
+  - Preserve correction and history semantics for operational records.
+  - Reference external domain concepts without absorbing their lifecycle ownership.
+scope:
+  - Operational occurrence recording
+  - Shift reporting
+  - Downtime/incident reporting
+  - Process/parameter-change recording
+out_of_scope:
+  - Kiln scheduling and drying-process ownership
+  - Project lifecycle management
+  - Asset lifecycle ownership
+  - Safety, Quality, or personnel lifecycle ownership
+owned_concepts:
+  - Operational Record
+  - Shift Report
+  - Downtime/Incident Report
+  - Process/Parameter Change Record
+external_concepts:
+  - Asset
+  - Person
+  - Nonconformity
+  - Safety finding
+ubiquitous_language:
+  - Shift Report
+  - Downtime/Incident Report
+  - Process/Parameter Change
+  - operational occurrence
+business_rules:
+  - A retained operational record must preserve what was reported and its correction/history semantics.
+  - Referencing an external concept does not make Operations Record authoritative for that concept's lifecycle.
+owner: unresolved
+domain_experts: [Mark]
+integration_surface:
+  - References assets, personnel, Quality, Safety, and other operational subjects by identity or translated facts as needed.
+upstream_dependencies: []
+downstream_consumers: []
+status: candidate
+provenance:
+  sources:
+    - type: domain-expert
+      reference: Mark direct, 2026-08-10
+      description: Operations is the broader area for operational gaps; record/reporting concerns remain distinct from kiln, projects, and workforce readiness.
+    - type: existing-model
+      reference: ManuFactor-arch Build Order Phase_B/B1
+      description: Existing evidence supports shift, downtime/incident, and process-change reporting.
+  confidence: medium
+  status: candidate
