@@ -7,12 +7,12 @@ context_candidates:
       - Capture operational facts such as shift reports, downtime or incident reports, and process/parameter changes.
       - Preserve an operational record of what happened without becoming the authoritative model for every subject mentioned in a report.
     language_cohesion: Shift Report, Downtime/Incident Report, Process/Parameter Change, operational occurrence, shift.
-    model_cohesion: Historical operational facts and reporting have a record-oriented lifecycle distinct from kiln control or project lifecycle.
+    model_cohesion: Historical operational facts and reporting have a record-oriented lifecycle distinct from kiln control, project lifecycle, or workforce-readiness planning.
     lifecycle_ownership: Owns creation, correction, and retention semantics for ManuFactor operational records; does not own the underlying equipment, people, quality, safety, or environmental lifecycle merely because they are referenced.
     boundary_indicators:
       - Reports can reference concepts owned elsewhere without taking over those models.
       - An operational incident record may describe the same occurrence that another context treats as a Safety, Quality, or Maintenance concern.
-    adjacent_contexts: [bc.kiln-operations, bc.project-tracking, bc.corrective-action, bc.asset-lifecycle, bc.safety-signoff]
+    adjacent_contexts: [bc.kiln-operations, bc.project-tracking, bc.corrective-action, bc.asset-lifecycle, bc.safety-signoff, bc.workforce-availability]
     ambiguities:
       - The term Incident may have materially different meanings in Operations, Safety, Maintenance, and Quality and must be challenged in Phase 6/8.
     confidence: medium
@@ -22,17 +22,22 @@ context_candidates:
     name: Kiln Operations
     subdomain: subdomain.production-operations
     responsibilities:
-      - Represent the kiln drying operational process and its scheduling/operating decisions where ManuFactor fills a gap.
-    language_cohesion: Kiln, drying schedule, charge/run, operating parameters, drying process.
-    model_cohesion: Kiln operation has a process lifecycle and operating rules distinct from general operational reporting and project work.
-    lifecycle_ownership: Candidate owner of ManuFactor kiln-operation lifecycle where no authoritative existing system already owns the needed model.
+      - Replace spreadsheet-based kiln scheduling/operations with a persistent operational schedule and history.
+      - Represent kiln runs/charges, scheduling decisions, operating records, and evolving kiln process-control/data-collection gaps.
+      - Correlate downstream planer moisture measurements from ProTrack with the kiln schedule/run history that produced the lumber.
+      - Support operational understanding of drying performance and actual board moisture through dashboards/projections derived from the model.
+    language_cohesion: Kiln, drying schedule, charge/run, operating parameters, drying process, moisture result, drying performance.
+    model_cohesion: Kiln scheduling, retained operating history, and correlation to downstream moisture outcomes form a process model distinct from general operational reporting and from the ProTrack moisture-measurement source model.
+    lifecycle_ownership: Owns ManuFactor's kiln scheduling/operations record and correlation semantics. ProTrack remains authoritative for the moisture measurements it records in the planer database.
     boundary_indicators:
-      - Environmental may use kiln information for regulatory purposes without thereby owning the kiln operating model.
-      - Operations Record may record kiln events without owning kiln process decisions.
+      - ProTrack moisture measurements are consumed as downstream facts and correlated to kiln runs without importing ProTrack's source model as the Kiln Operations model.
+      - Operations Record may record kiln events without owning kiln scheduling or drying-performance semantics.
+      - Dashboards are projections of Kiln Operations and correlated source facts, not a separate Bounded Context.
     adjacent_contexts: [bc.operations-record, bc.asset-lifecycle, bc.reliability-verification]
     ambiguities:
-      - Exact source-of-truth responsibility for kiln scheduling/operation is not yet established and must be challenged before confirmation.
-    confidence: medium
+      - Exact identifiers/rules used to correlate kiln runs to downstream ProTrack moisture records remain to be discovered during later language/rule modeling.
+      - Additional process-control responsibilities will be modeled as concrete gaps are discovered rather than inferred in advance.
+    confidence: high
     status: candidate
 
   - id: bc.project-tracking
@@ -156,35 +161,39 @@ context_candidates:
     status: unresolved
 
   - id: bc.training-competency
-    name: Training and Competency
-    subdomain: subdomain.people-workforce
+    name: Operational Training and Qualification
+    subdomain: subdomain.production-operations
     responsibilities:
-      - Represent who is trained or qualified for what where ManuFactor needs the information.
-      - Consume authoritative learning records from Moodle or another system without redefining training completion arbitrarily.
-    language_cohesion: Training, competency, qualification, completion, trained-for.
-    model_cohesion: Qualification/competency semantics and evidence differ from shift assignment, attendance, and absence.
-    lifecycle_ownership: Candidate translated/read model for external training authority plus any ManuFactor-owned competency gap explicitly discovered later.
+      - Represent operational training coverage across mill activities, with particular importance during onboarding.
+      - Maintain the cross-operator training/qualification matrix needed to understand depth of coverage across crews and jobs.
+      - Use authoritative learning records from Moodle or other sources as evidence without treating source-system completion as automatically identical to operational qualification.
+    language_cohesion: Onboarding, operator training, qualification, cross-training, training matrix, crew depth, trained-for.
+    model_cohesion: Operational qualification/coverage answers which people can perform which mill jobs; this differs from personnel administration and from whether a person is available on a particular date/shift.
+    lifecycle_ownership: Owns the operational interpretation of training coverage and cross-operator depth where ManuFactor fills the gap; external learning systems remain authoritative for their source completion records.
     boundary_indicators:
-      - Operations/Safety/Maintenance may consume competency information but should not redefine its HR/training meaning.
-    adjacent_contexts: [bc.workforce-availability, bc.safety-signoff, bc.operations-record]
+      - Moodle provides learning facts but does not define the entire operational readiness model.
+      - Workforce Availability consumes qualification/coverage when deciding who can step into a job after vacation or a sick call.
+    adjacent_contexts: [bc.workforce-availability, bc.operations-record, bc.safety-signoff]
     ambiguities:
-      - Whether ManuFactor owns any competency determination beyond consuming Moodle completion data remains unresolved but is not a reason to merge with Workforce Availability.
-    confidence: medium
+      - Later rule discovery must distinguish training completion, demonstrated qualification, and operational authorization where those differ.
+    confidence: high
     status: candidate
 
   - id: bc.workforce-availability
-    name: Workforce Availability
-    subdomain: subdomain.people-workforce
+    name: Operational Workforce Availability
+    subdomain: subdomain.production-operations
     responsibilities:
-      - Represent crew/shift/supervisor structure and absence/availability information needed by ManuFactor.
-      - Consume authoritative workforce/timekeeping information where another system owns it.
-    language_cohesion: Department, Crew, Shift, Supervisor, absence, scheduled, available.
-    model_cohesion: Scheduling/availability has time-based assignment and absence semantics distinct from competency/qualification.
-    lifecycle_ownership: Candidate translated/read model of workforce availability plus any ManuFactor-owned scheduling gap discovered later.
+      - Represent vacation scheduling where no adequate software process currently exists.
+      - Represent crew/shift availability needed for mill operations.
+      - Determine replacement options when an operator is absent by combining availability with cross-operator qualification/coverage.
+    language_cohesion: Crew, Shift, vacation, absence, available, replacement operator, coverage, staffing gap.
+    model_cohesion: The context answers the operational question of who can actually cover work at a given time, rather than administering HR absence/payroll semantics.
+    lifecycle_ownership: Owns ManuFactor's operational vacation/coverage planning and replacement-readiness semantics. HR/timekeeping systems remain authoritative for personnel facts they own.
     boundary_indicators:
-      - Operations consumes who is scheduled/available but should not own HR absence semantics solely because it uses them.
+      - An HR absence record is an input fact; operational coverage is a separate derived/business decision.
+      - Qualification comes from Operational Training and Qualification, while this context applies it to a time/crew staffing need.
     adjacent_contexts: [bc.training-competency, bc.operations-record]
     ambiguities:
-      - Exact authority split with Kronos/other workforce systems requires Phase 6 ownership challenge.
-    confidence: medium
+      - Exact interfaces to timekeeping/HR absence data remain to be mapped, but the operational coverage lifecycle is now established.
+    confidence: high
     status: candidate
