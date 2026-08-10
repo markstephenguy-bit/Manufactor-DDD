@@ -1,4 +1,4 @@
-version: 15
+version: 16
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -81,9 +81,9 @@ findings:
     subject: Operations candidate strategic placement
     finding: Mark confirmed Operations as the broader candidate strategic domain area for mill-operating gaps. The previous name Production Operations was misleading because it sounded like ERP/production-execution scope. Operations should contain currently known operational-reporting and kiln-related gaps without implying ManuFactor owns production execution or ERP functions.
   - id: AUDIT-0024
-    severity: domain-confirmation
-    subject: Projects Continuous Improvement candidate placement
-    finding: Mark confirmed Projects / Continuous Improvement as the broader candidate strategic domain area. Project Tracking is one known capability within it, not merely a cross-domain utility.
+    severity: domain-correction
+    subject: Projects Continuous Improvement placement
+    finding: Mark initially accepted Projects / Continuous Improvement as a broader area but then clarified that he prefers it under Operations. Therefore Projects / Continuous Improvement must not be modeled as a peer strategic Subdomain; it is an Operations responsibility/capability grouping, with Project Tracking as a known capability within that Operations scope.
   - id: AUDIT-0025
     severity: domain-correction
     subject: Identity Access strategic placement
@@ -123,9 +123,7 @@ required_actions:
   - id: ACTION-0028
     action: Record the Maintenance/Reliability gap-filler example in discovery/decision material: ManuFactor may extract maintenance/reliability data from existing databases and make it available for novel analysis in Superset or comparable analytical tooling. Do not create an Analytics Subdomain solely because Superset is used, and do not imply ManuFactor owns CMMS maintenance workflows.
   - id: ACTION-0029
-    action: Rename/reframe subdomain.production-operations as broader candidate Operations. Preserve cap.operational-reporting and cap.kiln-drying-operations as currently known responsibilities unless later evidence separates them. Keep status candidate. Explicitly state that Operations represents ManuFactor gaps under mill operations and does not imply ERP, MES, production planning, production execution, or other existing-system ownership.
-  - id: ACTION-0030
-    action: Add broader candidate Projects / Continuous Improvement to the strategic Subdomain map and place cap.project-tracking within it as a currently known capability. Keep status candidate and do not imply Project Tracking exhausts the domain area.
+    action: Rename/reframe subdomain.production-operations as broader candidate Operations. Preserve cap.operational-reporting and cap.kiln-drying-operations as currently known responsibilities unless later evidence separates them. Add cap.project-tracking within Operations and record Projects / Continuous Improvement as an Operations responsibility grouping, not a peer Subdomain. Keep status candidate. Explicitly state that Operations represents ManuFactor gaps under mill operations and does not imply ERP, MES, production planning, production execution, or other existing-system ownership.
   - id: ACTION-0031
     action: Remove subdomain.identity-access from the business-domain Subdomain map. Preserve Identity & Access only as shared platform infrastructure in the appropriate non-domain documentation if needed. Do not promote it to a generic business Subdomain.
   - id: ACTION-0032
