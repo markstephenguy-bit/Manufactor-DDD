@@ -1,0 +1,63 @@
+id: bc.corrective-action
+name: Corrective Action
+purpose: Coordinate Nonconformity-driven correction and corrective action through root-cause, routing, and closure without duplicating work ownership held by other contexts or systems.
+subdomain: subdomain.quality
+model_statement: Within Corrective Action, a Nonconformity is a finding that enters a remediation lifecycle of correction, root-cause analysis, corrective action, routing, and closure; routed work may be owned elsewhere and does not become locally owned merely because CAPA coordinates it.
+responsibilities:
+  - Represent Nonconformities and Corrections.
+  - Coordinate root-cause and Corrective Action work.
+  - Route resulting work to the context/system that owns that work class.
+  - Track CAPA coordination through closure.
+scope:
+  - Nonconformity lifecycle
+  - Correction and Corrective Action coordination
+  - Root-cause work
+  - Routing and closure semantics
+out_of_scope:
+  - Product measurement/quality-check lifecycle
+  - Ownership of routed maintenance, Safety, Operations, project, or other work
+  - A monolithic QMS
+owned_concepts:
+  - Nonconformity
+  - Correction
+  - Corrective Action
+  - CAPA Item
+  - Routing Rule
+external_concepts:
+  - Project
+  - Maintenance work
+  - Safety finding
+  - Quality Verification Result
+ubiquitous_language:
+  - Nonconformity
+  - Correction
+  - Corrective Action
+  - root cause
+  - CAPA item
+  - routing
+  - closure
+business_rules:
+  - CAPA closure must reflect the corrective-action lifecycle without falsely becoming authoritative for work owned by another context.
+  - Planned project work is not inherently a CAPA item.
+  - External standards may inform vocabulary/rules but do not define this Bounded Context boundary.
+owner: unresolved
+domain_experts: [Mark]
+integration_surface:
+  - Accepts eligible findings from Quality Verification and potentially other contexts when explicit rules allow.
+  - Routes corrective work to contexts/systems that own execution.
+upstream_dependencies:
+  - bc.quality-verification
+downstream_consumers:
+  - bc.project-tracking
+  - bc.asset-lifecycle
+status: candidate
+provenance:
+  sources:
+    - type: domain-expert
+      reference: Mark direct, ISSUE-0002
+      description: Mark established CAPA as a Quality aspect and distinct from project tracking.
+    - type: decision
+      reference: DDD-0005
+      description: CAPA vocabulary, trigger, routing, and ISO-boundary semantics were clarified.
+  confidence: high
+  status: candidate
