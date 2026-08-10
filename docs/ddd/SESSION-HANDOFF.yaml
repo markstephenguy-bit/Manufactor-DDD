@@ -1,13 +1,15 @@
-model_state: strategic DDD — candidate Bounded Contexts and first canonical Context Map established; ready for contextual language stabilization
-current_phase: Phase 8 — Ubiquitous Language stabilization
-last_completed: Phase 7 whole-map Context Map discovery created the canonical candidate Context Map and explicit Integration Contracts for all currently established significant cross-context/external interactions
-current_focus: Stabilize contextual language inside each Bounded Context, identify overloaded terms, and prevent foreign-context terminology from leaking across semantic boundaries
+model_state: strategic DDD — candidate Bounded Contexts, Context Map, Integration Contracts, and contextual Ubiquitous Language established
+current_phase: Phase 9 — Domain Concept modeling
+last_completed: Phase 8 whole-map Ubiquitous Language stabilization created contextual language records for boundary-sensitive terms plus domain-wide vocabulary for ManuFactor Gap, Source Authority, External Source Fact, and Translation Boundary
+current_focus: Identify the major domain concepts inside each candidate Bounded Context without prematurely classifying every noun as Entity, Aggregate, Value Object, or Domain Service
 blocking_issues: []
-next_action: Perform a whole-map Ubiquitous Language pass. Prioritize terms that cross or threaten boundaries: Incident, Failure, Nonconformity, Verification, Asset Status/Condition, Training Completion, Qualification, Available/Coverage, Kiln Run/Charge, Moisture Result, LTV Form/Template/Printed Instance, and Project/Action. Create contextual language records rather than one global definition when meanings differ.
+next_action: Perform a whole-map Domain Concept pass across all ten supported candidate Bounded Contexts. Start with concepts already supported by the context models and language records. Record identity semantics, lifecycle, state, behaviors, rules, relationships, and candidate model role only where evidence supports it. Preserve unresolved tactical classification rather than inventing it.
 files_to_read:
   - docs/ddd/SPECIFICATION.md
   - docs/ddd/context-map/context-map.yaml
   - docs/ddd/integration-contracts/index.yaml
+  - docs/ddd/language/domain-language.yaml
+  - docs/ddd/language/ubiquitous-language.yaml
   - docs/ddd/discovery/context-candidates.yaml
   - docs/ddd/discovery/boundary-challenge.yaml
   - docs/ddd/subdomains/index.yaml
@@ -64,28 +66,28 @@ context_map:
     - bc.training-competency -> bc.workforce-availability
     - external.learning-system -> bc.training-competency
     - external.hr-timekeeping -> bc.workforce-availability
-  relationship_pattern_state: Relationship types remain unresolved where governance/pattern evidence is insufficient; semantic direction, ownership, translation, and contracts are explicit.
-  intentionally_unmapped:
-    - bc.operations-record: references alone are not enough to invent significant relationships
-    - bc.project-tracking: no currently established significant cross-context contract
-    - bc.safety-signoff (LTV Form Management): no currently established significant cross-context contract
-important_boundary_findings:
-  - Kiln Operations owns retained kiln scheduling/operations history and correlation to downstream ProTrack moisture outcomes; ProTrack remains authoritative for source moisture measurements.
-  - Asset Lifecycle owns meaningful asset identity/condition/lifecycle/history missing from MP2; MP2 remains authoritative for its WR/WO records.
-  - Reliability Verification owns verification/checkpoint evidence and is distinct from Asset Lifecycle.
-  - Operational Training and Qualification owns operational qualification/cross-training coverage; source learning systems own their source completion records.
-  - Operational Workforce Availability owns vacation/coverage/replacement-readiness semantics and consumes qualification plus personnel facts.
-  - Quality Verification and Corrective Action remain distinct models; failed checks do not automatically become Nonconformities.
-  - LTV Form Management owns the LTV template/form/printed-instance lifecycle; printing and form management are primary, while approval/sign-off is only part of that lifecycle where applicable.
-  - Operations Record is authoritative for the operational record it creates, not for every referenced subject.
+language_model:
+  domain_language: docs/ddd/language/domain-language.yaml
+  contextual_language: docs/ddd/language/ubiquitous-language.yaml
+  major_stabilized_distinctions:
+    - Operational Incident is not automatically a Nonconformity, failed verification, or asset failure.
+    - Failed Quality Check is not automatically a Corrective Action Nonconformity.
+    - Reliability Verification result is not Asset Condition.
+    - Operational Qualification is not source course completion and is not Availability.
+    - Operational Availability is not Qualification; Operational Coverage requires both.
+    - Kiln Operations Moisture Outcome is an operational interpretation of source ProTrack measurements, not the source measurement itself.
+    - LTV Form Template and LTV Printed Instance are distinct; Sign-Off is only a possible instance lifecycle state/action.
+    - ManuFactor Gap does not imply replacement-system ownership.
+    - Source Authority remains with the context/system that owns the original fact lifecycle.
 open_nonblocking_issues:
   - ISSUE-0003: Vehicle Management versus Physical Asset Management
   - Exact domain rules for failed verification changing asset state
   - Exact rule for a failed quality check becoming a Nonconformity
   - Exact identifiers/rules for correlating kiln history to ProTrack moisture records
+  - Exact qualification rules distinguishing completion, demonstrated capability, and authorization
 specification_authority:
   source_document: ManuFactor_DDD_Modeling_Specification.docx
   repository_specification: docs/ddd/SPECIFICATION.md
-  rule: Ubiquitous Language is contextual; overloaded terms must retain their context-specific meanings rather than being forced into a global dictionary.
-session_resume: Continue with a whole-map contextual language pass. Do not reopen resolved boundary ownership unless language discovery exposes a real semantic contradiction.
+  rule: Phase 9 begins with Domain Concepts; do not mechanically convert nouns into tactical DDD patterns before invariants and identity/lifecycle evidence justify them.
+session_resume: Begin a whole-map Domain Concept pass. Do not jump directly to Aggregates or Entities. Preserve unresolved model roles until later invariant discovery supports tactical classification.
 last_direct_update: 2026-08-10
