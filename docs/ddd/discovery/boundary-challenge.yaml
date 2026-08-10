@@ -56,12 +56,12 @@ boundary_challenges:
     result: retain-strong-candidate
 
   - context: bc.safety-signoff
-    merge_test: Keep separate from Corrective Action and Operations Record.
-    split_test: Do not split template and instance yet; evidence supports one approval/sign-off lifecycle.
-    domain_not_software_test: Boundary follows authoritative sign-off semantics, not the Safety department.
-    ownership_test: ManuFactor owns the sign-off record lifecycle for this gap.
-    language_change: Approval, sign-off, authoritative, template, and instance are local semantics.
-    result: retain-strong-candidate
+    merge_test: Keep separate from Corrective Action and Operations Record because the LTV form/template and printed-instance lifecycle is distinct from corrective remediation or operational reporting.
+    split_test: Do not split printing from form management; producing printable instances, tracking them, and retaining their relationship to the managed form/template are one cohesive lifecycle. Approval/sign-off should split only if later evidence shows an independent model.
+    domain_not_software_test: Boundary follows the real Safety gap of LTV form management and printing, not the Safety department or an approval screen.
+    ownership_test: ManuFactor owns the managed LTV form/template and printed/issued-instance lifecycle. Approval/sign-off is a subordinate state where required, not the context-defining responsibility.
+    language_change: LTV Form, template, printed instance, print, issue, form status, approval, and sign-off are local lifecycle terms.
+    result: retain-strong-candidate-renamed-ltv-form-management
 
   - context: bc.environmental-compliance
     merge_test: No merge decision is warranted because no current ManuFactor Environmental model is established.
