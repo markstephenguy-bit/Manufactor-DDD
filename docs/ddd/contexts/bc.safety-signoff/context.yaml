@@ -1,44 +1,50 @@
 id: bc.safety-signoff
-name: Safety Sign-Off
-purpose: Manage the template/instance approval lifecycle that makes a ManuFactor safety sign-off record authoritative.
+name: LTV Form Management
+purpose: Manage the LTV form lifecycle, including maintaining form definitions/templates, producing printable instances, retaining and tracking issued forms, and supporting approval/sign-off where the business process requires it.
 subdomain: subdomain.safety-compliance-signoff
-model_statement: Within Safety Sign-Off, a safety sign-off record becomes authoritative only through the required template/instance approval lifecycle; this context does not model the entire Safety business area.
+model_statement: Within LTV Form Management, ManuFactor is authoritative for the managed LTV form/template and the lifecycle of printable/issued LTV form instances; printing and form management are the primary gap, while approval/sign-off is one possible lifecycle step rather than the defining model.
 responsibilities:
-  - Manage safety sign-off templates and instances.
-  - Track required approval state.
-  - Establish when a sign-off record becomes authoritative.
-  - Retain sign-off evidence/history.
+  - Maintain the LTV form/template information needed to produce current forms.
+  - Produce printable LTV form instances from the applicable managed form/template.
+  - Track and retain issued/printed LTV form instances and their history.
+  - Support approval, completion, or sign-off state where required by the applicable LTV process.
+  - Preserve traceability between a printed/issued instance and the form/template from which it was produced.
 scope:
-  - LTV Template
-  - LTV Printed Instance
-  - Site Safety Manager approval
-  - Safety sign-off authority lifecycle
+  - LTV form/template management
+  - LTV form printing
+  - LTV printed/issued instances
+  - LTV form history and traceability
+  - Approval/sign-off where applicable to an LTV form lifecycle
 out_of_scope:
   - General Safety incident management
   - CAPA lifecycle
   - Operations incident reporting
   - Entire Safety departmental scope
 owned_concepts:
-  - Safety Sign-Off Template
-  - Safety Sign-Off Instance
-  - Safety Approval
-  - Authoritative Safety Sign-Off Record
+  - LTV Form
+  - LTV Form Template
+  - LTV Printed Instance
+  - LTV Form Status
+  - LTV Form History
 external_concepts:
   - Person
-  - Safety finding
+  - Safety requirement
 ubiquitous_language:
+  - LTV Form
   - LTV Template
   - LTV Printed Instance
-  - Site Safety Manager approval
+  - print
+  - issue
+  - approval
   - sign-off
-  - authoritative record
 business_rules:
-  - A sign-off record is not authoritative until its required approval state is satisfied.
-  - A Safety Sign-Off record may be referenced by Operations Record or Corrective Action without transferring ownership of its approval lifecycle.
+  - A printed or issued LTV form instance must remain traceable to the form/template version from which it was produced.
+  - Printing or issuing a form does not by itself imply approval or sign-off unless the applicable LTV process requires that state.
+  - Approval/sign-off state, where required, belongs to the managed LTV form instance and must not redefine unrelated Safety or CAPA lifecycles.
 owner: unresolved
 domain_experts: [Mark]
 integration_surface:
-  - May provide findings or authoritative sign-off references to other contexts.
+  - May provide LTV form status or completed-form references to other contexts where operational or corrective work needs them.
 upstream_dependencies: []
 downstream_consumers:
   - bc.corrective-action
@@ -47,10 +53,10 @@ status: candidate
 provenance:
   sources:
     - type: domain-expert
-      reference: Mark direct, ISSUE-0002
-      description: Mark confirmed Safety Sign-Off as a real Safety responsibility while rejecting the inference that it exhausts the Safety business area.
+      reference: Mark direct, 2026-08-10
+      description: Mark clarified that the actual Safety gap is LTV form printing and a system to manage those forms; sign-off alone is too narrow a description of the required model.
     - type: existing-model
-      reference: ManuFactor-arch LTV template/instance approval evidence
-      description: Existing evidence supports a distinct template-instance-approval lifecycle.
+      reference: ManuFactor-arch LTV template/instance evidence
+      description: Existing evidence supports managed LTV templates/forms, printable instances, and related lifecycle information.
   confidence: high
   status: candidate
