@@ -27,9 +27,9 @@ context_candidates:
     model_cohesion: Kiln operation has a process lifecycle and operating rules distinct from general operational reporting and project work.
     lifecycle_ownership: Candidate owner of ManuFactor kiln-operation lifecycle where no authoritative existing system already owns the needed model.
     boundary_indicators:
-      - Environmental may use kiln information for regulatory reporting but does not thereby own the kiln operating model.
+      - Environmental may use kiln information for regulatory purposes without thereby owning the kiln operating model.
       - Operations Record may record kiln events without owning kiln process decisions.
-    adjacent_contexts: [bc.operations-record, bc.environmental-compliance, bc.asset-lifecycle, bc.reliability-verification]
+    adjacent_contexts: [bc.operations-record, bc.asset-lifecycle, bc.reliability-verification]
     ambiguities:
       - Exact source-of-truth responsibility for kiln scheduling/operation is not yet established and must be challenged before confirmation.
     confidence: medium
@@ -81,7 +81,7 @@ context_candidates:
     boundary_indicators:
       - CAPA can originate from Quality, Safety, Environmental, Maintenance, or Operations findings without those domains becoming part of the CAPA model.
       - Project Tracking is distinguished by trigger: planned/improvement work is not inherently a Nonconformity response.
-    adjacent_contexts: [bc.quality-verification, bc.project-tracking, bc.asset-lifecycle, bc.reliability-verification, bc.safety-signoff, bc.environmental-compliance]
+    adjacent_contexts: [bc.quality-verification, bc.project-tracking, bc.asset-lifecycle, bc.reliability-verification, bc.safety-signoff]
     ambiguities:
       - Whether every Safety/Environmental/Maintenance finding can become a CAPA item is not yet established; cross-context relationship remains candidate.
     confidence: high
@@ -142,18 +142,18 @@ context_candidates:
   - id: bc.environmental-compliance
     name: Environmental Compliance
     subdomain: subdomain.environmental-compliance
-    responsibilities:
-      - Produce and retain environmental compliance forms/reports for known boiler/kiln obligations where ManuFactor fills the gap.
-    language_cohesion: Environmental compliance form, boiler, kiln, reporting period, regulatory requirement.
-    model_cohesion: Regulatory reporting obligations and report lifecycle are distinct from operating the kiln or maintaining equipment.
-    lifecycle_ownership: Owns ManuFactor environmental compliance record/report lifecycle, not kiln operation or equipment lifecycle.
+    responsibilities: []
+    language_cohesion: Not yet established from an actual ManuFactor gap.
+    model_cohesion: Not yet established.
+    lifecycle_ownership: Not established; Mark cannot currently identify a concrete Environmental gap that ManuFactor needs to own.
     boundary_indicators:
-      - Consumes kiln/equipment facts from Operations or Maintenance while applying Environmental-specific reporting meaning and rules.
-    adjacent_contexts: [bc.kiln-operations, bc.asset-lifecycle, bc.corrective-action]
+      - Environmental remains a valid broader business area, but business-area existence alone does not justify a Bounded Context.
+      - A future Environmental gap may justify this or a differently named context once real language, rules, lifecycle, and authority are known.
+    adjacent_contexts: []
     ambiguities:
-      - Specific regulatory vocabulary/rules remain to be discovered before confirmation.
-    confidence: medium
-    status: candidate
+      - No current concrete ManuFactor Environmental responsibility is known from the domain expert.
+    confidence: low
+    status: unresolved
 
   - id: bc.training-competency
     name: Training and Competency
