@@ -1,4 +1,4 @@
-version: 4
+version: 5
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -40,6 +40,10 @@ findings:
     severity: notation
     subject: capability confirmation semantics
     finding: cap.safety-compliance-signoff, cap.corrective-preventive-action, and cap.environmental-compliance may remain confirmed capabilities because Mark confirmed the responsibilities themselves. Their confirmed capability status must not be interpreted as confirmed Subdomain status.
+  - id: AUDIT-0014
+    severity: domain-evidence
+    subject: product quality target classes
+    finding: Mark states that target sizes are mill- and machine-specific, while planed finished-lumber target sizes are standard market sizes. GP employs SPIB to monitor finished sizes. This establishes distinct target authorities/contexts within Product Quality Verification but does not establish a separate Subdomain boundary or ManuFactor ownership.
 
 required_actions:
   - id: ACTION-0013
@@ -54,18 +58,19 @@ required_actions:
     action: Review active strategic decisions/issues for any surviving statement that separate Safety, CAPA, and Environmental responsibilities prove separate confirmed Subdomains, or that ISO/QMS grouping defines a ManuFactor boundary. Correct only such surviving active statements; do not restart broad evidence archaeology.
   - id: ACTION-0018
     action: Update SESSION-HANDOFF.yaml after these consistency corrections. Preserve Phase 4 as active and Phase 5 as blocked. Preserve ChatGPT as owner of strategic domain questions.
+  - id: ACTION-0019
+    action: Record Mark's Product Quality Verification evidence in the appropriate discovery record: process/target dimensions may be mill- and machine-specific; planed finished-lumber target sizes are standard market sizes; SPIB is employed to monitor finished sizes. Do not infer that SPIB owns ManuFactor Quality, that finished-size monitoring exhausts Product Quality Verification, or that this evidence defines a Subdomain boundary.
 
 next_domain_question:
   owner: chatgpt
-  subject: product-quality-target-authority
-  evidence_check: Targeted searches of markstephenguy-bit/ManuFactor-arch and markstephenguy-bit/Manufactor did not establish an authoritative owner/source for mill- and machine-specific lumber quality targets.
-  instruction: Claude Code must not ask this question. ChatGPT will ask Mark who defines and maintains those targets and whether they exist in any authoritative system or controlled source.
+  subject: mill-machine-target-governance
+  instruction: Claude Code must not ask this question. ChatGPT will ask Mark where mill- and machine-specific target sizes are maintained today and who has authority to establish or change them.
 
 do_not_do:
   - do not create Bounded Contexts yet
   - do not reinterpret separate responsibilities as separate Subdomains
   - do not ask Mark strategic domain questions
-  - do not treat ISO 9001 or generic QMS grouping as a DDD boundary definition
+  - do not treat ISO 9001, SPIB, or generic QMS grouping as a DDD boundary definition
   - do not model a monolithic QMS as ManuFactor-owned
   - do not assume ManuFactor owns a responsibility because it reads, displays, correlates, or aggregates its data
   - do not gather broad repository evidence; evidence lookup must be tied to the specific responsibility under discovery
