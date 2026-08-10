@@ -1,0 +1,190 @@
+context_candidates:
+
+  - id: bc.operations-record
+    name: Operations Record
+    subdomain: subdomain.production-operations
+    responsibilities:
+      - Capture operational facts such as shift reports, downtime or incident reports, and process/parameter changes.
+      - Preserve an operational record of what happened without becoming the authoritative model for every subject mentioned in a report.
+    language_cohesion: Shift Report, Downtime/Incident Report, Process/Parameter Change, operational occurrence, shift.
+    model_cohesion: Historical operational facts and reporting have a record-oriented lifecycle distinct from kiln control or project lifecycle.
+    lifecycle_ownership: Owns creation, correction, and retention semantics for ManuFactor operational records; does not own the underlying equipment, people, quality, safety, or environmental lifecycle merely because they are referenced.
+    boundary_indicators:
+      - Reports can reference concepts owned elsewhere without taking over those models.
+      - An operational incident record may describe the same occurrence that another context treats as a Safety, Quality, or Maintenance concern.
+    adjacent_contexts: [bc.kiln-operations, bc.project-tracking, bc.corrective-action, bc.asset-lifecycle, bc.safety-signoff]
+    ambiguities:
+      - The term Incident may have materially different meanings in Operations, Safety, Maintenance, and Quality and must be challenged in Phase 6/8.
+    confidence: medium
+    status: candidate
+
+  - id: bc.kiln-operations
+    name: Kiln Operations
+    subdomain: subdomain.production-operations
+    responsibilities:
+      - Represent the kiln drying operational process and its scheduling/operating decisions where ManuFactor fills a gap.
+    language_cohesion: Kiln, drying schedule, charge/run, operating parameters, drying process.
+    model_cohesion: Kiln operation has a process lifecycle and operating rules distinct from general operational reporting and project work.
+    lifecycle_ownership: Candidate owner of ManuFactor kiln-operation lifecycle where no authoritative existing system already owns the needed model.
+    boundary_indicators:
+      - Environmental may use kiln information for regulatory reporting but does not thereby own the kiln operating model.
+      - Operations Record may record kiln events without owning kiln process decisions.
+    adjacent_contexts: [bc.operations-record, bc.environmental-compliance, bc.asset-lifecycle, bc.reliability-verification]
+    ambiguities:
+      - Exact source-of-truth responsibility for kiln scheduling/operation is not yet established and must be challenged before confirmation.
+    confidence: medium
+    status: candidate
+
+  - id: bc.project-tracking
+    name: Project Tracking
+    subdomain: subdomain.production-operations
+    responsibilities:
+      - Track discrete improvement or capital projects that are not triggered by a Nonconformity.
+    language_cohesion: Project, milestone, task/action, planned work, capital/improvement work.
+    model_cohesion: Projects have a planned-work lifecycle distinct from incident/report records and from CAPA's nonconformity-driven lifecycle.
+    lifecycle_ownership: Owns the ManuFactor project lifecycle and project-specific status where ManuFactor fills the gap.
+    boundary_indicators:
+      - The same work may be referenced by CAPA or Maintenance, but a Project is not a CAPA item merely because corrective work later becomes a project.
+    adjacent_contexts: [bc.corrective-action, bc.operations-record, bc.asset-lifecycle]
+    ambiguities: []
+    confidence: medium
+    status: candidate
+
+  - id: bc.quality-verification
+    name: Quality Verification
+    subdomain: subdomain.quality
+    responsibilities:
+      - Determine the applicable product-quality target for mill/machine/process context.
+      - Capture and interpret product measurements/checks against those targets.
+      - Retain quality verification results where the current process leaves a gap.
+    language_cohesion: Quality target, quality check, measurement, mill context, machine context, process context, finished size.
+    model_cohesion: Target selection and verification results form a measurement/acceptance model distinct from CAPA's corrective-action lifecycle.
+    lifecycle_ownership: Owns the meaning and lifecycle of ManuFactor quality checks and their contextual evaluation; does not own machine setup or external market standards themselves.
+    boundary_indicators:
+      - Machine/process identity is referenced from Operations or Maintenance but quality acceptance semantics are local to Quality Verification.
+      - A failed check may create a Nonconformity that enters Corrective Action, but the measurement remains a Quality Verification fact.
+    adjacent_contexts: [bc.corrective-action, bc.operations-record, bc.asset-lifecycle]
+    ambiguities:
+      - The exact semantic transition from a failed quality check to a Nonconformity requires later rule discovery but does not prevent the candidate split.
+    confidence: high
+    status: candidate
+
+  - id: bc.corrective-action
+    name: Corrective Action
+    subdomain: subdomain.quality
+    responsibilities:
+      - Represent Nonconformities, Corrections, Corrective Actions, root-cause work, routing, and closure.
+      - Route resulting work to the business/system context that already owns that class of work rather than becoming a duplicate owner.
+    language_cohesion: Nonconformity, Correction, Corrective Action, CAPA item, root cause, routing rule, closure.
+    model_cohesion: A nonconformity-driven remediation lifecycle has different triggers, states, and authority from product measurement or ordinary project tracking.
+    lifecycle_ownership: Owns CAPA/nonconformity coordination and closure semantics while referenced corrective work may be owned by another context/system.
+    boundary_indicators:
+      - CAPA can originate from Quality, Safety, Environmental, Maintenance, or Operations findings without those domains becoming part of the CAPA model.
+      - Project Tracking is distinguished by trigger: planned/improvement work is not inherently a Nonconformity response.
+    adjacent_contexts: [bc.quality-verification, bc.project-tracking, bc.asset-lifecycle, bc.reliability-verification, bc.safety-signoff, bc.environmental-compliance]
+    ambiguities:
+      - Whether every Safety/Environmental/Maintenance finding can become a CAPA item is not yet established; cross-context relationship remains candidate.
+    confidence: high
+    status: candidate
+
+  - id: bc.asset-lifecycle
+    name: Asset Lifecycle
+    subdomain: subdomain.asset-reliability
+    responsibilities:
+      - Represent physical asset identity, current lifecycle/condition state, and relevant history where ManuFactor fills a gap.
+      - Correlate asset information from existing systems without replacing the CMMS lifecycle when it remains authoritative.
+    language_cohesion: Asset, equipment, vehicle, condition, lifecycle state, operational setting/history.
+    model_cohesion: Persistent asset identity and lifecycle are distinct from individual verification/check records.
+    lifecycle_ownership: Candidate owner only for ManuFactor-specific asset state not already authoritative in CMMS; otherwise acts as a translated/read model of external authority.
+    boundary_indicators:
+      - Reliability Verification evaluates an asset at a checkpoint but does not define the full asset lifecycle.
+      - Operations and Quality reference machines/equipment with context-specific meanings without owning asset lifecycle.
+    adjacent_contexts: [bc.reliability-verification, bc.kiln-operations, bc.operations-record, bc.quality-verification, bc.project-tracking]
+    ambiguities:
+      - ISSUE-0003 remains open for Vehicle Management versus Physical Asset Management but does not invalidate this broader candidate context.
+      - Exact split between authoritative external CMMS state and ManuFactor-owned asset state requires Phase 6 ownership challenge.
+    confidence: medium
+    status: candidate
+
+  - id: bc.reliability-verification
+    name: Reliability Verification
+    subdomain: subdomain.asset-reliability
+    responsibilities:
+      - Verify equipment is in a known-good/compliant state at post-maintenance, scheduled, or condition-triggered checkpoints.
+      - Retain AFAL/check verification evidence where ManuFactor owns the gap.
+    language_cohesion: AFAL, verification, checkpoint, category-check, known-good state, post-maintenance verification.
+    model_cohesion: Verification has a discrete assessment lifecycle and rules distinct from the asset's persistent lifecycle.
+    lifecycle_ownership: Owns verification record lifecycle and verification result semantics; references assets owned by Asset Lifecycle/CMMS.
+    boundary_indicators:
+      - A failed verification can affect asset status or trigger corrective work, but the verification record remains its own fact.
+    adjacent_contexts: [bc.asset-lifecycle, bc.corrective-action, bc.operations-record]
+    ambiguities:
+      - The exact business authority for changing asset state as a consequence of failed verification is unresolved and should be challenged in Phase 6.
+    confidence: medium
+    status: candidate
+
+  - id: bc.safety-signoff
+    name: Safety Sign-Off
+    subdomain: subdomain.safety-compliance-signoff
+    responsibilities:
+      - Manage safety-related template/instance sign-off and approval semantics where ManuFactor fills the gap.
+      - Establish when a safety sign-off record becomes authoritative.
+    language_cohesion: LTV Template, LTV Printed Instance, Site Safety Manager approval, sign-off, authoritative record.
+    model_cohesion: Template-instance-approval rules form a cohesive safety record model with a distinct authorization lifecycle.
+    lifecycle_ownership: Owns ManuFactor safety sign-off record lifecycle; does not own the entire Safety business area.
+    boundary_indicators:
+      - A safety finding may be referenced by Corrective Action or Operations Record without merging the models.
+    adjacent_contexts: [bc.corrective-action, bc.operations-record]
+    ambiguities: []
+    confidence: high
+    status: candidate
+
+  - id: bc.environmental-compliance
+    name: Environmental Compliance
+    subdomain: subdomain.environmental-compliance
+    responsibilities:
+      - Produce and retain environmental compliance forms/reports for known boiler/kiln obligations where ManuFactor fills the gap.
+    language_cohesion: Environmental compliance form, boiler, kiln, reporting period, regulatory requirement.
+    model_cohesion: Regulatory reporting obligations and report lifecycle are distinct from operating the kiln or maintaining equipment.
+    lifecycle_ownership: Owns ManuFactor environmental compliance record/report lifecycle, not kiln operation or equipment lifecycle.
+    boundary_indicators:
+      - Consumes kiln/equipment facts from Operations or Maintenance while applying Environmental-specific reporting meaning and rules.
+    adjacent_contexts: [bc.kiln-operations, bc.asset-lifecycle, bc.corrective-action]
+    ambiguities:
+      - Specific regulatory vocabulary/rules remain to be discovered before confirmation.
+    confidence: medium
+    status: candidate
+
+  - id: bc.training-competency
+    name: Training and Competency
+    subdomain: subdomain.people-workforce
+    responsibilities:
+      - Represent who is trained or qualified for what where ManuFactor needs the information.
+      - Consume authoritative learning records from Moodle or another system without redefining training completion arbitrarily.
+    language_cohesion: Training, competency, qualification, completion, trained-for.
+    model_cohesion: Qualification/competency semantics and evidence differ from shift assignment, attendance, and absence.
+    lifecycle_ownership: Candidate translated/read model for external training authority plus any ManuFactor-owned competency gap explicitly discovered later.
+    boundary_indicators:
+      - Operations/Safety/Maintenance may consume competency information but should not redefine its HR/training meaning.
+    adjacent_contexts: [bc.workforce-availability, bc.safety-signoff, bc.operations-record]
+    ambiguities:
+      - Whether ManuFactor owns any competency determination beyond consuming Moodle completion data remains unresolved but is not a reason to merge with Workforce Availability.
+    confidence: medium
+    status: candidate
+
+  - id: bc.workforce-availability
+    name: Workforce Availability
+    subdomain: subdomain.people-workforce
+    responsibilities:
+      - Represent crew/shift/supervisor structure and absence/availability information needed by ManuFactor.
+      - Consume authoritative workforce/timekeeping information where another system owns it.
+    language_cohesion: Department, Crew, Shift, Supervisor, absence, scheduled, available.
+    model_cohesion: Scheduling/availability has time-based assignment and absence semantics distinct from competency/qualification.
+    lifecycle_ownership: Candidate translated/read model of workforce availability plus any ManuFactor-owned scheduling gap discovered later.
+    boundary_indicators:
+      - Operations consumes who is scheduled/available but should not own HR absence semantics solely because it uses them.
+    adjacent_contexts: [bc.training-competency, bc.operations-record]
+    ambiguities:
+      - Exact authority split with Kronos/other workforce systems requires Phase 6 ownership challenge.
+    confidence: medium
+    status: candidate
