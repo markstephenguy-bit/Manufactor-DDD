@@ -10,11 +10,11 @@ boundary_challenges:
     result: retain-candidate
 
   - context: bc.kiln-operations
-    merge_test: Do not merge with Environmental Compliance; operating a kiln and reporting environmental obligations use different rules and lifecycle ownership. Do not merge with Operations Record because operation versus historical reporting differs.
+    merge_test: Do not merge with Environmental Compliance; operating a kiln and any future environmental use of kiln facts would have different rules and lifecycle ownership. Do not merge with Operations Record because operation versus historical reporting differs.
     split_test: No supported split yet.
     domain_not_software_test: Candidate is justified only if ManuFactor has a meaningful kiln-operation model; existing kiln software/system boundaries are not sufficient.
     ownership_test: unresolved — existing evidence says manage kiln drying process, but Mark has not yet established how much kiln operational authority ManuFactor actually owns versus reads/fills around another system.
-    language_change: Kiln and operating parameters are interpreted operationally here; Environmental uses kiln facts for compliance meaning.
+    language_change: Kiln and operating parameters are interpreted operationally here; any future Environmental context may apply different compliance semantics.
     invariants_candidate: Scheduling/operating decisions must use the valid kiln-process state and parameters if ManuFactor owns those decisions.
     result: retain-candidate-with-material-ownership-question
 
@@ -73,13 +73,13 @@ boundary_challenges:
     result: retain-candidate
 
   - context: bc.environmental-compliance
-    merge_test: Keep separate from Kiln Operations and Asset Lifecycle. Environmental reporting applies regulatory semantics to facts it consumes from those contexts.
-    split_test: No supported split yet; boiler/kiln reporting may later diverge if rules/lifecycles materially differ.
-    domain_not_software_test: Boundary follows environmental obligation/report semantics, not a department or form component.
-    ownership_test: ManuFactor candidate owner of generated compliance records where the gap exists; external regulation remains rule authority rather than a Bounded Context.
-    language_change: Kiln, boiler, period, emission/compliance values acquire Environmental-specific reporting meaning here.
-    invariants_candidate: A compliance record must use the applicable reporting obligation/period and preserve the evidence used to produce it.
-    result: retain-candidate
+    merge_test: No merge decision is warranted because a ManuFactor Environmental model is not currently established.
+    split_test: No split decision is warranted.
+    domain_not_software_test: Environmental is a real business area, but Mark cannot currently identify a concrete ManuFactor Environmental gap. Departmental/regulatory existence alone is insufficient to create a Bounded Context.
+    ownership_test: No current ManuFactor lifecycle or authoritative environmental record is established.
+    language_change: Not yet established from a real gap.
+    invariants_candidate: None established.
+    result: defer-until-concrete-gap
 
   - context: bc.training-competency
     merge_test: Keep separate from Workforce Availability. Being trained/qualified and being scheduled/available are different predicates with different evidence and lifecycle.
@@ -100,15 +100,18 @@ boundary_challenges:
     result: retain-candidate-with-ownership-warning
 
 whole_map_result:
-  candidate_context_count: 11
-  strong_candidates: [bc.operations-record, bc.project-tracking, bc.quality-verification, bc.corrective-action, bc.reliability-verification, bc.safety-signoff, bc.environmental-compliance]
+  candidate_context_count: 10
+  deferred_context_count: 1
+  strong_candidates: [bc.operations-record, bc.project-tracking, bc.quality-verification, bc.corrective-action, bc.reliability-verification, bc.safety-signoff]
   ownership_challenge_candidates: [bc.kiln-operations, bc.asset-lifecycle, bc.training-competency, bc.workforce-availability]
+  deferred_contexts: [bc.environmental-compliance]
   unsupported_merges: []
   unsupported_splits: []
   material_domain_questions:
     - subject: kiln-operation-authority
       question: Does ManuFactor actually own meaningful kiln scheduling/operating decisions and lifecycle, or is its kiln role primarily reading existing systems, reporting, analysis, and other gap-filling around an externally owned kiln-operation model?
   deferred_nonblocking_questions:
+    - Environmental Compliance Bounded Context remains deferred until a concrete ManuFactor Environmental gap is identified
     - ISSUE-0003 Vehicle Management versus Physical Asset Management
     - Exact CMMS versus ManuFactor asset-state authority
     - Whether Training/Competency includes local competency determination beyond consumed learning completion data
