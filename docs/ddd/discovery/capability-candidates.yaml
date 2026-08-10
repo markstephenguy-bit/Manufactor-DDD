@@ -1,11 +1,11 @@
 capabilities:
 
   - id: cap.safety-compliance-signoff
-    name: Safety Compliance & Procedure Sign-Off
-    purpose: Formal sign-off of safety-related procedures/equipment against approved templates, with an approval workflow before a record is authoritative.
-    business_outcome: A trustworthy, retained safety-compliance record.
-    important_terms: [LTV Template, LTV Printed Instance, Site Safety Manager approval]
-    evidence: [ev.arch.addendum rev 1/4/40, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules", "domain-expert: Mark, direct, ISSUE-0002"]
+    name: LTV Form Management & Printing
+    purpose: Manage LTV forms/templates, produce printable form instances, retain and track those instances, and support approval/sign-off where the applicable LTV process requires it.
+    business_outcome: Current LTV forms can be reliably produced, printed, tracked, and retained through their actual lifecycle instead of relying on an unmanaged form-printing process.
+    important_terms: [LTV Form, LTV Template, LTV Printed Instance, print, issue, approval, sign-off]
+    evidence: [ev.arch.addendum rev 1/4/40, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules", "domain-expert: Mark, direct, ISSUE-0002", "domain-expert: Mark, direct, 2026-08-10 LTV gap clarification"]
     confidence: high
     status: confirmed
 
