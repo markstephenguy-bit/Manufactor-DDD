@@ -1,4 +1,4 @@
-version: 13
+version: 14
 status: pending
 updated_by: chatgpt
 purpose: Temporary audit/control queue for Claude Code. Not domain evidence.
@@ -76,6 +76,10 @@ findings:
     severity: domain-evidence
     subject: Maintenance Reliability gap-filler role
     finding: Mark clarified the ManuFactor gap in Maintenance/Reliability with a concrete example: extract data from an existing database and use Apache Superset to examine that data in novel ways. Model this as data access, aggregation, and analytical use around an existing domain/system of record, not as ManuFactor taking ownership of maintenance workflows or creating a separate analytics Subdomain from the tooling example.
+  - id: AUDIT-0023
+    severity: domain-confirmation
+    subject: Operations candidate strategic placement
+    finding: Mark confirmed Operations as the broader candidate strategic domain area for mill-operating gaps. The previous name Production Operations was misleading because it sounded like ERP/production-execution scope. Operations should contain currently known operational-reporting and kiln-related gaps without implying ManuFactor owns production execution or ERP functions.
 
 required_actions:
   - id: ACTION-0013
@@ -110,11 +114,13 @@ required_actions:
     action: Reframe subdomain.asset-reliability as broader candidate Maintenance/Reliability, preserving the currently relevant physical-asset and equipment-reliability capabilities as known responsibilities. Keep status candidate. Explicitly preserve that CMMS ownership of operational maintenance work and ManuFactor's reader/aggregator/gap-filler role are system-responsibility facts, not reasons to remove the strategic domain area.
   - id: ACTION-0028
     action: Record the Maintenance/Reliability gap-filler example in discovery/decision material: ManuFactor may extract maintenance/reliability data from existing databases and make it available for novel analysis in Superset or comparable analytical tooling. Do not create an Analytics Subdomain solely because Superset is used, and do not imply ManuFactor owns CMMS maintenance workflows.
+  - id: ACTION-0029
+    action: Rename/reframe subdomain.production-operations as broader candidate Operations. Preserve cap.operational-reporting and cap.kiln-drying-operations as currently known responsibilities unless later evidence separates them. Keep status candidate. Explicitly state that Operations represents ManuFactor gaps under mill operations and does not imply ERP, MES, production planning, production execution, or other existing-system ownership.
 
 next_domain_question:
   owner: chatgpt
-  subject: production-operations-strategic-placement
-  instruction: Claude Code must not ask the question. ChatGPT will ask Mark whether Production Operations is a meaningful broader strategic domain area for ManuFactor, containing currently known operational reporting and kiln-drying responsibilities without requiring exhaustive enumeration before Phase 5.
+  subject: remaining-strategic-boundaries
+  instruction: Claude Code must not ask strategic questions. ChatGPT should now review the remaining candidate map against ManuFactor_DDD_Modeling_Specification.docx and ask Mark only the next material strategic placement question needed to complete Phase 4 challenge.
 
 do_not_do:
   - do not create Bounded Contexts yet
