@@ -1,0 +1,160 @@
+value_objects:
+  - id: value-object.quality-verification.quality-measurement
+    name: Quality Measurement
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.quality-check
+    components: [measured characteristic, measured value, unit, measurement context]
+    validation_rules:
+      - Must carry enough context to interpret the measured value correctly.
+    equality_semantics: Equal when the complete measurement value/context is equal; no independent identity is required.
+    immutability_expectation: Conceptually immutable once recorded as evidence; corrections create replacement/corrected evidence rather than mutating history silently.
+    behaviors: [express measured value, support comparison to applicable target]
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.quality-verification.quality-check
+          description: Measurement is evidence inside one Quality Check and has no independent lifecycle in current domain evidence.
+      confidence: high
+      status: candidate
+
+  - id: value-object.quality-verification.verification-result
+    name: Quality Verification Result
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.quality-check
+    components: [evaluation outcome, evaluated target/basis reference or snapshot]
+    validation_rules:
+      - Must be derived from the check's recorded measurement and applicable evaluation basis.
+    equality_semantics: Equal when outcome and evaluation basis are equal.
+    immutability_expectation: Immutable as the result of a particular evaluation; reevaluation yields a new retained result/history state.
+    behaviors: [express acceptable or failed outcome]
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.quality-verification/context.yaml
+          description: Verification result belongs to the Quality Check evidence lifecycle and is not independently identified.
+      confidence: high
+      status: candidate
+
+  - id: value-object.asset-lifecycle.asset-condition
+    name: Asset Condition
+    bounded_context: bc.asset-lifecycle
+    aggregate: aggregate.asset-lifecycle.asset
+    components: [condition value, effective context/time where required]
+    validation_rules:
+      - Condition value must be valid under the Asset Lifecycle domain vocabulary/rules in effect.
+    equality_semantics: Equal when the condition value/context is equal; it describes an Asset rather than having separate business identity.
+    immutability_expectation: A condition value is conceptually immutable; changing Asset condition replaces the current value and records history.
+    behaviors: [describe asset condition]
+    status: candidate
+    provenance:
+      sources:
+        - type: ubiquitous-language
+          reference: language.asset-lifecycle.asset-condition
+          description: Asset Condition is explicitly modeled as state of an Asset, distinct from a verification result.
+      confidence: high
+      status: candidate
+
+  - id: value-object.asset-lifecycle.lifecycle-state
+    name: Asset Lifecycle State
+    bounded_context: bc.asset-lifecycle
+    aggregate: aggregate.asset-lifecycle.asset
+    components: [lifecycle state]
+    validation_rules:
+      - State must be one allowed by the eventual Asset lifecycle rules; exact controlled vocabulary remains unresolved.
+    equality_semantics: Equal by lifecycle-state value.
+    immutability_expectation: Immutable value; transitions replace the value while Asset history records the change.
+    behaviors: [describe lifecycle position]
+    status: unresolved
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.asset-lifecycle.asset
+          description: Asset lifecycle state is aggregate-owned state; exact state vocabulary is not yet discovered.
+      confidence: medium
+      status: unresolved
+
+  - id: value-object.reliability-verification.verification-result
+    name: Verification Result
+    bounded_context: bc.reliability-verification
+    aggregate: aggregate.reliability-verification.verification
+    components: [result outcome]
+    validation_rules:
+      - Result must be supported by the applicable verification criteria/category checks.
+    equality_semantics: Equal by outcome/value for the same semantic result type; no independent identity.
+    immutability_expectation: Immutable result of a completed evaluation; correction/reperformance creates new retained evidence rather than mutating the original silently.
+    behaviors: [express passed or failed verification outcome]
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.reliability-verification/context.yaml
+          description: Verification Result belongs to a specific Reliability Verification and is not independently identified.
+      confidence: high
+      status: candidate
+
+  - id: value-object.ltv-form-management.form-status
+    name: LTV Form Status
+    bounded_context: bc.safety-signoff
+    aggregate: aggregate.ltv-form-management.printed-instance
+    components: [instance lifecycle status]
+    validation_rules:
+      - Printing/issuing cannot be interpreted as approval/sign-off unless the applicable LTV process defines that transition.
+    equality_semantics: Equal by lifecycle-status value.
+    immutability_expectation: Immutable value; lifecycle transitions replace status and retain history as required.
+    behaviors: [describe current instance lifecycle state]
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.safety-signoff/context.yaml
+          description: Status is state of an individual LTV Printed Instance rather than an independently identified object.
+      confidence: high
+      status: candidate
+
+  - id: value-object.workforce-availability.staffing-gap
+    name: Staffing Gap
+    bounded_context: bc.workforce-availability
+    aggregate: aggregate.workforce-availability.coverage-plan
+    components: [required job/position, required time/shift, crew/operational context]
+    validation_rules:
+      - Must identify the operational job/time need sufficiently to evaluate coverage.
+    equality_semantics: Equal when the defined operational staffing need is equal.
+    immutability_expectation: Conceptually immutable need-description within a coverage decision; material change creates a revised coverage-plan state.
+    behaviors: [describe uncovered operational need]
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.workforce-availability.coverage-plan
+          description: Staffing Gap is part of one coverage decision and has no supported independent lifecycle.
+      confidence: high
+      status: candidate
+
+  - id: value-object.workforce-availability.replacement-option
+    name: Replacement Option
+    bounded_context: bc.workforce-availability
+    aggregate: aggregate.workforce-availability.coverage-plan
+    components: [person reference, qualification evidence/reference, availability evidence/reference]
+    validation_rules:
+      - A valid option must be operationally available for the need and sufficiently qualified for the required job.
+    equality_semantics: Equal when the candidate person and decision-time evidence/reference set are equivalent for the staffing need.
+    immutability_expectation: Immutable snapshot of an evaluated option at decision time; later source changes require reevaluation.
+    behaviors: [express suitability as a coverage candidate]
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Sick-call replacement requires knowing who is both available and capable of doing the job.
+      confidence: high
+      status: candidate
+
+value_object_classification_notes:
+  unresolved_or_not_yet_modeled:
+    - Applicable Quality Target: likely reference data/value snapshot in a Quality Check, but authoritative configuration/lifecycle remains unresolved.
+    - Kiln schedule revision details: may become value objects once the actual scheduling fields/rules are discovered.
+    - LTV template version: likely value-bearing version semantics, but exact identity/version model needs deeper form-rule discovery.
+    - AFAL Category Check: may be an Entity or Value Object depending on whether individual checks require business identity/history apart from the Verification root.
+  rule: Value Objects are chosen only where current evidence supports value semantics without independent identity or lifecycle.
