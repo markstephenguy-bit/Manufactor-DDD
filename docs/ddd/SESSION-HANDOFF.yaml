@@ -1,11 +1,12 @@
-model_state: strategic DDD established at candidate level; Context Map, Integration Contracts, contextual Ubiquitous Language, and first whole-map Domain Concept model are canonical
-current_phase: Phase 10 — Aggregate and invariant discovery
-last_completed: Phase 9 whole-map Domain Concept pass created 21 canonical candidate Domain Concepts across the ten supported Bounded Contexts without prematurely forcing tactical roles
-current_focus: Discover the smallest consistency boundaries required by real business invariants; challenge whether each concept belongs inside an Aggregate, remains reference data, or is coordinated across Aggregates/contexts
+model_state: strategic DDD established at candidate level; Context Map, Integration Contracts, contextual Ubiquitous Language, Domain Concepts, and first Aggregate model are canonical
+current_phase: Phase 11 — Entity and Value Object discovery
+last_completed: Phase 10 whole-map aggregate/invariant pass created ten defensible candidate Aggregates and explicitly rejected several concepts that do not currently justify independent consistency boundaries
+current_focus: Classify concepts inside candidate Aggregates as Aggregate Roots, Entities, Value Objects, reference data, or concept-only based on identity and lifecycle semantics; do not mirror database tables
 blocking_issues: []
-next_action: Perform a whole-map aggregate/invariant pass. For each candidate Aggregate answer the specification tests: what invariant requires consistent change, what is the root, what must be atomic, which members can change only through the root, and why the Aggregate cannot be smaller. Leave candidates unresolved where those answers are not supported. Do not create Aggregates merely because concepts are related or stored together.
+next_action: Perform a whole-map Entity/Value Object pass from docs/ddd/aggregates/index.yaml and docs/ddd/concepts/index.yaml. Use identity semantics and lifecycle to determine tactical roles. Keep unresolved roles where business identity or mutability is not sufficiently established. Do not promote projections such as Cross-Training Matrix or Moisture Outcome into Entities merely because they are useful views.
 files_to_read:
   - docs/ddd/SPECIFICATION.md
+  - docs/ddd/aggregates/index.yaml
   - docs/ddd/concepts/index.yaml
   - docs/ddd/context-map/context-map.yaml
   - docs/ddd/integration-contracts/index.yaml
@@ -56,46 +57,50 @@ deferred_contexts:
 concept_model:
   canonical: docs/ddd/concepts/index.yaml
   concept_count: 21
-  modeling_rule: Candidate model roles remain unresolved unless identity/lifecycle/invariant evidence already supports a stronger classification.
-  important_concepts:
-    - Operational Record
-    - Operational Incident
-    - Kiln Schedule
-    - Kiln Run/Charge
-    - Moisture Outcome
-    - Project
-    - Quality Check
-    - Applicable Quality Target
-    - Nonconformity
-    - Corrective Action
-    - Asset
-    - Asset Condition
-    - Reliability Verification
-    - Verification Result
-    - LTV Form Template
-    - LTV Printed Instance
-    - Operational Qualification
-    - Cross-Training Relationship
-    - Operational Availability
-    - Staffing Gap
-    - Replacement Option
+aggregate_model:
+  canonical: docs/ddd/aggregates/index.yaml
+  candidate_aggregate_count: 10
+  candidates:
+    - aggregate.operations-record.operational-record
+    - aggregate.kiln-operations.kiln-run
+    - aggregate.project-tracking.project
+    - aggregate.quality-verification.quality-check
+    - aggregate.corrective-action.nonconformity
+    - aggregate.asset-lifecycle.asset
+    - aggregate.reliability-verification.verification
+    - aggregate.ltv-form-management.form-template
+    - aggregate.ltv-form-management.printed-instance
+    - aggregate.training-qualification.qualification
+    - aggregate.workforce-availability.coverage-plan
+  note: Count is eleven listed consistency boundaries including both LTV aggregates; retain file as authority if this summary count conflicts.
+  rejected_as_separate_aggregates:
+    - Moisture Outcome: derived interpretation tied to Kiln Run and ProTrack facts
+    - Applicable Quality Target: no independent transactional consistency boundary established
+    - Asset Condition: state of Asset
+    - Verification Result: produced by Reliability Verification
+    - Replacement Option: member of staffing/coverage decision
+    - LTV Form Status: state of Printed Instance
+  unresolved:
+    - Kiln Schedule may or may not need its own aggregate separate from Kiln Run
+    - Cross-Training Matrix is currently best treated as a projection across Operational Qualification relationships
 important_tactical_constraints:
-  - Do not aggregate concepts just because they have parent-child relationships or database foreign keys.
-  - Quality Check and Nonconformity remain cross-context concepts with an explicit translation/transition boundary.
-  - Verification Result and Asset Condition remain cross-context concepts with explicit transition rules still unresolved.
-  - ProTrack source measurements remain external authority; Moisture Outcome is a Kiln Operations interpretation.
-  - MP2 WR/WO records remain external authority; Asset owns richer ManuFactor lifecycle semantics.
-  - LTV Form Template and LTV Printed Instance have separate identity/lifecycle semantics even if they ultimately participate in one Aggregate.
-  - Operational Qualification and Operational Availability are distinct inputs to staffing coverage.
+  - Aggregate roots must protect real invariants; no table/container aggregates.
+  - Quality Check -> Nonconformity remains a cross-context transition, not one aggregate.
+  - Reliability Verification -> Asset Condition remains a cross-context transition, not one aggregate.
+  - ProTrack source measurements remain external authority.
+  - MP2 WR/WO records remain external authority.
+  - LTV Form Template and LTV Printed Instance are separate aggregates under current identity/version/provenance evidence.
+  - Operational Coverage validates qualification and availability references but does not own either source lifecycle.
 open_nonblocking_issues:
   - ISSUE-0003: Vehicle Management versus Physical Asset Management
   - Exact domain rules for failed verification changing asset state
   - Exact rule for a failed quality check becoming a Nonconformity
   - Exact identifiers/rules for correlating kiln history to ProTrack moisture records
   - Exact qualification rules distinguishing completion, demonstrated capability, and authorization
+  - Whether Kiln Schedule requires its own aggregate
 specification_authority:
   source_document: ManuFactor_DDD_Modeling_Specification.docx
   repository_specification: docs/ddd/SPECIFICATION.md
-  rule: Aggregate modeling must be driven by invariants and atomic consistency requirements, not structural convenience.
-session_resume: Start Phase 10 from docs/ddd/concepts/index.yaml and perform a whole-map aggregate/invariant challenge. Ask Mark only if a genuinely material business invariant cannot be determined from existing evidence.
+  rule: Entity and Value Object modeling must follow identity/lifecycle semantics within Aggregate boundaries and must not mirror persistence structures.
+session_resume: Start Phase 11 from docs/ddd/aggregates/index.yaml and docs/ddd/concepts/index.yaml. Perform a whole-map tactical classification pass. Ask Mark only where a material business identity/lifecycle distinction cannot be determined from existing evidence.
 last_direct_update: 2026-08-10
