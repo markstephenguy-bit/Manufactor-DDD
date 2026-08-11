@@ -1,0 +1,131 @@
+aggregate_challenges:
+  - id: aggregate.operations-record.operational-record
+    bounded_context: bc.operations-record
+    candidate_root: Operational Record
+    invariant_test: A retained operational record must preserve what was reported and all corrections/history without silently changing the authoritative state of referenced external subjects.
+    atomicity_test: Creating or correcting one operational record and its history must be consistent as one business change.
+    root_control_test: Record content/history changes must occur through the Operational Record lifecycle; referenced Asset, Person, Safety, Quality, or other subjects remain external references.
+    minimum_size_test: The aggregate can remain a single Operational Record plus its correction/history details; no cross-context concepts belong inside it.
+    result: retain-candidate
+
+  - id: aggregate.kiln-operations.kiln-run
+    bounded_context: bc.kiln-operations
+    candidate_root: Kiln Run/Charge
+    invariant_test: A run/charge must preserve its own operating history and identity so later moisture outcomes can be correlated to the correct drying work.
+    atomicity_test: Changes to the current run/charge operating record that define the run itself require consistency; downstream ProTrack measurements do not.
+    root_control_test: Operating records that are part of one run/charge change through the run; Kiln Schedule and ProTrack source measurements remain separate references.
+    minimum_size_test: Kiln Schedule does not need to be inside the run aggregate because schedule revisions span multiple planned runs and have a separate lifecycle. Moisture Outcome is derived and need not be transactionally owned by the run.
+    result: retain-candidate
+
+  - id: aggregate.kiln-operations.kiln-schedule
+    bounded_context: bc.kiln-operations
+    candidate_root: Kiln Schedule
+    invariant_test: A schedule revision must preserve a coherent retained planning state and history rather than overwrite the spreadsheet-like prior state.
+    atomicity_test: A schedule revision and its planning relationships must be recorded consistently as one schedule change.
+    root_control_test: Schedule planning changes occur through the schedule; execution state belongs to referenced Kiln Run/Charge aggregates.
+    minimum_size_test: The schedule should not absorb run operating history merely because scheduled runs are referenced.
+    result: retain-candidate
+
+  - id: aggregate.project-tracking.project
+    bounded_context: bc.project-tracking
+    candidate_root: Project
+    invariant_test: Project status, milestones/actions, and completion must remain internally coherent for one project lifecycle.
+    atomicity_test: Project lifecycle changes that establish status/completion and dependent project-local state require project-level consistency.
+    root_control_test: Project-local milestones/actions change within the Project lifecycle; CAPA, Asset, or external work remains referenced rather than embedded.
+    minimum_size_test: One Project is the smallest boundary that can enforce its own lifecycle without merging unrelated projects or Corrective Action.
+    result: retain-candidate
+
+  - id: aggregate.quality-verification.quality-check
+    bounded_context: bc.quality-verification
+    candidate_root: Quality Check
+    invariant_test: A completed quality check must retain the measurement/evidence, the target that was applicable when evaluated, and the resulting evaluation together.
+    atomicity_test: Capturing/evaluating the check and binding it to the applicable target/evidence must be consistent for that verification occurrence.
+    root_control_test: Check evidence/result changes occur through the Quality Check; the external machine/process identity and target source remain references.
+    minimum_size_test: Applicable Quality Target should not become part of every check's mutable aggregate if it has its own versioned/reference lifecycle; the check retains the applicable target reference/snapshot needed for historical interpretation.
+    result: retain-candidate
+
+  - id: aggregate.corrective-action.nonconformity
+    bounded_context: bc.corrective-action
+    candidate_root: Nonconformity
+    invariant_test: Correction, root-cause/corrective-action coordination, routing, and closure must remain coherent for the same Nonconformity, while routed execution remains owned elsewhere.
+    atomicity_test: Changes that advance the Nonconformity remediation lifecycle and its locally owned corrective-action coordination require consistency within that lifecycle.
+    root_control_test: CAPA-local Corrective Actions and closure evidence are controlled through the Nonconformity lifecycle; routed Project/Maintenance/Safety/Operations work is referenced externally.
+    minimum_size_test: Do not include downstream work aggregates; CAPA coordinates them but does not own their internal lifecycle.
+    result: retain-candidate
+
+  - id: aggregate.asset-lifecycle.asset
+    bounded_context: bc.asset-lifecycle
+    candidate_root: Asset
+    invariant_test: An Asset's current condition/lifecycle state and retained history must be mutually consistent and cannot be silently defined by MP2 WR/WO status or a single verification result.
+    atomicity_test: A recognized asset-state/condition transition and the history that records it must be committed consistently.
+    root_control_test: Asset Condition and Asset Lifecycle State change through the Asset; MP2 WR/WO and Reliability Verification remain external facts.
+    minimum_size_test: Maintenance work and verification records remain separate aggregates/contexts; only ManuFactor-owned asset state/history belongs inside the Asset consistency boundary.
+    result: retain-candidate
+
+  - id: aggregate.reliability-verification.verification
+    bounded_context: bc.reliability-verification
+    candidate_root: Reliability Verification
+    invariant_test: A verification must retain the checkpoint, applicable criteria/category checks, evidence, and final result as one trustworthy assessment fact.
+    atomicity_test: Completing a verification requires its category checks/evidence and resulting pass/fail outcome to be consistent.
+    root_control_test: Verification-local checks/results change through the Verification; Asset Condition changes through Asset Lifecycle via an explicit cross-context rule.
+    minimum_size_test: The Asset itself must remain outside the aggregate because verification does not own asset lifecycle.
+    result: retain-candidate
+
+  - id: aggregate.ltv-form-management.form-template
+    bounded_context: bc.safety-signoff
+    candidate_root: LTV Form Template
+    invariant_test: Each template version must remain identifiable and immutable enough for issued forms to remain traceable to exactly what was printed.
+    atomicity_test: Publishing/superseding a template version and its version identity/applicability must be consistent.
+    root_control_test: Template revision/version state changes through the template lifecycle; already issued LTV Printed Instances do not change with later template revisions.
+    minimum_size_test: Printed instances must remain separate aggregates because their lifecycle continues independently after generation and cannot be rewritten when the template changes.
+    result: retain-candidate
+
+  - id: aggregate.ltv-form-management.printed-instance
+    bounded_context: bc.safety-signoff
+    candidate_root: LTV Printed Instance
+    invariant_test: An issued/printed form must remain traceable to its exact template version and preserve its own completion/approval/sign-off/history state where applicable.
+    atomicity_test: Instance lifecycle transitions such as issue, completion, or required sign-off must remain coherent for that individual form.
+    root_control_test: Instance state/history changes through the LTV Printed Instance; the source template is an immutable/versioned reference.
+    minimum_size_test: Do not absorb the template aggregate; one instance is the smallest independently progressing form lifecycle.
+    result: retain-candidate
+
+  - id: aggregate.training-qualification.operational-qualification
+    bounded_context: bc.training-competency
+    candidate_root: Operational Qualification
+    invariant_test: A person-job qualification must remain supported by appropriate evidence and must not be asserted merely from availability or raw course completion when local rules require more.
+    atomicity_test: Establishing, changing, withdrawing, or expiring one person-job qualification and its supporting evidence linkage must be consistent.
+    root_control_test: Qualification state changes through the Operational Qualification relationship; Person, Job, and LMS completion remain external/reference concepts.
+    minimum_size_test: A whole crew training matrix is a projection across many qualifications, not one aggregate.
+    result: retain-candidate
+
+  - id: aggregate.workforce-availability.staffing-gap
+    bounded_context: bc.workforce-availability
+    candidate_root: Staffing Gap
+    invariant_test: A resolved staffing gap must identify coverage that satisfies both time availability and required qualification for the job.
+    atomicity_test: Selecting/replacing a coverage assignment for one staffing need must consistently bind the need, time, job, and chosen replacement decision.
+    root_control_test: Replacement Options and chosen coverage belong to the Staffing Gap decision lifecycle; qualification and HR/timekeeping facts remain external inputs.
+    minimum_size_test: Operational Availability for every employee should not form one giant aggregate; availability is evaluated/reference input to individual staffing needs and broader schedule projections.
+    result: retain-candidate
+
+rejected_or_not_yet_supported_groupings:
+  - grouping: One Kiln Operations aggregate containing Schedule, Run/Charge, Moisture Outcome, and ProTrack measurements
+    reason: Schedule and run have different lifecycles; Moisture Outcome is derived; ProTrack measurements are externally authoritative.
+  - grouping: One Asset/Reliability aggregate
+    reason: Asset lifecycle state and Reliability Verification are deliberately separate semantic and consistency boundaries.
+  - grouping: One LTV aggregate containing Template and every Printed Instance
+    reason: Template versions and issued instances have independent identities/lifecycles; historical instances must not change with template revision.
+  - grouping: One Training Matrix aggregate containing all people/jobs/qualifications
+    reason: The matrix is a projection over independent person-job qualification relationships; no evidence requires whole-matrix atomic consistency.
+  - grouping: One Workforce aggregate containing all schedules, absences, people, qualifications, and replacement decisions
+    reason: HR/timekeeping and qualification are external inputs; individual staffing needs/coverage decisions can remain smaller.
+
+whole_map_result:
+  candidate_aggregate_count: 12
+  unresolved_aggregate_questions:
+    - Exact business identity and revision boundary of Kiln Schedule remains tactical refinement.
+    - Exact composition of Project-local milestones/actions remains to be discovered before member classification.
+    - Applicable Quality Target may be reference-data/versioned model rather than a mutable member of Quality Check; current aggregate retains only its applicable historical reference/evaluation basis.
+    - Exact CAPA closure invariants and whether multiple Corrective Actions are independent child entities or separate aggregates require later behavior/rule discovery.
+    - Exact Asset condition/state vocabulary and transition policies remain unresolved.
+    - Qualification expiration/authorization rules remain unresolved.
+    - Vacation schedule may later justify its own aggregate if business rules require schedule-wide atomic constraints; current evidence supports staffing-gap decisions without asserting that larger boundary.
