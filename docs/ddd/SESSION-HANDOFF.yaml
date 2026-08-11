@@ -1,16 +1,17 @@
-model_state: strategic DDD established at candidate level; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregate model, and first Entity/Value Object classifications are canonical
-current_phase: Phase 12 — First-class Invariant modeling
-last_completed: Phase 11 whole-map Entity/Value Object discovery classified the 12 aggregate roots as identity-bearing Entity candidates and identified value-semantic members without forcing ambiguous internals into tactical roles
-current_focus: Extract aggregate/business rules into first-class Invariant model objects with explicit triggering operations, enforcement boundaries, and failure semantics
+model_state: strategic DDD established at candidate level; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregate model, Entity/Value Object classifications, and first-class Invariants are canonical
+current_phase: Phase 13 — Command and Domain Event modeling
+last_completed: Phase 12 extracted supported aggregate/business rules into 22 first-class candidate Invariants and separated four unresolved transition-policy areas instead of guessing them
+current_focus: Model domain behavior explicitly through Commands and Domain Events, using Aggregate boundaries and Invariants as enforcement guardrails
 blocking_issues: []
-next_action: Build the canonical invariant inventory from the aggregate model. Prioritize rules already strongly supported by domain evidence: operational-record history preservation; kiln schedule/run history; Quality Check target/evidence coherence; Nonconformity admission/closure boundaries; Asset history/state integrity; Reliability Verification result evidence; LTV template-version and printed-instance traceability; qualification evidence; and staffing coverage requiring both availability and qualification. Do not invent exact transition thresholds or status vocabularies that remain unresolved.
+next_action: Build a whole-map Command and Domain Event inventory from the 12 candidate Aggregates. Commands must express intent and target the owning Aggregate; Events must be past-tense facts produced by accepted behavior. Do not create events for database changes or invent cross-context transitions whose business rules remain unresolved.
 files_to_read:
   - docs/ddd/SPECIFICATION.md
-  - docs/ddd/concepts/index.yaml
+  - docs/ddd/invariants/index.yaml
   - docs/ddd/aggregates/index.yaml
   - docs/ddd/aggregates/kiln-schedule.yaml
   - docs/ddd/entities/index.yaml
   - docs/ddd/value-objects/index.yaml
+  - docs/ddd/concepts/index.yaml
   - docs/ddd/context-map/context-map.yaml
   - docs/ddd/integration-contracts/index.yaml
   - docs/ddd/language/domain-language.yaml
@@ -45,45 +46,41 @@ entity_value_model:
   aggregate_root_entity_count: 12
   value_objects: docs/ddd/value-objects/index.yaml
   value_object_candidate_count: 8
-  entity_classification_rule: Persistent business identity through change, not database key presence.
-  value_object_classification_rule: Meaning/equality by value with no independent lifecycle; conceptual immutability preferred.
-  unresolved_internal_identity:
-    - Milestone
-    - Project Action
-    - Correction
-    - Corrective Action coordination record
-    - AFAL Category Check
-    - Asset History entry
-    - Operational Setting History entry
-  value_object_candidates:
-    - Quality Measurement
-    - Quality Verification Result
-    - Asset Condition
-    - Asset Lifecycle State (unresolved exact vocabulary)
-    - Reliability Verification Result
-    - LTV Form Status
-    - Staffing Gap
-    - Replacement Option
+invariant_model:
+  canonical: docs/ddd/invariants/index.yaml
+  candidate_invariant_count: 22
+  major_invariant_groups:
+    - Operational Record history preservation
+    - Kiln Schedule revision history and Kiln Run identity/history
+    - ProTrack source-authority preservation
+    - Project lifecycle status ownership
+    - Quality target/evidence coherence and failed-check boundary
+    - Explicit Nonconformity acceptance and CAPA routing ownership
+    - Asset identity/history integrity and MP2 translation boundary
+    - Reliability Verification evidence and Asset-state separation
+    - LTV template/version and printed-instance traceability
+    - Qualification evidence and availability separation
+    - Staffing coverage requires both qualification and availability
+  unresolved_transition_rules:
+    - Failed Quality Check to Nonconformity exact acceptance rule
+    - Reliability Verification Result to Asset Condition/Lifecycle State exact transition rule
+    - Qualification completion/demonstrated capability/authorization/expiration details
+    - LTV process-specific approval/sign-off requirements
 important_tactical_findings:
-  - Aggregate roots are identity-bearing Entity candidates because their business identity persists through lifecycle/state change.
-  - Asset Condition is value state of Asset, not a separate Entity.
-  - Verification Result is value produced by one Reliability Verification, not an independently identified object.
-  - Staffing Gap and Replacement Option are value-semantic parts of one Coverage Plan under current evidence.
-  - LTV Form Template and LTV Printed Instance are separate identity-bearing Entities and separate Aggregates.
-  - Ambiguous internals remain unresolved until independent business identity/lifecycle evidence is discovered.
+  - Invariants are now first-class and must govern later Commands/Events/Policies.
+  - Cross-context transitions are not Aggregate invariants unless the destination rule is known.
+  - Source-system facts remain externally authoritative even when consumed by local behavior.
+  - Failed checks and failed verifications remain facts in their source contexts until an explicit transition rule acts.
 open_nonblocking_issues:
   - ISSUE-0003: Vehicle Management versus Physical Asset Management
   - Exact business identity/revision semantics for Kiln Schedule require tactical refinement
-  - Exact CAPA closure invariants and child Corrective Action structure
-  - Exact Asset condition/state vocabulary and transition policies
-  - Exact quality-check-to-Nonconformity transition rule
-  - Exact verification-result-to-Asset-state transition rule
-  - Exact kiln-to-ProTrack correlation identifiers/rules
-  - Exact qualification expiration/authorization rules
+  - Exact CAPA closure details and child Corrective Action identity remain unresolved
+  - Exact Asset condition/state vocabulary remains unresolved
+  - Exact kiln-to-ProTrack correlation identifiers/rules remain unresolved
   - Vacation planning may later justify its own aggregate if schedule-wide invariants are discovered
 specification_authority:
   source_document: ManuFactor_DDD_Modeling_Specification.docx
   repository_specification: docs/ddd/SPECIFICATION.md
-  rule: Invariants are first-class model objects and must not remain only as aggregate/entity prose. Exact business rules must come from evidence; unresolved thresholds/transitions must not be invented.
-session_resume: Start Phase 12 from the aggregate/entity/value-object model and create explicit invariant records. Do not promote unresolved tactical details merely to make the model look complete.
+  rule: Commands express domain intent; Domain Events express facts that occurred. Neither may bypass Aggregate invariants or invent unresolved business transitions.
+session_resume: Start Phase 13 from docs/ddd/invariants/index.yaml and the Aggregate model. Build Commands and Domain Events across the whole map without turning technical CRUD/database operations into domain behavior.
 last_direct_update: 2026-08-10
