@@ -1,20 +1,36 @@
 model_state: strategic DDD established at candidate level; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregates, Entities/Value Objects, Invariants, Commands, and Domain Events are canonical
+session_state: finalized-for-new-session
+session_finalized_at: 2026-08-10T20:36:00-05:00
 current_phase: Phase 14 — Policy modeling
 last_completed: Phase 13 modeled 23 candidate Commands and 21 candidate Domain Events across the 12 aggregate boundaries, using first-class Invariants as guards and excluding unresolved cross-context transition behavior
 current_focus: Identify business decision mechanisms that react to domain facts or determine resulting commands across Aggregates/contexts without moving domain rules into application orchestration
 blocking_issues: []
-next_action: Build a whole-map Policy inventory. Prioritize only supported decision mechanisms such as replacement eligibility combining qualification and availability, CAPA routing to the owning work context/system, and source-fact translation/correlation rules where enough business behavior is known. Keep the following unresolved rather than guessing: failed Quality Check to Nonconformity admission, Verification Result to Asset state, qualification expiration/authorization, and LTV process-specific sign-off rules.
+next_action: Build a whole-map Policy inventory. Prioritize only supported decision mechanisms such as replacement eligibility combining qualification and availability, CAPA routing to the owning work context/system, and source-fact translation/correlation rules where enough business behavior is known. Keep unresolved business transitions unresolved rather than guessing.
+startup_instructions:
+  - Treat this repository as the authoritative DDD session state.
+  - Read docs/ddd/SPECIFICATION.md before strategic or tactical modeling.
+  - Read this SESSION-HANDOFF.yaml before doing new discovery.
+  - Continue from Phase 14; do not reconstruct Phases 1-13 from conversation history.
+  - Mark is the domain authority. Ask a business question only when the answer can materially change the model and cannot be resolved from current repository evidence.
+  - Perform substantial whole-map work before asking incremental questions.
+  - Existing systems, code, databases, documents, and architecture are evidence, not automatic domain truth.
+  - Preserve stable IDs when display names or framing change unless identity itself changes.
+  - Do not invent QMS, ERP, HR, Analytics, Environmental, or other boundaries merely because existing systems or departments suggest them.
 files_to_read:
   - docs/ddd/SPECIFICATION.md
-  - docs/ddd/commands/index.yaml
-  - docs/ddd/domain-events/index.yaml
-  - docs/ddd/invariants/index.yaml
+  - docs/ddd/SESSION-HANDOFF.yaml
+  - docs/ddd/context-map/context-map.yaml
+  - docs/ddd/integration-contracts/index.yaml
+  - docs/ddd/language/domain-language.yaml
+  - docs/ddd/language/ubiquitous-language.yaml
+  - docs/ddd/concepts/index.yaml
   - docs/ddd/aggregates/index.yaml
   - docs/ddd/aggregates/kiln-schedule.yaml
   - docs/ddd/entities/index.yaml
   - docs/ddd/value-objects/index.yaml
-  - docs/ddd/context-map/context-map.yaml
-  - docs/ddd/integration-contracts/index.yaml
+  - docs/ddd/invariants/index.yaml
+  - docs/ddd/commands/index.yaml
+  - docs/ddd/domain-events/index.yaml
   - docs/ddd/issues/unresolved.yaml
 repository_roles:
   canonical: markstephenguy-bit/Manufactor-DDD
@@ -24,22 +40,45 @@ repository_roles:
 execution_model:
   chatgpt: DDD/domain-discovery lead and normal GitHub repository editor
   claude_code: optional execution agent for local operations, broad mechanical edits, builds, tests, scripts, or unavailable GitHub operations
-candidate_bounded_contexts:
-  - bc.operations-record
-  - bc.kiln-operations
-  - bc.project-tracking
-  - bc.quality-verification
-  - bc.corrective-action
-  - bc.asset-lifecycle
-  - bc.reliability-verification
-  - bc.safety-signoff
-  - bc.training-competency
-  - bc.workforce-availability
+business_positioning:
+  - ManuFactor is a gap filler, current-system reader, extractor, aggregator, correlator, analysis enabler, and owner of missing workflows/records when a real gap exists.
+  - ManuFactor is not a wholesale ERP, MES, CMMS, HR, QMS, or analytics replacement.
+  - Reading or correlating data does not transfer source authority.
+active_candidate_bounded_contexts:
+  - bc.operations-record: Operations Record
+  - bc.kiln-operations: Kiln Operations
+  - bc.project-tracking: Project Tracking
+  - bc.quality-verification: Quality Verification
+  - bc.corrective-action: Corrective Action
+  - bc.asset-lifecycle: Asset Lifecycle
+  - bc.reliability-verification: Reliability Verification
+  - bc.safety-signoff: LTV Form Management
+  - bc.training-competency: Operational Training and Qualification
+  - bc.workforce-availability: Operational Workforce Availability
 deferred_contexts:
   - bc.environmental-compliance: Environmental remains a business area, but no concrete current ManuFactor Environmental gap supplies a justified model/lifecycle
+important_boundary_corrections:
+  - Human Resources is rejected as an active ManuFactor Subdomain for known training/qualification and staffing gaps; those are operational semantics.
+  - Identity & Access is shared platform infrastructure, not a business Subdomain.
+  - Environmental Compliance is deferred until a concrete gap exists.
+  - MP2 owns WR/WO records but does not provide meaningful asset-management semantics; Asset Lifecycle owns the richer ManuFactor asset model.
+  - ProTrack owns planer moisture measurements; Kiln Operations owns retained scheduling/run history and correlation to drying outcomes.
+  - LTV Form Management is the real Safety gap: managing LTV forms/templates, printing/issuing instances, retaining/tracking those forms, and supporting approval/sign-off only where applicable. Sign-off is not the defining context.
 aggregate_model:
   candidate_aggregate_count: 12
-  candidates: [Operational Record, Kiln Schedule, Kiln Run/Charge, Project, Quality Check, Nonconformity, Asset, Reliability Verification, LTV Form Template, LTV Printed Instance, Operational Qualification, Operational Coverage Plan]
+  candidates:
+    - Operational Record
+    - Kiln Schedule
+    - Kiln Run/Charge
+    - Project
+    - Quality Check
+    - Nonconformity
+    - Asset
+    - Reliability Verification
+    - LTV Form Template
+    - LTV Printed Instance
+    - Operational Qualification
+    - Operational Coverage Plan
 invariant_model:
   canonical: docs/ddd/invariants/index.yaml
   candidate_invariant_count: 22
@@ -53,12 +92,12 @@ behavior_model:
     - Domain Events are domain-significant facts that occurred and use past-tense names.
     - Technical CRUD/database changes are not Domain Events.
     - Cross-context transition policies remain outside Aggregate behavior until their business decision rule is known.
-  important_event_boundaries:
-    - QualityCheckEvaluated remains a Quality Verification fact and does not create Nonconformity automatically.
-    - VerificationCompleted remains a Reliability Verification fact and does not change Asset Condition automatically.
-    - LTVFormInstanceIssued records printing/issuance and does not imply sign-off.
-    - OperationalQualificationEstablished can be consumed by Workforce Availability without transferring qualification ownership.
-    - CorrectiveWorkRouted records CAPA routing without transferring destination work ownership into Corrective Action.
+important_event_boundaries:
+  - QualityCheckEvaluated remains a Quality Verification fact and does not create Nonconformity automatically.
+  - VerificationCompleted remains a Reliability Verification fact and does not change Asset Condition automatically.
+  - LTVFormInstanceIssued records printing/issuance and does not imply sign-off.
+  - OperationalQualificationEstablished can be consumed by Workforce Availability without transferring qualification ownership.
+  - CorrectiveWorkRouted records CAPA routing without transferring destination work ownership into Corrective Action.
 unresolved_transition_rules:
   - Failed Quality Check to Nonconformity exact acceptance rule
   - Reliability Verification Result to Asset Condition/Lifecycle State exact transition rule
@@ -76,4 +115,3 @@ specification_authority:
   repository_specification: docs/ddd/SPECIFICATION.md
   rule: Policies represent business decisions reacting to facts or determining actions across domain behavior; do not invent unsupported policy conditions merely to connect existing Events and Commands.
 session_resume: Begin Phase 14 from the Command/Event/Invariant model and identify only genuine domain Policies. Preserve unresolved transition policies until Mark supplies the deciding business rule.
-last_direct_update: 2026-08-10
