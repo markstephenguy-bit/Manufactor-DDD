@@ -1,0 +1,38 @@
+id: aggregate.kiln-operations.kiln-schedule
+name: Kiln Schedule
+bounded_context: bc.kiln-operations
+purpose: Preserve a coherent, revision-aware kiln planning state that replaces spreadsheet-only scheduling while remaining separate from execution history.
+aggregate_root: Kiln Schedule
+members:
+  - schedule revision/planning details
+invariants:
+  - Prior schedule state must remain historically traceable when the schedule is revised.
+  - A schedule revision must remain coherent for the planning period/work scope it represents.
+  - Kiln Run/Charge execution state and operating history remain outside the Schedule aggregate.
+commands:
+  - Create Kiln Schedule
+  - Revise Kiln Schedule
+domain_events:
+  - KilnScheduleCreated
+  - KilnScheduleRevised
+transaction_boundary: One schedule revision and its planning relationships are committed consistently; execution changes occur through Kiln Run/Charge aggregates.
+external_references:
+  - Kiln Run/Charge
+  - Asset
+repository: unresolved
+creation_rules:
+  - A schedule must establish the planning period/work scope it represents.
+  - Schedule identity/revision semantics must allow prior planning states to remain traceable.
+deletion_rules:
+  - Historical schedule revisions must not be silently deleted or overwritten.
+status: candidate
+provenance:
+  sources:
+    - type: domain-expert
+      reference: Mark direct, 2026-08-10
+      description: The kiln gap includes replacing Excel scheduling/operations with a system that keeps a record/history.
+    - type: inference
+      reference: docs/ddd/discovery/aggregate-challenge.yaml
+      description: Phase 10 invariant analysis found schedule revision/history to be a separate consistency boundary from Kiln Run execution.
+  confidence: high
+  status: candidate
