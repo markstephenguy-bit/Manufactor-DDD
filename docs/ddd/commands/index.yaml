@@ -1,0 +1,504 @@
+commands:
+  - id: command.operations-record.record-operational-fact
+    name: RecordOperationalFact
+    bounded_context: bc.operations-record
+    target_aggregate: aggregate.operations-record.operational-record
+    intent: Create a retained Operational Record for a specific operational fact or occurrence.
+    initiators: [authorized operations user or system process]
+    input: [record type, occurrence/report details, provenance, external subject references as needed]
+    preconditions: [The occurrence/report is sufficiently identified to be retained as one Operational Record.]
+    invariants_checked: [invariant.operations-record.preserve-history]
+    possible_events: [event.operations-record.operational-record-recorded]
+    failure_conditions: [Insufficient occurrence identity or provenance to create a retained record.]
+    idempotency_expectation: Repeated submission of the same business occurrence must not silently create duplicate authoritative records; exact deduplication key remains unresolved.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.operations-record.operational-record
+          description: Recording an operational fact is aggregate-root behavior.
+      confidence: high
+      status: candidate
+
+  - id: command.operations-record.correct-operational-record
+    name: CorrectOperationalRecord
+    bounded_context: bc.operations-record
+    target_aggregate: aggregate.operations-record.operational-record
+    intent: Correct a retained Operational Record while preserving its prior state/history.
+    initiators: [authorized operations user]
+    input: [operational record identity, corrected information, correction reason/provenance]
+    preconditions: [The Operational Record already exists.]
+    invariants_checked: [invariant.operations-record.preserve-history]
+    possible_events: [event.operations-record.operational-record-corrected]
+    failure_conditions: [Correction would erase or obscure prior retained history.]
+    idempotency_expectation: Repeating the identical correction should not create materially different state.
+    status: candidate
+    provenance:
+      sources:
+        - type: invariant-model
+          reference: invariant.operations-record.preserve-history
+          description: Corrections must preserve prior recorded state.
+      confidence: high
+      status: candidate
+
+  - id: command.kiln-operations.create-kiln-schedule
+    name: CreateKilnSchedule
+    bounded_context: bc.kiln-operations
+    target_aggregate: aggregate.kiln-operations.kiln-schedule
+    intent: Establish a retained kiln planning object for a defined planning scope/period.
+    initiators: [kiln operations user]
+    input: [planning scope, planning period, planned kiln work]
+    preconditions: [Planning scope and period are defined.]
+    invariants_checked: [invariant.kiln-schedule.preserve-revisions]
+    possible_events: [event.kiln-operations.kiln-schedule-created]
+    failure_conditions: [Planning scope/period is not sufficiently defined.]
+    idempotency_expectation: Repeated creation for the same intended schedule identity should not silently create competing authoritative schedules; exact identity rule remains unresolved.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: docs/ddd/aggregates/kiln-schedule.yaml
+          description: Kiln Schedule is a separate planning aggregate.
+      confidence: high
+      status: candidate
+
+  - id: command.kiln-operations.revise-kiln-schedule
+    name: ReviseKilnSchedule
+    bounded_context: bc.kiln-operations
+    target_aggregate: aggregate.kiln-operations.kiln-schedule
+    intent: Revise the current kiln planning state while retaining prior schedule revisions.
+    initiators: [kiln operations user]
+    input: [kiln schedule identity, revised planning details, revision provenance]
+    preconditions: [The Kiln Schedule exists.]
+    invariants_checked: [invariant.kiln-schedule.preserve-revisions]
+    possible_events: [event.kiln-operations.kiln-schedule-revised]
+    failure_conditions: [Revision would overwrite prior planning state without history.]
+    idempotency_expectation: Reapplying an identical revision should not produce a different planning result.
+    status: candidate
+    provenance:
+      sources:
+        - type: invariant-model
+          reference: invariant.kiln-schedule.preserve-revisions
+          description: Prior schedule revisions remain traceable.
+      confidence: high
+      status: candidate
+
+  - id: command.kiln-operations.start-kiln-run
+    name: StartKilnRun
+    bounded_context: bc.kiln-operations
+    target_aggregate: aggregate.kiln-operations.kiln-run
+    intent: Begin execution of a specific scheduled Kiln Run/Charge.
+    initiators: [kiln operations user]
+    input: [kiln run identity, kiln asset reference, schedule reference, start information]
+    preconditions: [The run is distinguishable and has sufficient execution context.]
+    invariants_checked: [invariant.kiln-run.preserve-run-identity-history]
+    possible_events: [event.kiln-operations.kiln-run-started]
+    failure_conditions: [Run identity or execution context is ambiguous.]
+    idempotency_expectation: Starting an already-started run must not create a second run identity.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.kiln-operations.kiln-run
+          description: Starting a run is Kiln Run aggregate behavior.
+      confidence: high
+      status: candidate
+
+  - id: command.kiln-operations.record-kiln-operation
+    name: RecordKilnOperation
+    bounded_context: bc.kiln-operations
+    target_aggregate: aggregate.kiln-operations.kiln-run
+    intent: Add retained operating history to a specific Kiln Run/Charge.
+    initiators: [kiln operations user or authorized process source]
+    input: [kiln run identity, operating fact/parameter, timestamp/context, provenance]
+    preconditions: [The Kiln Run exists and is the intended run for the operating fact.]
+    invariants_checked: [invariant.kiln-run.preserve-run-identity-history]
+    possible_events: [event.kiln-operations.kiln-operation-recorded]
+    failure_conditions: [Operating fact cannot be reliably associated with the intended run.]
+    idempotency_expectation: Duplicate source facts should not silently create duplicate authoritative operating history; exact deduplication rule remains unresolved.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Kiln operations history must be retained rather than spreadsheet-only.
+      confidence: high
+      status: candidate
+
+  - id: command.kiln-operations.complete-kiln-run
+    name: CompleteKilnRun
+    bounded_context: bc.kiln-operations
+    target_aggregate: aggregate.kiln-operations.kiln-run
+    intent: Mark a specific Kiln Run/Charge complete while preserving its operating history for later correlation.
+    initiators: [kiln operations user]
+    input: [kiln run identity, completion information]
+    preconditions: [The intended Kiln Run exists.]
+    invariants_checked: [invariant.kiln-run.preserve-run-identity-history]
+    possible_events: [event.kiln-operations.kiln-run-completed]
+    failure_conditions: [Completion would leave run identity/history incoherent.]
+    idempotency_expectation: Completing an already-completed run is a no-op or rejected duplicate, not a new completion lifecycle.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.kiln-operations.kiln-run
+          description: Completed runs remain historical correlation anchors.
+      confidence: high
+      status: candidate
+
+  - id: command.project-tracking.create-project
+    name: CreateProject
+    bounded_context: bc.project-tracking
+    target_aggregate: aggregate.project-tracking.project
+    intent: Establish a discrete planned improvement or capital Project.
+    initiators: [authorized operations/project user]
+    input: [project purpose, initial plan/status, relevant references]
+    preconditions: [The work is a distinct planned project rather than merely a CAPA state.]
+    invariants_checked: [invariant.project.status-owned-by-project]
+    possible_events: [event.project-tracking.project-created]
+    failure_conditions: [No distinguishable planned-work lifecycle can be established.]
+    idempotency_expectation: Exact duplicate project creation should not produce competing project identities; precise duplicate rule unresolved.
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.project-tracking/context.yaml
+          description: Project Tracking owns discrete planned work.
+      confidence: medium
+      status: candidate
+
+  - id: command.project-tracking.complete-project
+    name: CompleteProject
+    bounded_context: bc.project-tracking
+    target_aggregate: aggregate.project-tracking.project
+    intent: Complete a Project based on its own lifecycle and owned work state.
+    initiators: [authorized project user]
+    input: [project identity, completion evidence/status]
+    preconditions: [The Project exists.]
+    invariants_checked: [invariant.project.status-owned-by-project]
+    possible_events: [event.project-tracking.project-completed]
+    failure_conditions: [Completion is justified only by external CAPA or another context's state rather than Project-owned rules.]
+    idempotency_expectation: Repeated completion of an already-completed project should not create a second completion fact.
+    status: candidate
+    provenance:
+      sources:
+        - type: invariant-model
+          reference: invariant.project.status-owned-by-project
+          description: Project completion belongs to Project lifecycle.
+      confidence: medium
+      status: candidate
+
+  - id: command.quality-verification.initiate-quality-check
+    name: InitiateQualityCheck
+    bounded_context: bc.quality-verification
+    target_aggregate: aggregate.quality-verification.quality-check
+    intent: Begin a Quality Check with enough mill/machine/process context to resolve the applicable target.
+    initiators: [authorized quality or operations user]
+    input: [subject/product context, mill, machine/process path, check purpose]
+    preconditions: [The check context is sufficiently defined to attempt target resolution.]
+    invariants_checked: [invariant.quality-check.applicable-target]
+    possible_events: [event.quality-verification.quality-check-initiated]
+    failure_conditions: [Required context for target resolution is missing.]
+    idempotency_expectation: Separate real-world checks remain separate occurrences; technical retries should not create duplicate check identity.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-09
+          description: A person may suspect a quality problem and need a system-supported check.
+      confidence: high
+      status: candidate
+
+  - id: command.quality-verification.record-quality-measurement
+    name: RecordQualityMeasurement
+    bounded_context: bc.quality-verification
+    target_aggregate: aggregate.quality-verification.quality-check
+    intent: Record measurement evidence for a specific Quality Check.
+    initiators: [authorized quality or operations user]
+    input: [quality check identity, measured characteristic, value, unit, measurement context]
+    preconditions: [The Quality Check exists.]
+    invariants_checked: [invariant.quality-check.preserve-evaluation-basis]
+    possible_events: [event.quality-verification.quality-measurement-recorded]
+    failure_conditions: [Measurement lacks enough context to be interpretable.]
+    idempotency_expectation: Repeating the same captured measurement due to transport retry should not duplicate evidence.
+    status: candidate
+    provenance:
+      sources:
+        - type: value-object-model
+          reference: value-object.quality-verification.quality-measurement
+          description: Measurement is retained evidence within a Quality Check.
+      confidence: high
+      status: candidate
+
+  - id: command.quality-verification.evaluate-quality-check
+    name: EvaluateQualityCheck
+    bounded_context: bc.quality-verification
+    target_aggregate: aggregate.quality-verification.quality-check
+    intent: Evaluate a Quality Check against its applicable historical target/basis and record the result.
+    initiators: [authorized quality or operations user or domain process]
+    input: [quality check identity]
+    preconditions: [Measurement evidence exists and the applicable target/basis can be established.]
+    invariants_checked: [invariant.quality-check.applicable-target, invariant.quality-check.preserve-evaluation-basis, invariant.quality-check.failure-not-nonconformity]
+    possible_events: [event.quality-verification.quality-check-evaluated]
+    failure_conditions: [Applicable target cannot be established, measurement evidence is insufficient, or evaluation would implicitly create a Nonconformity.]
+    idempotency_expectation: Evaluation against unchanged evidence/basis should be repeatable without producing contradictory authoritative outcomes.
+    status: candidate
+    provenance:
+      sources:
+        - type: invariant-model
+          reference: invariant.quality-check.applicable-target
+          description: Quality result requires applicable target context.
+      confidence: high
+      status: candidate
+
+  - id: command.corrective-action.accept-nonconformity
+    name: AcceptNonconformity
+    bounded_context: bc.corrective-action
+    target_aggregate: aggregate.corrective-action.nonconformity
+    intent: Accept an eligible finding into the Corrective Action lifecycle as a Nonconformity.
+    initiators: [authorized quality/CAPA decision role or explicit domain policy]
+    input: [source finding reference, unmet requirement/evidence, acceptance rationale]
+    preconditions: [An explicit supported rule or decision allows the finding to enter the Nonconformity lifecycle.]
+    invariants_checked: [invariant.nonconformity.explicit-acceptance]
+    possible_events: [event.corrective-action.nonconformity-accepted]
+    failure_conditions: [No supported acceptance rule/decision exists.]
+    idempotency_expectation: The same source finding should not create duplicate Nonconformities without an explicit business reason.
+    status: candidate
+    provenance:
+      sources:
+        - type: invariant-model
+          reference: invariant.nonconformity.explicit-acceptance
+          description: Nonconformity admission must be explicit.
+      confidence: high
+      status: candidate
+
+  - id: command.corrective-action.route-corrective-work
+    name: RouteCorrectiveWork
+    bounded_context: bc.corrective-action
+    target_aggregate: aggregate.corrective-action.nonconformity
+    intent: Route a Corrective Action to the context/system that owns execution of that work class.
+    initiators: [authorized CAPA user or domain policy]
+    input: [nonconformity identity, corrective action reference, destination context/system, routing information]
+    preconditions: [The Nonconformity and corrective action coordination record exist.]
+    invariants_checked: [invariant.nonconformity.do-not-own-routed-work]
+    possible_events: [event.corrective-action.corrective-work-routed]
+    failure_conditions: [Routing would falsely make Corrective Action authoritative for destination work lifecycle.]
+    idempotency_expectation: Repeating the same routing request should not create duplicate execution ownership.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, ISSUE-0002
+          description: CAPA routes work to whichever system/context owns that work.
+      confidence: high
+      status: candidate
+
+  - id: command.corrective-action.close-nonconformity
+    name: CloseNonconformity
+    bounded_context: bc.corrective-action
+    target_aggregate: aggregate.corrective-action.nonconformity
+    intent: Close a Nonconformity when its own CAPA closure requirements are satisfied.
+    initiators: [authorized CAPA/quality role]
+    input: [nonconformity identity, closure evidence]
+    preconditions: [The Nonconformity exists and required closure evidence is available under the applicable rules.]
+    invariants_checked: [invariant.nonconformity.do-not-own-routed-work]
+    possible_events: [event.corrective-action.nonconformity-closed]
+    failure_conditions: [Closure relies on invented local status for externally owned work or applicable closure requirements are not met.]
+    idempotency_expectation: Closing an already-closed Nonconformity does not create another closure lifecycle.
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.corrective-action/context.yaml
+          description: Corrective Action owns CAPA closure semantics.
+      confidence: high
+      status: candidate
+
+  - id: command.asset-lifecycle.register-asset
+    name: RegisterAsset
+    bounded_context: bc.asset-lifecycle
+    target_aggregate: aggregate.asset-lifecycle.asset
+    intent: Establish ManuFactor identity for a physical Asset and begin its retained lifecycle/history.
+    initiators: [authorized asset/reliability user or controlled import process]
+    input: [physical/business identity, external machine references if available, initial lifecycle context]
+    preconditions: [The physical asset can be distinguished from other assets.]
+    invariants_checked: [invariant.asset.stable-identity]
+    possible_events: [event.asset-lifecycle.asset-registered]
+    failure_conditions: [Asset identity cannot be reliably distinguished or would fragment an existing asset identity.]
+    idempotency_expectation: Re-registering the same physical asset should resolve to the established identity rather than create a duplicate.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: ManuFactor fills meaningful asset-management gaps absent from MP2.
+      confidence: high
+      status: candidate
+
+  - id: command.asset-lifecycle.change-asset-condition
+    name: ChangeAssetCondition
+    bounded_context: bc.asset-lifecycle
+    target_aggregate: aggregate.asset-lifecycle.asset
+    intent: Change an Asset's ManuFactor-owned condition under an explicit asset-domain rule and retain the transition in history.
+    initiators: [authorized asset/reliability role or explicit domain policy]
+    input: [asset identity, new condition, transition evidence/reason]
+    preconditions: [The Asset exists and the transition is supported by an asset-domain rule.]
+    invariants_checked: [invariant.asset.stable-identity, invariant.asset.mp2-status-not-asset-state, invariant.asset.state-change-records-history]
+    possible_events: [event.asset-lifecycle.asset-condition-changed]
+    failure_conditions: [Transition is inferred solely from MP2 status, lacks explicit rule/evidence, or cannot preserve history.]
+    idempotency_expectation: Reapplying the same accepted condition state with identical evidence should not generate contradictory history.
+    status: candidate
+    provenance:
+      sources:
+        - type: invariant-model
+          reference: invariant.asset.state-change-records-history
+          description: Accepted asset state changes require retained history.
+      confidence: high
+      status: candidate
+
+  - id: command.reliability-verification.complete-verification
+    name: CompleteVerification
+    bounded_context: bc.reliability-verification
+    target_aggregate: aggregate.reliability-verification.verification
+    intent: Complete a Reliability Verification and record its authoritative verification result.
+    initiators: [authorized reliability user or controlled verification process]
+    input: [verification identity, completed criteria/category-check evidence]
+    preconditions: [The Verification exists and required applicable evidence is available.]
+    invariants_checked: [invariant.verification.result-supported-by-checks, invariant.verification.result-not-asset-condition]
+    possible_events: [event.reliability-verification.verification-completed]
+    failure_conditions: [Required evidence is incomplete/inconsistent or completion would directly overwrite Asset Condition.]
+    idempotency_expectation: Repeating completion against unchanged evidence should not produce a second conflicting authoritative result.
+    status: candidate
+    provenance:
+      sources:
+        - type: invariant-model
+          reference: invariant.verification.result-supported-by-checks
+          description: Verification result must derive from retained evidence.
+      confidence: high
+      status: candidate
+
+  - id: command.ltv-form-management.publish-template
+    name: PublishLTVFormTemplate
+    bounded_context: bc.safety-signoff
+    target_aggregate: aggregate.ltv-form-management.form-template
+    intent: Publish a distinguishable LTV Form Template version for use in generating printable instances.
+    initiators: [authorized LTV form manager]
+    input: [template identity, version definition, applicability]
+    preconditions: [The template/version is sufficiently defined for intended use.]
+    invariants_checked: [invariant.ltv-template.preserve-published-versions]
+    possible_events: [event.ltv-form-management.template-version-published]
+    failure_conditions: [Publishing would overwrite a historical version or make versions indistinguishable.]
+    idempotency_expectation: Republishing the same version content/identity should not create an indistinguishable duplicate version.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.ltv-form-management.form-template
+          description: Published template versions must remain historical and distinguishable.
+      confidence: high
+      status: candidate
+
+  - id: command.ltv-form-management.generate-form-instance
+    name: GenerateLTVFormInstance
+    bounded_context: bc.safety-signoff
+    target_aggregate: aggregate.ltv-form-management.printed-instance
+    intent: Generate a specific LTV form instance from an exact managed template version.
+    initiators: [authorized LTV form user]
+    input: [template identity/version, intended use/context]
+    preconditions: [The exact source template version exists and is available for the intended use.]
+    invariants_checked: [invariant.ltv-instance.template-traceability]
+    possible_events: [event.ltv-form-management.form-instance-generated]
+    failure_conditions: [Exact source template/version provenance cannot be established.]
+    idempotency_expectation: A technical retry should not create duplicate form-instance identity for the same generation request.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: The actual Safety gap is printing and managing LTV forms.
+      confidence: high
+      status: candidate
+
+  - id: command.ltv-form-management.mark-form-issued
+    name: MarkLTVFormIssued
+    bounded_context: bc.safety-signoff
+    target_aggregate: aggregate.ltv-form-management.printed-instance
+    intent: Record that a specific LTV Form Instance has been printed or issued without implying approval/sign-off.
+    initiators: [authorized LTV form user or printing process]
+    input: [form instance identity, print/issue facts]
+    preconditions: [The LTV Form Instance exists.]
+    invariants_checked: [invariant.ltv-instance.template-traceability, invariant.ltv-instance.printing-not-signoff]
+    possible_events: [event.ltv-form-management.form-instance-issued]
+    failure_conditions: [Issue action loses template provenance or incorrectly sets approval/sign-off state.]
+    idempotency_expectation: Repeating the same issue acknowledgement should not create a second issue lifecycle.
+    status: candidate
+    provenance:
+      sources:
+        - type: invariant-model
+          reference: invariant.ltv-instance.printing-not-signoff
+          description: Printing/issuing and sign-off are distinct lifecycle meanings.
+      confidence: high
+      status: candidate
+
+  - id: command.training-qualification.establish-qualification
+    name: EstablishOperationalQualification
+    bounded_context: bc.training-competency
+    target_aggregate: aggregate.training-qualification.qualification
+    intent: Establish that a specific person is operationally qualified for a specific job/role based on acceptable evidence.
+    initiators: [authorized operational training/qualification role or explicit domain policy]
+    input: [person reference, job/role reference, qualification evidence]
+    preconditions: [Applicable qualification evidence/rule is available.]
+    invariants_checked: [invariant.qualification.requires-evidence, invariant.qualification.availability-not-qualification]
+    possible_events: [event.training-qualification.operational-qualification-established]
+    failure_conditions: [Evidence is insufficient or availability/presence is being used as qualification evidence.]
+    idempotency_expectation: Establishing the same person-job qualification from unchanged evidence should not create duplicate active qualification identities.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Operational qualification is needed to know who can perform each mill job.
+      confidence: high
+      status: candidate
+
+  - id: command.workforce-availability.create-coverage-plan
+    name: CreateOperationalCoveragePlan
+    bounded_context: bc.workforce-availability
+    target_aggregate: aggregate.workforce-availability.coverage-plan
+    intent: Establish a coverage decision for a defined staffing gap in job/time/crew terms.
+    initiators: [authorized operations scheduler/supervisor]
+    input: [staffing gap, relevant time/shift/crew, candidate source facts]
+    preconditions: [The operational staffing need is sufficiently defined.]
+    invariants_checked: [invariant.coverage.need-is-explicit]
+    possible_events: [event.workforce-availability.staffing-gap-identified]
+    failure_conditions: [The staffing need cannot be defined sufficiently to evaluate coverage.]
+    idempotency_expectation: The same staffing need should not silently create competing active coverage plans; exact identity rule remains unresolved.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Vacation and sick-call coverage require an explicit operational staffing need.
+      confidence: high
+      status: candidate
+
+  - id: command.workforce-availability.select-replacement
+    name: SelectReplacement
+    bounded_context: bc.workforce-availability
+    target_aggregate: aggregate.workforce-availability.coverage-plan
+    intent: Select a replacement for a staffing gap after validating both operational availability and qualification.
+    initiators: [authorized operations scheduler/supervisor]
+    input: [coverage plan identity, replacement person/reference, qualification evidence/reference, availability evidence/reference]
+    preconditions: [The Coverage Plan exists and candidate evidence is available for decision time.]
+    invariants_checked: [invariant.coverage.replacement-must-be-qualified-and-available, invariant.coverage.do-not-rewrite-source-facts]
+    possible_events: [event.workforce-availability.replacement-selected]
+    failure_conditions: [Candidate is unavailable, insufficiently qualified, or selection attempts to rewrite HR/qualification source facts.]
+    idempotency_expectation: Re-selecting the same replacement for the unchanged need should not create contradictory selected coverage.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Sick-call replacement requires someone who is both available and capable of doing the job.
+      confidence: high
+      status: candidate
