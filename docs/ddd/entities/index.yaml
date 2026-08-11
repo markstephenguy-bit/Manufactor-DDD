@@ -1,0 +1,263 @@
+entities:
+  - id: entity.operations-record.operational-record
+    name: Operational Record
+    bounded_context: bc.operations-record
+    aggregate: aggregate.operations-record.operational-record
+    domain_identity: A specific retained operational record remains the same record across correction/history changes.
+    identity_rules:
+      - Identity must survive corrections and later references.
+    attributes: [record type, recorded occurrence/report details, provenance, correction history]
+    behaviors: [record operational fact, correct while preserving history, reference external subjects]
+    lifecycle: created, retained, corrected without identity replacement
+    invariants:
+      - Corrections preserve prior recorded state/history.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.operations-record.operational-record
+          description: Aggregate root requires identity continuity across correction/history.
+      confidence: high
+      status: candidate
+
+  - id: entity.kiln-operations.kiln-schedule
+    name: Kiln Schedule
+    bounded_context: bc.kiln-operations
+    aggregate: aggregate.kiln-operations.kiln-schedule
+    domain_identity: A schedule remains the same planning object across retained revisions for its planning scope/period.
+    identity_rules:
+      - Schedule identity must distinguish the planning object from individual historical revisions.
+    attributes: [planning scope, planning period, revision history]
+    behaviors: [create schedule, revise schedule]
+    lifecycle: created, revised, retained historically
+    invariants:
+      - Prior schedule revisions remain traceable.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: docs/ddd/aggregates/kiln-schedule.yaml
+          description: Schedule revision/history forms a separate consistency boundary.
+      confidence: high
+      status: candidate
+
+  - id: entity.kiln-operations.kiln-run
+    name: Kiln Run/Charge
+    bounded_context: bc.kiln-operations
+    aggregate: aggregate.kiln-operations.kiln-run
+    domain_identity: One kiln run/charge must remain distinguishable from every other run across scheduling, execution, completion, and later moisture correlation.
+    identity_rules:
+      - Identity must persist after completion for downstream correlation and analysis.
+    attributes: [kiln reference, schedule reference, operating history, lifecycle state]
+    behaviors: [schedule run, start run, record operation, complete run, correlate outcomes]
+    lifecycle: scheduled, active, completed, historical
+    invariants:
+      - Operating history belongs to the identified run and cannot be silently rewritten.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.kiln-operations.kiln-run
+          description: Run identity anchors operating history and downstream outcome correlation.
+      confidence: high
+      status: candidate
+
+  - id: entity.project-tracking.project
+    name: Project
+    bounded_context: bc.project-tracking
+    aggregate: aggregate.project-tracking.project
+    domain_identity: The same project persists across proposal, planning, execution, completion, or cancellation.
+    identity_rules:
+      - Project identity is independent of CAPA or other external work that may reference it.
+    attributes: [purpose, status, plan, milestone/action references]
+    behaviors: [plan work, update status, complete, cancel]
+    lifecycle: proposed, planned, active, completed or cancelled
+    invariants:
+      - Project status reflects project-owned work rather than external lifecycle state.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.project-tracking.project
+          description: Project is the aggregate root for planned improvement/capital work.
+      confidence: medium
+      status: candidate
+
+  - id: entity.quality-verification.quality-check
+    name: Quality Check
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.quality-check
+    domain_identity: A specific quality verification occurrence persists as the same check through measurement, evaluation, and retained evidence.
+    identity_rules:
+      - Identity distinguishes one verification occurrence from another even for the same product/process context.
+    attributes: [mill context, machine context, process path, measurement evidence, evaluation basis, result]
+    behaviors: [record measurement, resolve applicable target, evaluate]
+    lifecycle: initiated, measured, evaluated, retained
+    invariants:
+      - Evaluation basis and measurement remain coherent for the identified check.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.quality-verification.quality-check
+          description: One check is the consistency boundary for measurement and evaluation evidence.
+      confidence: high
+      status: candidate
+
+  - id: entity.corrective-action.nonconformity
+    name: Nonconformity
+    bounded_context: bc.corrective-action
+    aggregate: aggregate.corrective-action.nonconformity
+    domain_identity: The same accepted Nonconformity persists through correction, root-cause analysis, corrective actions, routing, and closure.
+    identity_rules:
+      - Identity begins only when a finding is explicitly accepted into the Nonconformity lifecycle.
+    attributes: [finding reference, state, correction, root cause, corrective-action coordination, closure evidence]
+    behaviors: [record correction, analyze cause, coordinate corrective action, route work, close]
+    lifecycle: open, under analysis, corrective-action active, closed
+    invariants:
+      - Only explicitly accepted findings become Nonconformities.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.corrective-action.nonconformity
+          description: Nonconformity is the aggregate root for the CAPA lifecycle.
+      confidence: high
+      status: candidate
+
+  - id: entity.asset-lifecycle.asset
+    name: Asset
+    bounded_context: bc.asset-lifecycle
+    aggregate: aggregate.asset-lifecycle.asset
+    domain_identity: A physical asset retains ManuFactor identity across condition, lifecycle, maintenance, and verification history.
+    identity_rules:
+      - Identity must remain stable when external MP2 references or asset condition change.
+    attributes: [physical/business identity, current condition, lifecycle state, retained history]
+    behaviors: [change condition, change lifecycle state, associate maintenance work, retain history]
+    lifecycle: registered/established, active, condition/lifecycle changes, retired
+    invariants:
+      - State changes preserve asset identity and retained history.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: MP2 lacks meaningful asset-management identity/lifecycle semantics beyond machine references for WR/WO.
+      confidence: high
+      status: candidate
+
+  - id: entity.reliability-verification.verification
+    name: Reliability Verification
+    bounded_context: bc.reliability-verification
+    aggregate: aggregate.reliability-verification.verification
+    domain_identity: A specific verification occurrence for one asset/checkpoint remains identifiable through execution and retained evidence.
+    identity_rules:
+      - Each verification occurrence must be distinguishable by business occurrence, not merely database identity.
+    attributes: [asset reference, checkpoint/trigger, criteria/category checks, result]
+    behaviors: [start, record checks, complete]
+    lifecycle: scheduled, in progress, passed or failed, retained
+    invariants:
+      - Final result must be supported by the verification's applicable checks/evidence.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.reliability-verification.verification
+          description: Verification is the aggregate root for a discrete AFAL/checkpoint assessment.
+      confidence: high
+      status: candidate
+
+  - id: entity.ltv-form-management.form-template
+    name: LTV Form Template
+    bounded_context: bc.safety-signoff
+    aggregate: aggregate.ltv-form-management.form-template
+    domain_identity: A managed LTV form/template remains the same template across distinct published revisions/versions.
+    identity_rules:
+      - Template identity persists while versions remain separately traceable.
+    attributes: [template definition, version history, applicability/status]
+    behaviors: [revise, publish version, retire]
+    lifecycle: created, revised/versioned, current, superseded or retired
+    invariants:
+      - Historical published versions used by printed instances cannot be overwritten.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.ltv-form-management.form-template
+          description: Template identity persists across revisions while versions remain traceable.
+      confidence: high
+      status: candidate
+
+  - id: entity.ltv-form-management.printed-instance
+    name: LTV Printed Instance
+    bounded_context: bc.safety-signoff
+    aggregate: aggregate.ltv-form-management.printed-instance
+    domain_identity: Each generated/issued LTV form instance has individual identity independent of the reusable template.
+    identity_rules:
+      - Identity must preserve the exact source template/version and specific issued use.
+    attributes: [template/version reference, form status, completion/approval/sign-off evidence]
+    behaviors: [print or issue, complete, approve/sign when required, retain]
+    lifecycle: generated, printed/issued, optionally completed/approved, retained
+    invariants:
+      - Instance remains traceable to its exact source template version.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: The Safety gap requires individual printed LTV forms to be managed and retained.
+      confidence: high
+      status: candidate
+
+  - id: entity.training-qualification.operational-qualification
+    name: Operational Qualification
+    bounded_context: bc.training-competency
+    aggregate: aggregate.training-qualification.qualification
+    domain_identity: The person-job qualification relationship persists as a business record across evidence additions, review, withdrawal, or later requalification.
+    identity_rules:
+      - Identity is the operational qualification relationship, not the source LMS completion record.
+    attributes: [person reference, job/role reference, qualification state, supporting evidence]
+    behaviors: [establish qualification, add evidence, review, withdraw]
+    lifecycle: established, maintained/reviewed, withdrawn or superseded
+    invariants:
+      - Qualification must remain supported by acceptable evidence under the applicable rule.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Cross-operator training depth requires a persistent understanding of who can perform each operational job.
+      confidence: high
+      status: candidate
+
+  - id: entity.workforce-availability.coverage-plan
+    name: Operational Coverage Plan
+    bounded_context: bc.workforce-availability
+    aggregate: aggregate.workforce-availability.coverage-plan
+    domain_identity: A specific operational staffing need/coverage decision persists for its defined job/time/crew requirement.
+    identity_rules:
+      - Identity is tied to the staffing need being covered, not to the selected person alone.
+    attributes: [staffing need, time/shift, job, crew, replacement options, selected coverage]
+    behaviors: [identify gap, add replacement option, select replacement, revise coverage]
+    lifecycle: identified, evaluated, covered/revised, historical
+    invariants:
+      - Selected coverage must satisfy both availability and qualification at decision time.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.workforce-availability.coverage-plan
+          description: Coverage Plan is the consistency boundary for one staffing need and its replacement decision.
+      confidence: high
+      status: candidate
+
+entity_classification_notes:
+  unresolved_internal_identity:
+    - Milestone
+    - Project Action
+    - Correction
+    - Corrective Action coordination record
+    - AFAL Category Check
+    - Asset History entry
+    - Operational Setting History entry
+  rule: These remain unresolved until independent business identity/lifecycle evidence exists; database keys alone are insufficient.
