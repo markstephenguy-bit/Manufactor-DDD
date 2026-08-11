@@ -1,0 +1,410 @@
+invariants:
+  - id: invariant.operations-record.preserve-history
+    name: Preserve Operational Record History
+    bounded_context: bc.operations-record
+    aggregate: aggregate.operations-record.operational-record
+    rule: Correcting an Operational Record must preserve the prior recorded state/history rather than silently replacing it.
+    reason: The record is evidence of what was reported and how it was later corrected.
+    triggering_operations: [Record Operational Fact, Correct Operational Record]
+    enforcement_boundary: Operational Record aggregate
+    failure_semantics: Reject any correction that would destroy or obscure the retained prior state.
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.operations-record/context.yaml
+          description: Operations Record owns retained record and correction/history semantics.
+      confidence: high
+      status: candidate
+
+  - id: invariant.kiln-schedule.preserve-revisions
+    name: Preserve Kiln Schedule Revisions
+    bounded_context: bc.kiln-operations
+    aggregate: aggregate.kiln-operations.kiln-schedule
+    rule: Revising a Kiln Schedule must leave prior planning states historically traceable.
+    reason: The ManuFactor gap explicitly replaces spreadsheet scheduling with a system that keeps a record/history.
+    triggering_operations: [Create Kiln Schedule, Revise Kiln Schedule]
+    enforcement_boundary: Kiln Schedule aggregate
+    failure_semantics: Reject a revision operation that overwrites the prior schedule state without retained history.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Kiln scheduling/operations must replace Excel with retained history.
+      confidence: high
+      status: candidate
+
+  - id: invariant.kiln-run.preserve-run-identity-history
+    name: Preserve Kiln Run Identity and History
+    bounded_context: bc.kiln-operations
+    aggregate: aggregate.kiln-operations.kiln-run
+    rule: A Kiln Run/Charge must remain distinguishable from every other run and retain its associated operating history after completion.
+    reason: Downstream moisture outcomes must be correlated to the correct historical run.
+    triggering_operations: [Schedule Kiln Run, Start Kiln Run, Record Kiln Operation, Complete Kiln Run]
+    enforcement_boundary: Kiln Run aggregate
+    failure_semantics: Reject changes that would merge run identity or detach/overwrite retained run history.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Kiln history must be retained and correlated with downstream ProTrack moisture data.
+      confidence: high
+      status: candidate
+
+  - id: invariant.kiln-run.do-not-mutate-protrack
+    name: Preserve ProTrack Source Authority
+    bounded_context: bc.kiln-operations
+    aggregate: aggregate.kiln-operations.kiln-run
+    rule: Kiln Operations must not mutate or redefine authoritative ProTrack moisture measurements when correlating them to a Kiln Run/Charge.
+    reason: ProTrack remains source authority for planer moisture measurements.
+    triggering_operations: [Correlate Moisture Outcome, Recalculate Moisture Outcome]
+    enforcement_boundary: Kiln Operations translation/integration boundary
+    failure_semantics: Reject any operation that attempts to overwrite source measurement facts through the Kiln Operations model.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: ProTrack stores authoritative moisture-meter data; ManuFactor correlates and analyzes it.
+      confidence: high
+      status: candidate
+
+  - id: invariant.project.status-owned-by-project
+    name: Project Status Follows Project-Owned Work
+    bounded_context: bc.project-tracking
+    aggregate: aggregate.project-tracking.project
+    rule: Project status and completion must be determined by the Project lifecycle and must not be inferred solely from CAPA closure or another external lifecycle.
+    reason: Project Tracking is a distinct planned-work lifecycle from Corrective Action.
+    triggering_operations: [Update Project Status, Complete Project, Cancel Project]
+    enforcement_boundary: Project aggregate
+    failure_semantics: Reject a project status transition justified only by an external context state without an explicit project rule.
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.project-tracking/context.yaml
+          description: Project status/completion belongs to the Project lifecycle.
+      confidence: medium
+      status: candidate
+
+  - id: invariant.quality-check.applicable-target
+    name: Evaluate Against Applicable Quality Target
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.quality-check
+    rule: A Quality Check result must be evaluated against the target applicable to its recorded mill, machine, and process context.
+    reason: Quality targets differ by mill and machine/process path.
+    triggering_operations: [Initiate Quality Check, Record Measurement, Evaluate Quality Check]
+    enforcement_boundary: Quality Check aggregate
+    failure_semantics: Do not produce an authoritative evaluation when the applicable target/context cannot be established.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-09 through 2026-08-10
+          description: The applicable target varies with mill and process/machine context.
+      confidence: high
+      status: candidate
+
+  - id: invariant.quality-check.preserve-evaluation-basis
+    name: Preserve Quality Evaluation Evidence
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.quality-check
+    rule: An evaluated Quality Check must retain the measurement and the evaluation basis/target used for that result.
+    reason: Historical checks must remain interpretable even after targets or process conditions change.
+    triggering_operations: [Evaluate Quality Check, Correct Quality Check Evidence]
+    enforcement_boundary: Quality Check aggregate
+    failure_semantics: Reject an evaluation or correction that leaves the retained result without its measurement or historical evaluation basis.
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.quality-verification/context.yaml
+          description: Verification evidence preserves measurement and evaluation basis.
+      confidence: high
+      status: candidate
+
+  - id: invariant.quality-check.failure-not-nonconformity
+    name: Failed Quality Check Is Not Automatically a Nonconformity
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.quality-check
+    rule: A failed Quality Check must not be created or represented as a Corrective Action Nonconformity without an explicit cross-context transition rule.
+    reason: Quality verification and CAPA have distinct semantics and lifecycle ownership.
+    triggering_operations: [Evaluate Quality Check, Publish Quality Finding]
+    enforcement_boundary: Quality Verification to Corrective Action boundary
+    failure_semantics: Retain the failed check as a Quality Verification fact and do not create a Nonconformity implicitly.
+    status: candidate
+    provenance:
+      sources:
+        - type: ubiquitous-language
+          reference: language.quality-verification.failed-quality-check
+          description: Failed Quality Check and Nonconformity are explicitly distinct contextual meanings.
+      confidence: high
+      status: candidate
+
+  - id: invariant.nonconformity.explicit-acceptance
+    name: Explicit Nonconformity Acceptance
+    bounded_context: bc.corrective-action
+    aggregate: aggregate.corrective-action.nonconformity
+    rule: A finding from another context becomes a Nonconformity only through an explicit domain rule or decision accepting it into the Corrective Action lifecycle.
+    reason: Incident, failed check, and failed verification are not synonyms for Nonconformity.
+    triggering_operations: [Accept Nonconformity]
+    enforcement_boundary: Nonconformity aggregate creation boundary
+    failure_semantics: Reject Nonconformity creation when no supported acceptance rule/decision exists.
+    status: candidate
+    provenance:
+      sources:
+        - type: decision
+          reference: DDD-0005
+          description: CAPA trigger and Nonconformity semantics were clarified.
+      confidence: high
+      status: candidate
+
+  - id: invariant.nonconformity.do-not-own-routed-work
+    name: CAPA Does Not Re-own Routed Work
+    bounded_context: bc.corrective-action
+    aggregate: aggregate.corrective-action.nonconformity
+    rule: Corrective Action may coordinate and reference routed work, but it must not invent or independently mutate lifecycle state owned by the destination context/system.
+    reason: CAPA is a coordinator, not a second maintenance/project/safety/operations work system.
+    triggering_operations: [Route Corrective Work, Evaluate Closure, Close Nonconformity]
+    enforcement_boundary: Nonconformity aggregate and integration boundary
+    failure_semantics: Treat destination work state as externally owned; closure cannot rely on fabricated local execution state.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, ISSUE-0002
+          description: CAPA routes work to the system/context that already owns that work class.
+      confidence: high
+      status: candidate
+
+  - id: invariant.asset.stable-identity
+    name: Preserve Asset Identity Across Lifecycle Changes
+    bounded_context: bc.asset-lifecycle
+    aggregate: aggregate.asset-lifecycle.asset
+    rule: An Asset must retain the same ManuFactor identity across condition changes, lifecycle-state changes, MP2 work references, and verification history.
+    reason: Physical asset identity is distinct from changing maintenance transactions or condition/state.
+    triggering_operations: [Register Asset, Change Asset Condition, Change Asset Lifecycle State, Associate Maintenance Work]
+    enforcement_boundary: Asset aggregate
+    failure_semantics: Reject state/history changes that replace or fragment established asset identity.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: ManuFactor fills meaningful asset-management gaps not represented by MP2.
+      confidence: high
+      status: candidate
+
+  - id: invariant.asset.mp2-status-not-asset-state
+    name: MP2 Work Status Does Not Define Asset State
+    bounded_context: bc.asset-lifecycle
+    aggregate: aggregate.asset-lifecycle.asset
+    rule: MP2 work-request/work-order status must not silently determine ManuFactor Asset Condition or Asset Lifecycle State.
+    reason: MP2 is authoritative for WR/WO transactions but does not contain meaningful asset-management semantics.
+    triggering_operations: [Import MP2 Work Fact, Change Asset Condition, Change Asset Lifecycle State]
+    enforcement_boundary: MP2 to Asset Lifecycle translation boundary and Asset aggregate
+    failure_semantics: Retain MP2 status as an external work fact unless an explicit Asset-domain transition rule maps it to asset state.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: MP2 only posts WR/WO to machine assets and lacks meaningful asset management.
+      confidence: high
+      status: candidate
+
+  - id: invariant.asset.state-change-records-history
+    name: Asset State Changes Preserve History
+    bounded_context: bc.asset-lifecycle
+    aggregate: aggregate.asset-lifecycle.asset
+    rule: Any accepted Asset Condition or Asset Lifecycle State change must create/retain corresponding asset history rather than silently replacing prior state.
+    reason: Meaningful retained lifecycle/history is part of the ManuFactor-owned asset model.
+    triggering_operations: [Change Asset Condition, Change Asset Lifecycle State]
+    enforcement_boundary: Asset aggregate
+    failure_semantics: Reject a state change that cannot be represented with retained historical traceability.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.asset-lifecycle.asset
+          description: State changes and retained asset history form one consistency boundary.
+      confidence: high
+      status: candidate
+
+  - id: invariant.verification.result-supported-by-checks
+    name: Verification Result Requires Applicable Evidence
+    bounded_context: bc.reliability-verification
+    aggregate: aggregate.reliability-verification.verification
+    rule: A completed Reliability Verification result must be supported by the applicable checkpoint criteria/category checks and retained evidence.
+    reason: Verification is a discrete assessment whose result derives from its criteria/evidence.
+    triggering_operations: [Record Category Check, Complete Verification]
+    enforcement_boundary: Reliability Verification aggregate
+    failure_semantics: Do not complete the verification with an authoritative result when required criteria/evidence are incomplete or inconsistent.
+    status: candidate
+    provenance:
+      sources:
+        - type: existing-model
+          reference: ManuFactor-arch AFAL evidence
+          description: AFAL/category checks support the verification result.
+      confidence: high
+      status: candidate
+
+  - id: invariant.verification.result-not-asset-condition
+    name: Verification Result Is Not Asset Condition
+    bounded_context: bc.reliability-verification
+    aggregate: aggregate.reliability-verification.verification
+    rule: A Verification Result must not directly overwrite or be treated as synonymous with Asset Condition.
+    reason: Reliability Verification owns assessment facts; Asset Lifecycle owns persistent asset condition/state.
+    triggering_operations: [Complete Verification, Publish Verification Result]
+    enforcement_boundary: Reliability Verification to Asset Lifecycle boundary
+    failure_semantics: Publish the result as a verification fact and require an explicit Asset-domain transition rule for any asset-state effect.
+    status: candidate
+    provenance:
+      sources:
+        - type: ubiquitous-language
+          reference: language.reliability-verification.failed-verification
+          description: Failed Verification and Asset Condition are separate meanings.
+      confidence: high
+      status: candidate
+
+  - id: invariant.ltv-template.preserve-published-versions
+    name: Preserve Published LTV Template Versions
+    bounded_context: bc.safety-signoff
+    aggregate: aggregate.ltv-form-management.form-template
+    rule: A published LTV Form Template version that may be referenced by a printed/issued instance must remain distinguishable and historically available.
+    reason: Printed instances must remain traceable to the exact source template version.
+    triggering_operations: [Revise LTV Form Template, Publish LTV Form Template, Retire LTV Form Template]
+    enforcement_boundary: LTV Form Template aggregate
+    failure_semantics: Reject revision/retirement behavior that overwrites or destroys a historically referenced version.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: LTV form management and printing are the actual Safety gap.
+      confidence: high
+      status: candidate
+
+  - id: invariant.ltv-instance.template-traceability
+    name: LTV Printed Instance Retains Template Provenance
+    bounded_context: bc.safety-signoff
+    aggregate: aggregate.ltv-form-management.printed-instance
+    rule: Every LTV Printed Instance must remain traceable to the exact LTV Form Template version from which it was generated.
+    reason: Form management requires reliable history and prevents later template changes from changing old issued forms semantically.
+    triggering_operations: [Generate LTV Form Instance, Mark Printed or Issued, Retain LTV Form Instance]
+    enforcement_boundary: LTV Printed Instance aggregate
+    failure_semantics: Reject generation/issuance when exact source template/version provenance cannot be recorded.
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.safety-signoff/context.yaml
+          description: Printed/issued instances must remain traceable to their source form/template version.
+      confidence: high
+      status: candidate
+
+  - id: invariant.ltv-instance.printing-not-signoff
+    name: Printing Does Not Imply LTV Sign-Off
+    bounded_context: bc.safety-signoff
+    aggregate: aggregate.ltv-form-management.printed-instance
+    rule: Printing or issuing an LTV form instance must not by itself place the instance in an approved or signed-off state.
+    reason: Sign-off is only a possible later lifecycle action where the applicable LTV process requires it.
+    triggering_operations: [Mark Printed or Issued, Record Approval or Sign-Off]
+    enforcement_boundary: LTV Printed Instance aggregate
+    failure_semantics: Keep print/issue state distinct from approval/sign-off state unless an explicit process rule performs the transition.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Sign-off is secondary to the actual LTV printing/form-management gap.
+      confidence: high
+      status: candidate
+
+  - id: invariant.qualification.requires-evidence
+    name: Operational Qualification Requires Acceptable Evidence
+    bounded_context: bc.training-competency
+    aggregate: aggregate.training-qualification.qualification
+    rule: An Operational Qualification must remain supported by evidence acceptable under the applicable operational qualification rule.
+    reason: Course completion alone is not automatically equivalent to being operationally usable in a mill job.
+    triggering_operations: [Establish Operational Qualification, Add Qualification Evidence, Review Operational Qualification]
+    enforcement_boundary: Operational Qualification aggregate
+    failure_semantics: Do not establish or retain qualified state when the required acceptable evidence is absent.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: Cross-operator training depth is needed to know who can actually perform another job.
+      confidence: high
+      status: candidate
+
+  - id: invariant.qualification.availability-not-qualification
+    name: Availability Does Not Establish Qualification
+    bounded_context: bc.training-competency
+    aggregate: aggregate.training-qualification.qualification
+    rule: A person's availability or presence on a crew/shift must not be used as evidence that the person is Operationally Qualified for a job.
+    reason: Qualification and availability are separate Operations models.
+    triggering_operations: [Establish Operational Qualification, Review Operational Qualification]
+    enforcement_boundary: Operational Qualification aggregate and workforce translation boundary
+    failure_semantics: Reject qualification decisions based solely on staffing availability.
+    status: candidate
+    provenance:
+      sources:
+        - type: ubiquitous-language
+          reference: language.training-qualification.operational-qualification
+          description: Operational Qualification and Operational Availability are explicitly distinct.
+      confidence: high
+      status: candidate
+
+  - id: invariant.coverage.requires-qualified-and-available
+    name: Selected Coverage Requires Qualification and Availability
+    bounded_context: bc.workforce-availability
+    aggregate: aggregate.workforce-availability.coverage-plan
+    rule: A selected replacement for an operational staffing need must be both operationally available for the required time and sufficiently qualified for the required job.
+    reason: The operational gap is finding who can actually step into a job when the planned operator is unavailable.
+    triggering_operations: [Add Replacement Option, Select Replacement, Revise Coverage Plan]
+    enforcement_boundary: Operational Coverage Plan aggregate
+    failure_semantics: Reject selection of a replacement who does not satisfy both predicates at decision time.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10
+          description: When someone calls in sick, operations needs a registry of who can step in and do the job.
+      confidence: high
+      status: candidate
+
+  - id: invariant.coverage.do-not-rewrite-source-facts
+    name: Coverage Decisions Do Not Rewrite HR or Qualification Facts
+    bounded_context: bc.workforce-availability
+    aggregate: aggregate.workforce-availability.coverage-plan
+    rule: An Operational Coverage Plan may consume HR/timekeeping and Operational Qualification facts but must not mutate those source facts through the coverage decision.
+    reason: Coverage is an operational decision layered over externally/source-owned personnel facts and separately owned qualification semantics.
+    triggering_operations: [Add Replacement Option, Select Replacement, Schedule Vacation Coverage, Revise Coverage Plan]
+    enforcement_boundary: Operational Coverage Plan aggregate and integration boundaries
+    failure_semantics: Treat source facts as references/snapshots; changes to those facts must occur in their authoritative context/system.
+    status: candidate
+    provenance:
+      sources:
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.workforce-availability/context.yaml
+          description: Workforce Availability owns coverage planning but not HR absence or qualification source records.
+      confidence: high
+      status: candidate
+
+unresolved_transition_rules:
+  - id: unresolved.quality-failure-to-nonconformity
+    subject: Failed Quality Check to Nonconformity
+    reason: The boundary is established, but the exact business rule deciding when a failed check becomes a Nonconformity has not yet been supplied.
+  - id: unresolved.verification-to-asset-state
+    subject: Verification Result to Asset Condition/Lifecycle State
+    reason: The contexts and ownership are established, but the exact domain rule for changing asset state after a verification result remains unknown.
+  - id: unresolved.qualification-rule-details
+    subject: Training completion, demonstrated capability, authorization, expiration
+    reason: Evidence supports qualification as an operational concept, but exact qualification/expiration rules remain to be discovered.
+  - id: unresolved.ltv-process-specific-signoff
+    subject: LTV process-specific approval/sign-off requirements
+    reason: Form management is established, but different LTV forms may have different approval/sign-off requirements and those rules have not been enumerated.
