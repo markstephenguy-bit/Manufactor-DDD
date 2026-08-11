@@ -1,20 +1,20 @@
-model_state: strategic DDD established at candidate level; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, and first aggregate model are canonical
-current_phase: Phase 11 — Entity and Value Object discovery
-last_completed: Phase 10 whole-map aggregate/invariant challenge produced 12 candidate consistency boundaries and rejected oversized aggregate groupings
-current_focus: Classify aggregate members and remaining Domain Concepts by business identity semantics. Do not mirror database tables or create Entities merely because records have IDs.
+model_state: strategic DDD established at candidate level; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregate model, and first Entity/Value Object classifications are canonical
+current_phase: Phase 12 — First-class Invariant modeling
+last_completed: Phase 11 whole-map Entity/Value Object discovery classified the 12 aggregate roots as identity-bearing Entity candidates and identified value-semantic members without forcing ambiguous internals into tactical roles
+current_focus: Extract aggregate/business rules into first-class Invariant model objects with explicit triggering operations, enforcement boundaries, and failure semantics
 blocking_issues: []
-next_action: Perform a whole-map Entity/Value Object pass. For each concept/member determine whether identity persists independently of attributes, whether equality is value-based, whether lifecycle is controlled through an Aggregate Root, or whether the concept should remain reference-data/concept-only/unresolved. Preserve cross-context references as identities rather than object graphs.
+next_action: Build the canonical invariant inventory from the aggregate model. Prioritize rules already strongly supported by domain evidence: operational-record history preservation; kiln schedule/run history; Quality Check target/evidence coherence; Nonconformity admission/closure boundaries; Asset history/state integrity; Reliability Verification result evidence; LTV template-version and printed-instance traceability; qualification evidence; and staffing coverage requiring both availability and qualification. Do not invent exact transition thresholds or status vocabularies that remain unresolved.
 files_to_read:
   - docs/ddd/SPECIFICATION.md
   - docs/ddd/concepts/index.yaml
   - docs/ddd/aggregates/index.yaml
   - docs/ddd/aggregates/kiln-schedule.yaml
-  - docs/ddd/discovery/aggregate-challenge.yaml
+  - docs/ddd/entities/index.yaml
+  - docs/ddd/value-objects/index.yaml
   - docs/ddd/context-map/context-map.yaml
   - docs/ddd/integration-contracts/index.yaml
   - docs/ddd/language/domain-language.yaml
   - docs/ddd/language/ubiquitous-language.yaml
-  - docs/ddd/subdomains/index.yaml
   - docs/ddd/issues/unresolved.yaml
 repository_roles:
   canonical: markstephenguy-bit/Manufactor-DDD
@@ -37,41 +37,40 @@ candidate_bounded_contexts:
   - bc.workforce-availability
 deferred_contexts:
   - bc.environmental-compliance: Environmental remains a business area, but no concrete current ManuFactor Environmental gap supplies a justified model/lifecycle
-concept_model:
-  canonical: docs/ddd/concepts/index.yaml
-  concept_count: 21
 aggregate_model:
-  canonical_index: docs/ddd/aggregates/index.yaml
-  additional_candidate_files:
-    - docs/ddd/aggregates/kiln-schedule.yaml
   candidate_aggregate_count: 12
-  candidates:
-    - Operational Record
-    - Kiln Schedule
-    - Kiln Run/Charge
-    - Project
-    - Quality Check
-    - Nonconformity
-    - Asset
-    - Reliability Verification
-    - LTV Form Template
-    - LTV Printed Instance
-    - Operational Qualification
-    - Operational Coverage Plan
-  rejected_oversized_groupings:
-    - One Kiln aggregate containing schedule, runs, moisture outcomes, and ProTrack source measurements
-    - One Asset/Reliability aggregate
-    - One LTV aggregate containing template and every printed instance
-    - One Training Matrix aggregate containing all people/jobs/qualifications
-    - One Workforce aggregate containing HR facts, qualifications, schedules, and every coverage decision
-  important_invariant_findings:
-    - Kiln Schedule revision/history is a separate consistency boundary from Kiln Run execution history.
-    - Moisture Outcome is derived and does not currently justify its own aggregate.
-    - A Quality Check owns its historical measurement/evaluation basis but does not own Nonconformity transition.
-    - Asset Condition changes through Asset; Verification Result remains inside Reliability Verification.
-    - LTV Form Template and LTV Printed Instance must remain separate aggregates because issued instances must not change when templates are revised.
-    - Cross-Training Matrix is a projection over person-job Operational Qualification relationships, not one atomic aggregate.
-    - Staffing coverage decisions consume qualification and HR/time facts but do not own those source models.
+  candidates: [Operational Record, Kiln Schedule, Kiln Run/Charge, Project, Quality Check, Nonconformity, Asset, Reliability Verification, LTV Form Template, LTV Printed Instance, Operational Qualification, Operational Coverage Plan]
+entity_value_model:
+  entities: docs/ddd/entities/index.yaml
+  aggregate_root_entity_count: 12
+  value_objects: docs/ddd/value-objects/index.yaml
+  value_object_candidate_count: 8
+  entity_classification_rule: Persistent business identity through change, not database key presence.
+  value_object_classification_rule: Meaning/equality by value with no independent lifecycle; conceptual immutability preferred.
+  unresolved_internal_identity:
+    - Milestone
+    - Project Action
+    - Correction
+    - Corrective Action coordination record
+    - AFAL Category Check
+    - Asset History entry
+    - Operational Setting History entry
+  value_object_candidates:
+    - Quality Measurement
+    - Quality Verification Result
+    - Asset Condition
+    - Asset Lifecycle State (unresolved exact vocabulary)
+    - Reliability Verification Result
+    - LTV Form Status
+    - Staffing Gap
+    - Replacement Option
+important_tactical_findings:
+  - Aggregate roots are identity-bearing Entity candidates because their business identity persists through lifecycle/state change.
+  - Asset Condition is value state of Asset, not a separate Entity.
+  - Verification Result is value produced by one Reliability Verification, not an independently identified object.
+  - Staffing Gap and Replacement Option are value-semantic parts of one Coverage Plan under current evidence.
+  - LTV Form Template and LTV Printed Instance are separate identity-bearing Entities and separate Aggregates.
+  - Ambiguous internals remain unresolved until independent business identity/lifecycle evidence is discovered.
 open_nonblocking_issues:
   - ISSUE-0003: Vehicle Management versus Physical Asset Management
   - Exact business identity/revision semantics for Kiln Schedule require tactical refinement
@@ -85,6 +84,6 @@ open_nonblocking_issues:
 specification_authority:
   source_document: ManuFactor_DDD_Modeling_Specification.docx
   repository_specification: docs/ddd/SPECIFICATION.md
-  rule: Entity/Value Object classification is driven by business identity and value semantics inside an Aggregate, not by persistence structure.
-session_resume: Start Phase 11 from the aggregate model. Do not reopen strategic boundaries unless tactical identity analysis exposes a genuine contradiction.
+  rule: Invariants are first-class model objects and must not remain only as aggregate/entity prose. Exact business rules must come from evidence; unresolved thresholds/transitions must not be invented.
+session_resume: Start Phase 12 from the aggregate/entity/value-object model and create explicit invariant records. Do not promote unresolved tactical details merely to make the model look complete.
 last_direct_update: 2026-08-10
