@@ -24,7 +24,29 @@ actor_model:
     - type: domain-expert
       reference: Mark direct, 2026-08-22 quality authorization clarification
       description: At the mill, all salaried employees are considered management; formal Quality Checks may be started by management and designated quality technicians.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22 quality concern disposition clarification
+      description: A reported quality concern that does not become a formal Quality Check is closed/dispositioned with a retained reason.
   confidence: high
+
+quality_concern_lifecycle_candidate:
+  concept_name: Quality Concern
+  bounded_context: bc.quality-verification
+  meaning: A reported suspicion of a product-quality problem that exists before any formal Quality Check or Nonconformity.
+  reported_by: any employee
+  reviewed_by: [management, designated quality technician]
+  lifecycle:
+    - reported
+    - reviewed
+    - formal Quality Check started
+    - or closed/dispositioned with reason
+  important_rules:
+    - Reporting a Quality Concern does not create a Quality Check.
+    - Reporting or closing a Quality Concern does not create a Nonconformity.
+    - If no formal Quality Check is started, the concern must be closed/dispositioned with a retained reason.
+  modeling_implication: >
+    Quality Concern has meaningful identity/lifecycle/history and is therefore a strong candidate
+    for a first-class Domain Concept and possibly its own Aggregate rather than a transient notification.
 
 candidate_queries:
   - id: query-candidate.operations-record.history
@@ -64,8 +86,8 @@ candidate_queries:
     name: Review Reported Quality Concerns
     purpose: Show suspected product-quality concerns reported by employees before any formal Quality Check is started.
     likely_inputs: [mill or operational scope, time period, concern status, subject/product context]
-    likely_result: Reported concerns and whether management or a designated quality technician has reviewed or opened a formal Quality Check.
-    authoritative_source: Concern intake semantics remain to be finalized; a reported concern is explicitly not yet a Quality Check or Nonconformity.
+    likely_result: Reported concerns, review status, any linked formal Quality Check, or retained closure/disposition reason.
+    authoritative_source: bc.quality-verification
 
   - id: query-candidate.quality-verification.check
     bounded_context: bc.quality-verification
@@ -162,18 +184,28 @@ candidate_use_cases:
     goal: Allow any employee who notices a possible lumber-quality problem to report it without creating a formal Quality Check or Nonconformity.
     actors: [any employee]
     trigger: Employee notices or suspects a possible lumber-quality problem.
-    result: A retained concern is available for review by management or a designated quality technician, who decides whether to start a formal Quality Check.
+    result: A retained Quality Concern is available for management or a designated quality technician to review.
     supporting_queries: [Review Reported Quality Concerns]
     boundary_rule: Reporting a concern does not itself create a Quality Check and does not create a Nonconformity.
-    modeling_note: The exact concern-intake command/domain concept is not yet canonical; do not reuse InitiateQualityCheck because Mark explicitly separated reporting from formal check initiation.
+
+  - id: use-case-candidate.quality-verification.review-concern
+    bounded_context: bc.quality-verification
+    name: Review and Disposition a Quality Concern
+    goal: Review a reported concern and either start a formal Quality Check or close/disposition the concern with a retained reason.
+    actors: [management, designated quality technician]
+    actor_definition: At the mill all salaried employees are considered management.
+    trigger: A reported Quality Concern is awaiting review.
+    result: Either a formal Quality Check is started and linked to the concern, or the concern is closed/dispositioned with a reason.
+    supporting_queries: [Review Reported Quality Concerns]
+    boundary_rule: A closed/dispositioned concern remains retained history and does not become a Nonconformity merely because it was reported.
 
   - id: use-case-candidate.quality-verification.perform-check
     bounded_context: bc.quality-verification
     name: Perform and Evaluate a Quality Check
-    goal: Management or a designated quality technician reviews a reported concern or other valid trigger, starts the formal Quality Check, captures measurement evidence, resolves the applicable target/basis, and records the evaluation result.
+    goal: Management or a designated quality technician starts the formal Quality Check, captures measurement evidence, resolves the applicable target/basis, and records the evaluation result.
     actors: [management, designated quality technician]
     actor_definition: At the mill all salaried employees are considered management.
-    trigger: Management or a designated quality technician determines that the concern or other valid trigger warrants a formal Quality Check.
+    trigger: Management or a designated quality technician determines that a reported concern or other valid trigger warrants a formal Quality Check.
     established_commands: [InitiateQualityCheck, RecordQualityMeasurement, EvaluateQualityCheck]
     supporting_queries: [Review Reported Quality Concerns, Review Quality Check]
     unresolved_boundary: A failed result does not automatically become a Nonconformity; ISSUE-0004 remains open.
@@ -237,9 +269,9 @@ candidate_use_cases:
 whole_map_observation: >
   ManuFactor is an enterprise-wide employee-facing work system. Use Cases therefore should
   not assume manager/specialist actors by default. Actor restrictions must come from the
-  specific business action or authorization rule. Quality now demonstrates a reusable pattern:
+  specific business action or authorization rule. Quality demonstrates a reusable pattern:
   broad employee reporting access can feed a formal workflow whose state-changing initiation
-  belongs to management or designated specialists.
+  belongs to management or designated specialists, and intake records retain their own lifecycle.
 
 answered_questions:
   - id: PHASE14-Q1
@@ -251,11 +283,14 @@ answered_questions:
   - id: PHASE14-Q3
     answer: Formal Quality Checks may be started by management or designated quality technicians; at the mill all salaried employees are considered management.
     evidence: domain-expert Mark, direct, 2026-08-22
+  - id: PHASE14-Q4
+    answer: If a reported Quality Concern does not warrant a formal Quality Check, it is closed/dispositioned with a retained reason.
+    evidence: domain-expert Mark, direct, 2026-08-22
 
 material_question:
-  id: PHASE14-Q4
-  topic: disposition of reported quality concerns
+  id: PHASE14-Q5
+  topic: quality concern to formal check relationship
   question: >
-    When management or a designated quality technician reviews a reported quality concern and decides that it does not warrant a formal Quality Check, should that concern still be formally dispositioned/closed in ManuFactor with a reason, or can it simply remain as a reported concern with no further action?
+    When a reported Quality Concern does warrant a formal Quality Check, should the original concern itself be considered resolved/closed by opening the check, or should it remain open until the resulting Quality Check is completed?
   why_it_matters: >
-    This determines whether concern intake has its own meaningful lifecycle and retained disposition, which may justify a first-class Quality Concern domain concept and commands rather than treating the report as a transient notification.
+    This determines the lifecycle boundary between Quality Concern and Quality Check and whether opening a formal check is the terminal disposition of the concern or only an intermediate state.
