@@ -1,14 +1,19 @@
 id: bc.training-competency
 name: Operational Training and Qualification
-purpose: Represent operational training coverage and cross-operator qualification depth needed to keep mill crews capable of performing required jobs.
+purpose: Represent and formalize operational training coverage and cross-operator qualification depth needed to keep mill crews capable of performing required jobs where the current process is informal to a fault.
 subdomain: subdomain.production-operations
-model_statement: Within Operational Training and Qualification, qualification means operationally usable evidence that a person can perform a mill job; source learning completion records from Moodle or other systems are evidence inputs and are not automatically identical to operational qualification.
+model_statement: >
+  Within Operational Training and Qualification, qualification means a retained operational determination that a person can perform a mill job.
+  The current mill process is often informal and depends heavily on management knowledge rather than a consistently recorded qualification event.
+  ManuFactor therefore fills a control/evidence gap by making operational qualification explicit and traceable. Source learning completion records from Moodle or other systems are evidence inputs and are not automatically identical to operational qualification.
 responsibilities:
+  - Replace overly informal knowledge of who can perform which jobs with explicit retained operational qualification records.
   - Represent onboarding-related operational training coverage.
   - Maintain cross-operator training/qualification relationships across crews and jobs.
   - Show depth of qualified coverage for operational positions.
-  - Consume source learning records without surrendering operational qualification semantics to the source LMS.
+  - Consume source learning records as evidence without surrendering operational qualification semantics to the source LMS.
 scope:
+  - Formalization of currently informal operator qualification knowledge
   - Onboarding training coverage
   - Operator qualification
   - Cross-training matrix
@@ -35,16 +40,17 @@ ubiquitous_language:
   - crew depth
   - trained-for
 business_rules:
-  - Operational qualification must be supported by appropriate evidence and remain traceable to that evidence.
+  - Operational qualification should be explicit and retained rather than existing only as informal management knowledge.
+  - Operational qualification must be supported by appropriate evidence once the exact qualification rule is established.
   - Source training completion is not automatically equivalent to operational qualification unless the domain rule says it is.
   - Availability does not imply qualification.
 owner: unresolved
 domain_experts: [Mark]
 integration_surface:
-  - Consumes learning-completion facts from Moodle or other learning sources.
+  - Consumes learning-completion facts from Moodle or other learning sources as evidence where useful.
   - Supplies qualification/coverage information to Operational Workforce Availability.
 upstream_dependencies:
-  - Moodle or other learning system
+  - Moodle or other learning system, when relevant evidence exists
 downstream_consumers:
   - bc.workforce-availability
 status: candidate
@@ -53,5 +59,8 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-10
       description: Mark described training across mill activities, onboarding emphasis, and a cross-operator training matrix used to understand crew depth and replacement capability.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22
+      description: Mark stated that qualification is currently informal to a fault, establishing a ManuFactor gap in making operational qualification explicit, retained, and usable for staffing and cross-training decisions.
   confidence: high
   status: candidate
