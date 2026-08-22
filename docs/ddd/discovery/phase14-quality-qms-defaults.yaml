@@ -1,0 +1,45 @@
+phase: Specification Phase 14 — Use Cases and Queries
+status: domain-expert-default
+scope: Quality / QMS-oriented modeling
+
+decision:
+  default_framework: ISO 9001 quality-management concepts and terminology
+  interpretation: >
+    For QMS-oriented parts of the ManuFactor DDD, established ISO 9001 quality-management
+    terminology and conceptual distinctions are the default rather than topics to rediscover
+    one-by-one. Mill-specific business reality overrides or specializes the default where Mark
+    identifies a meaningful difference. This does not make ManuFactor a monolithic QMS or imply
+    that every ISO 9001 process belongs inside ManuFactor.
+  terminology_rule: >
+    When Mark uses informal or local wording, preserve the business intent while mapping to the
+    appropriate established QMS term when the meaning is clear. Do not introduce generic terms
+    such as Issue where a recognized term such as Nonconformity, Correction, Corrective Action,
+    or other applicable QMS concept is more precise.
+
+quality_intake_authorization:
+  frontline_scope: >
+    Non-salaried employees may submit QMS-based quality concerns through the QC channel for
+    review/triage. Submission does not directly create a formal Nonconformity or other formal
+    QMS record.
+  formal_triage_authority:
+    - management
+    - designated quality technicians
+  management_definition: All salaried employees at the mill are considered management.
+  implication: >
+    Broad employee access to ManuFactor does not equal authority to create formal QMS records.
+    The Quality Concern intake path allows frontline reporting while formal promotion/triage
+    remains controlled by management and designated quality technicians.
+
+modeling_effect:
+  - Do not continue questioning Mark merely to reconstruct standard ISO 9001 concepts unless a mill-specific deviation materially affects the DDD.
+  - Preserve the existing Quality Concern intake concept as the frontline reporting channel.
+  - Treat formal QMS records and transitions using established QMS terminology by default.
+  - Keep ManuFactor's gap-filler boundary: ISO 9001 supplies vocabulary/conceptual defaults, not automatic product scope.
+  - Continue Phase 14 questioning in areas where actual mill workflow, actors, decisions, or exceptions remain domain-specific.
+
+provenance:
+  sources:
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22
+      description: Mark designated ISO 9001 as the default basis for QMS-oriented DDD so standard concepts do not need to be rediscovered, while retaining QC-channel triage for non-salaried employee concerns.
+  confidence: high
