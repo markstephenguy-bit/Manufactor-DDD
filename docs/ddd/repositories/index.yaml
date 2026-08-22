@@ -1,0 +1,230 @@
+repositories:
+  - id: repository.operations-record.operational-record
+    name: Operational Record Repository
+    bounded_context: bc.operations-record
+    aggregate: aggregate.operations-record.operational-record
+    purpose: Provide collection-like access to retained Operational Record aggregates by domain identity and operational occurrence/report criteria.
+    retrieval_semantics:
+      - Retrieve one Operational Record by its stable domain identity.
+      - Find retained records by operational record type, business time/period, and explicitly modeled external subject references where needed.
+      - Retrieval must preserve access to correction/history semantics rather than presenting silently overwritten state as the only record.
+    persistence_semantics: Persist the Operational Record aggregate as the authoritative ManuFactor record while preserving correction/history invariants.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.operations-record.operational-record
+          description: Operational Record is an aggregate root with retained identity and history.
+      confidence: high
+      status: candidate
+
+  - id: repository.kiln-operations.kiln-schedule
+    name: Kiln Schedule Repository
+    bounded_context: bc.kiln-operations
+    aggregate: aggregate.kiln-operations.kiln-schedule
+    purpose: Provide collection-like access to retained Kiln Schedule aggregates and their revision-aware planning state.
+    retrieval_semantics:
+      - Retrieve a Kiln Schedule by stable schedule identity.
+      - Find schedules by planning period/scope as required by kiln operations.
+      - Make historical revisions available when the domain needs to understand prior planning state.
+    persistence_semantics: Persist schedule identity, current planning state, and retained revision history without overwriting prior revisions.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.kiln-operations.kiln-schedule
+          description: Kiln Schedule is a separate revision-aware aggregate.
+      confidence: high
+      status: candidate
+
+  - id: repository.kiln-operations.kiln-run
+    name: Kiln Run Repository
+    bounded_context: bc.kiln-operations
+    aggregate: aggregate.kiln-operations.kiln-run
+    purpose: Provide collection-like access to Kiln Run/Charge aggregates and their retained execution history.
+    retrieval_semantics:
+      - Retrieve one Kiln Run/Charge by stable run identity.
+      - Find runs by kiln asset, schedule reference, business time/period, and completion state where domain behavior requires it.
+      - Support retrieval needed to correlate completed runs with downstream moisture outcomes without importing ProTrack ownership.
+    persistence_semantics: Persist one run's lifecycle and operating history as a coherent aggregate while retaining external ProTrack facts only as references/provenance.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.kiln-operations.kiln-run
+          description: Kiln Run identity anchors execution history and later correlation.
+      confidence: high
+      status: candidate
+
+  - id: repository.project-tracking.project
+    name: Project Repository
+    bounded_context: bc.project-tracking
+    aggregate: aggregate.project-tracking.project
+    purpose: Provide collection-like access to Project aggregates across their planned-work lifecycle.
+    retrieval_semantics:
+      - Retrieve one Project by project identity.
+      - Find Projects by lifecycle status and relevant operational references where the Project model supports them.
+    persistence_semantics: Persist Project-owned lifecycle and plan state without deriving project status from CAPA or other external context state.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.project-tracking.project
+          description: Project owns a planned-work lifecycle distinct from CAPA.
+      confidence: medium
+      status: candidate
+
+  - id: repository.quality-verification.quality-check
+    name: Quality Check Repository
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.quality-check
+    purpose: Provide collection-like access to retained Quality Check aggregates and their historical measurement/evaluation evidence.
+    retrieval_semantics:
+      - Retrieve a Quality Check by check identity.
+      - Find checks by mill, machine/process context, subject/product context, business time, or evaluation result where needed.
+      - Historical retrieval must preserve the measurement and target/evaluation basis used for the recorded result.
+    persistence_semantics: Persist the complete Quality Check consistency boundary, including retained measurement and evaluation basis, without implicitly creating a Nonconformity.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.quality-verification.quality-check
+          description: Quality Check is the retained verification evidence boundary.
+      confidence: high
+      status: candidate
+
+  - id: repository.corrective-action.nonconformity
+    name: Nonconformity Repository
+    bounded_context: bc.corrective-action
+    aggregate: aggregate.corrective-action.nonconformity
+    purpose: Provide collection-like access to Nonconformity aggregates across the CAPA coordination and closure lifecycle.
+    retrieval_semantics:
+      - Retrieve a Nonconformity by stable Nonconformity identity.
+      - Find Nonconformities by source finding reference, lifecycle state, routed work reference, or business time where required.
+    persistence_semantics: Persist CAPA-owned coordination, correction, action, routing, and closure state while treating destination work lifecycle as externally owned.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.corrective-action.nonconformity
+          description: Nonconformity is the CAPA aggregate root.
+      confidence: high
+      status: candidate
+
+  - id: repository.asset-lifecycle.asset
+    name: Asset Repository
+    bounded_context: bc.asset-lifecycle
+    aggregate: aggregate.asset-lifecycle.asset
+    purpose: Provide collection-like access to ManuFactor physical Asset aggregates, including equipment and vehicles, by stable asset identity.
+    retrieval_semantics:
+      - Retrieve an Asset by ManuFactor asset identity.
+      - Resolve an Asset from known external machine/asset references where a controlled mapping exists.
+      - Find assets by lifecycle/condition criteria when domain behavior requires it.
+      - Historical retrieval must preserve asset condition/lifecycle history.
+    persistence_semantics: Persist ManuFactor-owned asset identity, condition, lifecycle state, and history while keeping MP2 WR/WO state external.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10 and 2026-08-22
+          description: ManuFactor owns the richer physical-asset lifecycle model; vehicles and equipment share that model.
+      confidence: high
+      status: candidate
+
+  - id: repository.reliability-verification.verification
+    name: Reliability Verification Repository
+    bounded_context: bc.reliability-verification
+    aggregate: aggregate.reliability-verification.verification
+    purpose: Provide collection-like access to discrete Reliability Verification aggregates and their retained checkpoint evidence/results.
+    retrieval_semantics:
+      - Retrieve a Reliability Verification by verification identity.
+      - Find verification occurrences by Asset reference, checkpoint/trigger, business time, or result when needed.
+    persistence_semantics: Persist verification criteria/check evidence and result as one consistency boundary without directly mutating Asset Lifecycle state.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.reliability-verification.verification
+          description: Reliability Verification is a discrete evidence/result aggregate.
+      confidence: high
+      status: candidate
+
+  - id: repository.ltv-form-management.form-template
+    name: LTV Form Template Repository
+    bounded_context: bc.safety-signoff
+    aggregate: aggregate.ltv-form-management.form-template
+    purpose: Provide collection-like access to managed LTV Form Template aggregates and their retained published versions.
+    retrieval_semantics:
+      - Retrieve a template by stable template identity.
+      - Retrieve the current usable version and exact historical versions when generating or tracing printed instances.
+      - Find templates by applicability/status where the LTV form model supports it.
+    persistence_semantics: Persist template identity and version history so published versions referenced by issued forms remain historically available.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.ltv-form-management.form-template
+          description: LTV template versions must remain distinguishable and traceable.
+      confidence: high
+      status: candidate
+
+  - id: repository.ltv-form-management.printed-instance
+    name: LTV Printed Instance Repository
+    bounded_context: bc.safety-signoff
+    aggregate: aggregate.ltv-form-management.printed-instance
+    purpose: Provide collection-like access to individually generated/issued LTV form instances and their lifecycle/provenance.
+    retrieval_semantics:
+      - Retrieve an LTV Printed Instance by instance identity.
+      - Find instances by exact template/version reference, issue/print context, lifecycle status, or business time where required.
+    persistence_semantics: Persist individual instance lifecycle and exact template-version provenance; printing/issuance must remain distinct from approval/sign-off.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.ltv-form-management.printed-instance
+          description: Each issued form is an independently identified aggregate with template provenance.
+      confidence: high
+      status: candidate
+
+  - id: repository.training-qualification.operational-qualification
+    name: Operational Qualification Repository
+    bounded_context: bc.training-competency
+    aggregate: aggregate.training-qualification.qualification
+    purpose: Provide collection-like access to Operational Qualification aggregates representing persistent person-job qualification relationships.
+    retrieval_semantics:
+      - Retrieve a qualification relationship by its domain identity.
+      - Find qualifications by person or operational job/role for coverage and qualification decisions.
+      - Retrieval must distinguish operational qualification from source learning-completion records.
+    persistence_semantics: Persist the operational qualification relationship and accepted supporting evidence references without taking ownership of learning-system source records.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.training-qualification.qualification
+          description: Operational Qualification is a persistent person-job relationship with its own evidence-backed meaning.
+      confidence: high
+      status: candidate
+
+  - id: repository.workforce-availability.coverage-plan
+    name: Operational Coverage Plan Repository
+    bounded_context: bc.workforce-availability
+    aggregate: aggregate.workforce-availability.coverage-plan
+    purpose: Provide collection-like access to operational staffing-gap/coverage decisions for a defined job/time/crew need.
+    retrieval_semantics:
+      - Retrieve a Coverage Plan by staffing-need/coverage-plan identity.
+      - Find coverage plans by job, crew, shift/time period, or coverage state where required.
+      - Retain decision-time replacement-option evidence/reference semantics so later source changes do not rewrite the historical decision.
+    persistence_semantics: Persist the coverage decision and its decision-time evidence references while leaving qualification and HR/timekeeping facts owned by their source contexts/systems.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.workforce-availability.coverage-plan
+          description: Coverage Plan owns one operational staffing need and replacement decision.
+      confidence: high
+      status: candidate
+
+repository_model_notes:
+  count: 12
+  rule: One technology-independent Repository abstraction is modeled for each current Aggregate Root because each root has persistent domain identity/lifecycle and requires collection-like retrieval/persistence semantics.
+  implementation_boundary: These records intentionally do not specify SQL, PostgreSQL, ORM, API, file, or storage technology.
