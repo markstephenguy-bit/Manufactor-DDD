@@ -1,22 +1,27 @@
 id: bc.workforce-availability
 name: Operational Workforce Availability
-purpose: Plan and understand operational staffing coverage across vacations, absences, crews, and shifts using both availability and qualification information.
+purpose: Plan and understand operational staffing coverage across vacations, absences, crews, and shifts using both recorded qualification/availability information and retained supervisor judgment about who can actually cover a job.
 subdomain: subdomain.production-operations
-model_statement: Within Operational Workforce Availability, coverage means that a person is both available for the required time and qualified for the required job; HR/timekeeping absence facts are inputs and do not themselves determine operational replacement readiness.
+model_statement: >
+  Within Operational Workforce Availability, a person being technically qualified and not absent does not by itself make that person the right replacement for a specific staffing need. The supervisor makes the operational judgment about whether a person can actually cover the job in the circumstances. ManuFactor should support that decision with available facts and retain the supervisor's judgment as a matter of record rather than pretending replacement eligibility can be fully calculated from HR/timekeeping or qualification data.
 responsibilities:
   - Represent vacation scheduling where no adequate software process exists.
   - Represent crew/shift availability for mill operations.
-  - Identify qualified replacement options when an operator is absent.
+  - Present qualification and availability facts that support replacement decisions.
+  - Allow the responsible supervisor to determine whether a person is an acceptable replacement for a specific staffing need.
+  - Retain supervisor coverage judgments/selection history so practical job-coverage capability becomes organizational record rather than only tacit knowledge.
   - Preserve operational staffing-gap and coverage decisions without rewriting HR/timekeeping source records.
 scope:
   - Vacation scheduling for operational coverage
   - Crew/shift availability
   - Sick-call replacement readiness
   - Staffing-gap and coverage planning
+  - Supervisor replacement judgment and retained coverage history
 out_of_scope:
   - Payroll or leave administration
   - Source HR/timekeeping absence-record ownership
   - Defining operational qualification itself
+  - Treating supervisor replacement judgment as a deterministic rule derivable solely from system facts
 owned_concepts:
   - Operational Availability
   - Staffing Gap
@@ -38,8 +43,11 @@ ubiquitous_language:
   - staffing gap
   - crew
   - shift
+  - supervisor judgment
 business_rules:
-  - A proposed replacement must be available for the required time and sufficiently qualified for the job.
+  - Qualification and availability are evidence used in a replacement decision; they do not automatically select or prove the suitability of a replacement.
+  - The responsible supervisor determines whether a person can cover a specific operational job in the circumstances.
+  - The supervisor's coverage decision should be retained as a matter of record.
   - Operational coverage decisions must not rewrite authoritative HR/timekeeping absence records.
   - Qualification is consumed from Operational Training and Qualification rather than inferred from availability.
 owner: unresolved
@@ -47,6 +55,7 @@ domain_experts: [Mark]
 integration_surface:
   - Consumes personnel/absence facts from HR or timekeeping sources.
   - Consumes qualification/coverage facts from Operational Training and Qualification.
+  - Exposes retained supervisor coverage decisions for later staffing, cross-training, and operational review where appropriate.
 upstream_dependencies:
   - bc.training-competency
   - HR/timekeeping source systems
@@ -58,5 +67,8 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-10
       description: Mark described unsystematized vacation scheduling and the need to know which qualified operator can cover a position when someone calls in sick.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22
+      description: Mark clarified that the ability of a person to cover a job is ultimately subjective to the supervisor, but that judgment should also become a retained matter of record.
   confidence: high
   status: candidate
