@@ -1,0 +1,35 @@
+factories: []
+
+factory_evaluation:
+  result: no-current-factories-justified
+  rationale:
+    - Current aggregate creation behavior is sufficiently expressed by Aggregate Root commands and invariants.
+    - No current aggregate requires a complex domain construction process spanning multiple internal objects that cannot naturally be handled by its root.
+    - Creating a Factory per Aggregate would add ceremony without domain meaning and would violate the specification's instruction not to create factories mechanically.
+  reviewed_aggregates:
+    - aggregate.operations-record.operational-record
+    - aggregate.kiln-operations.kiln-schedule
+    - aggregate.kiln-operations.kiln-run
+    - aggregate.project-tracking.project
+    - aggregate.quality-verification.quality-check
+    - aggregate.corrective-action.nonconformity
+    - aggregate.asset-lifecycle.asset
+    - aggregate.reliability-verification.verification
+    - aggregate.ltv-form-management.form-template
+    - aggregate.ltv-form-management.printed-instance
+    - aggregate.training-qualification.qualification
+    - aggregate.workforce-availability.coverage-plan
+  reconsider_factory_if:
+    - future creation rules require coordinated construction of multiple invariant-bearing internal members before a valid Aggregate can exist
+    - creation needs a domain-significant selection/calculation process that does not belong naturally to the Aggregate Root
+    - later domain evidence establishes a named business construction process with independent semantics
+  provenance:
+    sources:
+      - type: specification
+        reference: docs/ddd/SPECIFICATION.md section 26
+        description: Factories are justified only for sufficiently complex domain creation and must not be created mechanically.
+      - type: aggregate-model
+        reference: docs/ddd/aggregates/
+        description: Current aggregate creation rules are simple enough to remain Aggregate Root behavior.
+    confidence: high
+    status: candidate
