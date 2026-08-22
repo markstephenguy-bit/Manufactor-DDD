@@ -1,8 +1,8 @@
 model_state: strategic DDD established at candidate level; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregates, Entities/Value Objects, Invariants, Commands, and Domain Events are canonical
-session_state: finalized-for-new-session
-session_finalized_at: 2026-08-10T20:36:00-05:00
+session_state: ready-to-continue
+session_refreshed_at: 2026-08-22T09:36:00-05:00
 current_phase: Phase 14 — Policy modeling
-last_completed: Phase 13 modeled 23 candidate Commands and 21 candidate Domain Events across the 12 aggregate boundaries, using first-class Invariants as guards and excluding unresolved cross-context transition behavior
+last_completed: Phase 13 modeled 23 candidate Commands and 21 candidate Domain Events across the 12 aggregate boundaries; subsequent cleanup resolved Vehicle Management into the canonical Physical Asset / Asset Lifecycle model and reconciled stale discovery/subdomain wording
 current_focus: Identify business decision mechanisms that react to domain facts or determine resulting commands across Aggregates/contexts without moving domain rules into application orchestration
 blocking_issues: []
 next_action: Build a whole-map Policy inventory. Prioritize only supported decision mechanisms such as replacement eligibility combining qualification and availability, CAPA routing to the owning work context/system, and source-fact translation/correlation rules where enough business behavior is known. Keep unresolved business transitions unresolved rather than guessing.
@@ -62,6 +62,7 @@ important_boundary_corrections:
   - Identity & Access is shared platform infrastructure, not a business Subdomain.
   - Environmental Compliance is deferred until a concrete gap exists.
   - MP2 owns WR/WO records but does not provide meaningful asset-management semantics; Asset Lifecycle owns the richer ManuFactor asset model.
+  - Vehicle Management is merged into Physical Asset Management / Asset Lifecycle; equipment and vehicles use the same physical-asset model under current evidence.
   - ProTrack owns planer moisture measurements; Kiln Operations owns retained scheduling/run history and correlation to drying outcomes.
   - LTV Form Management is the real Safety gap: managing LTV forms/templates, printing/issuing instances, retaining/tracking those forms, and supporting approval/sign-off only where applicable. Sign-off is not the defining context.
 aggregate_model:
@@ -104,12 +105,13 @@ unresolved_transition_rules:
   - Qualification completion/demonstrated capability/authorization/expiration details
   - LTV process-specific approval/sign-off requirements
 open_nonblocking_issues:
-  - ISSUE-0003: Vehicle Management versus Physical Asset Management
   - Exact business identity/revision semantics for Kiln Schedule require tactical refinement
   - Exact CAPA closure details and child Corrective Action identity remain unresolved
   - Exact Asset condition/state vocabulary remains unresolved
   - Exact kiln-to-ProTrack correlation identifiers/rules remain unresolved
   - Vacation planning may later justify its own aggregate if schedule-wide invariants are discovered
+resolved_since_prior_handoff:
+  - ISSUE-0003: Vehicle Management versus Physical Asset Management — merge confirmed correct by Mark on 2026-08-22 and incorporated into Asset Lifecycle.
 specification_authority:
   source_document: ManuFactor_DDD_Modeling_Specification.docx
   repository_specification: docs/ddd/SPECIFICATION.md
