@@ -27,6 +27,9 @@ actor_model:
     - type: domain-expert
       reference: Mark direct, 2026-08-22 quality concern disposition clarification
       description: A reported quality concern that does not rise to formal quality action is closed/dispositioned with a retained reason.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22 concern promotion lifecycle clarification
+      description: When a Quality Concern is promoted to a Nonconformity, the Quality Concern remains open rather than closing at promotion.
   confidence: high
 
 quality_terminology_guardrail:
@@ -46,17 +49,18 @@ quality_concern_lifecycle_candidate:
   bounded_context: bc.quality-verification
   meaning: A reported suspicion of a product-quality problem that exists before any formal Quality Check or Nonconformity.
   cmms_analogy: >
-    Quality Concern behaves like a work request in a CMMS: it is intake that must be reviewed
-    and dispositioned. If the concern rises to the formal quality level, it is promoted into
-    the appropriate formal record rather than remaining only an intake request.
+    Quality Concern behaves like a work request in a CMMS for intake and review, but differs in one
+    important respect established by Mark: promotion to a formal Nonconformity does not close the
+    source concern. The concern and Nonconformity remain related records with independent lifecycles.
   reported_by: any employee
   reviewed_by: [management, designated quality technician]
   lifecycle:
     - reported
     - reviewed/triaged
     - closed/dispositioned with reason when no formal quality escalation is justified
-    - or linked/promoted directly to a Nonconformity when sufficient basis exists
+    - or linked/promoted directly to a Nonconformity when sufficient basis exists, while concern remains open
     - or linked to a formal Quality Check when additional measurement/evaluation is useful
+    - concern closure after escalation requires its own later rule and must not be inferred from Nonconformity creation
   important_rules:
     - Reporting a Quality Concern does not create a Quality Check.
     - Reporting a Quality Concern does not create a Nonconformity.
@@ -64,6 +68,8 @@ quality_concern_lifecycle_candidate:
     - Management or a designated quality technician may promote a Quality Concern directly to Nonconformity when sufficient basis exists.
     - If the concern does not justify formal escalation, it must be closed/dispositioned with a retained reason.
     - When a Quality Check is used, its result remains evidence and does not automatically create a Nonconformity.
+    - Promotion to Nonconformity does not close the Quality Concern.
+    - Quality Concern and Nonconformity retain independent lifecycles and remain linked by identity/reference, not by aggregate containment.
   modeling_implication: >
     Quality Concern has meaningful identity/lifecycle/history and is therefore a strong candidate
     for a first-class Domain Concept and likely its own Aggregate rather than a transient notification.
@@ -106,7 +112,7 @@ candidate_queries:
     name: Review Reported Quality Concerns
     purpose: Show suspected product-quality concerns reported by employees and their disposition/escalation state.
     likely_inputs: [mill or operational scope, time period, concern status, subject/product context]
-    likely_result: Reported concerns, review status, retained disposition reason, linked Quality Check where used, or linked Nonconformity where promoted.
+    likely_result: Reported concerns, review status, retained disposition reason, linked Quality Check where used, or linked Nonconformity while the concern may remain open.
     authoritative_source: bc.quality-verification for concern lifecycle; linked Nonconformity remains authoritative in bc.corrective-action.
 
   - id: query-candidate.quality-verification.check
@@ -218,11 +224,12 @@ candidate_use_cases:
     result_options:
       - close/disposition the concern with a retained reason when no formal escalation is justified
       - start/link a formal Quality Check when additional evidence or measurement is useful
-      - promote/link directly to a Nonconformity when sufficient basis exists without requiring a Quality Check
+      - promote/link directly to a Nonconformity when sufficient basis exists without requiring a Quality Check; the concern remains open
     supporting_queries: [Review Reported Quality Concerns]
     boundary_rules:
       - Quality Check is optional and is not a mandatory gate to Nonconformity.
       - The Quality Concern remains retained as the source intake record regardless of disposition.
+      - Promotion to a Nonconformity does not close the Quality Concern.
       - The Nonconformity, once accepted, belongs to bc.corrective-action rather than becoming a larger Quality Concern object.
 
   - id: use-case-candidate.quality-verification.perform-check
@@ -245,7 +252,7 @@ candidate_use_cases:
     supporting_queries: [Review Nonconformity and CAPA Status]
     established_policy: Route Corrective Work to Its Owning Context
     source_paths:
-      - direct promotion from a reviewed Quality Concern when sufficient basis exists
+      - direct promotion from a reviewed Quality Concern when sufficient basis exists; the source Quality Concern remains open
       - explicit acceptance following a Quality Check or another supported finding source
     unresolved_boundary: Exact general admission and closure details remain ISSUE-0004 and ISSUE-0010.
 
@@ -300,8 +307,8 @@ whole_map_observation: >
   not assume manager/specialist actors by default. Quality demonstrates a reusable intake-to-formal-work pattern:
   broad employee reporting creates a retained concern; authorized review either dispositions it,
   requests further formal evidence through a Quality Check, or promotes it directly into the
-  formal Nonconformity lifecycle. Quality Check and Nonconformity are distinct and neither is
-  automatically implied by the concern itself.
+  formal Nonconformity lifecycle. Promotion does not terminate the source concern; the two records
+  remain linked and independently open/closed according to their own lifecycle rules.
 
 answered_questions:
   - id: PHASE14-Q1
@@ -322,14 +329,14 @@ answered_questions:
   - id: PHASE14-Q6
     answer: A Quality Concern may be promoted directly to a Nonconformity without first performing a Quality Check.
     evidence: domain-expert Mark, direct, 2026-08-22
+  - id: PHASE14-Q7
+    answer: When a Quality Concern is promoted to a Nonconformity, the Quality Concern remains open.
+    evidence: domain-expert Mark, direct, 2026-08-22
 
 material_question:
-  id: PHASE14-Q7
-  topic: concern lifecycle when promoted
+  id: PHASE14-Q8
+  topic: Quality Concern closure after escalation
   question: >
-    When a Quality Concern is promoted directly to a Nonconformity, should the Quality Concern
-    itself be closed/dispositioned at that moment with a link to the new Nonconformity, similar
-    to a CMMS work request becoming a work order, or should the concern remain open in parallel?
+    If a Quality Concern has been promoted to a Nonconformity and remains open, what business event should eventually allow the Quality Concern itself to close: closure of the linked Nonconformity, management/designated-quality review that the original concern is adequately addressed, or some other rule?
   why_it_matters: >
-    This determines whether promotion is the terminal disposition of the intake record and prevents
-    duplicated open-work state between Quality Verification and Corrective Action.
+    Promotion no longer supplies the terminal disposition. The Quality Concern therefore needs an explicit closure condition independent from Nonconformity creation, and this rule determines whether closure is coupled to CAPA completion or remains a separate Quality Verification decision.
