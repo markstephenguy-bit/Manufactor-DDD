@@ -1,0 +1,87 @@
+policies:
+  - id: policy.corrective-action.route-to-work-owner
+    name: Route Corrective Work to Its Owning Context
+    bounded_context: bc.corrective-action
+    purpose: Determine where execution of a Corrective Action belongs without making CAPA a second owner of the routed work lifecycle.
+    inputs:
+      - Nonconformity identity
+      - Corrective Action/work requirement
+      - work class or responsibility being requested
+      - known destination context/system ownership
+    conditions:
+      - The corrective work requires execution outside Corrective Action.
+      - A context or existing system is authoritative for that class of execution work.
+    decision: Route the corrective work to the context/system that owns execution of that work class while Corrective Action retains only CAPA coordination and closure semantics.
+    resulting_commands:
+      - RouteCorrectiveWork
+    related_events:
+      - NonconformityAccepted
+      - CorrectiveWorkRouted
+    exceptions:
+      - If execution ownership cannot be established, do not guess a destination; leave routing unresolved for domain decision.
+      - Routing must not create a duplicate local execution lifecycle inside Corrective Action.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, ISSUE-0002
+          description: CAPA routes resulting work to the system/context that owns the actual work and must not become a second owner.
+        - type: invariant-model
+          reference: invariant.nonconformity.do-not-own-routed-work
+          description: CAPA may coordinate routed work but cannot independently own destination execution state.
+      confidence: high
+      status: candidate
+
+  - id: policy.workforce-availability.replacement-eligibility
+    name: Determine Operational Replacement Eligibility
+    bounded_context: bc.workforce-availability
+    purpose: Determine whether a person can validly cover a specific operational staffing need using authoritative qualification and availability facts without redefining either source model.
+    inputs:
+      - Staffing Gap
+      - person reference
+      - Operational Qualification reference/evidence for the required job
+      - Operational Availability or authoritative absence/time facts for the required period
+    conditions:
+      - The staffing need identifies the required job/position and time/shift context.
+      - The person is sufficiently Operationally Qualified for the required job under the current qualification record.
+      - The person is operationally available for the required time.
+    decision: A person is an eligible replacement option only when both qualification and availability are satisfied for the same staffing need; eligibility does not transfer ownership of qualification or HR/timekeeping facts into Workforce Availability.
+    resulting_commands:
+      - SelectReplacement
+    related_events:
+      - OperationalQualificationEstablished
+      - ReplacementSelected
+    exceptions:
+      - Availability alone is insufficient.
+      - Qualification alone is insufficient.
+      - If qualification status or availability cannot be established, the person must not be treated as an eligible replacement under current evidence.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-10 workforce clarification
+          description: When someone calls in sick, Operations needs to know who can step into the job; coverage requires someone both available and qualified.
+        - type: invariant-model
+          reference: invariant.coverage.requires-qualified-and-available
+          description: Selected operational coverage must satisfy both qualification and availability.
+      confidence: high
+      status: candidate
+
+policy_modeling_notes:
+  intentionally_unmodeled_until_domain_rule_exists:
+    - subject: Failed Quality Check to Nonconformity admission
+      issue: ISSUE-0004
+      reason: QualityCheckEvaluated establishes a Quality Verification fact, but the exact decision rule that admits a failed check into CAPA is not known.
+    - subject: Reliability Verification Result to Asset state
+      issue: ISSUE-0005
+      reason: VerificationCompleted produces a verification fact, but the Asset-domain transition rule is not known.
+    - subject: Operational Qualification evidence, authorization, and expiration
+      issue: ISSUE-0006
+      reason: The model knows qualification requires acceptable evidence but not the exact decision mechanism for completion, demonstrated capability, authorization, expiration, or withdrawal.
+    - subject: LTV approval/sign-off
+      issue: ISSUE-0007
+      reason: Sign-off is process-specific and cannot be generalized from printing/issuance.
+    - subject: Kiln to ProTrack moisture correlation
+      issue: ISSUE-0008
+      reason: Correlation is required, but the exact identity/matching rule is not yet known well enough to model a decision policy.
+  rule: Policies are created only for supported business decisions; they are not glue inserted merely to connect existing Events and Commands.
