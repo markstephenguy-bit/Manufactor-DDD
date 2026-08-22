@@ -1,19 +1,31 @@
 id: bc.project-tracking
 name: Project Tracking
-purpose: Track discrete operational improvement or capital projects whose lifecycle is not inherently driven by a Nonconformity.
+purpose: Track actual projects using conventional project-management semantics rather than treating smaller operational tasks, investigations, or changes as projects.
 subdomain: subdomain.production-operations
-model_statement: Within Project Tracking, a Project is planned operational work with its own milestones, tasks/actions, status, and completion semantics; it is not a CAPA item merely because corrective work can later become project work.
+model_statement: >
+  Within Project Tracking, a Project is a project in the ordinary business sense. ManuFactor should
+  support a conventional project-management experience similar in spirit to Monday.com, with project
+  ownership, status, dates, milestones/tasks, dependencies, progress visibility, and completion semantics
+  as needed by the project. Project Tracking must not become a generic container for small operational
+  tasks, investigations, process tweaks, software changes, or recurring problems merely because they involve work.
+  A Project is also distinct from CAPA even when project work is later related to corrective action.
 responsibilities:
-  - Track project lifecycle, status, milestones, and work items.
-  - Preserve distinction between planned/improvement work and Nonconformity-driven corrective work.
+  - Track the lifecycle, ownership, status, dates, milestones/tasks, dependencies, and progress of actual projects.
+  - Provide clear project-level visibility using familiar project-management concepts rather than inventing ManuFactor-specific project semantics without need.
+  - Preserve distinction between project work and Nonconformity-driven corrective work.
+  - Preserve distinction between projects and smaller operational tasks or investigations that belong elsewhere.
 scope:
-  - Operational improvement projects
+  - Recognized business projects
   - Capital projects
-  - Project milestones and task/action tracking
+  - Continuous-improvement projects when they are genuinely managed as projects
+  - Project milestones, tasks/actions, dependencies, schedule/status, and progress tracking
 out_of_scope:
+  - Small operational tasks merely because they require action
+  - Ad hoc investigations or trials that are not managed as projects
+  - Process changes or software changes that do not rise to project status
   - CAPA/nonconformity lifecycle
   - Maintenance work-order ownership
-  - Generic enterprise portfolio management not tied to ManuFactor operational gaps
+  - Generic enterprise portfolio management beyond concrete ManuFactor project needs
 owned_concepts:
   - Project
   - Project Milestone
@@ -23,14 +35,18 @@ external_concepts:
   - Asset
 ubiquitous_language:
   - Project
+  - project owner
   - milestone
   - task/action
-  - planned work
-  - capital work
-  - improvement work
+  - dependency
+  - due date
+  - status
+  - progress
 business_rules:
+  - A Project exists because the business recognizes and manages the work as a project; ManuFactor must not infer project status merely from complexity or duration.
   - Project status and completion belong to the project lifecycle and must not be inferred from CAPA closure or maintenance work status without an explicit relationship.
   - A Project is not a CAPA item solely because it may address a problem.
+  - Conventional project-management concepts are the default modeling baseline unless mill-specific evidence requires deviation.
 owner: unresolved
 domain_experts: [Mark]
 integration_surface:
@@ -43,8 +59,11 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-10
       description: Mark placed Project Tracking directly under Operations and rejected an unnecessary Projects / Continuous Improvement grouping.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22
+      description: Mark clarified that a project is simply a project, should not absorb smaller operational work, and that he prefers the way Monday.com handles projects as the conceptual reference point.
     - type: decision
       reference: DDD-0005
       description: Existing decision distinguishes Project Tracking from CAPA by trigger and lifecycle.
-  confidence: medium
+  confidence: high
   status: candidate
