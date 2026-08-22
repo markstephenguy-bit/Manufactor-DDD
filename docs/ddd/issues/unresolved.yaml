@@ -1,4 +1,75 @@
-issues: []
+issues:
+  - id: ISSUE-0004
+    title: What exact rule admits a failed Quality Check as a Nonconformity?
+    description: A failed Quality Check is explicitly not automatically a Nonconformity. The exact Corrective Action admission rule or decision remains unknown.
+    affected_objects: [bc.quality-verification, bc.corrective-action, aggregate.quality-verification.quality-check, aggregate.corrective-action.nonconformity]
+    evidence: [language.quality-verification.failed-quality-check, invariant.quality-check.failure-not-nonconformity, invariant.nonconformity.explicit-acceptance]
+    blocking: false
+    needed_input: domain-rule discovery
+    status: open
+
+  - id: ISSUE-0005
+    title: What exact rule maps Reliability Verification results to Asset state?
+    description: Reliability Verification Result and Asset Condition/Lifecycle State are distinct. The exact Asset-domain transition rule remains unknown.
+    affected_objects: [bc.reliability-verification, bc.asset-lifecycle, aggregate.reliability-verification.verification, aggregate.asset-lifecycle.asset]
+    evidence: [invariant.verification.result-not-asset-condition, invariant.asset.state-change-records-history]
+    blocking: false
+    needed_input: domain-rule discovery
+    status: open
+
+  - id: ISSUE-0006
+    title: What evidence and rules establish, expire, withdraw, or authorize Operational Qualification?
+    description: Learning completion is not automatically Operational Qualification. Exact rules for completion, demonstrated capability, authorization, expiration, review, and withdrawal remain to be discovered.
+    affected_objects: [bc.training-competency, aggregate.training-qualification.qualification]
+    evidence: [language.training-qualification.operational-qualification, invariant.qualification.requires-evidence]
+    blocking: false
+    needed_input: domain-rule discovery
+    status: open
+
+  - id: ISSUE-0007
+    title: Which LTV processes require approval or sign-off and under what rules?
+    description: LTV printing/issuance does not imply approval or sign-off. Process-specific requirements remain unknown and must not be generalized.
+    affected_objects: [bc.safety-signoff, aggregate.ltv-form-management.printed-instance]
+    evidence: [invariant.ltv-instance.printing-not-signoff]
+    blocking: false
+    needed_input: domain-rule discovery
+    status: open
+
+  - id: ISSUE-0008
+    title: What identifiers and rules correlate Kiln Runs to ProTrack moisture records?
+    description: ProTrack remains source authority for planer moisture data while Kiln Operations owns correlation and Moisture Outcome semantics. Exact business correlation keys/rules remain unresolved.
+    affected_objects: [bc.kiln-operations, rel.protrack-moisture-to-kiln-operations, aggregate.kiln-operations.kiln-run]
+    evidence: [contract.protrack-moisture-to-kiln-operations, language.kiln-operations.moisture-outcome]
+    blocking: false
+    needed_input: domain-rule/integration discovery
+    status: open
+
+  - id: ISSUE-0009
+    title: What is the controlled Asset condition and lifecycle-state vocabulary?
+    description: Asset identity and state ownership are established, but the exact allowed condition/state vocabulary and transition policy remain tactical work.
+    affected_objects: [bc.asset-lifecycle, aggregate.asset-lifecycle.asset, value-object.asset-lifecycle.asset-condition, value-object.asset-lifecycle.lifecycle-state]
+    evidence: [invariant.asset.stable-identity, invariant.asset.state-change-records-history]
+    blocking: false
+    needed_input: domain-rule discovery
+    status: open
+
+  - id: ISSUE-0010
+    title: What are the exact child Corrective Action identity and CAPA closure rules?
+    description: Nonconformity owns the CAPA lifecycle and routes external work correctly, but exact child Corrective Action identity and closure evidence requirements remain unresolved.
+    affected_objects: [bc.corrective-action, aggregate.corrective-action.nonconformity]
+    evidence: [invariant.nonconformity.explicit-acceptance, invariant.nonconformity.do-not-own-routed-work]
+    blocking: false
+    needed_input: domain-rule discovery
+    status: open
+
+  - id: ISSUE-0011
+    title: Does vacation planning require a distinct aggregate?
+    description: Current evidence supports Operational Coverage Plan as the consistency boundary. A separate vacation-planning aggregate should be introduced only if schedule-wide invariants are discovered.
+    affected_objects: [bc.workforce-availability, aggregate.workforce-availability.coverage-plan]
+    evidence: [invariant.coverage.requires-qualified-available-person]
+    blocking: false
+    needed_input: future domain discovery
+    status: open
 
 resolved_issues:
   - id: ISSUE-0003
