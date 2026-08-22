@@ -1,19 +1,21 @@
 id: bc.asset-lifecycle
 name: Asset Lifecycle
-purpose: Provide the meaningful asset identity, condition, lifecycle, and retained history that MP2 does not provide while correlating MP2 maintenance work to those assets.
+purpose: Provide the meaningful physical-asset identity, condition, lifecycle, and retained history that MP2 does not provide while correlating MP2 maintenance work to those assets.
 subdomain: subdomain.asset-reliability
-model_statement: Within Asset Lifecycle, an Asset has ManuFactor-owned identity, condition, lifecycle state, and history semantics; MP2 work requests/work orders are external maintenance transactions associated to the asset and do not define its full lifecycle model.
+model_statement: Within Asset Lifecycle, an Asset includes mill equipment and vehicles under one physical-asset model with ManuFactor-owned identity, condition, lifecycle state, and history semantics; MP2 work requests/work orders are external maintenance transactions associated to the asset and do not define its full lifecycle model.
 responsibilities:
-  - Represent physical asset identity and meaningful lifecycle/condition state.
+  - Represent physical asset identity across mill equipment and vehicles.
+  - Represent meaningful lifecycle and condition state for physical assets.
   - Retain asset history and operational-setting history where needed.
   - Correlate MP2 work requests/work orders to assets.
   - Expose asset identity/state to Operations, Quality, and Reliability Verification without transferring lifecycle ownership.
 scope:
-  - Physical asset identity
+  - Physical asset identity for equipment and vehicles
   - Asset condition and lifecycle state
   - Retained asset history
   - Correlation to MP2 WR/WO activity
 out_of_scope:
+  - A separate Vehicle Management model or Bounded Context
   - Ownership of MP2 work-request/work-order lifecycle
   - Reliability verification/checkpoint lifecycle
   - Treating MP2 asset references as the complete asset-management model
@@ -35,6 +37,7 @@ ubiquitous_language:
   - asset history
   - operational setting
 business_rules:
+  - Equipment and vehicles use the same Asset Lifecycle model unless later domain evidence establishes a real semantic boundary.
   - MP2 WR/WO records remain authoritative for their own maintenance-transaction lifecycle.
   - ManuFactor asset state/history must not be silently derived from MP2 transaction status unless an explicit domain rule establishes that effect.
   - Reliability Verification may influence asset state only through explicit cross-context rules.
@@ -56,5 +59,8 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-10
       description: Mark clarified that MP2 contains no meaningful asset management beyond posting WR/WO to machine assets, leaving meaningful asset lifecycle semantics as a ManuFactor gap.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22
+      description: Mark confirmed that Vehicle Management should merge into Physical Asset Management rather than remain a separate model.
   confidence: high
   status: candidate
