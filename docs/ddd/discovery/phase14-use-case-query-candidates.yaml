@@ -26,27 +26,47 @@ actor_model:
       description: At the mill, all salaried employees are considered management; formal Quality Checks may be started by management and designated quality technicians.
     - type: domain-expert
       reference: Mark direct, 2026-08-22 quality concern disposition clarification
-      description: A reported quality concern that does not become a formal Quality Check is closed/dispositioned with a retained reason.
+      description: A reported quality concern that does not rise to formal quality action is closed/dispositioned with a retained reason.
   confidence: high
+
+quality_terminology_guardrail:
+  rule: >
+    Preserve established quality-management terminology in the canonical model. Domain-expert
+    shorthand such as "issue" may describe intent conversationally, but should map to the
+    appropriate quality term when the meaning is clear. In the current workflow the formal
+    escalated quality record is Nonconformity, not a generic Issue.
+  current_terms:
+    - Quality Concern: reported suspicion/intake before formal determination
+    - Quality Check: optional formal verification/measurement activity used to gather/evaluate evidence
+    - Nonconformity: formal quality record when the concern is accepted as failure to meet an applicable requirement
+    - Corrective Action: action addressing cause/recurrence within the CAPA lifecycle
 
 quality_concern_lifecycle_candidate:
   concept_name: Quality Concern
   bounded_context: bc.quality-verification
   meaning: A reported suspicion of a product-quality problem that exists before any formal Quality Check or Nonconformity.
+  cmms_analogy: >
+    Quality Concern behaves like a work request in a CMMS: it is intake that must be reviewed
+    and dispositioned. If the concern rises to the formal quality level, it is promoted into
+    the appropriate formal record rather than remaining only an intake request.
   reported_by: any employee
   reviewed_by: [management, designated quality technician]
   lifecycle:
     - reported
-    - reviewed
-    - formal Quality Check started
-    - or closed/dispositioned with reason
+    - reviewed/triaged
+    - closed/dispositioned with reason when no formal quality escalation is justified
+    - or linked/promoted directly to a Nonconformity when sufficient basis exists
+    - or linked to a formal Quality Check when additional measurement/evaluation is useful
   important_rules:
     - Reporting a Quality Concern does not create a Quality Check.
-    - Reporting or closing a Quality Concern does not create a Nonconformity.
-    - If no formal Quality Check is started, the concern must be closed/dispositioned with a retained reason.
+    - Reporting a Quality Concern does not create a Nonconformity.
+    - A Quality Check is not a mandatory gate before Nonconformity.
+    - Management or a designated quality technician may promote a Quality Concern directly to Nonconformity when sufficient basis exists.
+    - If the concern does not justify formal escalation, it must be closed/dispositioned with a retained reason.
+    - When a Quality Check is used, its result remains evidence and does not automatically create a Nonconformity.
   modeling_implication: >
     Quality Concern has meaningful identity/lifecycle/history and is therefore a strong candidate
-    for a first-class Domain Concept and possibly its own Aggregate rather than a transient notification.
+    for a first-class Domain Concept and likely its own Aggregate rather than a transient notification.
 
 candidate_queries:
   - id: query-candidate.operations-record.history
@@ -84,10 +104,10 @@ candidate_queries:
   - id: query-candidate.quality-verification.concerns
     bounded_context: bc.quality-verification
     name: Review Reported Quality Concerns
-    purpose: Show suspected product-quality concerns reported by employees before any formal Quality Check is started.
+    purpose: Show suspected product-quality concerns reported by employees and their disposition/escalation state.
     likely_inputs: [mill or operational scope, time period, concern status, subject/product context]
-    likely_result: Reported concerns, review status, any linked formal Quality Check, or retained closure/disposition reason.
-    authoritative_source: bc.quality-verification
+    likely_result: Reported concerns, review status, retained disposition reason, linked Quality Check where used, or linked Nonconformity where promoted.
+    authoritative_source: bc.quality-verification for concern lifecycle; linked Nonconformity remains authoritative in bc.corrective-action.
 
   - id: query-candidate.quality-verification.check
     bounded_context: bc.quality-verification
@@ -102,8 +122,8 @@ candidate_queries:
     name: Review Nonconformity and CAPA Status
     purpose: Show a Nonconformity, its corrective-action coordination state, routed-work references, and closure status.
     likely_inputs: [nonconformity identity]
-    likely_result: CAPA-owned status plus references to externally owned execution work where applicable.
-    authoritative_source: bc.corrective-action for CAPA semantics; external destinations retain execution authority.
+    likely_result: CAPA-owned status plus source concern/check references and externally owned execution references where applicable.
+    authoritative_source: bc.corrective-action for Nonconformity/CAPA semantics; source contexts retain authority for their own facts.
 
   - id: query-candidate.asset-lifecycle.asset-history
     bounded_context: bc.asset-lifecycle
@@ -191,34 +211,43 @@ candidate_use_cases:
   - id: use-case-candidate.quality-verification.review-concern
     bounded_context: bc.quality-verification
     name: Review and Disposition a Quality Concern
-    goal: Review a reported concern and either start a formal Quality Check or close/disposition the concern with a retained reason.
+    goal: Review a reported Quality Concern and choose its proper disposition using quality-management terminology.
     actors: [management, designated quality technician]
     actor_definition: At the mill all salaried employees are considered management.
     trigger: A reported Quality Concern is awaiting review.
-    result: Either a formal Quality Check is started and linked to the concern, or the concern is closed/dispositioned with a reason.
+    result_options:
+      - close/disposition the concern with a retained reason when no formal escalation is justified
+      - start/link a formal Quality Check when additional evidence or measurement is useful
+      - promote/link directly to a Nonconformity when sufficient basis exists without requiring a Quality Check
     supporting_queries: [Review Reported Quality Concerns]
-    boundary_rule: A closed/dispositioned concern remains retained history and does not become a Nonconformity merely because it was reported.
+    boundary_rules:
+      - Quality Check is optional and is not a mandatory gate to Nonconformity.
+      - The Quality Concern remains retained as the source intake record regardless of disposition.
+      - The Nonconformity, once accepted, belongs to bc.corrective-action rather than becoming a larger Quality Concern object.
 
   - id: use-case-candidate.quality-verification.perform-check
     bounded_context: bc.quality-verification
     name: Perform and Evaluate a Quality Check
-    goal: Management or a designated quality technician starts the formal Quality Check, captures measurement evidence, resolves the applicable target/basis, and records the evaluation result.
+    goal: Management or a designated quality technician starts a formal Quality Check when measurement/evaluation is useful, captures evidence, resolves the applicable target/basis, and records the evaluation result.
     actors: [management, designated quality technician]
     actor_definition: At the mill all salaried employees are considered management.
-    trigger: Management or a designated quality technician determines that a reported concern or other valid trigger warrants a formal Quality Check.
+    trigger: Management or a designated quality technician determines that a concern or other valid trigger warrants formal measurement/evaluation.
     established_commands: [InitiateQualityCheck, RecordQualityMeasurement, EvaluateQualityCheck]
     supporting_queries: [Review Reported Quality Concerns, Review Quality Check]
-    unresolved_boundary: A failed result does not automatically become a Nonconformity; ISSUE-0004 remains open.
+    boundary_rule: A failed Quality Check does not automatically become a Nonconformity; explicit acceptance into the Nonconformity lifecycle remains required.
 
   - id: use-case-candidate.corrective-action.manage-nonconformity
     bounded_context: bc.corrective-action
     name: Manage a Nonconformity Through CAPA
-    goal: Accept an eligible finding, coordinate/rout corrective work, and close the Nonconformity under CAPA-owned rules.
-    actor_scope: ManuFactor is broadly accessible, but CAPA admission/routing/closure authority may be role-specific.
+    goal: Accept an eligible finding, coordinate/route corrective work, and close the Nonconformity under CAPA-owned rules.
+    actor_scope: ManuFactor is broadly accessible, but Nonconformity admission/routing/closure authority may be role-specific.
     established_commands: [AcceptNonconformity, RouteCorrectiveWork, CloseNonconformity]
     supporting_queries: [Review Nonconformity and CAPA Status]
     established_policy: Route Corrective Work to Its Owning Context
-    unresolved_boundary: Exact admission and closure details remain ISSUE-0004 and ISSUE-0010.
+    source_paths:
+      - direct promotion from a reviewed Quality Concern when sufficient basis exists
+      - explicit acceptance following a Quality Check or another supported finding source
+    unresolved_boundary: Exact general admission and closure details remain ISSUE-0004 and ISSUE-0010.
 
   - id: use-case-candidate.asset-lifecycle.manage-asset
     bounded_context: bc.asset-lifecycle
@@ -268,10 +297,11 @@ candidate_use_cases:
 
 whole_map_observation: >
   ManuFactor is an enterprise-wide employee-facing work system. Use Cases therefore should
-  not assume manager/specialist actors by default. Actor restrictions must come from the
-  specific business action or authorization rule. Quality demonstrates a reusable pattern:
-  broad employee reporting access can feed a formal workflow whose state-changing initiation
-  belongs to management or designated specialists, and intake records retain their own lifecycle.
+  not assume manager/specialist actors by default. Quality demonstrates a reusable intake-to-formal-work pattern:
+  broad employee reporting creates a retained concern; authorized review either dispositions it,
+  requests further formal evidence through a Quality Check, or promotes it directly into the
+  formal Nonconformity lifecycle. Quality Check and Nonconformity are distinct and neither is
+  automatically implied by the concern itself.
 
 answered_questions:
   - id: PHASE14-Q1
@@ -284,13 +314,22 @@ answered_questions:
     answer: Formal Quality Checks may be started by management or designated quality technicians; at the mill all salaried employees are considered management.
     evidence: domain-expert Mark, direct, 2026-08-22
   - id: PHASE14-Q4
-    answer: If a reported Quality Concern does not warrant a formal Quality Check, it is closed/dispositioned with a retained reason.
+    answer: If a reported Quality Concern does not warrant formal escalation, it is closed/dispositioned with a retained reason.
+    evidence: domain-expert Mark, direct, 2026-08-22
+  - id: PHASE14-Q5
+    answer: Quality Concern should follow a CMMS work-request-like intake pattern; if it rises to the level of a formal quality problem, canonical terminology should promote it to the appropriate formal quality record rather than a generic "issue".
+    evidence: domain-expert Mark, direct, 2026-08-22
+  - id: PHASE14-Q6
+    answer: A Quality Concern may be promoted directly to a Nonconformity without first performing a Quality Check.
     evidence: domain-expert Mark, direct, 2026-08-22
 
 material_question:
-  id: PHASE14-Q5
-  topic: quality concern to formal check relationship
+  id: PHASE14-Q7
+  topic: concern lifecycle when promoted
   question: >
-    When a reported Quality Concern does warrant a formal Quality Check, should the original concern itself be considered resolved/closed by opening the check, or should it remain open until the resulting Quality Check is completed?
+    When a Quality Concern is promoted directly to a Nonconformity, should the Quality Concern
+    itself be closed/dispositioned at that moment with a link to the new Nonconformity, similar
+    to a CMMS work request becoming a work order, or should the concern remain open in parallel?
   why_it_matters: >
-    This determines the lifecycle boundary between Quality Concern and Quality Check and whether opening a formal check is the terminal disposition of the concern or only an intermediate state.
+    This determines whether promotion is the terminal disposition of the intake record and prevents
+    duplicated open-work state between Quality Verification and Corrective Action.
