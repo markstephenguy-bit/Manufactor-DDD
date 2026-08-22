@@ -11,13 +11,12 @@ capabilities:
 
   - id: cap.physical-asset-management
     name: Physical Asset Management
-    purpose: Track physical asset condition and lifecycle across mill equipment and vehicles.
-    business_outcome: Knowing an asset's current condition and history, for maintenance and replacement decisions.
-    important_terms: [Operational Setting Logbook]
-    evidence: [ev.arch.workbook "Status Catalog Mappings", ev.arch.workbook "Data Gathering" items 13/14/17]
-    confidence: medium
+    purpose: Track meaningful physical-asset identity, condition, lifecycle, and history across mill equipment and vehicles where MP2 does not provide that model.
+    business_outcome: A coherent asset model for equipment and vehicles that preserves condition/history and correlates external maintenance work without replacing MP2.
+    important_terms: [Asset, equipment, vehicle, Asset Condition, Asset Lifecycle State, Operational Setting Logbook]
+    evidence: [ev.arch.workbook "Status Catalog Mappings", ev.arch.workbook "Data Gathering" items 13/14/17, "domain-expert: Mark, direct, 2026-08-10 MP2 clarification", "domain-expert: Mark, direct, 2026-08-22 — Vehicle Management merge confirmed correct"]
+    confidence: high
     status: candidate
-    issue_refs: [ISSUE-0003]
 
   - id: cap.equipment-reliability-verification
     name: Equipment Reliability & Compliance Verification
@@ -30,7 +29,7 @@ capabilities:
 
   - id: cap.corrective-preventive-action
     name: Corrective & Preventive Action (CAPA)
-    purpose: Resolve a Nonconformity (ISO 9001:2015 clause 10.2) by root-cause corrective action, routing the work to whichever system already owns that class of work.
+    purpose: Resolve a Nonconformity by root-cause corrective action, routing the work to whichever system/context already owns that class of work.
     business_outcome: Findings tracked to closure without CAPA becoming a second owner of work another system already owns.
     important_terms: [CAPA item, CAPA routing rule, Nonconformity, Correction, Corrective Action]
     evidence: [ev.arch.addendum "CAPA reframed" session 020, ev.arch.workbook "Catalog Entities", ev.arch.workbook "Rules", "domain-expert: Mark, direct, ISSUE-0002", "external-standard: ISO 9001:2015 clause 10.2"]
@@ -49,9 +48,9 @@ capabilities:
 
   - id: cap.project-tracking
     name: Project Tracking
-    purpose: Track discrete improvement/capital projects not triggered by a Nonconformity.
-    business_outcome: Visibility into planned/capital work, distinct from CAPA by trigger — CAPA responds to a failure against a requirement, Project Tracking does not.
-    important_terms: [Nonconformity]
+    purpose: Track discrete improvement/capital projects not inherently triggered by a Nonconformity.
+    business_outcome: Visibility into planned/capital work, distinct from CAPA by trigger and lifecycle.
+    important_terms: [Project, Nonconformity]
     evidence: [ev.arch.workbook "Components" (ProjectTracking row), ev.arch.workbook "Data Gathering" item 22, "domain-expert: Mark, direct, ISSUE-0002", "external-standard: ISO 9001:2015 clause 10.2"]
     confidence: medium
     status: candidate
@@ -60,46 +59,46 @@ capabilities:
   - id: cap.operational-reporting
     name: Operational Reporting
     purpose: Capture what happened operationally — a shift, a downtime/incident event, or a process/parameter change.
-    business_outcome: Operational visibility across the mill.
-    important_terms: [Shift Report, Downtime/Incident Report]
+    business_outcome: Retained operational visibility/history without taking ownership of every referenced subject.
+    important_terms: [Shift Report, Downtime/Incident Report, Process/Parameter Change]
     evidence: [ev.arch.workbook "Build Order" Phase_B/B1, ev.arch.workbook "Decisions (ADRs)", ev.arch.workbook "Components" (ParameterProcessChange row)]
     confidence: medium overall, low for the Process/Parameter Change portion
     status: candidate
 
   - id: cap.training-competency
-    name: Training / Competency Records
-    purpose: Track training completion and competency, sourced from Moodle.
-    business_outcome: A record of who is trained/qualified for what.
-    important_terms: []
-    evidence: [ev.arch.workbook "Endpoints" (moodle-api/moodle-db), ev.arch.workbook "Constraints & Assumptions" A-05]
-    confidence: medium
+    name: Operational Training & Qualification
+    purpose: Represent who is operationally qualified to perform mill jobs, using learning-system completion records as evidence inputs rather than equating completion with qualification.
+    business_outcome: A reliable cross-operator qualification view showing who can perform which jobs and where crew depth exists or is missing.
+    important_terms: [Operational Qualification, cross-training, training matrix, crew depth, trained-for]
+    evidence: [ev.arch.workbook "Endpoints" (moodle-api/moodle-db), ev.arch.workbook "Constraints & Assumptions" A-05, "domain-expert: Mark, direct, 2026-08-10 workforce clarification"]
+    confidence: high
     status: candidate
 
   - id: cap.workforce-scheduling
-    name: Workforce Scheduling & Absence
-    purpose: Represent crew/shift/supervisor structure and track absence categories.
-    business_outcome: An accurate picture of who is scheduled/available, and absence accounting.
-    important_terms: [Department, Crew, Shift, Supervisor]
-    evidence: [ev.arch.drawings.glossary, ev.arch.workbook "Constraints & Assumptions" A-06]
-    confidence: medium
+    name: Operational Workforce Availability & Coverage
+    purpose: Represent vacation/absence-driven operational availability and determine replacement coverage by combining availability with operational qualification.
+    business_outcome: Operations can identify who can validly cover a required job/shift when vacations, absences, or call-ins create a staffing gap.
+    important_terms: [Operational Availability, Operational Coverage, Staffing Gap, Replacement Option, Crew, Shift]
+    evidence: [ev.arch.drawings.glossary, ev.arch.workbook "Constraints & Assumptions" A-06, "domain-expert: Mark, direct, 2026-08-10 workforce clarification"]
+    confidence: high
     status: candidate
 
   - id: cap.environmental-compliance
-    name: Environmental Compliance Reporting
-    purpose: Produce Boiler/Kiln environmental compliance forms.
-    business_outcome: Documented compliance with environmental regulation.
+    name: Environmental Compliance
+    purpose: Preserve Environmental as a known mill business responsibility while deferring ManuFactor capability modeling until a concrete gap is identified.
+    business_outcome: No active ManuFactor-owned Environmental outcome is currently established.
     important_terms: []
-    evidence: [ev.arch.workbook "Data Gathering" item 21, ev.arch.workbook "Components" (Environmental row), "domain-expert: Mark, direct, ISSUE-0002"]
-    confidence: medium
-    status: confirmed
+    evidence: [ev.arch.workbook "Data Gathering" item 21, ev.arch.workbook "Components" (Environmental row), "domain-expert: Mark, direct, 2026-08-10 — no concrete current Environmental gap identified"]
+    confidence: low
+    status: unresolved
 
   - id: cap.kiln-drying-operations
     name: Kiln Drying Operations
-    purpose: Manage the kiln drying production process.
-    business_outcome: Effective kiln scheduling and operation.
-    important_terms: []
-    evidence: [ev.arch.workbook "Data Gathering" item 23, ev.arch.workbook "Components" (KilnDrying row), ev.arch.drawings.mill_hierarchy]
-    confidence: medium
+    purpose: Replace spreadsheet-based kiln scheduling/operations with retained history and correlate kiln runs with authoritative downstream ProTrack moisture measurements.
+    business_outcome: Persistent kiln scheduling/run records and better understanding of drying performance and actual board moisture without rewriting ProTrack source data.
+    important_terms: [Kiln Schedule, Kiln Run/Charge, Kiln Operating Record, Moisture Outcome, Drying Performance Correlation]
+    evidence: [ev.arch.workbook "Data Gathering" item 23, ev.arch.workbook "Components" (KilnDrying row), ev.arch.drawings.mill_hierarchy, "domain-expert: Mark, direct, 2026-08-10 kiln gap clarification"]
+    confidence: high
     status: candidate
 
   - id: cap.identity-access
