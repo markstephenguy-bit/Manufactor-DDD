@@ -1,0 +1,64 @@
+phase: Specification Phase 14 — Use Cases and Queries
+status: discovery-candidate
+bounded_context: bc.quality-verification
+
+domain_expert_evidence:
+  - type: domain-expert
+    reference: Mark direct, 2026-08-22
+    statement: >
+      Quality intake should behave structurally like a CMMS work request/work order flow: a concern is
+      reported and, if it rises to the level of a real quality problem, it is promoted into the formal
+      quality workflow. Mark also directed that canonical DDD terminology should use real QMS/quality
+      vocabulary even when his conversational wording is more generic.
+
+terminology_guardrail:
+  rule: >
+    Do not canonically model the generic word "issue" when established quality-management terminology
+    provides a more precise term. Preserve Mark's business meaning while translating conversational
+    wording into accepted quality vocabulary.
+  current_interpretation:
+    reported_intake_term: Quality Concern
+    formal_escalation_term: Nonconformity
+    corrective_followup_term: Corrective Action
+  external_vocabulary_evidence:
+    - source: ISO 9000:2026
+      use: Quality-management fundamentals and vocabulary are the terminology authority for QMS language.
+    - source: ASQ Quality Glossary
+      use: Nonconformity means failure to fulfill a specified requirement; corrective action addresses an identified problem/cause.
+
+quality_concern_candidate:
+  name: Quality Concern
+  meaning: A reported suspicion that product or process quality may not meet requirements, before a formal Nonconformity has been established.
+  reported_by: any employee
+  reviewed_by:
+    - management
+    - designated quality technician
+  management_definition: At the mill, all salaried employees are considered management.
+  lifecycle:
+    - reported
+    - reviewed
+    - dispositioned_and_closed_with_reason
+    - or escalated_into_formal_quality_evaluation
+  rules:
+    - Reporting a Quality Concern does not create a Nonconformity.
+    - A Quality Concern that does not warrant escalation is closed/dispositioned with a retained reason.
+    - Generic "issue" language should not replace Nonconformity in the canonical model.
+    - A Quality Check may supply evidence used to determine whether a Nonconformity exists, but a failed Quality Check is not automatically a Nonconformity under the current model.
+
+cmms_analogy_translation:
+  work_request_analogy: Quality Concern
+  work_order_analogy: Formal quality lifecycle after promotion
+  canonical_quality_interpretation: >
+    The analogy defines escalation structure, not terminology. ManuFactor should preserve quality-domain
+    language rather than importing maintenance terms or generic "issue" terminology into Quality.
+
+open_modeling_question:
+  id: PHASE14-Q5-REFINED
+  question: >
+    When management or a designated quality technician decides that a Quality Concern is serious enough
+    to escalate, is a formal Quality Check normally the investigation/evidence step used before deciding
+    whether to create a Nonconformity, or can some concerns be promoted directly to a Nonconformity without
+    first performing a Quality Check?
+  why_it_matters: >
+    This determines the canonical application flow among Quality Concern, Quality Check, and Nonconformity
+    without inventing an automatic failed-check-to-Nonconformity rule.
