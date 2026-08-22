@@ -4,23 +4,28 @@ purpose: Capture and preserve ManuFactor-owned operational records where an exis
 subdomain: subdomain.production-operations
 model_statement: >
   Operations Record owns structured transactional capture for operational information that would
-  otherwise be handled through informal mechanisms such as email. The resulting record is authoritative
+  otherwise be handled through informal mechanisms such as email. Each operational form/record type
+  represents a distinct business need with its own required fields and rules; the context must not
+  collapse unrelated needs into one generic catch-all record. The resulting record is authoritative
   for what was submitted and its retained history, but not automatically for the lifecycle of equipment,
   people, Quality, Safety, or other referenced concepts. Operations Record is not the Superset/grain
   analytics layer; captured records may subsequently be made available to analytical grains alongside
   data sourced from other company systems.
 responsibilities:
   - Replace appropriate informal operational reporting workflows, such as email-based reporting, with structured retained records.
+  - Model each operational form/record type from a distinct identified business need rather than as one generic record template.
   - Preserve correction and history semantics for ManuFactor-owned operational records.
-  - Capture the business fields needed by the specific operational reporting workflow.
+  - Capture the business fields and rules needed by each specific operational reporting workflow.
   - Make captured operational facts available for downstream analytical composition without becoming the analytics/grain model itself.
   - Reference external domain concepts without absorbing their lifecycle ownership.
 scope:
   - Structured operational reporting/capture where a real system gap exists
+  - Distinct form/record types corresponding to distinct operational needs
   - Form-based capture of operational information currently transmitted through informal channels such as email
   - Retained operational record history and corrections
   - Publication/exposure of captured facts for downstream analytical use
 out_of_scope:
+  - A generic catch-all operational form intended to represent all operational reporting needs
   - Superset semantic models, analytical grains, dashboards, or enterprise analytical composition
   - Wholesale ingestion of company data merely because it is available for analytics
   - Kiln scheduling and drying-process ownership
@@ -39,10 +44,12 @@ ubiquitous_language:
   - Operational Record
   - operational reporting
   - operational form
+  - operational record type
   - operational occurrence
 business_rules:
   - A retained operational record must preserve what was reported and its correction/history semantics.
   - An Operations Record exists because ManuFactor is filling a structured operational-recording gap, not merely because the same data is useful analytically.
+  - Each operational form/record type must correspond to a distinct identified business need and may have its own required fields, rules, and lifecycle details.
   - Referencing an external concept does not make Operations Record authoritative for that concept's lifecycle.
   - Making an Operations Record available to Superset or another analytical grain does not transfer record ownership to the analytics layer.
 owner: unresolved
@@ -62,6 +69,9 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-22
       description: Operational reporting can replace information currently sent by email with a structured form/record, after which the captured data may join Superset grains; Operations Record must not be confused with enterprise data pulling or analytical grain construction.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22 distinct-record clarification
+      description: Each operational form is a distinct business need that should be recorded within the Operations Record context rather than represented by one generic catch-all form.
     - type: existing-model
       reference: ManuFactor-arch Build Order Phase_B/B1
       description: Existing evidence supports operational reporting/capture candidates, but specific record types require business validation before being treated as canonical examples.
