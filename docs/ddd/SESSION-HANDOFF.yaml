@@ -1,16 +1,16 @@
-model_state: Strategic Stable / Tactical Candidate; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregates, Entities/Value Objects, Invariants, Commands, Domain Events, and supported Policies are canonical
+model_state: Strategic Stable / Tactical Candidate; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregates, Entities/Value Objects, Invariants, Commands, Domain Events, supported Policies, Repositories, and explicit Domain Service/Factory evaluations are canonical
 session_state: ready-to-continue
-session_refreshed_at: 2026-08-22T09:47:00-05:00
-current_phase: Specification Phase 13 — Repositories and Factories
-last_completed: Specification Phase 12 Behavior Modeling completed at current evidence level; two genuine Policies were modeled and whole-map Domain Service evaluation found no Domain Service currently justified
-current_focus: Model technology-independent Repository abstractions for Aggregate Roots and determine whether any Aggregate construction is genuinely complex enough to justify a Factory
+session_refreshed_at: 2026-08-22T09:51:00-05:00
+current_phase: Specification Phase 14 — Use Cases and Queries
+last_completed: Specification Phase 13 Repositories and Factories completed at current evidence level; 12 technology-independent Repository abstractions were modeled and whole-map Factory evaluation found no Factory currently justified
+current_focus: Model application-level Use Cases and business Queries around the established domain model without moving business rules out of Aggregates or Policies
 blocking_issues: []
-next_action: Perform a whole-map Repository pass for the 12 Aggregate Roots, then evaluate Factory necessity. Repositories should express collection-like access and persistence semantics without naming SQL, PostgreSQL, Entity Framework, filesystem, or other implementation technologies. Do not create Factories unless construction rules require domain behavior beyond normal Aggregate creation.
+next_action: Perform a whole-map Query and Use Case pass. Queries express information needs and do not change state. Use Cases orchestrate established Commands, Repositories, Queries, Policies, and integrations but must not become containers for domain rules. After Phase 14, perform Specification Phase 15 Integration Validation.
 startup_instructions:
   - Treat this repository as the authoritative DDD session state.
   - Read docs/ddd/SPECIFICATION.md before strategic or tactical modeling.
   - Read docs/ddd/reports/validation-report.md and this SESSION-HANDOFF.yaml before new work.
-  - Continue from Specification Phase 13; do not use obsolete session-local phase numbering.
+  - Continue from Specification Phase 14; do not use obsolete session-local phase numbering.
   - Mark is the domain authority. Ask a business question only when the answer can materially change the model and cannot be resolved from repository evidence.
   - Perform substantial whole-map work before asking incremental questions.
   - Existing systems, code, databases, documents, and architecture are evidence, not automatic domain truth.
@@ -50,12 +50,16 @@ behavior_model:
   domain_event_count: 21
   policies: docs/ddd/policies/index.yaml
   policy_count: 2
-  policy_names:
-    - Route Corrective Work to Its Owning Context
-    - Determine Operational Replacement Eligibility
   domain_services: docs/ddd/domain-services/index.yaml
   domain_service_count: 0
   domain_service_evaluation: No Domain Service is currently justified; supported behavior belongs naturally to Aggregate Roots or Policies, while unresolved rules remain explicit issues.
+repository_factory_model:
+  repositories: docs/ddd/repositories/index.yaml
+  repository_count: 12
+  repository_rule: One technology-independent Repository abstraction exists for each current Aggregate Root; implementation storage technology is intentionally unspecified.
+  factories: docs/ddd/factories/index.yaml
+  factory_count: 0
+  factory_evaluation: No Factory is currently justified; Aggregate creation remains simple enough to belong to Aggregate Root commands/invariants.
 aggregate_model:
   candidate_aggregate_count: 12
   candidates:
@@ -99,5 +103,9 @@ files_to_read:
   - docs/ddd/domain-events/index.yaml
   - docs/ddd/policies/index.yaml
   - docs/ddd/domain-services/index.yaml
+  - docs/ddd/repositories/index.yaml
+  - docs/ddd/factories/index.yaml
+  - docs/ddd/context-map/context-map.yaml
+  - docs/ddd/integration-contracts/index.yaml
   - docs/ddd/issues/unresolved.yaml
-session_resume: Begin Specification Phase 13 with Repository abstractions for the 12 Aggregate Roots, then evaluate Factory necessity. Do not introduce persistence technology into the canonical DDD model.
+session_resume: Begin Specification Phase 14 with a whole-map Query and Application Use Case pass. Do not turn Queries into Commands, and do not move domain rules into application orchestration.
