@@ -3,16 +3,17 @@ name: ManuFactor
 vision: Fill operational business-process and information gaps across GP mills while respecting the authority of existing enterprise and mill systems.
 business_purpose: Provide a coherent operational gap-filling domain that can capture missing work and records, read and correlate existing-system data, aggregate information across systems, and enable analysis without duplicating established systems of record.
 scope:
-  - Operations gaps, including operational reporting, kiln-related work, and project tracking where existing systems do not satisfy the business need
+  - Operations gaps, including operational reporting, kiln operations/history, project tracking, operational training/qualification, and workforce availability/coverage where existing systems do not satisfy the business need
   - Quality gaps, including CAPA coordination and product quality verification
-  - Maintenance and Reliability gaps around assets, verification, data access, correlation, and analysis
-  - Safety gaps such as compliance and procedure sign-off
-  - Environmental gaps such as compliance reporting
-  - Human Resources gaps around training, competency, workforce scheduling, and absence information
+  - Maintenance and Reliability gaps around physical assets, including equipment and vehicles, reliability verification, data access, correlation, and analysis
+  - Safety gaps currently centered on LTV form/template management, printing/issuing, retention/tracking, and approval/sign-off only where the applicable process requires it
+  - Future Environmental gaps only when a concrete ManuFactor-owned workflow, record, rule, lifecycle, or information-access responsibility is established
   - Reading, correlating, aggregating, and analyzing data from existing GP systems when needed to satisfy these business gaps
 out_of_scope:
-  - Replacing SAP ERP, MES, CMMS, HR/workforce platforms, or other established systems merely because ManuFactor consumes their data
+  - Replacing SAP ERP, MES, MP2/CMMS, HR/workforce platforms, Moodle/learning systems, ProTrack, or other established systems merely because ManuFactor consumes their data
   - Owning a monolithic QMS
+  - Treating Human Resources as an active ManuFactor Subdomain for currently known operational qualification and staffing-coverage gaps
+  - Treating Environmental as an active Bounded Context before a concrete ManuFactor gap is established
   - Treating shared platform infrastructure such as Identity and Access as a business subdomain
   - Treating analytical tooling such as Superset as a business subdomain
   - Redefining enterprise-owned workflows solely to centralize them in ManuFactor
@@ -22,7 +23,7 @@ primary_stakeholders:
   - Maintenance and Reliability
   - Safety
   - Environmental
-  - Human Resources
+  - Human Resources and learning/timekeeping source-system stakeholders where their authoritative facts are consumed
   - Mill and Lumber Division leadership
   - Personnel who need cross-system operational information and gap-filling workflows
 domain_experts:
@@ -32,15 +33,17 @@ success_characteristics:
   - Existing-system data can be accessed, correlated, aggregated, and analyzed in ways the source systems do not provide
   - ManuFactor-owned records clearly distinguish their authority from data owned elsewhere
   - Mill-specific operational and quality knowledge is represented where it materially affects business behavior
+  - Operational qualification and staffing-coverage semantics remain distinct from HR/learning source-system ownership
+  - Physical equipment and vehicles share the Asset Lifecycle model unless later evidence establishes a real semantic split
   - The domain can expand to additional gaps without forcing unrelated responsibilities into one application-defined boundary
 status: candidate
 provenance:
   sources:
     - type: domain-expert
-      reference: Mark direct, 2026-08-09 through 2026-08-10
-      description: Mark defined ManuFactor as a gap filler, current-system reader, data aggregator, and analytical enabler rather than a replacement for GP enterprise systems, and confirmed the current major business areas.
+      reference: Mark direct, 2026-08-09 through 2026-08-22
+      description: Mark defined ManuFactor as a gap filler, current-system reader, data aggregator, and analytical enabler rather than a replacement for GP enterprise systems; later clarifications established Operations ownership of training/workforce gaps, deferred Environmental, LTV Form Management as the current Safety gap, MP2 limitations, and vehicle/equipment merge into Asset Lifecycle.
     - type: decision
       reference: DDD-0004 and DDD-0005
-      description: Existing strategic corrections establish that responsibilities, external standards, and system boundaries do not automatically define ManuFactor DDD boundaries.
+      description: Existing strategic corrections establish that responsibilities, external standards, organizational departments, and system boundaries do not automatically define ManuFactor DDD boundaries.
   confidence: high
   status: candidate
