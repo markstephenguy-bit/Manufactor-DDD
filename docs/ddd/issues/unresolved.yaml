@@ -8,7 +8,7 @@ issues:
       within this repository's own evidence files) suggests these may have
       been deliberately kept separate in an earlier session — unverified.
     affected_objects: [cap.physical-asset-management]
-    evidence: [ev.arch.workbook "Status Catalog Mappings"]
+    evidence: [ev.arch.workbook "Status Catalog Mappings", "domain-expert: Mark, direct, 2026-08-22 — merge confirmed correct"]
     possible_answers: [merge confirmed correct, keep separate — real prior reason exists, keep separate for a different reason not yet on record]
     blocking: false
     needed_input: domain-expert
