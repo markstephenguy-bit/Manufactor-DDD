@@ -1,46 +1,25 @@
-model_state: Strategic Stable / Tactical Candidate; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregates, Entities/Value Objects, Invariants, Commands, and Domain Events are canonical
+model_state: Strategic Stable / Tactical Candidate; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregates, Entities/Value Objects, Invariants, Commands, Domain Events, and supported Policies are canonical
 session_state: ready-to-continue
-session_refreshed_at: 2026-08-22T09:45:00-05:00
-current_phase: Specification Phase 12 — Behavior Modeling (partially complete)
-last_completed: Current-model A-J validation completed with PASS WITH WARNINGS; strategic maturity promoted to Strategic Stable; phase numbering corrected to match docs/ddd/SPECIFICATION.md
-current_focus: Complete Behavior Modeling by identifying genuine Policies and determining whether any Domain Services are required. Do not invent policy conditions merely to connect existing Commands and Domain Events.
+session_refreshed_at: 2026-08-22T09:47:00-05:00
+current_phase: Specification Phase 13 — Repositories and Factories
+last_completed: Specification Phase 12 Behavior Modeling completed at current evidence level; two genuine Policies were modeled and whole-map Domain Service evaluation found no Domain Service currently justified
+current_focus: Model technology-independent Repository abstractions for Aggregate Roots and determine whether any Aggregate construction is genuinely complex enough to justify a Factory
 blocking_issues: []
-next_action: Perform a whole-map Policy pass, then evaluate Domain Service necessity. Preserve unresolved transition rules as explicit issues until domain evidence supplies the rule. After Behavior Modeling is complete, proceed to Specification Phase 13 — Repositories and Factories.
+next_action: Perform a whole-map Repository pass for the 12 Aggregate Roots, then evaluate Factory necessity. Repositories should express collection-like access and persistence semantics without naming SQL, PostgreSQL, Entity Framework, filesystem, or other implementation technologies. Do not create Factories unless construction rules require domain behavior beyond normal Aggregate creation.
 startup_instructions:
   - Treat this repository as the authoritative DDD session state.
   - Read docs/ddd/SPECIFICATION.md before strategic or tactical modeling.
-  - Read docs/ddd/reports/validation-report.md and this SESSION-HANDOFF.yaml before doing new discovery.
-  - Continue from Specification Phase 12 Behavior Modeling; do not use the obsolete session-local phase numbering.
-  - Mark is the domain authority. Ask a business question only when the answer can materially change the model and cannot be resolved from current repository evidence.
+  - Read docs/ddd/reports/validation-report.md and this SESSION-HANDOFF.yaml before new work.
+  - Continue from Specification Phase 13; do not use obsolete session-local phase numbering.
+  - Mark is the domain authority. Ask a business question only when the answer can materially change the model and cannot be resolved from repository evidence.
   - Perform substantial whole-map work before asking incremental questions.
   - Existing systems, code, databases, documents, and architecture are evidence, not automatic domain truth.
-  - Preserve stable IDs when display names or framing change unless identity itself changes.
-  - Do not invent QMS, ERP, HR, Analytics, Environmental, or other boundaries merely because existing systems or departments suggest them.
-files_to_read:
-  - docs/ddd/SPECIFICATION.md
-  - docs/ddd/reports/validation-report.md
-  - docs/ddd/SESSION-HANDOFF.yaml
-  - docs/ddd/context-map/context-map.yaml
-  - docs/ddd/integration-contracts/index.yaml
-  - docs/ddd/language/domain-language.yaml
-  - docs/ddd/language/ubiquitous-language.yaml
-  - docs/ddd/concepts/index.yaml
-  - docs/ddd/aggregates/index.yaml
-  - docs/ddd/aggregates/kiln-schedule.yaml
-  - docs/ddd/entities/index.yaml
-  - docs/ddd/value-objects/index.yaml
-  - docs/ddd/invariants/index.yaml
-  - docs/ddd/commands/index.yaml
-  - docs/ddd/domain-events/index.yaml
-  - docs/ddd/issues/unresolved.yaml
+  - Preserve stable IDs when names/framing change unless modeled identity itself changes.
 repository_roles:
   canonical: markstephenguy-bit/Manufactor-DDD
   evidence:
     - markstephenguy-bit/ManuFactor-arch
     - markstephenguy-bit/Manufactor
-execution_model:
-  chatgpt: DDD/domain-discovery lead and normal GitHub repository editor
-  claude_code: optional execution agent for local operations, broad mechanical edits, builds, tests, scripts, or unavailable GitHub operations
 maturity:
   strategic: Strategic Stable
   tactical: Tactical Candidate
@@ -61,15 +40,22 @@ active_candidate_bounded_contexts:
   - bc.training-competency: Operational Training and Qualification
   - bc.workforce-availability: Operational Workforce Availability
 deferred_contexts:
-  - bc.environmental-compliance: Environmental remains a business area, but no concrete current ManuFactor Environmental gap supplies a justified model/lifecycle
-important_boundary_corrections:
-  - Human Resources is rejected as an active ManuFactor Subdomain for known training/qualification and staffing gaps; those are operational semantics.
-  - Identity & Access is shared platform infrastructure, not a business Subdomain.
-  - Environmental Compliance is deferred until a concrete gap exists.
-  - MP2 owns WR/WO records but does not provide meaningful asset-management semantics; Asset Lifecycle owns the richer ManuFactor asset model.
-  - Vehicle Management is merged into Physical Asset Management / Asset Lifecycle; equipment and vehicles use the same physical-asset model under current evidence.
-  - ProTrack owns planer moisture measurements; Kiln Operations owns retained scheduling/run history and correlation to drying outcomes.
-  - LTV Form Management is the real Safety gap: managing LTV forms/templates, printing/issuing instances, retaining/tracking those forms, and supporting approval/sign-off only where applicable. Sign-off is not the defining context.
+  - bc.environmental-compliance: deferred until a concrete ManuFactor Environmental gap establishes a model/lifecycle
+behavior_model:
+  invariants: docs/ddd/invariants/index.yaml
+  invariant_count: 22
+  commands: docs/ddd/commands/index.yaml
+  command_count: 23
+  domain_events: docs/ddd/domain-events/index.yaml
+  domain_event_count: 21
+  policies: docs/ddd/policies/index.yaml
+  policy_count: 2
+  policy_names:
+    - Route Corrective Work to Its Owning Context
+    - Determine Operational Replacement Eligibility
+  domain_services: docs/ddd/domain-services/index.yaml
+  domain_service_count: 0
+  domain_service_evaluation: No Domain Service is currently justified; supported behavior belongs naturally to Aggregate Roots or Policies, while unresolved rules remain explicit issues.
 aggregate_model:
   candidate_aggregate_count: 12
   candidates:
@@ -85,29 +71,6 @@ aggregate_model:
     - LTV Printed Instance
     - Operational Qualification
     - Operational Coverage Plan
-invariant_model:
-  canonical: docs/ddd/invariants/index.yaml
-  candidate_invariant_count: 22
-behavior_model:
-  commands: docs/ddd/commands/index.yaml
-  command_count: 23
-  domain_events: docs/ddd/domain-events/index.yaml
-  domain_event_count: 21
-  policies: not-yet-modeled
-  domain_services: not-yet-evaluated
-  modeling_rules:
-    - Commands express domain intent to change state and target the owning Aggregate.
-    - Domain Events are domain-significant facts that occurred and use past-tense names.
-    - Policies represent genuine business decisions reacting to facts or determining resulting actions.
-    - Domain Services exist only where domain behavior does not naturally belong to an Entity or Value Object.
-    - Technical CRUD/database changes are not Domain Events.
-    - Cross-context transition policies remain outside Aggregate behavior until their business decision rule is known.
-important_event_boundaries:
-  - QualityCheckEvaluated remains a Quality Verification fact and does not create Nonconformity automatically.
-  - VerificationCompleted remains a Reliability Verification fact and does not change Asset Condition automatically.
-  - LTVFormInstanceIssued records printing/issuance and does not imply sign-off.
-  - OperationalQualificationEstablished can be consumed by Workforce Availability without transferring qualification ownership.
-  - CorrectiveWorkRouted records CAPA routing without transferring destination work ownership into Corrective Action.
 open_nonblocking_issues:
   - ISSUE-0004: failed Quality Check to Nonconformity exact admission rule
   - ISSUE-0005: Reliability Verification Result to Asset state exact transition rule
@@ -118,9 +81,23 @@ open_nonblocking_issues:
   - ISSUE-0010: child Corrective Action identity and CAPA closure rules
   - ISSUE-0011: whether vacation planning needs a distinct aggregate
 resolved_since_prior_handoff:
-  - ISSUE-0003: Vehicle Management versus Physical Asset Management — merge confirmed correct by Mark on 2026-08-22 and incorporated into Asset Lifecycle.
+  - ISSUE-0003: Vehicle Management merged into Physical Asset Management / Asset Lifecycle
 specification_authority:
   source_document: ManuFactor_DDD_Modeling_Specification.docx
   repository_specification: docs/ddd/SPECIFICATION.md
   validation_report: docs/ddd/reports/validation-report.md
-session_resume: Continue Specification Phase 12 with a whole-map Policy pass, then evaluate Domain Services. Do not jump to Repositories/Factories until Behavior Modeling is complete.
+files_to_read:
+  - docs/ddd/SPECIFICATION.md
+  - docs/ddd/reports/validation-report.md
+  - docs/ddd/SESSION-HANDOFF.yaml
+  - docs/ddd/aggregates/index.yaml
+  - docs/ddd/aggregates/kiln-schedule.yaml
+  - docs/ddd/entities/index.yaml
+  - docs/ddd/value-objects/index.yaml
+  - docs/ddd/invariants/index.yaml
+  - docs/ddd/commands/index.yaml
+  - docs/ddd/domain-events/index.yaml
+  - docs/ddd/policies/index.yaml
+  - docs/ddd/domain-services/index.yaml
+  - docs/ddd/issues/unresolved.yaml
+session_resume: Begin Specification Phase 13 with Repository abstractions for the 12 Aggregate Roots, then evaluate Factory necessity. Do not introduce persistence technology into the canonical DDD model.
