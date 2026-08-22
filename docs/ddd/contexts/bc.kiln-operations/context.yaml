@@ -1,19 +1,20 @@
 id: bc.kiln-operations
 name: Kiln Operations
-purpose: Replace spreadsheet-based kiln scheduling/operations with a retained operational model that translates business-led market demand into actionable kiln loading, supports subsequent planer/warehouse product creation, and correlates kiln-run history with downstream moisture performance.
+purpose: Replace spreadsheet-based kiln scheduling/operations with a retained operational model that translates business-led market demand into actionable kiln loading and correlates kiln-run history with downstream moisture performance.
 subdomain: subdomain.production-operations
 model_statement: >
   Within Kiln Operations, kiln scheduling and kiln-run performance analysis are related but distinct concerns.
   Kiln Scheduling turns business direction originating from business leaders through Sales and market demand into
-  an actionable drying plan, while also considering upstream available green lumber and downstream product needs.
-  The required market/sales direction is not currently available as a usable structured data source, so ManuFactor
-  fills that gap by creating the operational planning record needed to drive drying and subsequent planer/warehouse
-  product creation. Kiln run execution/history preserves what actually occurred and supports analysis of kiln
-  performance by correlating the run with downstream ProTrack planer moisture data. ProTrack moisture records remain
-  external source facts and are not re-owned or rewritten by ManuFactor.
+  an actionable drying plan, while also considering upstream available green lumber. The planning decision is about
+  what lumber needs to be dried; it does not determine the finished SKU mix. Finished SKU creation is determined later
+  by proper optimization of planed product and remains outside Kiln Operations. The required market/sales direction is
+  not currently available as a usable structured data source, so ManuFactor fills that gap by creating the operational
+  planning record needed to drive drying. Kiln run execution/history preserves what actually occurred and supports
+  analysis of kiln performance by correlating the run with downstream ProTrack planer moisture data. ProTrack moisture
+  records remain external source facts and are not re-owned or rewritten by ManuFactor.
 responsibilities:
   - Translate business-led sales/market demand into an actionable kiln loading/sequencing plan where no structured demand data source currently exists.
-  - Consider upstream green-lumber availability and downstream planer/warehouse product needs when building the kiln schedule.
+  - Determine what lumber needs to be dried by considering business direction and upstream green-lumber availability.
   - Preserve kiln schedule revisions and the business basis for planned loading where applicable.
   - Preserve kiln run/charge and operating history for what actually occurred.
   - Correlate downstream planer moisture measurements from ProTrack with the kiln run/history that produced the lumber.
@@ -21,13 +22,16 @@ responsibilities:
   - Extend to additional kiln data-collection and process-control gaps as concrete rules emerge.
 scope:
   - Translation of business/sales market direction into drying action
-  - Kiln loading and scheduling based on upstream supply and downstream planer/warehouse product demand
+  - Determination of what lumber needs to be dried
+  - Kiln loading and scheduling based on upstream supply and business-led product demand
   - Kiln schedule revision/history
   - Kiln run/charge history
   - Operating parameters and retained process records
   - Correlation of downstream ProTrack moisture outcomes to kiln history
   - Drying-performance analysis and dashboards
 out_of_scope:
+  - Finished-product or SKU-mix determination
+  - Planer optimization logic that determines which SKUs are created from dried lumber
   - Ownership of enterprise sales, market-demand, order-management, or commercial-planning lifecycles
   - Treating currently unavailable business/sales direction as if it were a structured upstream system integration
   - Ownership or mutation of upstream production facts merely used as scheduling inputs
@@ -45,7 +49,7 @@ external_concepts:
   - Business/Sales market direction
   - Market demand
   - Upstream green-lumber availability
-  - Downstream planer/warehouse product need
+  - Planer optimization / SKU creation
   - ProTrack Moisture Measurement
   - Planer moisture-meter record
   - Asset
@@ -58,12 +62,12 @@ ubiquitous_language:
   - drying process
   - moisture result
   - planer run
-  - warehouse product creation
   - market demand
   - drying performance
 business_rules:
   - Kiln scheduling must translate business-led market demand into operational drying action rather than assuming a formal downstream production schedule already exists as data.
-  - Kiln scheduling must consider upstream available material and downstream planer/warehouse product requirements rather than being treated as isolated run planning.
+  - Kiln scheduling decides what lumber needs to be dried; it does not decide which finished SKUs will be produced.
+  - Finished SKU creation is determined by downstream planer optimization and is outside Kiln Operations ownership.
   - Kiln scheduling state and revisions must be retained rather than overwritten as an ephemeral spreadsheet state.
   - Kiln-run history represents what actually occurred and is distinct from the planned schedule.
   - Correlated moisture outcomes must preserve provenance to ProTrack and must not rewrite source measurements.
@@ -74,7 +78,7 @@ domain_experts: [Mark]
 integration_surface:
   - Capture/translate business-led Sales and market-demand direction into kiln planning because the needed demand signal is not currently available as structured data.
   - Consume/translate upstream availability facts needed for kiln-loading decisions without taking source ownership.
-  - Provide the drying plan that drives subsequent planer and warehouse product creation without taking ownership of those downstream production lifecycles.
+  - Provide the drying plan needed by downstream planer operations without taking ownership of planer optimization or SKU creation.
   - Consume ProTrack planer moisture measurements from its database for drying-performance correlation.
   - Reference physical kiln/assets from Asset Lifecycle where needed.
 upstream_dependencies:
@@ -83,7 +87,7 @@ upstream_dependencies:
   - ProTrack moisture data source
   - bc.asset-lifecycle
 downstream_consumers:
-  - planer/warehouse production planning and execution, exact owning contexts/systems unresolved
+  - planer operations / planer optimization, exact owning contexts/systems unresolved
   - Operational dashboards and analytical projections
 status: candidate
 provenance:
@@ -96,6 +100,9 @@ provenance:
       description: Mark clarified that kiln scheduling looks upstream and downstream to determine the correct kiln loading needed to meet required planer runs, while kiln-run execution is primarily about analyzing kiln performance against downstream planer results using ProTrack data.
     - type: domain-expert
       reference: Mark direct, 2026-08-22 market-demand clarification
-      description: The planer/product requirement originates with business leaders through Sales in response to market demand, but that demand is not presently available as structured data; Kiln Operations must therefore create the actionable drying plan that drives subsequent product creation in the planer/warehouse flow.
+      description: The planer/product requirement originates with business leaders through Sales in response to market demand, but that demand is not presently available as structured data; Kiln Operations must therefore create the actionable drying plan.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22 SKU-boundary clarification
+      description: Kiln planning determines what lumber needs to be dried; finished SKU creation is determined later by proper optimization of planed product and is not owned by Kiln Operations.
   confidence: high
   status: candidate
