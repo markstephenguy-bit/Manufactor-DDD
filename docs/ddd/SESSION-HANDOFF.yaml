@@ -1,16 +1,16 @@
-model_state: strategic DDD established at candidate level; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregates, Entities/Value Objects, Invariants, Commands, and Domain Events are canonical
+model_state: Strategic Stable / Tactical Candidate; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregates, Entities/Value Objects, Invariants, Commands, and Domain Events are canonical
 session_state: ready-to-continue
-session_refreshed_at: 2026-08-22T09:36:00-05:00
-current_phase: Phase 14 — Policy modeling
-last_completed: Phase 13 modeled 23 candidate Commands and 21 candidate Domain Events across the 12 aggregate boundaries; subsequent cleanup resolved Vehicle Management into the canonical Physical Asset / Asset Lifecycle model and reconciled stale discovery/subdomain wording
-current_focus: Identify business decision mechanisms that react to domain facts or determine resulting commands across Aggregates/contexts without moving domain rules into application orchestration
+session_refreshed_at: 2026-08-22T09:45:00-05:00
+current_phase: Specification Phase 12 — Behavior Modeling (partially complete)
+last_completed: Current-model A-J validation completed with PASS WITH WARNINGS; strategic maturity promoted to Strategic Stable; phase numbering corrected to match docs/ddd/SPECIFICATION.md
+current_focus: Complete Behavior Modeling by identifying genuine Policies and determining whether any Domain Services are required. Do not invent policy conditions merely to connect existing Commands and Domain Events.
 blocking_issues: []
-next_action: Build a whole-map Policy inventory. Prioritize only supported decision mechanisms such as replacement eligibility combining qualification and availability, CAPA routing to the owning work context/system, and source-fact translation/correlation rules where enough business behavior is known. Keep unresolved business transitions unresolved rather than guessing.
+next_action: Perform a whole-map Policy pass, then evaluate Domain Service necessity. Preserve unresolved transition rules as explicit issues until domain evidence supplies the rule. After Behavior Modeling is complete, proceed to Specification Phase 13 — Repositories and Factories.
 startup_instructions:
   - Treat this repository as the authoritative DDD session state.
   - Read docs/ddd/SPECIFICATION.md before strategic or tactical modeling.
-  - Read this SESSION-HANDOFF.yaml before doing new discovery.
-  - Continue from Phase 14; do not reconstruct Phases 1-13 from conversation history.
+  - Read docs/ddd/reports/validation-report.md and this SESSION-HANDOFF.yaml before doing new discovery.
+  - Continue from Specification Phase 12 Behavior Modeling; do not use the obsolete session-local phase numbering.
   - Mark is the domain authority. Ask a business question only when the answer can materially change the model and cannot be resolved from current repository evidence.
   - Perform substantial whole-map work before asking incremental questions.
   - Existing systems, code, databases, documents, and architecture are evidence, not automatic domain truth.
@@ -18,6 +18,7 @@ startup_instructions:
   - Do not invent QMS, ERP, HR, Analytics, Environmental, or other boundaries merely because existing systems or departments suggest them.
 files_to_read:
   - docs/ddd/SPECIFICATION.md
+  - docs/ddd/reports/validation-report.md
   - docs/ddd/SESSION-HANDOFF.yaml
   - docs/ddd/context-map/context-map.yaml
   - docs/ddd/integration-contracts/index.yaml
@@ -40,6 +41,10 @@ repository_roles:
 execution_model:
   chatgpt: DDD/domain-discovery lead and normal GitHub repository editor
   claude_code: optional execution agent for local operations, broad mechanical edits, builds, tests, scripts, or unavailable GitHub operations
+maturity:
+  strategic: Strategic Stable
+  tactical: Tactical Candidate
+  validated: PASS WITH WARNINGS
 business_positioning:
   - ManuFactor is a gap filler, current-system reader, extractor, aggregator, correlator, analysis enabler, and owner of missing workflows/records when a real gap exists.
   - ManuFactor is not a wholesale ERP, MES, CMMS, HR, QMS, or analytics replacement.
@@ -88,9 +93,13 @@ behavior_model:
   command_count: 23
   domain_events: docs/ddd/domain-events/index.yaml
   domain_event_count: 21
+  policies: not-yet-modeled
+  domain_services: not-yet-evaluated
   modeling_rules:
-    - Commands express intent to change domain state and target the owning Aggregate.
+    - Commands express domain intent to change state and target the owning Aggregate.
     - Domain Events are domain-significant facts that occurred and use past-tense names.
+    - Policies represent genuine business decisions reacting to facts or determining resulting actions.
+    - Domain Services exist only where domain behavior does not naturally belong to an Entity or Value Object.
     - Technical CRUD/database changes are not Domain Events.
     - Cross-context transition policies remain outside Aggregate behavior until their business decision rule is known.
 important_event_boundaries:
@@ -99,21 +108,19 @@ important_event_boundaries:
   - LTVFormInstanceIssued records printing/issuance and does not imply sign-off.
   - OperationalQualificationEstablished can be consumed by Workforce Availability without transferring qualification ownership.
   - CorrectiveWorkRouted records CAPA routing without transferring destination work ownership into Corrective Action.
-unresolved_transition_rules:
-  - Failed Quality Check to Nonconformity exact acceptance rule
-  - Reliability Verification Result to Asset Condition/Lifecycle State exact transition rule
-  - Qualification completion/demonstrated capability/authorization/expiration details
-  - LTV process-specific approval/sign-off requirements
 open_nonblocking_issues:
-  - Exact business identity/revision semantics for Kiln Schedule require tactical refinement
-  - Exact CAPA closure details and child Corrective Action identity remain unresolved
-  - Exact Asset condition/state vocabulary remains unresolved
-  - Exact kiln-to-ProTrack correlation identifiers/rules remain unresolved
-  - Vacation planning may later justify its own aggregate if schedule-wide invariants are discovered
+  - ISSUE-0004: failed Quality Check to Nonconformity exact admission rule
+  - ISSUE-0005: Reliability Verification Result to Asset state exact transition rule
+  - ISSUE-0006: Operational Qualification evidence/authorization/expiration rules
+  - ISSUE-0007: LTV process-specific approval/sign-off rules
+  - ISSUE-0008: Kiln Run to ProTrack moisture correlation identifiers/rules
+  - ISSUE-0009: Asset condition/lifecycle-state vocabulary
+  - ISSUE-0010: child Corrective Action identity and CAPA closure rules
+  - ISSUE-0011: whether vacation planning needs a distinct aggregate
 resolved_since_prior_handoff:
   - ISSUE-0003: Vehicle Management versus Physical Asset Management — merge confirmed correct by Mark on 2026-08-22 and incorporated into Asset Lifecycle.
 specification_authority:
   source_document: ManuFactor_DDD_Modeling_Specification.docx
   repository_specification: docs/ddd/SPECIFICATION.md
-  rule: Policies represent business decisions reacting to facts or determining actions across domain behavior; do not invent unsupported policy conditions merely to connect existing Events and Commands.
-session_resume: Begin Phase 14 from the Command/Event/Invariant model and identify only genuine domain Policies. Preserve unresolved transition policies until Mark supplies the deciding business rule.
+  validation_report: docs/ddd/reports/validation-report.md
+session_resume: Continue Specification Phase 12 with a whole-map Policy pass, then evaluate Domain Services. Do not jump to Repositories/Factories until Behavior Modeling is complete.
