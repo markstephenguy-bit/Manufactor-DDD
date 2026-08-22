@@ -41,6 +41,8 @@ ubiquitous_language:
   - trained-for
 business_rules:
   - Operational qualification should be explicit and retained rather than existing only as informal management knowledge.
+  - Operational qualification may be granted by either the employee's supervisor or a designated trainer/subject-matter expert.
+  - The evidence supporting qualification may vary by job and remains a separate rule from who has authority to grant it.
   - Operational qualification must be supported by appropriate evidence once the exact qualification rule is established.
   - Source training completion is not automatically equivalent to operational qualification unless the domain rule says it is.
   - Availability does not imply qualification.
@@ -62,5 +64,8 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-22
       description: Mark stated that qualification is currently informal to a fault, establishing a ManuFactor gap in making operational qualification explicit, retained, and usable for staffing and cross-training decisions.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22 qualification authority clarification
+      description: An employee may be operationally qualified by either the employee's supervisor or a designated trainer/subject-matter expert.
   confidence: high
   status: candidate
