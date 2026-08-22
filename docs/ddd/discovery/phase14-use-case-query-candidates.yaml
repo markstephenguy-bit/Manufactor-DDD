@@ -1,0 +1,201 @@
+phase: Specification Phase 14 — Use Cases and Queries
+status: discovery-candidate
+purpose: >
+  Capture the whole-map application-facing information needs and orchestration flows
+  implied by the established domain model before promoting them to canonical Queries
+  and Application Use Cases. Actor assignments remain deliberately unresolved where
+  domain evidence does not yet establish who performs the work.
+
+candidate_queries:
+  - id: query-candidate.operations-record.history
+    bounded_context: bc.operations-record
+    name: View Operational Record History
+    purpose: Show retained operational records, including corrections/history, for a selected operational scope and time period.
+    likely_inputs: [mill or operational scope, time period, record type]
+    likely_result: Operational records with retained correction/history context.
+    authoritative_source: bc.operations-record
+
+  - id: query-candidate.kiln-operations.schedule
+    bounded_context: bc.kiln-operations
+    name: View Kiln Schedule
+    purpose: Show the current retained kiln plan and relevant schedule revision history.
+    likely_inputs: [mill, kiln or planning scope, planning period]
+    likely_result: Current schedule plus historically traceable revisions as needed.
+    authoritative_source: bc.kiln-operations
+
+  - id: query-candidate.kiln-operations.run-moisture
+    bounded_context: bc.kiln-operations
+    name: Review Kiln Run and Moisture Outcome
+    purpose: Review one completed Kiln Run/Charge together with correlated downstream ProTrack moisture measurements/outcome information.
+    likely_inputs: [kiln run identity]
+    likely_result: Retained run history plus composed/correlated moisture outcome information with ProTrack provenance preserved.
+    authoritative_source: Composition of bc.kiln-operations and external.protrack-moisture; not one shared model.
+
+  - id: query-candidate.project-tracking.project-status
+    bounded_context: bc.project-tracking
+    name: View Project Status
+    purpose: Show project purpose, lifecycle/status, and retained project information.
+    likely_inputs: [project identity or project filters]
+    likely_result: Project status and owned project information.
+    authoritative_source: bc.project-tracking
+
+  - id: query-candidate.quality-verification.check
+    bounded_context: bc.quality-verification
+    name: Review Quality Check
+    purpose: Show a Quality Check with its measurement evidence, applicable historical target/basis, and evaluation result.
+    likely_inputs: [quality check identity]
+    likely_result: Quality Check evidence and result without implying CAPA/Nonconformity status.
+    authoritative_source: bc.quality-verification
+
+  - id: query-candidate.corrective-action.capa-status
+    bounded_context: bc.corrective-action
+    name: Review Nonconformity and CAPA Status
+    purpose: Show a Nonconformity, its corrective-action coordination state, routed-work references, and closure status.
+    likely_inputs: [nonconformity identity]
+    likely_result: CAPA-owned status plus references to externally owned execution work where applicable.
+    authoritative_source: bc.corrective-action for CAPA semantics; external destinations retain execution authority.
+
+  - id: query-candidate.asset-lifecycle.asset-history
+    bounded_context: bc.asset-lifecycle
+    name: Review Asset State and History
+    purpose: Show a physical asset's ManuFactor identity, condition/lifecycle state, retained history, and correlated MP2 work references.
+    likely_inputs: [asset identity]
+    likely_result: Asset Lifecycle state/history with MP2 facts clearly identified as external.
+    authoritative_source: bc.asset-lifecycle plus external.mp2-maintenance references.
+
+  - id: query-candidate.reliability-verification.verification-history
+    bounded_context: bc.reliability-verification
+    name: Review Reliability Verification History
+    purpose: Show verification instances/results and retained evidence for a selected asset.
+    likely_inputs: [asset identity, optional time period]
+    likely_result: Reliability Verification facts without treating results as Asset Condition.
+    authoritative_source: bc.reliability-verification
+
+  - id: query-candidate.ltv-form-management.forms
+    bounded_context: bc.safety-signoff
+    name: Find and Review LTV Forms
+    purpose: Find current/past LTV templates and printed/issued form instances with exact template-version traceability.
+    likely_inputs: [form type/template, date/status, instance identity]
+    likely_result: Template/version and printed-instance information, including lifecycle state where known.
+    authoritative_source: bc.safety-signoff
+
+  - id: query-candidate.training-qualification.who-can-do-job
+    bounded_context: bc.training-competency
+    name: Who Can Do This Job
+    purpose: Show personnel currently represented as operationally qualified for a selected job/role.
+    likely_inputs: [job or operational role, optional mill/crew scope]
+    likely_result: Qualification/cross-training coverage with evidence references as available.
+    authoritative_source: bc.training-competency; external learning facts remain evidence only.
+
+  - id: query-candidate.workforce-availability.coverage
+    bounded_context: bc.workforce-availability
+    name: Who Can Cover This Job Now
+    purpose: Show replacement options for a staffing need by composing operational qualification with current availability.
+    likely_inputs: [job/position, required time or shift, mill/crew context]
+    likely_result: Eligible replacement options and the qualification/availability basis used at decision time.
+    authoritative_source: bc.workforce-availability for coverage decision; qualification and HR/timekeeping facts retain their source authority.
+
+candidate_use_cases:
+  - id: use-case-candidate.operations-record.record-and-correct
+    bounded_context: bc.operations-record
+    name: Record and Correct an Operational Occurrence
+    goal: Capture a retained operational fact and allow later correction without destroying the original history.
+    established_commands: [RecordOperationalFact, CorrectOperationalRecord]
+    supporting_queries: [View Operational Record History]
+
+  - id: use-case-candidate.kiln-operations.manage-schedule
+    bounded_context: bc.kiln-operations
+    name: Maintain the Kiln Schedule
+    goal: Replace spreadsheet-only planning with a retained schedule that can be revised without losing history.
+    established_commands: [CreateKilnSchedule, ReviseKilnSchedule]
+    supporting_queries: [View Kiln Schedule]
+
+  - id: use-case-candidate.kiln-operations.run-history
+    bounded_context: bc.kiln-operations
+    name: Record a Kiln Run and Review Drying Outcome
+    goal: Start, record, complete, and later review a distinct Kiln Run/Charge together with downstream moisture outcome information.
+    established_commands: [StartKilnRun, RecordKilnOperation, CompleteKilnRun]
+    supporting_queries: [Review Kiln Run and Moisture Outcome]
+
+  - id: use-case-candidate.project-tracking.manage-project
+    bounded_context: bc.project-tracking
+    name: Track an Improvement or Capital Project
+    goal: Establish and complete a discrete Project according to its own lifecycle rather than CAPA lifecycle.
+    established_commands: [CreateProject, CompleteProject]
+    supporting_queries: [View Project Status]
+
+  - id: use-case-candidate.quality-verification.perform-check
+    bounded_context: bc.quality-verification
+    name: Perform and Evaluate a Quality Check
+    goal: Create a retained Quality Check, capture measurement evidence, resolve the applicable target/basis, and record the evaluation result.
+    established_commands: [InitiateQualityCheck, RecordQualityMeasurement, EvaluateQualityCheck]
+    supporting_queries: [Review Quality Check]
+    unresolved_boundary: A failed result does not automatically become a Nonconformity; ISSUE-0004 remains open.
+
+  - id: use-case-candidate.corrective-action.manage-nonconformity
+    bounded_context: bc.corrective-action
+    name: Manage a Nonconformity Through CAPA
+    goal: Accept an eligible finding, coordinate/rout corrective work, and close the Nonconformity under CAPA-owned rules.
+    established_commands: [AcceptNonconformity, RouteCorrectiveWork, CloseNonconformity]
+    supporting_queries: [Review Nonconformity and CAPA Status]
+    established_policy: Route Corrective Work to Its Owning Context
+    unresolved_boundary: Exact admission and closure details remain ISSUE-0004 and ISSUE-0010.
+
+  - id: use-case-candidate.asset-lifecycle.manage-asset
+    bounded_context: bc.asset-lifecycle
+    name: Manage Physical Asset State and History
+    goal: Establish stable identity for equipment/vehicles and maintain meaningful condition/lifecycle history independent of MP2 work status.
+    established_commands: [RegisterAsset, ChangeAssetCondition]
+    supporting_queries: [Review Asset State and History]
+    unresolved_boundary: Exact condition/lifecycle vocabulary remains ISSUE-0009.
+
+  - id: use-case-candidate.reliability-verification.verify-asset
+    bounded_context: bc.reliability-verification
+    name: Perform a Reliability Verification
+    goal: Record applicable verification evidence and complete a supported verification result for an asset.
+    established_commands: [CompleteVerification]
+    supporting_queries: [Review Reliability Verification History]
+    unresolved_boundary: Result-to-Asset-state effect remains ISSUE-0005.
+
+  - id: use-case-candidate.ltv-form-management.manage-forms
+    bounded_context: bc.safety-signoff
+    name: Manage and Issue an LTV Form
+    goal: Publish/manage a versioned LTV template, generate a traceable form instance, and track its print/issue lifecycle.
+    established_commands: [PublishLTVFormTemplate, GenerateLTVFormInstance]
+    supporting_queries: [Find and Review LTV Forms]
+    unresolved_boundary: Process-specific approval/sign-off rules remain ISSUE-0007.
+
+  - id: use-case-candidate.training-qualification.establish-qualification
+    bounded_context: bc.training-competency
+    name: Establish Operational Qualification
+    goal: Determine and retain that a person can perform a particular operational job based on acceptable evidence.
+    established_commands: [EstablishOperationalQualification]
+    supporting_queries: [Who Can Do This Job]
+    unresolved_boundary: Exact evidence/authorization/expiration rules remain ISSUE-0006.
+
+  - id: use-case-candidate.workforce-availability.fill-gap
+    bounded_context: bc.workforce-availability
+    name: Fill an Operational Staffing Gap
+    goal: Identify and select a replacement who is both qualified and available for the specific operational need.
+    established_commands: [SelectReplacement]
+    supporting_queries: [Who Can Cover This Job Now]
+    established_policy: Determine Operational Replacement Eligibility
+    unresolved_boundary: Vacation planning aggregate question remains ISSUE-0011.
+
+whole_map_observation: >
+  The domain model supports an initial set of application-facing flows, but canonical
+  Application Use Cases require credible actors and triggers. Current repository evidence
+  often identifies broad roles such as authorized operations/quality/reliability users,
+  not the actual mill roles that initiate or perform each workflow.
+
+material_question:
+  id: PHASE14-Q1
+  topic: primary actors and day-to-day users
+  question: >
+    At a mill, which real job roles should be expected to use ManuFactor directly for these workflows?
+    In particular, are the normal hands-on users primarily supervisors/department managers,
+    operators/technicians, clerical/coordinator roles, or some combination by workflow?
+  why_it_matters: >
+    Application Use Cases require actors and triggers. The answer changes who initiates a
+    workflow, what information they need, and whether ManuFactor is primarily a frontline
+    work tool, a supervisor/coordination tool, or both.
