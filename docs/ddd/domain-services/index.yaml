@@ -1,0 +1,31 @@
+domain_services: []
+
+domain_service_evaluation:
+  conclusion: No Domain Service is currently justified by the available domain evidence.
+  rationale:
+    - Operational Record behavior belongs naturally to the Operational Record aggregate.
+    - Kiln scheduling and run-history behavior belongs to Kiln Schedule and Kiln Run aggregates; moisture correlation rules remain unresolved rather than being placed in a generic service.
+    - Project lifecycle behavior belongs to the Project aggregate.
+    - Quality measurement and evaluation behavior belongs to the Quality Check aggregate; failed-check-to-Nonconformity transition remains an unresolved cross-context policy.
+    - CAPA lifecycle behavior belongs to the Nonconformity aggregate, with work-routing represented as a Policy because it is a business decision across ownership boundaries.
+    - Asset lifecycle behavior belongs to the Asset aggregate; verification-to-asset-state transition remains unresolved rather than being hidden in a service.
+    - Reliability Verification behavior belongs to the Reliability Verification aggregate.
+    - LTV template and printed-instance behavior belongs to their respective aggregates; process-specific sign-off rules remain unresolved.
+    - Operational Qualification behavior belongs to the Operational Qualification aggregate.
+    - Workforce replacement eligibility is a Policy because it combines authoritative qualification and availability facts to make a business decision; no separate Domain Service is needed for that decision.
+  reconsider_when:
+    - A domain behavior is discovered that is genuinely part of the business model but cannot naturally belong to an Entity, Value Object, Aggregate Root, or Policy.
+    - Kiln/ProTrack correlation rules become sufficiently defined and prove to be domain behavior spanning model objects without a natural Aggregate owner.
+    - Another future rule requires substantial domain calculation or coordination that is neither an Aggregate behavior nor a Policy decision.
+  specification_rule: Do not create Domain Services merely to hold miscellaneous logic or technical orchestration.
+  status: candidate
+  provenance:
+    sources:
+      - type: specification
+        reference: docs/ddd/SPECIFICATION.md section 24
+        description: Domain Services are only for genuine domain behavior that does not naturally belong to an Entity or Value Object.
+      - type: inference
+        reference: Phase 12 whole-map behavior review, 2026-08-22
+        description: Current supported behavior can be placed in Aggregate roots or Policies without introducing an orphan service layer.
+    confidence: high
+    status: candidate
