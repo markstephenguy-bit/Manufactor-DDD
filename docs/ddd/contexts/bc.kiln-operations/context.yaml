@@ -1,21 +1,30 @@
 id: bc.kiln-operations
 name: Kiln Operations
-purpose: Replace spreadsheet-based kiln scheduling/operations with a retained operational model and correlate drying history with downstream moisture outcomes.
+purpose: Replace spreadsheet-based kiln scheduling/operations with a retained operational model that plans kiln loading against upstream supply and downstream planer demand, and correlates kiln-run history with downstream moisture performance.
 subdomain: subdomain.production-operations
-model_statement: Within Kiln Operations, kiln schedules, runs/charges, operating history, and drying-performance correlations are the authoritative ManuFactor model; ProTrack moisture records are external source facts correlated into this model, not re-owned or rewritten by it.
+model_statement: >
+  Within Kiln Operations, kiln scheduling and kiln-run performance analysis are related but distinct concerns.
+  Kiln Scheduling determines the appropriate kiln loading by considering upstream available green lumber
+  and downstream required planer runs. Kiln run execution/history preserves what actually occurred and
+  supports analysis of kiln performance by correlating the run with downstream ProTrack planer moisture data.
+  ProTrack moisture records remain external source facts and are not re-owned or rewritten by ManuFactor.
 responsibilities:
-  - Manage kiln scheduling and operating records that are currently spreadsheet based.
-  - Preserve kiln run/charge and operating history.
+  - Plan kiln loading/sequencing by considering upstream green-lumber availability and downstream planer-run requirements.
+  - Preserve kiln schedule revisions and the business basis for planned loading where applicable.
+  - Preserve kiln run/charge and operating history for what actually occurred.
   - Correlate downstream planer moisture measurements from ProTrack with the kiln run/history that produced the lumber.
-  - Support derived operational views of drying performance and actual board moisture.
+  - Support analysis of drying performance by comparing kiln-run history with downstream planer outcomes.
   - Extend to additional kiln data-collection and process-control gaps as concrete rules emerge.
 scope:
-  - Kiln scheduling
+  - Kiln loading and scheduling based on upstream supply and downstream planer demand
+  - Kiln schedule revision/history
   - Kiln run/charge history
   - Operating parameters and retained process records
-  - Correlation of downstream moisture outcomes to kiln history
-  - Drying-performance projections and dashboards
+  - Correlation of downstream ProTrack moisture outcomes to kiln history
+  - Drying-performance analysis and dashboards
 out_of_scope:
+  - Ownership or mutation of upstream production facts merely used as scheduling inputs
+  - Ownership or mutation of downstream planer-run requirements merely used as scheduling inputs
   - Ownership or mutation of ProTrack moisture source records
   - Treating dashboards as authoritative domain state
   - General operational reporting unrelated to kiln process semantics
@@ -26,27 +35,38 @@ owned_concepts:
   - Kiln Operating Record
   - Drying Performance Correlation
 external_concepts:
+  - Upstream green-lumber availability
+  - Downstream planer-run requirement
   - ProTrack Moisture Measurement
   - Planer moisture-meter record
   - Asset
 ubiquitous_language:
   - kiln
+  - kiln loading
   - drying schedule
   - run/charge
   - operating parameters
   - drying process
   - moisture result
+  - planer run
   - drying performance
 business_rules:
-  - Kiln scheduling and operation history must be retained rather than overwritten as an ephemeral spreadsheet state.
+  - Kiln scheduling must consider both upstream available material and downstream planer-run requirements rather than being treated as isolated run planning.
+  - Kiln scheduling state and revisions must be retained rather than overwritten as an ephemeral spreadsheet state.
+  - Kiln-run history represents what actually occurred and is distinct from the planned schedule.
   - Correlated moisture outcomes must preserve provenance to ProTrack and must not rewrite source measurements.
+  - Drying-performance analysis compares kiln-run history with downstream planer outcomes; the analytical view does not become authoritative for ProTrack source facts.
   - Dashboards and analytical views are projections of the model, not authoritative state.
 owner: unresolved
 domain_experts: [Mark]
 integration_surface:
-  - Consume ProTrack planer moisture measurements from its database.
+  - Consume/translate upstream availability facts needed for kiln-loading decisions without taking source ownership.
+  - Consume/translate downstream planer-run requirements needed for kiln-loading decisions without taking source ownership.
+  - Consume ProTrack planer moisture measurements from its database for drying-performance correlation.
   - Reference physical kiln/assets from Asset Lifecycle where needed.
 upstream_dependencies:
+  - upstream production/green-lumber availability source, exact authority unresolved
+  - downstream planer-run requirement source, exact authority unresolved
   - ProTrack moisture data source
   - bc.asset-lifecycle
 downstream_consumers:
@@ -57,5 +77,8 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-10
       description: Mark identified the kiln gaps as replacing Excel scheduling/operations with retained records, correlating to ProTrack moisture data, dashboards, and future process-control/data-collection needs.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22
+      description: Mark clarified that kiln scheduling looks upstream and downstream to determine the correct kiln loading needed to meet required planer runs, while kiln-run execution is primarily about analyzing kiln performance against downstream planer results using ProTrack data.
   confidence: high
   status: candidate
