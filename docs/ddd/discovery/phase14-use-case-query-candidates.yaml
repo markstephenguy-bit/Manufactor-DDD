@@ -3,8 +3,21 @@ status: discovery-candidate
 purpose: >
   Capture the whole-map application-facing information needs and orchestration flows
   implied by the established domain model before promoting them to canonical Queries
-  and Application Use Cases. Actor assignments remain deliberately unresolved where
-  domain evidence does not yet establish who performs the work.
+  and Application Use Cases.
+
+actor_model:
+  direct_user_scope: every employee may be a direct ManuFactor user where a workflow applies
+  interpretation: >
+    ManuFactor is a frontline-through-management work system, not primarily a supervisor or
+    specialist application. Specific actions may still be constrained by role, authority,
+    qualification, or workflow rules; broad direct-user scope does not mean every employee
+    can perform every command.
+  strongest_current_example: bc.safety-signoff / LTV Form Management
+  evidence:
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22
+      description: Mark stated that ManuFactor direct use extends all the way down to every employee and that this is manifest in the LTV subdomain.
+  confidence: high
 
 candidate_queries:
   - id: query-candidate.operations-record.history
@@ -100,6 +113,7 @@ candidate_use_cases:
     bounded_context: bc.operations-record
     name: Record and Correct an Operational Occurrence
     goal: Capture a retained operational fact and allow later correction without destroying the original history.
+    actor_scope: Employees may directly participate where the operational workflow applies; correction authority may be narrower than record creation.
     established_commands: [RecordOperationalFact, CorrectOperationalRecord]
     supporting_queries: [View Operational Record History]
 
@@ -107,6 +121,7 @@ candidate_use_cases:
     bounded_context: bc.kiln-operations
     name: Maintain the Kiln Schedule
     goal: Replace spreadsheet-only planning with a retained schedule that can be revised without losing history.
+    actor_scope: Direct users are employees participating in kiln operations; exact authority to create/revise schedules remains workflow-specific.
     established_commands: [CreateKilnSchedule, ReviseKilnSchedule]
     supporting_queries: [View Kiln Schedule]
 
@@ -114,6 +129,7 @@ candidate_use_cases:
     bounded_context: bc.kiln-operations
     name: Record a Kiln Run and Review Drying Outcome
     goal: Start, record, complete, and later review a distinct Kiln Run/Charge together with downstream moisture outcome information.
+    actor_scope: Employees involved in kiln work may directly use the workflow according to their responsibilities.
     established_commands: [StartKilnRun, RecordKilnOperation, CompleteKilnRun]
     supporting_queries: [Review Kiln Run and Moisture Outcome]
 
@@ -121,6 +137,7 @@ candidate_use_cases:
     bounded_context: bc.project-tracking
     name: Track an Improvement or Capital Project
     goal: Establish and complete a discrete Project according to its own lifecycle rather than CAPA lifecycle.
+    actor_scope: Direct use is not limited to management; employees participating in a project may interact with it as the workflow allows.
     established_commands: [CreateProject, CompleteProject]
     supporting_queries: [View Project Status]
 
@@ -128,6 +145,7 @@ candidate_use_cases:
     bounded_context: bc.quality-verification
     name: Perform and Evaluate a Quality Check
     goal: Create a retained Quality Check, capture measurement evidence, resolve the applicable target/basis, and record the evaluation result.
+    actor_scope: Frontline employees are within the direct-user population; exact initiation/evaluation authority remains to be established.
     established_commands: [InitiateQualityCheck, RecordQualityMeasurement, EvaluateQualityCheck]
     supporting_queries: [Review Quality Check]
     unresolved_boundary: A failed result does not automatically become a Nonconformity; ISSUE-0004 remains open.
@@ -136,6 +154,7 @@ candidate_use_cases:
     bounded_context: bc.corrective-action
     name: Manage a Nonconformity Through CAPA
     goal: Accept an eligible finding, coordinate/rout corrective work, and close the Nonconformity under CAPA-owned rules.
+    actor_scope: ManuFactor is broadly accessible, but CAPA admission/routing/closure authority may be role-specific.
     established_commands: [AcceptNonconformity, RouteCorrectiveWork, CloseNonconformity]
     supporting_queries: [Review Nonconformity and CAPA Status]
     established_policy: Route Corrective Work to Its Owning Context
@@ -145,6 +164,7 @@ candidate_use_cases:
     bounded_context: bc.asset-lifecycle
     name: Manage Physical Asset State and History
     goal: Establish stable identity for equipment/vehicles and maintain meaningful condition/lifecycle history independent of MP2 work status.
+    actor_scope: Employees may directly consume asset information; authority to register/change asset state remains workflow-specific.
     established_commands: [RegisterAsset, ChangeAssetCondition]
     supporting_queries: [Review Asset State and History]
     unresolved_boundary: Exact condition/lifecycle vocabulary remains ISSUE-0009.
@@ -153,6 +173,7 @@ candidate_use_cases:
     bounded_context: bc.reliability-verification
     name: Perform a Reliability Verification
     goal: Record applicable verification evidence and complete a supported verification result for an asset.
+    actor_scope: Employees assigned or authorized to perform the relevant verification directly use ManuFactor.
     established_commands: [CompleteVerification]
     supporting_queries: [Review Reliability Verification History]
     unresolved_boundary: Result-to-Asset-state effect remains ISSUE-0005.
@@ -161,6 +182,7 @@ candidate_use_cases:
     bounded_context: bc.safety-signoff
     name: Manage and Issue an LTV Form
     goal: Publish/manage a versioned LTV template, generate a traceable form instance, and track its print/issue lifecycle.
+    actor_scope: Every employee is within the direct-user boundary where LTV work applies; this context is the strongest current evidence that ManuFactor extends to frontline employees.
     established_commands: [PublishLTVFormTemplate, GenerateLTVFormInstance]
     supporting_queries: [Find and Review LTV Forms]
     unresolved_boundary: Process-specific approval/sign-off rules remain ISSUE-0007.
@@ -169,6 +191,7 @@ candidate_use_cases:
     bounded_context: bc.training-competency
     name: Establish Operational Qualification
     goal: Determine and retain that a person can perform a particular operational job based on acceptable evidence.
+    actor_scope: Employees may directly view/interact with qualification information where appropriate; establishment authority remains role/workflow-specific.
     established_commands: [EstablishOperationalQualification]
     supporting_queries: [Who Can Do This Job]
     unresolved_boundary: Exact evidence/authorization/expiration rules remain ISSUE-0006.
@@ -177,25 +200,31 @@ candidate_use_cases:
     bounded_context: bc.workforce-availability
     name: Fill an Operational Staffing Gap
     goal: Identify and select a replacement who is both qualified and available for the specific operational need.
+    actor_scope: ManuFactor direct use extends to employees, while staffing selection authority may be constrained to roles responsible for coverage.
     established_commands: [SelectReplacement]
     supporting_queries: [Who Can Cover This Job Now]
     established_policy: Determine Operational Replacement Eligibility
     unresolved_boundary: Vacation planning aggregate question remains ISSUE-0011.
 
 whole_map_observation: >
-  The domain model supports an initial set of application-facing flows, but canonical
-  Application Use Cases require credible actors and triggers. Current repository evidence
-  often identifies broad roles such as authorized operations/quality/reliability users,
-  not the actual mill roles that initiate or perform each workflow.
+  ManuFactor is an enterprise-wide employee-facing work system. Use Cases therefore should
+  not assume manager/specialist actors by default. Actor restrictions must come from the
+  specific business action or authorization rule, not from an assumption that frontline
+  employees are passive consumers.
+
+answered_questions:
+  - id: PHASE14-Q1
+    answer: Every employee may be a direct ManuFactor user where the workflow applies; LTV Form Management is explicit evidence of that scope.
+    evidence: domain-expert Mark, direct, 2026-08-22
 
 material_question:
-  id: PHASE14-Q1
-  topic: primary actors and day-to-day users
+  id: PHASE14-Q2
+  topic: frontline initiation versus role-specific authority
   question: >
-    At a mill, which real job roles should be expected to use ManuFactor directly for these workflows?
-    In particular, are the normal hands-on users primarily supervisors/department managers,
-    operators/technicians, clerical/coordinator roles, or some combination by workflow?
+    If any employee notices a possible lumber-quality problem, should that employee be able
+    to start a Quality Check in ManuFactor, or should starting the formal check be restricted
+    to selected roles even though every employee can use ManuFactor?
   why_it_matters: >
-    Application Use Cases require actors and triggers. The answer changes who initiates a
-    workflow, what information they need, and whether ManuFactor is primarily a frontline
-    work tool, a supervisor/coordination tool, or both.
+    This distinguishes broad system access from command authority and establishes a reusable
+    Phase 14 pattern for other workflows: employees may discover/report a need, while some
+    formal state-changing actions may belong to specific roles.
