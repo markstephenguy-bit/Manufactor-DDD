@@ -1,20 +1,25 @@
 model_state: Strategic Stable / Tactical Candidate; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregates, Entities/Value Objects, Invariants, Commands, Domain Events, supported Policies, Repositories, and explicit Domain Service/Factory evaluations are canonical
 session_state: ready-to-continue
-session_refreshed_at: 2026-08-22T09:51:00-05:00
+session_refreshed_at: 2026-08-22T10:23:00-05:00
 current_phase: Specification Phase 14 — Use Cases and Queries
 last_completed: Specification Phase 13 Repositories and Factories completed at current evidence level; 12 technology-independent Repository abstractions were modeled and whole-map Factory evaluation found no Factory currently justified
-current_focus: Model application-level Use Cases and business Queries around the established domain model without moving business rules out of Aggregates or Policies
+current_focus: Model application-level Use Cases and business Queries around the established domain model without moving business rules out of Aggregates or Policies; validate Phase 14 subdomain-by-subdomain with the domain expert
 blocking_issues: []
-next_action: Perform a whole-map Query and Use Case pass. Queries express information needs and do not change state. Use Cases orchestrate established Commands, Repositories, Queries, Policies, and integrations but must not become containers for domain rules. After Phase 14, perform Specification Phase 15 Integration Validation.
+next_action: Walk through each active Subdomain and its Bounded Contexts during Phase 14. For each, state the current model, identify where assumptions may be wrong or underspecified, and ask one high-value business question at a time where clarification can materially change the model. After Phase 14, perform Specification Phase 15 Integration Validation.
 startup_instructions:
   - Treat this repository as the authoritative DDD session state.
   - Read docs/ddd/SPECIFICATION.md before strategic or tactical modeling.
   - Read docs/ddd/reports/validation-report.md and this SESSION-HANDOFF.yaml before new work.
   - Continue from Specification Phase 14; do not use obsolete session-local phase numbering.
-  - Mark is the domain authority. Ask a business question only when the answer can materially change the model and cannot be resolved from repository evidence.
-  - Perform substantial whole-map work before asking incremental questions.
+  - Mark is the domain authority.
+  - During Phase 14, deliberately walk through every active Subdomain/Bounded Context that needs clarification rather than only modeling obvious use cases.
+  - For each area, explain what the model currently assumes, challenge assumptions that may be wrong, and ask one business-facing question at a time when the answer can materially change the model.
+  - Perform substantial whole-map work between questions; do not turn Phase 14 into a long questionnaire.
   - Existing systems, code, databases, documents, and architecture are evidence, not automatic domain truth.
   - Preserve stable IDs when names/framing change unless modeled identity itself changes.
+  - For Quality/QMS concepts, use ISO 9001/ISO 9000 terminology and conceptual structure as the default baseline where applicable; do not repeatedly rediscover standard QMS mechanics unless mill practice materially differs.
+  - ManuFactor remains a gap filler rather than a wholesale QMS implementation.
+  - Non-salaried employees may submit QMS-based quality concerns through the QC channel for triage; they do not directly create formal QMS records. Management (all salaried employees at the mill) and designated quality technicians control triage/promotion into formal quality records.
 repository_roles:
   canonical: markstephenguy-bit/Manufactor-DDD
   evidence:
@@ -108,4 +113,4 @@ files_to_read:
   - docs/ddd/context-map/context-map.yaml
   - docs/ddd/integration-contracts/index.yaml
   - docs/ddd/issues/unresolved.yaml
-session_resume: Begin Specification Phase 14 with a whole-map Query and Application Use Case pass. Do not turn Queries into Commands, and do not move domain rules into application orchestration.
+session_resume: Continue Specification Phase 14 with a deliberate subdomain-by-subdomain Query and Application Use Case validation pass. Challenge assumptions, ask one material business question at a time, do not turn Queries into Commands, and do not move domain rules into application orchestration.
