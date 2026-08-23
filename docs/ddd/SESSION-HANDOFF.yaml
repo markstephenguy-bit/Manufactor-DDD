@@ -1,13 +1,13 @@
 model_state: Strategic Stable / Tactical Candidate; Specification Phases 1-15 complete at current evidence level
 session_state: active-targeted-domain-rule-refinement
-session_refreshed_at: 2026-08-23T14:28:00-05:00
+session_refreshed_at: 2026-08-23T14:32:00-05:00
 current_phase: post-Phase-15 targeted domain-rule refinement
-last_completed: Post-Phase-15 hardening resolved ISSUE-0012 by modeling Quality Concern as a retained status-history record that never disappears on escalation or disposition
-current_focus: Continue narrowing genuine unresolved business rules; ask Mark only when a remaining rule cannot be derived from confirmed canonical evidence
+last_completed: Post-Phase-15 hardening resolved ISSUE-0010 by modeling corrective work as CAPA-owned tasks and requiring post-correction effectiveness verification before closure
+current_focus: Resolve the final remaining tactical/domain-rule issue without reopening settled boundaries
 blocking_issues: []
 
 next_action: >
-  Continue from the two remaining open issues. Prefer repository/model evidence first. Ask Mark one high-value business question at a time only where the remaining rule is genuinely domain-specific and materially changes the model.
+  Continue from the one remaining open issue, ISSUE-0007. Prefer repository/model evidence first. Ask Mark one high-value business question only where the remaining LTV completion/approval/sign-off rule is genuinely domain-specific and materially changes the model.
 
 startup_instructions:
   - Treat markstephenguy-bit/Manufactor-DDD as authoritative session state.
@@ -38,7 +38,7 @@ current_model_counts:
   aggregates: 14
   aggregate_root_entities: 14
   value_objects: 8
-  invariants: 31
+  invariants: 33
   commands: 32
   domain_events: 32
   policies: 3
@@ -67,6 +67,9 @@ post_phase15_hardening:
     - issue: ISSUE-0009
       result: >
         Asset Condition uses Operating, Degraded, and Down. Asset Lifecycle State uses In Service, Out of Service, and Retired. Functional condition and lifecycle position remain separate Value Objects. Accepted transitions preserve history and are not inferred from MP2 or Reliability Verification alone.
+    - issue: ISSUE-0010
+      result: >
+        Corrective work is represented as tasks owned by the parent Nonconformity/CAPA rather than independent child Corrective Action lifecycles. Completing tasks is necessary but not sufficient for closure. The CAPA remains active until post-correction effectiveness is verified and retained as closure evidence. Routed execution work may remain externally owned.
     - issue: ISSUE-0011
       result: >
         No separate vacation-planning Aggregate is justified at current evidence level. Vacation coverage is a staffing need handled within Operational Coverage Plan unless future schedule-wide invariants establish a distinct consistency boundary.
@@ -79,7 +82,6 @@ post_phase15_hardening:
 
 open_nonblocking_issues:
   - ISSUE-0007: process-specific LTV completion/approval/sign-off transition rules
-  - ISSUE-0010: child Corrective Action identity and detailed CAPA closure rules
 
 important_completed_business_decisions:
   - Operations Record owns concrete missing operational record workflows, not a generic catch-all form or analytics grain model.
@@ -98,6 +100,8 @@ important_completed_business_decisions:
   - Management/designated quality technicians control formal Quality Concern triage; non-salaried concerns route through the QC channel without inventing its implementation.
   - Quality Check is optional before Nonconformity; a failed check is not automatically a Nonconformity.
   - Nonconformity admission requires explicit authorized determination that an applicable requirement was not fulfilled.
+  - Corrective work under a CAPA is represented as tasks; tasks are not independent child Corrective Action lifecycles.
+  - CAPA closure requires all required corrective work plus retained effectiveness verification showing that the correction actually worked.
   - Applicable quality targets are ManuFactor-maintained contextual parameters; salaried management may create/change them.
   - CAPA belongs to Quality; the affected department's salaried Quality office owns the Nonconformity/CAPA lifecycle while routed execution remains externally owned.
   - LTV is a controlled workflow record with exact template/version, applicability, completion/sign-off evidence, and workflow progression; exact later transition rules remain ISSUE-0007.
@@ -111,6 +115,8 @@ canonical_files_to_use:
   - docs/ddd/domain-events/index.yaml
   - docs/ddd/invariants/index.yaml
   - docs/ddd/invariants/quality-concern-retained-status.yaml
+  - docs/ddd/invariants/corrective-task-identity.yaml
+  - docs/ddd/invariants/post-phase15-capa-effectiveness.yaml
   - docs/ddd/value-objects/index.yaml
   - docs/ddd/policies/index.yaml
   - docs/ddd/context-map/context-map.yaml
@@ -119,4 +125,4 @@ canonical_files_to_use:
   - docs/ddd/issues/unresolved.yaml
 
 session_resume: >
-  Specification Phases 14 and 15 are complete. Post-Phase-15 hardening has reduced the unresolved registry from nine to two issues. Quality Concern lifecycle now uses retained identity and status history rather than deletion/closure semantics that would erase referenceability. Continue targeted rule refinement from canonical GitHub state; do not restart Phase 14 discovery or whole-map canonicalization.
+  Specification Phases 14 and 15 are complete. Post-Phase-15 hardening has reduced the unresolved registry from nine to one issue. CAPA corrective work is task-based and parent closure requires retained post-correction effectiveness verification. Continue targeted rule refinement from canonical GitHub state; do not restart Phase 14 discovery or whole-map canonicalization.
