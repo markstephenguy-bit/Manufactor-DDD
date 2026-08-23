@@ -1,0 +1,39 @@
+invariants:
+  - id: invariant.qualification.persists-until-withdrawn
+    name: Operational Qualification Persists Until Explicitly Withdrawn
+    bounded_context: bc.training-competency
+    aggregate: aggregate.training-qualification.qualification
+    rule: An established Operational Qualification remains valid without time-based expiration until an authorized person explicitly withdraws or supersedes the qualification.
+    reason: Domain authority confirmed that Operational Qualification does not expire merely because time passes; qualification state changes only through an explicit decision.
+    triggering_operations: [Establish Operational Qualification, Withdraw Operational Qualification]
+    enforcement_boundary: Operational Qualification aggregate
+    failure_semantics: Do not infer expiration, lapse, or loss of qualification from elapsed time or absence of recent training evidence.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23 qualification lifecycle clarification
+          description: Operational Qualification remains valid until someone explicitly withdraws it.
+      confidence: high
+      status: candidate
+
+  - id: invariant.qualification.withdrawal-preserves-history
+    name: Qualification Withdrawal Preserves History
+    bounded_context: bc.training-competency
+    aggregate: aggregate.training-qualification.qualification
+    rule: Withdrawing an Operational Qualification must retain the prior qualification decision, supporting evidence references, withdrawal decision, reason, actor, and effective time as history rather than deleting the qualification record.
+    reason: Qualification is a retained business determination used by staffing decisions; later withdrawal must not erase the historical fact that the qualification previously existed.
+    triggering_operations: [Withdraw Operational Qualification]
+    enforcement_boundary: Operational Qualification aggregate
+    failure_semantics: Reject destructive withdrawal that erases the prior qualification relationship or its evidence/history.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23 qualification lifecycle clarification
+          description: Qualification ends by explicit withdrawal rather than passive expiration.
+        - type: aggregate-model
+          reference: aggregate.training-qualification.qualification
+          description: Qualification history is retained when withdrawn or superseded.
+      confidence: high
+      status: candidate
