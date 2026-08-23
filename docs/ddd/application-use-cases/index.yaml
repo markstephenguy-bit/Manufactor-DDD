@@ -1,0 +1,224 @@
+application_use_cases:
+  - id: use-case.operations-record.record-and-correct
+    name: Capture and Correct a Specific Operational Record
+    bounded_context: bc.operations-record
+    goal: Retain a concrete operational record and preserve correction history.
+    actors: [employees participating in the applicable record workflow]
+    trigger: A concrete operational fact needs a retained ManuFactor record.
+    preconditions: [The record type represents a distinct business need; the occurrence is sufficiently identified.]
+    commands: [command.operations-record.record-operational-fact, command.operations-record.correct-operational-record]
+    queries: [query.operations-record.history]
+    domain_services: []
+    events_observed: [event.operations-record.operational-record-recorded, event.operations-record.operational-record-corrected]
+    result: A retained operational record exists with history-preserving corrections.
+    failure_paths: [Insufficient identity/provenance; attempted destructive correction; misuse as generic analytics/grain model.]
+    status: candidate
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.operations-record.record-and-correct, description: Reconciled Phase 14 candidate.}], confidence: high, status: candidate}
+
+  - id: use-case.kiln-operations.manage-schedule
+    name: Plan What Lumber Needs Drying
+    bounded_context: bc.kiln-operations
+    goal: Translate human business/Sales direction and green-lumber availability into a retained revisable drying plan.
+    actors: [employees responsible for kiln planning]
+    trigger: Kiln drying work must be planned or revised.
+    preconditions: [Planning scope and period are defined; planning inputs are available to the planner.]
+    commands: [command.kiln-operations.create-kiln-schedule, command.kiln-operations.revise-kiln-schedule]
+    queries: [query.kiln-operations.schedule]
+    domain_services: []
+    events_observed: [event.kiln-operations.kiln-schedule-created, event.kiln-operations.kiln-schedule-revised]
+    result: A retained plan identifies what lumber needs drying with revision history.
+    failure_paths: [Undefined planning scope; revision would overwrite history; orchestration attempts downstream finished-SKU selection.]
+    status: candidate
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.kiln-operations.manage-schedule, description: Reconciled Phase 14 candidate.}], confidence: high, status: candidate}
+
+  - id: use-case.kiln-operations.run-history
+    name: Record a Kiln Run and Review Drying Performance
+    bounded_context: bc.kiln-operations
+    goal: Preserve one Kiln Run/Charge and review performance using authoritative ProTrack moisture evidence.
+    actors: [employees involved in kiln execution and review]
+    trigger: A kiln run is executed, completed, or reviewed.
+    preconditions: [The run is distinguishable; ProTrack measurements are consumed through the integration boundary.]
+    commands: [command.kiln-operations.start-kiln-run, command.kiln-operations.record-kiln-operation, command.kiln-operations.complete-kiln-run]
+    queries: [query.kiln-operations.run-moisture]
+    domain_services: []
+    events_observed: [event.kiln-operations.kiln-run-started, event.kiln-operations.kiln-operation-recorded, event.kiln-operations.kiln-run-completed]
+    result: Retained run history is available for explicit cross-context moisture correlation.
+    failure_paths: [Ambiguous run identity; unreliable fact association; uncorrelatable ProTrack records remain uncorrelated.]
+    status: candidate
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.kiln-operations.run-history, description: Reconciled Phase 14 candidate.}], confidence: high, status: candidate}
+
+  - id: use-case.project-tracking.manage-project
+    name: Manage a Project
+    bounded_context: bc.project-tracking
+    goal: Manage a real Project using conventional project-management lifecycle semantics.
+    actors: [project participants according to role and authority]
+    trigger: Distinct project work is created or completed.
+    preconditions: [The work is a genuine Project, not an ordinary task, MP2 work order, investigation, or CAPA action.]
+    commands: [command.project-tracking.create-project, command.project-tracking.complete-project]
+    queries: [query.project-tracking.project-status]
+    domain_services: []
+    events_observed: [event.project-tracking.project-created, event.project-tracking.project-completed]
+    result: Project-owned lifecycle/status is retained independently of external work lifecycles.
+    failure_paths: [No distinct project lifecycle; completion justified only by another context's state.]
+    status: candidate
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.project-tracking.manage-project, description: Reconciled Phase 14 candidate.}], confidence: high, status: candidate}
+
+  - id: use-case.quality-verification.intake-concern
+    name: Intake a Quality Concern
+    bounded_context: bc.quality-verification
+    goal: Retain a suspected quality concern without prematurely creating a Quality Check or Nonconformity.
+    actors: [management, designated quality technician, QC channel for non-salaried intake]
+    trigger: A possible lumber-quality problem is observed or communicated.
+    preconditions: [The concern is sufficiently identified; formal intake follows the confirmed role/channel rule.]
+    commands: [command.quality-verification.record-quality-concern]
+    queries: [query.quality-verification.concerns]
+    domain_services: []
+    events_observed: [event.quality-verification.quality-concern-recorded]
+    result: A retained Quality Concern exists for authorized triage.
+    failure_paths: [Ambiguous concern; automatic Quality Check/Nonconformity creation; invented QC-channel implementation.]
+    status: candidate
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.quality-verification.intake-concern, description: Reconciled Phase 14 candidate after tactical promotion.}], confidence: high, status: candidate}
+
+  - id: use-case.quality-verification.review-concern
+    name: Review and Disposition a Quality Concern
+    bounded_context: bc.quality-verification
+    goal: Retain authorized concern disposition and links to later formal records where independently justified.
+    actors: [management, designated quality technician]
+    trigger: A retained concern is ready for formal triage.
+    preconditions: [The concern exists; reviewer has formal triage authority.]
+    commands: [command.quality-verification.disposition-quality-concern, command.quality-verification.link-quality-check-to-concern, command.quality-verification.link-nonconformity-to-concern]
+    queries: [query.quality-verification.concerns, query.quality-verification.check, query.corrective-action.capa-status]
+    domain_services: []
+    events_observed: [event.quality-verification.quality-concern-dispositioned, event.quality-verification.quality-check-linked-to-concern, event.quality-verification.nonconformity-linked-to-concern]
+    result: Authorized disposition is retained with explicit links to independently owned formal records.
+    failure_paths: [Unauthorized reviewer; treating Quality Check as mandatory; implicit Nonconformity creation; automatic concern closure on escalation.]
+    status: candidate
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.quality-verification.review-concern, description: Reconciled Phase 14 candidate.}], confidence: high, status: candidate}
+
+  - id: use-case.quality-verification.perform-check
+    name: Perform and Evaluate a Quality Check
+    bounded_context: bc.quality-verification
+    goal: Capture measurement evidence, resolve the applicable historical target, and retain the evaluation result.
+    actors: [management, designated quality technician]
+    trigger: An authorized formal Quality Check is initiated.
+    preconditions: [Check context can resolve an applicable target; measurement evidence can be retained.]
+    commands: [command.quality-verification.initiate-quality-check, command.quality-verification.record-quality-measurement, command.quality-verification.evaluate-quality-check]
+    queries: [query.quality-verification.check, query.quality-verification.targets]
+    domain_services: []
+    events_observed: [event.quality-verification.quality-check-initiated, event.quality-verification.quality-measurement-recorded, event.quality-verification.quality-check-evaluated]
+    result: A retained Quality Check contains evidence, historical evaluation basis, and result.
+    failure_paths: [Applicable target unavailable; insufficient evidence; failed check implicitly converted to Nonconformity.]
+    status: candidate
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.quality-verification.perform-check, description: Reconciled Phase 14 candidate.}], confidence: high, status: candidate}
+
+  - id: use-case.quality-verification.manage-targets
+    name: Manage Applicable Quality Target Parameters
+    bounded_context: bc.quality-verification
+    goal: Allow salaried management to create or change contextual quality-target parameters while preserving historical applicability.
+    actors: [salaried management]
+    trigger: A quality target must be established or changed.
+    preconditions: [Actor is salaried management; applicability context is sufficiently defined.]
+    commands: [command.quality-verification.create-quality-target-parameter, command.quality-verification.change-quality-target-parameter]
+    queries: [query.quality-verification.targets]
+    domain_services: []
+    events_observed: [event.quality-verification.quality-target-parameter-created, event.quality-verification.quality-target-parameter-changed]
+    result: Current target configuration changes while historical versions remain resolvable.
+    failure_paths: [Actor lacks authority; ambiguous applicability; historical evaluation basis would be destroyed.]
+    status: candidate
+    provenance: {sources: [{type: domain-expert, reference: PHASE14-QUALITY-PARAMETERS / PHASE14-QUALITY-PARAMETER-AUTHORITY, description: Confirmed target ownership and authority.}], confidence: high, status: candidate}
+
+  - id: use-case.corrective-action.manage-nonconformity
+    name: Manage a Nonconformity Through CAPA
+    bounded_context: bc.corrective-action
+    goal: Coordinate an accepted Nonconformity through CAPA without taking ownership of destination execution lifecycles.
+    actors: [affected department salaried Quality office]
+    trigger: A finding is explicitly accepted as a Nonconformity.
+    preconditions: [A supported decision admits the finding to the Nonconformity lifecycle.]
+    commands: [command.corrective-action.accept-nonconformity, command.corrective-action.route-corrective-work, command.corrective-action.close-nonconformity]
+    queries: [query.corrective-action.capa-status]
+    domain_services: []
+    events_observed: [event.corrective-action.nonconformity-accepted, event.corrective-action.corrective-work-routed, event.corrective-action.nonconformity-closed]
+    result: CAPA lifecycle/coordination is retained while routed execution remains externally owned.
+    failure_paths: [No supported admission rule; duplicate local execution ownership; closure requirements not satisfied.]
+    status: candidate
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.corrective-action.manage-nonconformity, description: Reconciled Phase 14 candidate.}], confidence: high, status: candidate}
+
+  - id: use-case.asset-lifecycle.manage-asset
+    name: Manage Rich Asset State and History
+    bounded_context: bc.asset-lifecycle
+    goal: Maintain ManuFactor asset identity/condition/lifecycle/history while reusing MP2 hierarchy and linked WR/WO facts.
+    actors: [authorized asset or reliability users, controlled import processes]
+    trigger: An asset is registered or an accepted asset-domain condition change occurs.
+    preconditions: [The physical asset is distinguishable; MP2 facts remain source-owned.]
+    commands: [command.asset-lifecycle.register-asset, command.asset-lifecycle.change-asset-condition]
+    queries: [query.asset-lifecycle.asset-history]
+    domain_services: []
+    events_observed: [event.asset-lifecycle.asset-registered, event.asset-lifecycle.asset-condition-changed]
+    result: Stable rich asset semantics/history are retained and correlated to MP2 facts.
+    failure_paths: [Unresolved asset identity; MP2 status treated as Asset state; silent assignment of unmatched MP2 references.]
+    status: candidate
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.asset-lifecycle.manage-asset, description: Reconciled Phase 14 candidate.}], confidence: high, status: candidate}
+
+  - id: use-case.reliability-verification.verify-asset
+    name: Record and Review a Reliability Finding
+    bounded_context: bc.reliability-verification
+    goal: Retain reliability verification evidence/results while leaving Asset state changes to Asset Lifecycle authority.
+    actors: [millwright, maintenance supervisor, Reliability Manager as accountable process role]
+    trigger: A reliability verification/finding is completed and reviewed.
+    preconditions: [Asset is resolved; applicable verification evidence is available.]
+    commands: [command.reliability-verification.complete-verification]
+    queries: [query.reliability-verification.verification-history]
+    domain_services: []
+    events_observed: [event.reliability-verification.verification-completed]
+    result: An authoritative verification fact is retained; any Asset-state promotion remains a separate explicit decision.
+    failure_paths: [Insufficient evidence; result treated as Asset condition; fabricated Asset transition.]
+    status: candidate
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.reliability-verification.verify-asset, description: Reconciled Phase 14 candidate with authority clarification.}], confidence: high, status: candidate}
+
+  - id: use-case.ltv-form-management.manage-forms
+    name: Manage an LTV Record Through Its Workflow
+    bounded_context: bc.safety-signoff
+    goal: Manage versioned LTV templates/instances with exact version, applicability, completion/sign-off evidence, and workflow progression.
+    actors: [employees participating where LTV work applies, subject to workflow role]
+    trigger: An LTV template is published or an instance is generated.
+    preconditions: [A managed template/version exists; workflow role requirements are respected.]
+    commands: [command.ltv-form-management.publish-template, command.ltv-form-management.generate-form-instance]
+    queries: [query.ltv-form-management.forms]
+    domain_services: []
+    events_observed: [event.ltv-form-management.template-version-published, event.ltv-form-management.form-instance-generated]
+    result: LTV records retain exact template/version provenance and individual workflow history.
+    failure_paths: [Source version cannot be preserved; print/issue treated as sign-off; process-specific approval rules invented.]
+    status: candidate
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.ltv-form-management.manage-forms, description: Reconciled Phase 14 candidate.}], confidence: high, status: candidate}
+
+  - id: use-case.training-qualification.establish-qualification
+    name: Establish Operational Qualification
+    bounded_context: bc.training-competency
+    goal: Retain an explicit determination that a person can perform a specific operational job based on acceptable evidence.
+    actors: [employee supervisor, designated trainer or subject-matter expert]
+    trigger: Sufficient evidence is presented for a qualification decision.
+    preconditions: [Person/job are identified; acceptable evidence exists; actor is within confirmed authority.]
+    commands: [command.training-qualification.establish-qualification]
+    queries: [query.training-qualification.who-can-do-job]
+    domain_services: []
+    events_observed: [event.training-qualification.operational-qualification-established]
+    result: A retained Operational Qualification exists independently of source LMS/course completion.
+    failure_paths: [Insufficient evidence; course completion treated as qualification automatically; actor outside confirmed authority.]
+    status: candidate
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.training-qualification.establish-qualification, description: Reconciled Phase 14 candidate after grant-authority clarification.}], confidence: high, status: candidate}
+
+  - id: use-case.workforce-availability.fill-gap
+    name: Fill an Operational Staffing Gap
+    bounded_context: bc.workforce-availability
+    goal: Support and retain a supervisor's judgment about who can cover a specific job at a specific time.
+    actors: [supervisor]
+    trigger: A staffing gap requires replacement coverage.
+    preconditions: [Staffing need identifies job/time context; qualification and availability facts are available or explicitly unknown.]
+    commands: [command.workforce-availability.select-replacement]
+    queries: [query.workforce-availability.coverage]
+    domain_services: []
+    events_observed: [event.workforce-availability.replacement-selected]
+    result: The supervisor's selected replacement decision is retained with qualification/availability evidence references.
+    failure_paths: [Qualification/availability prerequisites fail; missing source facts fabricated; orchestration replaces supervisor judgment with an unsupported deterministic rule.]
+    status: candidate
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.workforce-availability.fill-gap, description: Reconciled Phase 14 candidate after supervisor-judgment clarification.}], confidence: high, status: candidate}
