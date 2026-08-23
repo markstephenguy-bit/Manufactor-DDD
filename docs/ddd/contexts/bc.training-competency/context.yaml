@@ -5,7 +5,7 @@ subdomain: subdomain.production-operations
 model_statement: >
   Within Operational Training and Qualification, qualification means a retained operational determination that a person can perform a mill job.
   The current mill process is often informal and depends heavily on management knowledge rather than a consistently recorded qualification event.
-  ManuFactor therefore fills a control/evidence gap by making operational qualification explicit and traceable. Source learning completion records from Moodle or other systems are evidence inputs and are not automatically identical to operational qualification. Practical qualification evidence comes from the person shadowing the current competent worker and being observed sufficiently for an authorized supervisor or designated trainer/subject-matter expert to determine that the person is capable of doing the job. Once established, an Operational Qualification remains valid until an authorized person explicitly withdraws or supersedes it; elapsed time alone does not cause expiration.
+  ManuFactor therefore fills a control/evidence gap by making operational qualification explicit and traceable. Source learning completion records from Moodle or other systems are evidence inputs and are not automatically identical to operational qualification. Practical qualification evidence comes from the person shadowing the current competent worker and being observed sufficiently for an authorized supervisor or designated trainer/subject-matter expert to determine that the person is capable of doing the job. Once established, an Operational Qualification remains valid until the responsible supervisor explicitly withdraws or supersedes it; elapsed time alone does not cause expiration.
 responsibilities:
   - Replace overly informal knowledge of who can perform which jobs with explicit retained operational qualification records.
   - Represent onboarding-related operational training coverage.
@@ -14,6 +14,7 @@ responsibilities:
   - Consume source learning records as evidence without surrendering operational qualification semantics to the source LMS.
   - Retain the practical shadowing/observed-performance basis supporting qualification decisions where available.
   - Preserve qualification and withdrawal history so staffing decisions can distinguish current qualification from prior qualification.
+  - Keep withdrawal/supersession under the responsible supervisor who manages the qualification.
 scope:
   - Formalization of currently informal operator qualification knowledge
   - Onboarding training coverage
@@ -21,7 +22,7 @@ scope:
   - Cross-training matrix
   - Crew/job qualification depth
   - Job shadowing and observed practical capability as qualification evidence
-  - Explicit withdrawal or supersession of qualification
+  - Supervisor-managed withdrawal or supersession of qualification
 out_of_scope:
   - LMS course administration
   - Payroll/HR administration
@@ -55,9 +56,10 @@ business_rules:
   - Before qualification is granted, the person shadows the current competent worker and is observed sufficiently for the authorized reviewer to determine that the person is capable of doing the job.
   - Practical job capability, not course completion alone, is the qualification evidence rule under current evidence.
   - Source training completion may support the decision but is not automatically equivalent to operational qualification.
-  - Once established, Operational Qualification remains valid until an authorized person explicitly withdraws or supersedes it.
+  - Once established, Operational Qualification remains valid until the responsible supervisor explicitly withdraws or supersedes it.
   - Elapsed time alone does not expire Operational Qualification.
-  - Withdrawal preserves the prior qualification decision, evidence references, reason, actor, and effective time as retained history.
+  - Withdrawal preserves the prior qualification decision, evidence references, reason, supervisor, and effective time as retained history.
+  - Because the supervisor manages both qualification and operational coverage judgment, withdrawal is not modeled as an unrelated external event that can silently invalidate a supervisor's staffing decision without supervisory awareness.
   - Availability does not imply qualification.
 owner: unresolved
 domain_experts: [Mark]
@@ -86,5 +88,8 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-23 qualification evidence clarification
       description: The person shadows the current worker so the business can determine whether the person is capable of doing the job.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-23 scenario-012 clarification
+      description: The supervisor manages the qualification; withdrawal is therefore a supervisor-controlled qualification decision rather than an independent outside event.
   confidence: high
   status: candidate
