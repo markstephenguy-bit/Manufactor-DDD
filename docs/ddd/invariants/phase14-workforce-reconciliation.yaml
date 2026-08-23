@@ -1,0 +1,21 @@
+invariants:
+  - id: invariant.coverage.need-is-explicit
+    name: Operational Coverage Need Is Explicit
+    bounded_context: bc.workforce-availability
+    aggregate: aggregate.workforce-availability.coverage-plan
+    rule: An Operational Coverage Plan must identify the staffing need being covered in job or position and required time or shift context, with crew context where applicable, before replacement evaluation or selection.
+    reason: Qualification, availability, and supervisor judgment are meaningful only relative to a specific operational staffing need; the Coverage Plan already owns that need as part of its consistency boundary.
+    triggering_operations: [Create Operational Coverage Plan, Select Replacement, Revise Coverage Plan]
+    enforcement_boundary: Operational Coverage Plan aggregate
+    failure_semantics: Reject creation or replacement selection when the staffing need cannot be identified sufficiently; do not infer a generic or context-free coverage decision.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.workforce-availability.coverage-plan
+          description: The canonical Coverage Plan aggregate already requires the staffing need, time, and job being covered to remain explicit.
+        - type: domain-expert
+          reference: Phase 14 workforce reconciliation, 2026-08-22
+          description: Coverage is a supervisor decision about who can cover a specific job at a specific time, using qualification and availability as inputs.
+      confidence: high
+      status: candidate
