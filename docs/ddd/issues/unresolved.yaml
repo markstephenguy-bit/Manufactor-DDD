@@ -1,13 +1,4 @@
 issues:
-  - id: ISSUE-0004
-    title: What exact rule admits a failed Quality Check as a Nonconformity?
-    description: A failed Quality Check is explicitly not automatically a Nonconformity. The exact Corrective Action admission rule or decision remains unknown.
-    affected_objects: [bc.quality-verification, bc.corrective-action, aggregate.quality-verification.quality-check, aggregate.corrective-action.nonconformity]
-    evidence: [language.quality-verification.failed-quality-check, invariant.quality-check.failure-not-nonconformity, invariant.nonconformity.explicit-acceptance]
-    blocking: false
-    needed_input: domain-rule discovery
-    status: open
-
   - id: ISSUE-0005
     title: What exact rule maps Reliability Verification results to Asset state?
     description: Reliability Verification Result and Asset Condition/Lifecycle State are distinct. The exact Asset-domain transition rule remains unknown.
@@ -81,6 +72,17 @@ resolved_issues:
       - ev.arch.workbook "Status Catalog Mappings"
       - "domain-expert: Mark, direct, 2026-08-22 — merge confirmed correct"
     resolved_by: domain-expert
+    resolved_at: 2026-08-22
+    blocking: false
+    status: resolved
+
+  - id: ISSUE-0004
+    title: What exact rule admits a failed Quality Check as a Nonconformity?
+    answer: Explicit authorized determination that retained evidence establishes nonfulfillment of an identified applicable requirement.
+    resolution: Corrective Action now uses policy.corrective-action.determine-nonconformity-admission. Management or a designated quality technician with formal promotion authority may admit a finding only when an applicable requirement is identifiable and retained evidence is sufficient to determine that the requirement was not fulfilled. A Quality Concern or failed Quality Check alone does not automatically create a Nonconformity, and a Quality Check is not a mandatory gate.
+    affected_objects: [bc.quality-verification, bc.corrective-action, aggregate.quality-verification.quality-check, aggregate.quality-verification.quality-concern, aggregate.corrective-action.nonconformity, policy.corrective-action.determine-nonconformity-admission]
+    evidence: [invariant.quality-check.failure-not-nonconformity, invariant.nonconformity.explicit-acceptance, policy.corrective-action.determine-nonconformity-admission, Phase 14 Quality reconciliation]
+    resolved_by: confirmed-domain-evidence-and-ISO-vocabulary-baseline
     resolved_at: 2026-08-22
     blocking: false
     status: resolved
