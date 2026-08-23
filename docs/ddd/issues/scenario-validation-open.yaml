@@ -1,13 +1,4 @@
-issues:
-  - id: ISSUE-0014
-    title: What is the Project cancellation or abandonment lifecycle after work has begun?
-    description: >
-      Project Tracking models creation and completion and preserves historical identity once work has begun, but scenario validation exposed a real non-completion path: the business may cancel or abandon a genuine Project. The exact Project-owned status transition, authority, and retained evidence for cancellation/abandonment are not yet confirmed and must not be inferred from deletion or CAPA state.
-    affected_objects: [bc.project-tracking, aggregate.project-tracking.project]
-    evidence: [SCENARIO-019]
-    blocking: false
-    needed_input: domain-rule discovery
-    status: open
+issues: []
 
 resolved_scenario_findings:
   - id: ISSUE-0013
@@ -15,3 +6,12 @@ resolved_scenario_findings:
     resolution: >
       SCENARIO-012 incorrectly treated qualification withdrawal as an independent event that could surprise an already-made supervisor coverage decision. Mark clarified that the supervisor manages the qualification. Withdrawal is therefore a supervisor-controlled qualification action, and future coverage judgment must use the now-current qualification state as part of that same supervisory responsibility. No separate automatic-invalidation versus explicit-reselection domain rule is required from this artificial scenario.
     evidence: ["domain-expert: Mark, direct, 2026-08-23 — how can the qualification be withdrawn when the supervisor manages it"]
+
+  - id: ISSUE-0014
+    status: resolved
+    resolution: >
+      If a Project is cancelled or abandoned after work has begun, the work already performed remains logged and retained as work but is no longer attached to the Project as current project work. Ending the Project association must not erase the work history or transfer unrelated work ownership.
+    affected_objects: [bc.project-tracking, aggregate.project-tracking.project]
+    evidence: ["domain-expert: Mark, direct, 2026-08-23 — then the work is logged as work but not attached to a project", SCENARIO-019]
+    resolved_by: domain-expert
+    resolved_at: 2026-08-23
