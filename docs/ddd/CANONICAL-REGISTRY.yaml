@@ -1,11 +1,12 @@
 registry_version: 2026-08-23-consolidated
 status: canonical
 purpose: >
-  Define the complete canonical tactical registries after post-Phase-15 hardening. Where large historical index files remain intact, explicitly compose later sidecar additions by stable ID so validators and future agents do not treat index.yaml alone as the complete registry.
+  Define the complete canonical tactical registries after post-Phase-15 hardening. Where large historical index files remain intact, explicitly compose later sidecar additions and reconciliation overlays by stable ID so validators and future agents do not treat index.yaml alone as the complete registry.
 
 rules:
   - Stable IDs are authoritative; duplicate IDs across files are one model object only when the content is a historical reconciliation copy, otherwise duplication is a validation error.
   - Files listed under additions extend the corresponding baseline index and are canonical until physically folded into that index.
+  - Files listed under overlays modify only named fields of an existing stable-ID object; unspecified fields remain inherited from the baseline object.
   - Historical reconciliation sidecars are evidence/audit artifacts and do not add duplicate objects when their IDs already exist in the baseline index.
   - unresolved issue registry is docs/ddd/issues/unresolved.yaml; issues: [] means no currently known domain-rule issue remains open.
 
@@ -13,6 +14,8 @@ registries:
   aggregates:
     baseline: docs/ddd/aggregates/index.yaml
     additions: []
+    overlays:
+      - docs/ddd/aggregates/post-phase15-reconciliation.yaml
     unique_count: 14
   aggregate_root_entities:
     baseline: docs/ddd/entities/index.yaml
@@ -106,4 +109,4 @@ known_post_phase15_behavior:
     - use-case.ltv-form-management.record-returned-form
 
 validation_expectation: >
-  Validators and future sessions must load the baseline plus listed additions before calculating counts or checking references. Do not infer unresolved domain questions from stale historical reports when docs/ddd/issues/unresolved.yaml contains issues: [].
+  Validators and future sessions must load each baseline plus listed additions and overlays before calculating counts or checking references. Do not infer unresolved domain questions from stale historical reports when docs/ddd/issues/unresolved.yaml contains issues: [].
