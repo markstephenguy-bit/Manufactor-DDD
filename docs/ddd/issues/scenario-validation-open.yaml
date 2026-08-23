@@ -1,14 +1,4 @@
 issues:
-  - id: ISSUE-0013
-    title: What happens to a selected coverage plan when qualification is withdrawn before the coverage is used?
-    description: >
-      Scenario validation established that Workforce Availability must consume current qualification and that a withdrawn qualification cannot satisfy eligibility. What remains unknown is the lifecycle rule for an Operational Coverage Plan when a replacement was validly selected and the person's qualification is then explicitly withdrawn before the planned shift/coverage occurs. The model must not guess whether selection is automatically invalidated, whether the plan reopens, or whether a supervisor must explicitly reselect coverage.
-    affected_objects: [bc.training-competency, bc.workforce-availability, aggregate.workforce-availability.coverage-plan, policy.workforce-availability.replacement-eligibility]
-    evidence: [SCENARIO-012]
-    blocking: false
-    needed_input: domain-rule discovery
-    status: open
-
   - id: ISSUE-0014
     title: What is the Project cancellation or abandonment lifecycle after work has begun?
     description: >
@@ -18,3 +8,10 @@ issues:
     blocking: false
     needed_input: domain-rule discovery
     status: open
+
+resolved_scenario_findings:
+  - id: ISSUE-0013
+    status: removed-as-invalid-scenario-assumption
+    resolution: >
+      SCENARIO-012 incorrectly treated qualification withdrawal as an independent event that could surprise an already-made supervisor coverage decision. Mark clarified that the supervisor manages the qualification. Withdrawal is therefore a supervisor-controlled qualification action, and future coverage judgment must use the now-current qualification state as part of that same supervisory responsibility. No separate automatic-invalidation versus explicit-reselection domain rule is required from this artificial scenario.
+    evidence: ["domain-expert: Mark, direct, 2026-08-23 — how can the qualification be withdrawn when the supervisor manages it"]
