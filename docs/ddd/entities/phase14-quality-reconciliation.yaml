@@ -1,0 +1,48 @@
+entities:
+  - id: entity.quality-verification.quality-concern
+    name: Quality Concern
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.quality-concern
+    domain_identity: A specific suspected quality issue remains the same concern across intake, authorized triage, disposition, and links to later formal records.
+    identity_rules:
+      - Concern identity persists independently of any linked Quality Check or Nonconformity.
+      - Promotion/linkage must not replace the concern identity.
+    attributes: [subject/product context, reported issue, reporter/source provenance, triage status, disposition rationale, linked formal-record references]
+    behaviors: [record concern, disposition concern, link optional Quality Check, link accepted Nonconformity, close under supported rule]
+    lifecycle: recorded, under review, dispositioned, optionally linked to formal records, closed only by an independent supported decision
+    invariants:
+      - Intake does not automatically create a Quality Check or Nonconformity.
+      - Formal triage requires management or designated quality-technician authority.
+      - Nonconformity linkage does not silently close the concern.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Quality Concern has retained intake/triage history and an independent lifecycle from checks and Nonconformities.
+      confidence: high
+      status: candidate
+
+  - id: entity.quality-verification.applicable-quality-target
+    name: Applicable Quality Target Parameter
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.applicable-quality-target
+    domain_identity: The same contextual target parameter persists across controlled revisions while each historical version remains distinguishable for evaluation traceability.
+    identity_rules:
+      - Identity is not merely the numeric target value; it represents the maintained target for a defined applicability context.
+      - Revision must preserve identity while historical versions remain traceable.
+    attributes: [quality characteristic or criterion, target value/rule, mill context, machine context, process context, effective context, version/history]
+    behaviors: [create target, change target, retire/supersede target, resolve current/historical applicability]
+    lifecycle: created, revised/versioned, current, superseded or retired while historical versions remain resolvable
+    invariants:
+      - Applicability must be explicit enough to resolve the target for a Quality Check.
+      - Historical versions used by checks remain traceable.
+      - Creation/change authority is limited to salaried management under current evidence.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: PHASE14-QUALITY-PARAMETERS / PHASE14-QUALITY-PARAMETER-AUTHORITY
+          description: ManuFactor maintains contextual target parameters and salaried management may create/change them.
+      confidence: high
+      status: candidate
