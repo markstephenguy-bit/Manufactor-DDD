@@ -1,0 +1,36 @@
+invariants:
+  - id: invariant.ltv-instance.recorded-requires-scan-match
+    name: Recorded LTV Requires Returned Scan and Origin Match
+    bounded_context: bc.safety-signoff
+    aggregate: aggregate.ltv-form-management.printed-instance
+    rule: An LTV record may transition to Recorded only after the returned paper form has been received by the Safety Office, scanned, and successfully matched to the originating electronic LTV record.
+    reason: Recorded means the used paper evidence has been reconciled back into the retained electronic record, not merely that a form was printed or issued.
+    triggering_operations: [Receive Returned LTV Form, Scan Returned LTV Form, Match Returned LTV Form, Record LTV Form]
+    enforcement_boundary: LTV Printed Instance / originating electronic record lifecycle
+    failure_semantics: Keep the record in its prior status when the returned form is missing, not scanned, or cannot be reliably matched to its originating electronic record.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23 LTV recording clarification
+          description: Safety picks up the used paper form, scans it, matches it to the electronic initial record, then changes the record status to Recorded.
+      confidence: high
+      status: candidate
+
+  - id: invariant.ltv-instance.retained-status-history
+    name: LTV Record Identity and Status History Are Retained
+    bounded_context: bc.safety-signoff
+    aggregate: aggregate.ltv-form-management.printed-instance
+    rule: An LTV record is not destroyed when field handling or recording completes; the same retained identity remains referenceable and later lifecycle changes are represented as status/history transitions.
+    reason: Historical LTV records must remain available for later reference and evidence.
+    triggering_operations: [Record LTV Form, Change LTV Status]
+    enforcement_boundary: LTV Printed Instance aggregate
+    failure_semantics: Reject destructive completion behavior or status replacement that removes prior record identity/history.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23 LTV recording clarification
+          description: The LTV record never dies; it only changes status.
+      confidence: high
+      status: candidate
