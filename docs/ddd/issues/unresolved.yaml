@@ -9,10 +9,10 @@ issues:
     status: open
 
   - id: ISSUE-0010
-    title: What are the exact child Corrective Action identity and CAPA closure rules?
-    description: Nonconformity owns the CAPA lifecycle and routes external work correctly, but exact child Corrective Action identity and closure evidence requirements remain unresolved.
+    title: What exact rule allows a Nonconformity/CAPA to move to its completed or closed status?
+    description: Child corrective-work identity is resolved: corrective work is represented as tasks under the parent Nonconformity/CAPA, not as independently identified child Corrective Action lifecycles. The remaining unknown is the parent closure rule: which task/completion/effectiveness evidence must be satisfied before the Nonconformity may transition to its completed/closed status.
     affected_objects: [bc.corrective-action, aggregate.corrective-action.nonconformity]
-    evidence: [invariant.nonconformity.explicit-acceptance, invariant.nonconformity.do-not-own-routed-work]
+    evidence: [invariant.nonconformity.explicit-acceptance, invariant.nonconformity.do-not-own-routed-work, invariant.nonconformity.corrective-work-is-tasked]
     blocking: false
     needed_input: domain-rule discovery
     status: open
