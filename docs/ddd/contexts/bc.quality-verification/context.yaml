@@ -6,9 +6,10 @@ model_statement: >
   Within Quality Verification, a quality check is a contextual measurement interpreted against a target
   maintained as a ManuFactor parameter for the applicable mill/machine/process path. The target is therefore
   part of ManuFactor's quality-verification model rather than an ad hoc external lookup performed at check time.
-  A failed check is a verification fact and is not automatically identical to a Corrective Action Nonconformity.
+  Salaried management governs creation and change of these target parameters. A failed check is a verification
+  fact and is not automatically identical to a Corrective Action Nonconformity.
 responsibilities:
-  - Maintain quality-target parameters needed for the relevant mill/machine/process contexts.
+  - Maintain quality-target parameters needed for the relevant mill/machine/process contexts under salaried-management authority.
   - Determine which maintained target parameter applies to a given quality check.
   - Capture product measurements and checks.
   - Interpret measurements against applicable targets.
@@ -45,6 +46,7 @@ ubiquitous_language:
   - finished size
 business_rules:
   - Quality targets required for ManuFactor quality verification are maintained as ManuFactor parameters.
+  - Creation or change of ManuFactor quality-target parameters is authorized to salaried management.
   - A quality result must be evaluated against the maintained target applicable to its mill/machine/process context.
   - Verification evidence must preserve the measurement and the target/evaluation basis used at the time of the check.
   - A failed check does not become a Corrective Action Nonconformity without an explicit domain transition/rule.
@@ -67,5 +69,8 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-22
       description: Mark clarified that the quality targets should be parameters maintained in ManuFactor.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22 parameter authority clarification
+      description: Salaried management is authorized to create or change ManuFactor quality-target parameters.
   confidence: high
   status: candidate
