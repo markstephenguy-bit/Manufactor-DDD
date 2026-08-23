@@ -88,7 +88,7 @@ integration_contracts:
       - Checkpoint/criteria context needed to interpret the result
     operations: []
     events:
-      - Verification completed or failed semantic fact; exact domain-event name remains unresolved
+      - event.reliability-verification.verification-completed
     compatibility_policy: Asset Lifecycle must interpret the verification result under its own asset-state rules; a failed verification does not automatically imply a specific asset state until that rule is modeled.
     translation_required: true
     failure_semantics: If the resulting asset-state rule is unresolved, retain the verification fact without inventing an asset-state transition.
@@ -106,26 +106,54 @@ integration_contracts:
     name: Quality Finding to Corrective Action
     provider_context: bc.quality-verification
     consumer_context: bc.corrective-action
-    purpose: Provide quality-check evidence that may support creation of a Nonconformity and entry into the corrective-action lifecycle.
+    purpose: Provide retained Quality Concern or Quality Check evidence that may support an explicit decision to admit a Nonconformity into the corrective-action lifecycle.
     interaction_style: event
     published_model:
-      - Quality check identity
-      - Measurement/result evidence
-      - Applicable target/context
-      - Failed or unacceptable evaluation where applicable
+      - Quality Concern identity and retained concern evidence where applicable
+      - Quality Check identity and retained measurement/result evidence where applicable
+      - Applicable target/context and unmet-requirement evidence where available
+      - Source provenance needed by Corrective Action to evaluate admission
     operations: []
     events:
-      - Quality verification failure/finding semantic fact; exact domain-event name remains unresolved
-    compatibility_policy: Corrective Action must not treat every failed quality check as a Nonconformity automatically; the transition rule remains explicit and separately governed.
+      - event.quality-verification.quality-concern-dispositioned
+      - event.quality-verification.quality-check-evaluated
+    compatibility_policy: Corrective Action must not treat concern intake, concern disposition, or every failed Quality Check as a Nonconformity automatically; admission remains an explicit Corrective Action decision under invariant.nonconformity.explicit-acceptance.
     translation_required: true
-    failure_semantics: Where the Nonconformity rule is not satisfied or not yet known, retain the Quality Verification fact without creating a CAPA item by inference.
-    ownership: Quality Verification owns the check and result; Corrective Action owns Nonconformity/CAPA lifecycle semantics.
+    failure_semantics: If evidence is insufficient or the admission decision is not supported, retain the Quality Verification record without creating a Nonconformity by inference.
+    ownership: Quality Verification owns Quality Concern and Quality Check semantics; Corrective Action owns Nonconformity/CAPA lifecycle semantics.
     status: candidate
     provenance:
       sources:
         - type: domain-expert
-          reference: Mark direct, 2026-08-09 through 2026-08-10
-          description: Product Quality Verification and CAPA are distinct Quality responsibilities with different lifecycle semantics.
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: A Quality Check is optional before Nonconformity; sufficient evidence may support direct promotion from a concern, but Nonconformity admission is explicit and independently owned.
+      confidence: high
+      status: candidate
+
+  - id: contract.corrective-action-to-quality-verification
+    name: Accepted Nonconformity Reference to Quality Verification
+    provider_context: bc.corrective-action
+    consumer_context: bc.quality-verification
+    purpose: Provide the authoritative identity of an accepted Nonconformity so Quality Verification can retain a cross-context link from the source Quality Concern without importing CAPA lifecycle state.
+    interaction_style: event
+    published_model:
+      - Nonconformity identity
+      - Source finding reference
+      - Acceptance fact
+    operations:
+      - Resolve whether the referenced Nonconformity exists as an accepted Corrective Action record
+    events:
+      - event.corrective-action.nonconformity-accepted
+    compatibility_policy: Quality Verification may retain the Nonconformity identity/reference but must not copy or become authoritative for CAPA status, corrective-work state, or closure.
+    translation_required: true
+    failure_semantics: If the accepted Nonconformity cannot be resolved, Quality Verification must not fabricate the link or infer CAPA state.
+    ownership: Corrective Action owns Nonconformity identity/lifecycle; Quality Verification owns the source Quality Concern and its retained cross-context reference.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Quality Concern and Nonconformity remain linked records with independent lifecycles; promotion does not transfer CAPA ownership back to Quality Verification.
       confidence: high
       status: candidate
 
