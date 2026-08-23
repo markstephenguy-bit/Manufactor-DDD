@@ -1,0 +1,44 @@
+id: aggregate.quality-verification.applicable-quality-target
+name: Applicable Quality Target Parameter
+bounded_context: bc.quality-verification
+purpose: Maintain one contextual quality target parameter and its version/history so Quality Checks can resolve and retain the target that applied to a mill, machine, and process context at evaluation time.
+aggregate_root: Applicable Quality Target Parameter
+members:
+  - Applicable Quality Target Parameter
+  - retained target revisions/history
+invariants:
+  - A target parameter must identify the mill/machine/process applicability needed to distinguish where it is valid.
+  - Historical target versions used by Quality Checks must remain traceable after later target changes.
+  - Only salaried management may create or change ManuFactor-maintained quality-target parameters under the currently confirmed authority rule.
+commands:
+  - Create Quality Target Parameter
+  - Change Quality Target Parameter
+  - Retire Quality Target Parameter
+domain_events:
+  - QualityTargetParameterCreated
+  - QualityTargetParameterChanged
+  - QualityTargetParameterRetired
+transaction_boundary: Creating, changing, or retiring one contextual target parameter and its retained version history must remain consistent through this root.
+external_references:
+  - Mill
+  - Machine
+  - Process Path
+  - applicable external quality standard where referenced
+repository: repository.quality-verification.applicable-quality-target
+creation_rules:
+  - A target requires a defined quality characteristic/value or criterion plus enough contextual applicability to resolve it for a Quality Check.
+  - Creation authority is limited to salaried management under current evidence.
+deletion_rules:
+  - A target version referenced by a retained Quality Check must remain historically resolvable.
+  - Retirement/supersession is preferred to destructive deletion once used.
+status: candidate
+provenance:
+  sources:
+    - type: domain-expert
+      reference: Phase 14 domain-expert reconciliation, 2026-08-22
+      description: Applicable quality targets are ManuFactor-maintained parameters resolved by mill/machine/process context, and salaried management may create/change them.
+    - type: inference
+      reference: concept.quality-verification.applicable-quality-target
+      description: Confirmed local maintenance authority plus versioned historical applicability now establishes an independent candidate consistency boundary beyond the earlier reference-data-only evidence.
+  confidence: high
+  status: candidate
