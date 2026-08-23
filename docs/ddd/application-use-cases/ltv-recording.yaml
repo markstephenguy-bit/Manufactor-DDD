@@ -1,0 +1,22 @@
+application_use_cases:
+  - id: use-case.ltv-form-management.record-returned-form
+    name: Record Returned LTV Form
+    bounded_context: bc.safety-signoff
+    goal: Reconcile a used paper LTV form back to its originating electronic record and place that retained record in Recorded status with scan evidence and history preserved.
+    actors: [Safety Office user]
+    trigger: A used paper LTV form is picked up/received by the Safety Office.
+    preconditions: [The originating electronic LTV record exists; the paper instance can be associated with that record/template lineage.]
+    commands: [command.ltv-form-management.record-returned-form]
+    queries: []
+    domain_services: []
+    events_observed: [event.ltv-form-management.form-recorded]
+    result: The scanned returned form is retained, matched to the originating electronic record, and that same record is in Recorded status with prior lifecycle history preserved.
+    failure_paths: [The form cannot be scanned; no reliable originating-record match can be established; a duplicate recording attempt would create contradictory history.]
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23 LTV recording clarification
+          description: The Safety Office receives the paper, scans it, matches it to the electronic initial record, and sets the record to Recorded; the record remains retained afterward.
+      confidence: high
+      status: candidate
