@@ -3,13 +3,14 @@ name: Asset Lifecycle
 purpose: Provide the meaningful physical-asset identity, condition, lifecycle, and retained history that MP2 does not provide while correlating MP2 maintenance work to drillable asset levels.
 subdomain: subdomain.asset-reliability
 model_statement: >
-  Within Asset Lifecycle, an Asset includes mill equipment and vehicles under one physical-asset model with ManuFactor-owned identity, condition, lifecycle state, and history semantics. MP2 is treated primarily as the maintenance transaction mechanism for work requests and work orders. ManuFactor reuses the MP2 equipment hierarchy as the structural/navigation backbone so users can drill through asset levels and correlate MP2 records at the appropriate level, while ManuFactor remains authoritative for the richer asset semantics that MP2 does not provide. Functional condition and lifecycle position are separate: an asset may be Operating, Degraded, or Down as condition while lifecycle position is In Service, Out of Service, or Retired.
+  Within Asset Lifecycle, an Asset includes mill equipment and vehicles under one physical-asset model with ManuFactor-owned identity, condition, lifecycle state, and history semantics. MP2 is treated primarily as the maintenance transaction mechanism for work requests and work orders. ManuFactor reuses the MP2 equipment hierarchy as the structural/navigation backbone so users can drill through asset levels and correlate MP2 records at the appropriate level, while ManuFactor remains authoritative for the richer asset semantics that MP2 does not provide. Functional condition and lifecycle position are separate: an asset may be Operating, Degraded, or Down as condition while lifecycle position is In Service, Out of Service, or Retired. Changes to the external MP2 hierarchy do not by themselves create a new ManuFactor Asset identity; hierarchy mappings must preserve provenance and the established physical-asset identity/history.
 responsibilities:
   - Represent physical asset identity across mill equipment and vehicles.
   - Reuse the MP2 equipment hierarchy for parent/child structure and drillable asset navigation where that hierarchy exists.
   - Represent meaningful lifecycle and condition state for physical assets at appropriate drillable asset levels.
   - Retain asset history and operational-setting history where needed.
   - Correlate MP2 work requests/work orders to the asset level at which the maintenance transaction applies without treating those transactions as the asset lifecycle itself.
+  - Preserve ManuFactor Asset identity when the external MP2 hierarchy is later restructured, while retaining mapping provenance/history.
   - Expose asset identity/state to Operations, Quality, and Reliability Verification without transferring lifecycle ownership.
 scope:
   - Physical asset identity for equipment and vehicles
@@ -55,6 +56,7 @@ business_rules:
   - Equipment and vehicles use the same Asset Lifecycle model unless later domain evidence establishes a real semantic boundary.
   - MP2 WR/WO records remain authoritative for their own maintenance-transaction lifecycle.
   - MP2 equipment hierarchy is reused as the structural/navigation hierarchy rather than independently reinvented in ManuFactor where MP2 already provides the applicable parent/child structure.
+  - A later MP2 hierarchy reparenting/restructure does not by itself replace an established ManuFactor Asset identity; the external structural mapping changes while physical-asset identity/history remains retained unless independent evidence establishes a real identity change.
   - ManuFactor owns the richer physical-asset model because MP2 is primarily effective as a WR/WO mechanism rather than as a complete asset-management model.
   - MP2 maintenance records must be correlatable to the appropriate drillable asset hierarchy level.
   - ManuFactor asset state/history must not be silently derived from MP2 transaction status unless an explicit domain rule establishes that effect.
@@ -95,5 +97,8 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-23
       description: Mark accepted Operating, Degraded, Down, Out of Service, and Retired as good standard-informed asset vocabulary; the model separates functional condition from lifecycle position and uses In Service as the active lifecycle counterpart.
+    - type: scenario-validation
+      reference: SCENARIO-013, 2026-08-23
+      description: Scenario validation confirmed that external MP2 hierarchy restructuring must not silently replace established ManuFactor physical-asset identity.
   confidence: high
   status: candidate
