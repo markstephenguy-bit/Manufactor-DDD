@@ -1,0 +1,30 @@
+commands:
+  - id: command.asset-lifecycle.change-lifecycle-state
+    name: ChangeAssetLifecycleState
+    bounded_context: bc.asset-lifecycle
+    target_aggregate: aggregate.asset-lifecycle.asset
+    intent: Change an Asset's ManuFactor-owned lifecycle position while preserving identity and retained state history.
+    initiators: [authorized asset/reliability role or explicit domain policy]
+    input: [asset identity, new lifecycle state, transition evidence/reason]
+    preconditions:
+      - The Asset exists.
+      - The requested lifecycle state is one of In Service, Out of Service, or Retired.
+      - The transition is an explicit Asset Lifecycle decision rather than an inference from MP2 work status or Reliability Verification result alone.
+    invariants_checked: [invariant.asset.stable-identity, invariant.asset.mp2-status-not-asset-state, invariant.asset.state-change-records-history]
+    possible_events: [event.asset-lifecycle.lifecycle-state-changed]
+    failure_conditions:
+      - Requested lifecycle value is outside the controlled vocabulary.
+      - Transition is inferred solely from MP2 transaction state or a Reliability Verification result without the required Asset Lifecycle decision.
+      - Transition cannot preserve retained history.
+    idempotency_expectation: Reapplying the same accepted lifecycle state with identical evidence should not create contradictory history.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23
+          description: Mark accepted the proposed standard-informed Asset vocabulary including Out of Service and Retired; the model separates lifecycle state from functional condition.
+        - type: invariant-model
+          reference: invariant.asset.state-change-records-history
+          description: Existing Asset invariants already require lifecycle-state changes to preserve history.
+      confidence: high
+      status: candidate
