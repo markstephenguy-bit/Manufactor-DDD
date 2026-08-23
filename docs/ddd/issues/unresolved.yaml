@@ -8,15 +8,6 @@ issues:
     needed_input: domain-rule discovery
     status: open
 
-  - id: ISSUE-0010
-    title: What exact rule allows a Nonconformity/CAPA to move to its completed or closed status?
-    description: Child corrective-work identity is resolved: corrective work is represented as tasks under the parent Nonconformity/CAPA, not as independently identified child Corrective Action lifecycles. The remaining unknown is the parent closure rule: which task/completion/effectiveness evidence must be satisfied before the Nonconformity may transition to its completed/closed status.
-    affected_objects: [bc.corrective-action, aggregate.corrective-action.nonconformity]
-    evidence: [invariant.nonconformity.explicit-acceptance, invariant.nonconformity.do-not-own-routed-work, invariant.nonconformity.corrective-work-is-tasked]
-    blocking: false
-    needed_input: domain-rule discovery
-    status: open
-
 resolved_issues:
   - id: ISSUE-0003
     title: Should Vehicle Management merge into Physical Asset Management?
@@ -81,6 +72,17 @@ resolved_issues:
     resolution: Mark accepted the proposed standard-informed terminology. The model now separates functional condition from lifecycle position so Down is not the same as Out of Service and Retired is not a condition. The previously missing ChangeAssetLifecycleState command/event/use case was added, and all state changes preserve retained history. In Service is modeled as the active lifecycle counterpart so Operating remains a functional condition term.
     affected_objects: [bc.asset-lifecycle, aggregate.asset-lifecycle.asset, value-object.asset-lifecycle.asset-condition, value-object.asset-lifecycle.lifecycle-state, command.asset-lifecycle.change-lifecycle-state, event.asset-lifecycle.lifecycle-state-changed, use-case.asset-lifecycle.change-lifecycle-state]
     evidence: [invariant.asset.stable-identity, invariant.asset.state-change-records-history, "domain-expert: Mark, direct, 2026-08-23 — proposed vocabulary is good and standard-informed terminology should be preferred"]
+    resolved_by: domain-expert-and-model-reconciliation
+    resolved_at: 2026-08-23
+    blocking: false
+    status: resolved
+
+  - id: ISSUE-0010
+    title: What are the child corrective-work and CAPA closure rules?
+    answer: Corrective work is represented as tasks under the parent Nonconformity/CAPA, and closure requires both completion of required tasks and retained post-correction verification that the correction actually worked.
+    resolution: Corrective tasks are owned by the parent Nonconformity/CAPA rather than modeled as independent child Corrective Action lifecycles. Task completion alone is insufficient for parent closure. After required tasks are completed, effectiveness must be verified and retained as closure evidence. The Nonconformity remains active if the correction has not been verified effective. Routed execution may remain externally owned while CAPA retains task/reference/effectiveness evidence.
+    affected_objects: [bc.corrective-action, aggregate.corrective-action.nonconformity, invariant.nonconformity.corrective-work-is-tasked, invariant.nonconformity.requires-effectiveness-verification]
+    evidence: ["domain-expert: Mark, direct, 2026-08-23 — corrective work is tasks to complete", "domain-expert: Mark, direct, 2026-08-23 — need to verify afterward that the correction actually worked", invariant.nonconformity.do-not-own-routed-work]
     resolved_by: domain-expert-and-model-reconciliation
     resolved_at: 2026-08-23
     blocking: false
