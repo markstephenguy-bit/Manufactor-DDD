@@ -1,0 +1,16 @@
+domain_events:
+  - id: event.ltv-form-management.form-recorded
+    name: LTVFormRecorded
+    bounded_context: bc.safety-signoff
+    aggregate: aggregate.ltv-form-management.printed-instance
+    meaning: The returned paper LTV form was received by Safety, scanned, successfully matched to its originating electronic record, and that retained record transitioned to Recorded.
+    payload: [LTV record identity, returned scan reference, originating electronic record reference, recorded time, recording actor]
+    invariants_supported: [invariant.ltv-instance.recorded-requires-scan-match, invariant.ltv-instance.retained-status-history]
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23 LTV recording clarification
+          description: Recorded status follows Safety Office pickup, scan, and match to the electronic initial record.
+      confidence: high
+      status: candidate
