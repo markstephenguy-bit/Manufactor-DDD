@@ -1,0 +1,18 @@
+invariants:
+  - id: invariant.nonconformity.corrective-work-is-tasked
+    name: Corrective Work Is Represented as Tasks Under the Nonconformity
+    bounded_context: bc.corrective-action
+    aggregate: aggregate.corrective-action.nonconformity
+    rule: Work required to correct a Nonconformity is represented as one or more corrective tasks coordinated under that Nonconformity; the tasks do not become independent child Corrective Action aggregates merely because they have responsibility, status, completion evidence, or routing.
+    reason: Domain evidence describes the corrective work as tasks to complete to get the issue corrected while the Nonconformity/CAPA remains the parent lifecycle.
+    triggering_operations: [Define Corrective Tasks, Route Corrective Work, Record Corrective Task Progress, Evaluate Closure]
+    enforcement_boundary: Nonconformity aggregate
+    failure_semantics: Reject modeling that fragments one CAPA into unsupported independently identified child Corrective Action lifecycles.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23 ISSUE-0010 clarification
+          description: Corrective work consists of tasks to complete to get the Nonconformity corrected.
+      confidence: high
+      status: candidate
