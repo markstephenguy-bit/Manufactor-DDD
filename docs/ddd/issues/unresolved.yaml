@@ -19,7 +19,7 @@ issues:
 
   - id: ISSUE-0006
     title: What evidence and rules establish, expire, withdraw, or authorize Operational Qualification?
-    description: Learning completion is not automatically Operational Qualification. Exact rules for completion, demonstrated capability, authorization, expiration, review, and withdrawal remain to be discovered.
+    description: Learning completion is not automatically Operational Qualification. Grant authority is now known, but exact rules for completion evidence, expiration, review, and withdrawal remain to be discovered.
     affected_objects: [bc.training-competency, aggregate.training-qualification.qualification]
     evidence: [language.training-qualification.operational-qualification, invariant.qualification.requires-evidence]
     blocking: false
@@ -28,7 +28,7 @@ issues:
 
   - id: ISSUE-0007
     title: Which LTV processes require approval or sign-off and under what rules?
-    description: LTV printing/issuance does not imply approval or sign-off. Process-specific requirements remain unknown and must not be generalized.
+    description: LTV printing/issuance does not imply approval or sign-off. Process-specific workflow transition requirements remain unknown and must not be generalized.
     affected_objects: [bc.safety-signoff, aggregate.ltv-form-management.printed-instance]
     evidence: [invariant.ltv-instance.printing-not-signoff]
     blocking: false
@@ -69,6 +69,15 @@ issues:
     evidence: [invariant.coverage.requires-qualified-available-person]
     blocking: false
     needed_input: future domain discovery
+    status: open
+
+  - id: ISSUE-0012
+    title: What independent rule closes a Quality Concern after disposition or Nonconformity escalation?
+    description: Quality Concern is now a retained independent lifecycle. Promotion/linkage to a Nonconformity explicitly does not close it automatically; the later closure decision/rule remains unknown.
+    affected_objects: [bc.quality-verification, aggregate.quality-verification.quality-concern]
+    evidence: [invariant.quality-concern.promotion-does-not-close, contract.corrective-action-to-quality-verification]
+    blocking: false
+    needed_input: domain-rule discovery
     status: open
 
 resolved_issues:
