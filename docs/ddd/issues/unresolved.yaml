@@ -1,13 +1,4 @@
 issues:
-  - id: ISSUE-0006
-    title: What evidence is acceptable to establish Operational Qualification for each job or role?
-    description: Grant authority is confirmed as the employee's supervisor or a designated trainer/subject-matter expert. Qualification persists until explicitly withdrawn or superseded and does not expire from elapsed time alone. Learning completion is not automatically Operational Qualification. The remaining unknown is the job-specific evidence rule used to support the original qualification decision.
-    affected_objects: [bc.training-competency, aggregate.training-qualification.qualification]
-    evidence: [language.training-qualification.operational-qualification, invariant.qualification.requires-evidence, invariant.qualification.persists-until-withdrawn, invariant.qualification.withdrawal-preserves-history, bc.training-competency]
-    blocking: false
-    needed_input: job-specific domain-rule discovery
-    status: open
-
   - id: ISSUE-0007
     title: Which LTV processes require completion, approval, or sign-off transitions and under what rules?
     description: LTV printing/issuance does not imply completion, approval, or sign-off. Process-specific workflow transition requirements remain unknown and must not be generalized.
@@ -68,6 +59,17 @@ resolved_issues:
     evidence: [bc.reliability-verification, invariant.verification.result-not-asset-condition, invariant.asset.state-change-records-history, contract.reliability-verification-to-asset-lifecycle]
     resolved_by: confirmed-domain-evidence-audit
     resolved_at: 2026-08-22
+    blocking: false
+    status: resolved
+
+  - id: ISSUE-0006
+    title: What evidence and lifecycle rules establish or withdraw Operational Qualification?
+    answer: Qualification is established from job shadowing and observed practical capability, granted by an authorized supervisor or designated trainer/SME, and remains valid until explicitly withdrawn or superseded.
+    resolution: The trainee shadows the current competent worker and is observed sufficiently for the authorized reviewer to determine that the trainee is capable of doing the job. Course/LMS completion may support the decision but does not itself establish Operational Qualification. Qualification does not expire merely because time passes. Withdrawal or supersession is explicit and preserves prior qualification evidence/history.
+    affected_objects: [bc.training-competency, aggregate.training-qualification.qualification, invariant.qualification.requires-evidence, invariant.qualification.shadowing-demonstrates-capability, invariant.qualification.persists-until-withdrawn, invariant.qualification.withdrawal-preserves-history]
+    evidence: ["domain-expert: Mark, direct, 2026-08-23 — qualification persists until explicitly withdrawn", "domain-expert: Mark, direct, 2026-08-23 — person shadows current worker to see if capable of doing the job", bc.training-competency]
+    resolved_by: domain-expert-and-model-reconciliation
+    resolved_at: 2026-08-23
     blocking: false
     status: resolved
 
