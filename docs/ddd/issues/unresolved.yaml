@@ -17,15 +17,6 @@ issues:
     needed_input: domain-rule discovery
     status: open
 
-  - id: ISSUE-0009
-    title: What is the controlled Asset condition and lifecycle-state vocabulary?
-    description: Asset identity and state ownership are established, but the exact allowed condition/state vocabulary and transition policy remain tactical work. This is also the remaining unknown needed when a maintenance supervisor promotes a Reliability finding into an Asset-state change.
-    affected_objects: [bc.asset-lifecycle, aggregate.asset-lifecycle.asset, value-object.asset-lifecycle.asset-condition, value-object.asset-lifecycle.lifecycle-state]
-    evidence: [invariant.asset.stable-identity, invariant.asset.state-change-records-history, bc.reliability-verification]
-    blocking: false
-    needed_input: domain-rule discovery
-    status: open
-
   - id: ISSUE-0010
     title: What are the exact child Corrective Action identity and CAPA closure rules?
     description: Nonconformity owns the CAPA lifecycle and routes external work correctly, but exact child Corrective Action identity and closure evidence requirements remain unresolved.
@@ -72,7 +63,7 @@ resolved_issues:
   - id: ISSUE-0005
     title: What exact rule maps Reliability Verification results to Asset state?
     answer: There is no deterministic result-to-state mapping; maintenance-supervisor promotion is the decision gate, and Asset Lifecycle owns any resulting state transition.
-    resolution: A millwright-recorded finding or failed Reliability Verification remains a verification fact. The maintenance supervisor decides whether the finding is promoted into formal action or an Asset-state change; the Reliability Manager remains accountable for the reliability process. The actual allowed Asset condition/lifecycle state and transition selected after promotion remain governed by ISSUE-0009 rather than by Reliability Verification.
+    resolution: A millwright-recorded finding or failed Reliability Verification remains a verification fact. The maintenance supervisor decides whether the finding is promoted into formal action or an Asset-state change; the Reliability Manager remains accountable for the reliability process. The actual allowed Asset condition/lifecycle state and transition selected after promotion remain governed by Asset Lifecycle rather than by Reliability Verification.
     affected_objects: [bc.reliability-verification, bc.asset-lifecycle, aggregate.reliability-verification.verification, aggregate.asset-lifecycle.asset]
     evidence: [bc.reliability-verification, invariant.verification.result-not-asset-condition, invariant.asset.state-change-records-history, contract.reliability-verification-to-asset-lifecycle]
     resolved_by: confirmed-domain-evidence-audit
@@ -87,6 +78,17 @@ resolved_issues:
     affected_objects: [bc.kiln-operations, contract.protrack-moisture-to-kiln-operations, query.kiln-operations.dimension-moisture-statistics, use-case.kiln-operations.run-history]
     evidence: [bc.kiln-operations, contract.protrack-moisture-to-kiln-operations, "domain-expert: Mark, direct, 2026-08-23 — no kiln-run identifier; statistics on thickness x width x length"]
     resolved_by: domain-expert
+    resolved_at: 2026-08-23
+    blocking: false
+    status: resolved
+
+  - id: ISSUE-0009
+    title: What is the controlled Asset condition and lifecycle-state vocabulary?
+    answer: Asset Condition is Operating, Degraded, or Down; Asset Lifecycle State is In Service, Out of Service, or Retired.
+    resolution: Mark accepted the proposed standard-informed terminology. The model now separates functional condition from lifecycle position so Down is not the same as Out of Service and Retired is not a condition. The previously missing ChangeAssetLifecycleState command/event/use case was added, and all state changes preserve retained history. In Service is modeled as the active lifecycle counterpart so Operating remains a functional condition term.
+    affected_objects: [bc.asset-lifecycle, aggregate.asset-lifecycle.asset, value-object.asset-lifecycle.asset-condition, value-object.asset-lifecycle.lifecycle-state, command.asset-lifecycle.change-lifecycle-state, event.asset-lifecycle.lifecycle-state-changed, use-case.asset-lifecycle.change-lifecycle-state]
+    evidence: [invariant.asset.stable-identity, invariant.asset.state-change-records-history, "domain-expert: Mark, direct, 2026-08-23 — proposed vocabulary is good and standard-informed terminology should be preferred"]
+    resolved_by: domain-expert-and-model-reconciliation
     resolved_at: 2026-08-23
     blocking: false
     status: resolved
