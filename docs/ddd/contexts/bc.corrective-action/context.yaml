@@ -1,25 +1,30 @@
 id: bc.corrective-action
 name: Corrective Action
-purpose: Coordinate Nonconformity-driven correction and corrective tasks through root-cause, routing, and closure without duplicating work ownership held by other contexts or systems.
+purpose: Coordinate Nonconformity-driven correction and corrective tasks through root-cause, routing, effectiveness verification, and closure without duplicating work ownership held by other contexts or systems.
 subdomain: subdomain.quality
 model_statement: >
   Within Corrective Action, a Nonconformity is a finding that enters a remediation lifecycle of correction,
-  root-cause analysis, corrective tasks, routing, and closure. The salaried Quality office within the affected
-  department owns the active Nonconformity/CAPA work and is accountable for driving the issue through that
-  lifecycle. The work needed to correct the issue is represented as tasks under the Nonconformity rather than as
-  independently identified child Corrective Action lifecycles. Routed work may be executed by other departments,
-  contexts, or systems and does not become locally owned merely because CAPA coordinates it.
+  root-cause analysis, corrective tasks, routing, effectiveness verification, and closure. The salaried Quality
+  office within the affected department owns the active Nonconformity/CAPA work and is accountable for driving
+  the issue through that lifecycle. The work needed to correct the issue is represented as tasks under the
+  Nonconformity rather than as independently identified child Corrective Action lifecycles. Routed work may be
+  executed by other departments, contexts, or systems and does not become locally owned merely because CAPA
+  coordinates it. Completing the required tasks is necessary but is not sufficient for closure; retained
+  post-correction evidence must verify that the correction actually worked.
 responsibilities:
   - Represent Nonconformities and Corrections.
   - Coordinate root-cause and the tasks required to correct the issue.
   - Keep the department's salaried Quality office accountable for active Nonconformity/CAPA progression and closure.
   - Route resulting work to the context/system that owns that work class.
-  - Track task/status/completion evidence needed for CAPA coordination through closure.
+  - Track task/status/completion evidence needed for CAPA coordination.
+  - Retain post-correction effectiveness-verification evidence before allowing CAPA closure.
 scope:
   - Nonconformity lifecycle
   - Correction and corrective-task coordination
   - Root-cause work
-  - Routing and closure semantics
+  - Routing
+  - Effectiveness verification
+  - Closure semantics
 out_of_scope:
   - Product measurement/quality-check lifecycle
   - Ownership of routed maintenance, Safety, Operations, project, or other work
@@ -29,6 +34,7 @@ owned_concepts:
   - Nonconformity
   - Correction
   - Corrective Task
+  - Effectiveness Verification
   - CAPA Item
   - Routing Rule
 external_concepts:
@@ -43,20 +49,24 @@ ubiquitous_language:
   - root cause
   - CAPA item
   - routing
+  - effectiveness verification
   - closure
 business_rules:
-  - The salaried Quality office in the affected department is accountable for working the Nonconformity/CAPA issue through investigation, corrective-task coordination, and closure.
+  - The salaried Quality office in the affected department is accountable for working the Nonconformity/CAPA issue through investigation, corrective-task coordination, effectiveness verification, and closure.
   - Work required to correct a Nonconformity is represented as one or more tasks under the Nonconformity; current evidence does not support an independently identified child Corrective Action lifecycle for each task.
   - A corrective task may retain responsible party, status, completion evidence, and routing reference as needed for coordination.
-  - CAPA closure must reflect completion/disposition of required corrective tasks without falsely becoming authoritative for work owned by another context.
+  - Completion of required corrective tasks is necessary but is not sufficient for CAPA closure.
+  - CAPA may move to completed/closed status only after retained post-correction evidence verifies that the correction or corrective action actually worked.
+  - When effectiveness is not verified, the Nonconformity/CAPA remains active even if the planned tasks were completed.
   - Routing execution work to another department/system does not transfer ownership of the Nonconformity/CAPA record away from Quality.
+  - CAPA must not fabricate authoritative state for work owned by another context/system; it retains references and evidence needed for its own lifecycle decision.
   - Planned project work is not inherently a CAPA item.
   - External standards may inform vocabulary/rules but do not define this Bounded Context boundary.
 owner: department salaried Quality office
 domain_experts: [Mark]
 integration_surface:
   - Accepts eligible findings from Quality Verification and potentially other contexts when explicit rules allow.
-  - Routes corrective tasks to contexts/systems that own execution while retaining Quality ownership of the CAPA lifecycle and task coordination history.
+  - Routes corrective tasks to contexts/systems that own execution while retaining Quality ownership of the CAPA lifecycle, task coordination history, and effectiveness-verification evidence.
 upstream_dependencies:
   - bc.quality-verification
 downstream_consumers:
@@ -74,6 +84,9 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-23 ISSUE-0010 clarification
       description: Corrective work under a Nonconformity is tasks to complete to get the issue corrected, not separate child Corrective Action lifecycles.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-23 CAPA closure clarification
+      description: After corrective tasks are completed, the correction must be verified afterward to make sure it actually worked before closure.
     - type: decision
       reference: DDD-0005
       description: CAPA vocabulary, trigger, routing, and ISO-boundary semantics were clarified.
