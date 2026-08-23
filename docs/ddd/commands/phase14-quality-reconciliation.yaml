@@ -1,0 +1,126 @@
+commands:
+  - id: command.quality-verification.record-quality-concern
+    name: RecordQualityConcern
+    bounded_context: bc.quality-verification
+    target_aggregate: aggregate.quality-verification.quality-concern
+    intent: Retain a specific suspected quality concern for authorized triage without creating a Quality Check or Nonconformity by implication.
+    initiators: [management, designated quality technician, authorized QC-channel intake process]
+    input: [concern subject/product context, observed issue, reporter/source provenance]
+    preconditions: [The suspected quality issue is sufficiently identified to retain for review.]
+    invariants_checked: [invariant.quality-concern.no-automatic-formalization]
+    possible_events: [event.quality-verification.quality-concern-recorded]
+    failure_conditions: [The intake cannot be associated with a distinguishable concern or would falsely create a formal Quality Check/Nonconformity.]
+    idempotency_expectation: Technical retries must not silently create duplicate concern identities for the same submitted intake.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Quality concerns are retained before formal determination and do not automatically create formal quality records.
+      confidence: high
+      status: candidate
+
+  - id: command.quality-verification.disposition-quality-concern
+    name: DispositionQualityConcern
+    bounded_context: bc.quality-verification
+    target_aggregate: aggregate.quality-verification.quality-concern
+    intent: Record the authorized triage/disposition decision for a retained Quality Concern.
+    initiators: [management, designated quality technician]
+    input: [quality concern identity, disposition, rationale, optional formal-record reference]
+    preconditions: [The Quality Concern exists and the initiator has formal triage authority.]
+    invariants_checked: [invariant.quality-concern.authorized-triage, invariant.quality-concern.no-automatic-formalization]
+    possible_events: [event.quality-verification.quality-concern-dispositioned]
+    failure_conditions: [Initiator lacks formal triage authority; disposition attempts to create a Nonconformity implicitly; or the decision lacks retained rationale.]
+    idempotency_expectation: Repeating the same authorized disposition with unchanged rationale should not create contradictory state.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Management and designated quality technicians control formal triage/promotion; failed checks and concern intake do not automatically become Nonconformities.
+      confidence: high
+      status: candidate
+
+  - id: command.quality-verification.link-quality-check-to-concern
+    name: LinkQualityCheckToConcern
+    bounded_context: bc.quality-verification
+    target_aggregate: aggregate.quality-verification.quality-concern
+    intent: Retain the reference from a Quality Concern to a formal Quality Check used to gather additional evidence.
+    initiators: [management, designated quality technician, authorized quality workflow]
+    input: [quality concern identity, quality check identity]
+    preconditions: [Both records exist and the Quality Check is relevant to the concern.]
+    invariants_checked: [invariant.quality-concern.no-automatic-formalization]
+    possible_events: [event.quality-verification.quality-check-linked-to-concern]
+    failure_conditions: [The link would imply that every concern requires a Quality Check or would merge the two lifecycles.]
+    idempotency_expectation: Repeating the same link is a no-op rather than a duplicate relationship.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: A Quality Check is optional and may be linked when additional measurement/evaluation is useful.
+      confidence: high
+      status: candidate
+
+  - id: command.quality-verification.link-nonconformity-to-concern
+    name: LinkNonconformityToConcern
+    bounded_context: bc.quality-verification
+    target_aggregate: aggregate.quality-verification.quality-concern
+    intent: Retain a cross-context reference from a Quality Concern to an explicitly accepted Nonconformity without transferring CAPA ownership into Quality Verification.
+    initiators: [management, designated quality technician, authorized quality workflow]
+    input: [quality concern identity, nonconformity identity]
+    preconditions: [The Quality Concern exists and the referenced Nonconformity has been explicitly accepted by Corrective Action.]
+    invariants_checked: [invariant.quality-concern.promotion-does-not-close, invariant.quality-concern.no-automatic-formalization]
+    possible_events: [event.quality-verification.nonconformity-linked-to-concern]
+    failure_conditions: [No accepted Nonconformity exists; linking would fabricate CAPA state; or linking would silently close the concern.]
+    idempotency_expectation: Repeating the same cross-context reference is a no-op.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Direct promotion may occur when sufficient basis exists, but the concern remains open and the Nonconformity lifecycle is independently owned.
+      confidence: high
+      status: candidate
+
+  - id: command.quality-verification.create-quality-target-parameter
+    name: CreateQualityTargetParameter
+    bounded_context: bc.quality-verification
+    target_aggregate: aggregate.quality-verification.applicable-quality-target
+    intent: Establish a ManuFactor-maintained quality target for a defined mill/machine/process applicability context.
+    initiators: [salaried management]
+    input: [quality characteristic or criterion, target value/rule, mill context, machine context, process context, effective context/provenance]
+    preconditions: [The target applicability is sufficiently defined and the initiator is salaried management.]
+    invariants_checked: [invariant.quality-target.contextual-applicability, invariant.quality-target.management-authority]
+    possible_events: [event.quality-verification.quality-target-parameter-created]
+    failure_conditions: [Applicability is ambiguous or initiator lacks confirmed authority.]
+    idempotency_expectation: Technical retry must not create duplicate competing target identities for the same intended parameter/version.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: PHASE14-QUALITY-PARAMETERS / PHASE14-QUALITY-PARAMETER-AUTHORITY
+          description: Targets are ManuFactor parameters keyed by context; salaried management may create/change them.
+      confidence: high
+      status: candidate
+
+  - id: command.quality-verification.change-quality-target-parameter
+    name: ChangeQualityTargetParameter
+    bounded_context: bc.quality-verification
+    target_aggregate: aggregate.quality-verification.applicable-quality-target
+    intent: Change a contextual quality target while preserving prior target versions needed to interpret historical Quality Checks.
+    initiators: [salaried management]
+    input: [quality target identity, revised target/applicability, effective context, change rationale/provenance]
+    preconditions: [The target exists and the initiator is salaried management.]
+    invariants_checked: [invariant.quality-target.preserve-history, invariant.quality-target.management-authority]
+    possible_events: [event.quality-verification.quality-target-parameter-changed]
+    failure_conditions: [Change would destroy historical applicability or initiator lacks confirmed authority.]
+    idempotency_expectation: Reapplying an identical revision should not create materially different authoritative state.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: PHASE14-QUALITY-PARAMETER-AUTHORITY
+          description: Salaried management may create/change quality-target parameters.
+      confidence: high
+      status: candidate
