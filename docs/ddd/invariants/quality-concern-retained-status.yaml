@@ -1,0 +1,18 @@
+invariants:
+  - id: invariant.quality-concern.retained-status-history
+    name: Quality Concern Persists Through Status Changes
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.quality-concern
+    rule: A Quality Concern must retain its identity and historical record across triage, escalation, disposition, and later status changes; ending active handling changes status rather than destroying or replacing the concern.
+    reason: Quality concerns remain referenceable historical records even after escalation or disposition.
+    triggering_operations: [Disposition Quality Concern, Link Nonconformity to Concern, Change Quality Concern Status]
+    enforcement_boundary: Quality Concern aggregate
+    failure_semantics: Reject lifecycle behavior that deletes, replaces, or makes the original concern unreferenceable when its handling status changes.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23
+          description: Things like Quality Concerns never die; they change status so they can be referenced later.
+      confidence: high
+      status: candidate
