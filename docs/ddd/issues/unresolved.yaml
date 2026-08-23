@@ -19,7 +19,7 @@ issues:
 
   - id: ISSUE-0006
     title: What evidence and rules establish, expire, withdraw, or authorize Operational Qualification?
-    description: Learning completion is not automatically Operational Qualification. Grant authority is now known, but exact rules for completion evidence, expiration, review, and withdrawal remain to be discovered.
+    description: Learning completion is not automatically Operational Qualification. Grant authority is known, but exact rules for completion evidence, expiration, review, and withdrawal remain to be discovered.
     affected_objects: [bc.training-competency, aggregate.training-qualification.qualification]
     evidence: [language.training-qualification.operational-qualification, invariant.qualification.requires-evidence]
     blocking: false
@@ -66,14 +66,14 @@ issues:
     title: Does vacation planning require a distinct aggregate?
     description: Current evidence supports Operational Coverage Plan as the consistency boundary. A separate vacation-planning aggregate should be introduced only if schedule-wide invariants are discovered.
     affected_objects: [bc.workforce-availability, aggregate.workforce-availability.coverage-plan]
-    evidence: [invariant.coverage.requires-qualified-available-person]
+    evidence: [invariant.coverage.need-is-explicit, invariant.coverage.requires-qualified-and-available]
     blocking: false
     needed_input: future domain discovery
     status: open
 
   - id: ISSUE-0012
     title: What independent rule closes a Quality Concern after disposition or Nonconformity escalation?
-    description: Quality Concern is now a retained independent lifecycle. Promotion/linkage to a Nonconformity explicitly does not close it automatically; the later closure decision/rule remains unknown.
+    description: Quality Concern is a retained independent lifecycle. Promotion/linkage to a Nonconformity explicitly does not close it automatically; the later closure decision/rule remains unknown.
     affected_objects: [bc.quality-verification, aggregate.quality-verification.quality-concern]
     evidence: [invariant.quality-concern.promotion-does-not-close, contract.corrective-action-to-quality-verification]
     blocking: false
