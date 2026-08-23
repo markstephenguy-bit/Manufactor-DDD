@@ -1,0 +1,21 @@
+relationships:
+  - id: rel.corrective-action-to-project-tracking
+    upstream: bc.corrective-action
+    downstream: bc.project-tracking
+    relationship_type: unresolved
+    description: Corrective Action may route a corrective task into Project Tracking when the business explicitly recognizes and manages that work as a Project.
+    model_influence: Corrective Action supplies Nonconformity/corrective-task context; Project Tracking applies its own Project-recognition and lifecycle rules. Project status does not determine CAPA closure, and CAPA status does not determine Project completion.
+    integration_contracts: [contract.corrective-action-to-project-tracking]
+    translation_boundary: Required. A corrective task is not automatically a Project, and a Project created to execute corrective work does not become the Nonconformity/CAPA lifecycle.
+    organizational_notes: The relationship exists only when routed corrective work is genuinely managed as a Project; ordinary corrective tasks remain within CAPA coordination or their other execution owner.
+    status: candidate
+    provenance:
+      sources:
+        - type: scenario-validation
+          reference: SCENARIO-007 / SCENARIO-009, 2026-08-23
+          description: Scenario traversal exposed that an already-supported CAPA-to-Project routing path was missing from the Context Map.
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.project-tracking/context.yaml
+          description: A Project is a real business Project and remains distinct from CAPA even when related to corrective action.
+      confidence: high
+      status: candidate
