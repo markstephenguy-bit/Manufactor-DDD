@@ -1,0 +1,21 @@
+commands:
+  - id: command.ltv-form-management.record-returned-form
+    name: RecordLTVForm
+    bounded_context: bc.safety-signoff
+    target_aggregate: aggregate.ltv-form-management.printed-instance
+    intent: Reconcile a returned paper LTV form to its originating electronic record and transition that retained record to Recorded.
+    initiators: [Safety Office user]
+    input: [LTV record identity, returned scan reference, originating electronic record match evidence, recorded time]
+    preconditions: [The LTV record exists; the returned paper has been received and scanned; the scan can be reliably matched to the originating electronic record.]
+    invariants_checked: [invariant.ltv-instance.template-traceability, invariant.ltv-instance.recorded-requires-scan-match, invariant.ltv-instance.retained-status-history]
+    possible_events: [event.ltv-form-management.form-recorded]
+    failure_conditions: [No returned scan exists; the scan cannot be matched to the originating electronic record; transition would erase prior lifecycle history.]
+    idempotency_expectation: Repeating the same successful recording operation against the same scan and originating record does not create a second Recorded transition.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23 LTV recording clarification
+          description: Safety picks up the form, scans it, matches it with the electronic initial record, and sets the record status to Recorded.
+      confidence: high
+      status: candidate
