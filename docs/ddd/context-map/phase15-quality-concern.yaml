@@ -1,0 +1,36 @@
+context_relationships:
+  - id: rel.quality-concern-to-corrective-action
+    upstream: bc.quality-verification
+    downstream: bc.corrective-action
+    relationship_type: unresolved
+    description: Authorized Quality Verification may provide retained Quality Concern evidence to Corrective Action when sufficient basis exists for explicit Nonconformity admission without requiring a prior Quality Check.
+    model_influence: Quality Verification supplies concern evidence and triage rationale; Corrective Action independently decides Nonconformity admission and owns the CAPA lifecycle.
+    integration_contracts: [contract.quality-concern-to-corrective-action]
+    translation_boundary: Required. Quality Concern is not a Nonconformity and must be translated through explicit acceptance semantics.
+    organizational_notes: This supplements the existing Quality Verification to Corrective Action relationship, whose original contract covers Quality Check evidence.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: A Quality Check is optional; authorized quality review may promote directly when sufficient basis exists.
+      confidence: high
+      status: candidate
+
+  - id: rel.corrective-action-to-quality-verification
+    upstream: bc.corrective-action
+    downstream: bc.quality-verification
+    relationship_type: unresolved
+    description: Corrective Action exposes accepted Nonconformity identity and minimal lifecycle reference so Quality Verification can retain concern-to-Nonconformity traceability.
+    model_influence: Corrective Action remains authoritative for CAPA state; Quality Verification stores only the cross-context reference needed for its own concern history.
+    integration_contracts: [contract.corrective-action-to-quality-verification]
+    translation_boundary: Required. Nonconformity state must not be copied into or re-owned by the Quality Concern aggregate.
+    organizational_notes: The reverse interaction exists only for traceability/composition and does not create shared model ownership.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Quality Concern and Nonconformity remain linked records with independent lifecycles; escalation does not close the concern.
+      confidence: high
+      status: candidate
