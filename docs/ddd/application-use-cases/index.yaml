@@ -32,20 +32,20 @@ application_use_cases:
     provenance: {sources: [{type: discovery, reference: use-case-candidate.kiln-operations.manage-schedule, description: Reconciled Phase 14 candidate.}], confidence: high, status: candidate}
 
   - id: use-case.kiln-operations.run-history
-    name: Record a Kiln Run and Review Drying Performance
+    name: Record Kiln Runs and Review Dimension-Level Drying Performance
     bounded_context: bc.kiln-operations
-    goal: Preserve one Kiln Run/Charge and review performance using authoritative ProTrack moisture evidence.
+    goal: Preserve Kiln Run/Charge history and review drying performance statistically using authoritative ProTrack moisture data grouped by lumber dimension.
     actors: [employees involved in kiln execution and review]
-    trigger: A kiln run is executed, completed, or reviewed.
-    preconditions: [The run is distinguishable; ProTrack measurements are consumed through contract.protrack-moisture-to-kiln-operations.]
+    trigger: A kiln run is executed/completed or drying performance is reviewed.
+    preconditions: [The kiln run is distinguishable for local history; ProTrack measurements/statistics are consumed through contract.protrack-moisture-to-kiln-operations without assuming a run identifier exists in ProTrack.]
     commands: [command.kiln-operations.start-kiln-run, command.kiln-operations.record-kiln-operation, command.kiln-operations.complete-kiln-run]
-    queries: [query.kiln-operations.run-moisture]
+    queries: [query.kiln-operations.dimension-moisture-statistics]
     domain_services: []
     events_observed: [event.kiln-operations.kiln-run-started, event.kiln-operations.kiln-operation-recorded, event.kiln-operations.kiln-run-completed]
-    result: Retained run history is available for explicit cross-context moisture correlation.
-    failure_paths: [Ambiguous run identity; unreliable fact association; uncorrelatable ProTrack records remain uncorrelated.]
+    result: Retained kiln history is available alongside ProTrack moisture statistics by thickness x width x length for statistical drying-performance analysis.
+    failure_paths: [Ambiguous local run identity; individual ProTrack records falsely attributed to a kiln run; statistical analysis presented as run-level traceability; ProTrack provenance lost.]
     status: candidate
-    provenance: {sources: [{type: discovery, reference: use-case-candidate.kiln-operations.run-history, description: Reconciled Phase 14 candidate.}], confidence: high, status: candidate}
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.kiln-operations.run-history, description: Reconciled Phase 14 candidate.}, {type: domain-expert, reference: Mark direct, 2026-08-23, description: ProTrack moisture data carries no kiln-run identity and supports statistical analysis by thickness x width x length only.}], confidence: high, status: candidate}
 
   - id: use-case.project-tracking.manage-project
     name: Manage a Project
