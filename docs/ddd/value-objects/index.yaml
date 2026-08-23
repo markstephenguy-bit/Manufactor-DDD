@@ -43,16 +43,20 @@ value_objects:
     aggregate: aggregate.asset-lifecycle.asset
     components: [condition value, effective context/time where required]
     validation_rules:
-      - Condition value must be valid under the Asset Lifecycle domain vocabulary/rules in effect.
+      - Condition value must be one of Operating, Degraded, or Down under the current controlled vocabulary.
+      - Condition describes current functional/operational condition and must not be used as lifecycle retirement status.
     equality_semantics: Equal when the condition value/context is equal; it describes an Asset rather than having separate business identity.
     immutability_expectation: A condition value is conceptually immutable; changing Asset condition replaces the current value and records history.
-    behaviors: [describe asset condition]
+    behaviors: [describe current functional condition]
     status: candidate
     provenance:
       sources:
         - type: ubiquitous-language
           reference: language.asset-lifecycle.asset-condition
           description: Asset Condition is explicitly modeled as state of an Asset, distinct from a verification result.
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23
+          description: Mark accepted Operating, Degraded, Down, Out of Service, and Retired as appropriate standard-informed asset vocabulary; the model separates functional condition from lifecycle state.
       confidence: high
       status: candidate
 
@@ -62,18 +66,23 @@ value_objects:
     aggregate: aggregate.asset-lifecycle.asset
     components: [lifecycle state]
     validation_rules:
-      - State must be one allowed by the eventual Asset lifecycle rules; exact controlled vocabulary remains unresolved.
+      - Lifecycle state must be one of In Service, Out of Service, or Retired under the current controlled vocabulary.
+      - Out of Service and Retired must not be represented merely as functional condition values.
+      - Retired is a lifecycle position and does not erase prior condition/lifecycle history.
     equality_semantics: Equal by lifecycle-state value.
     immutability_expectation: Immutable value; transitions replace the value while Asset history records the change.
     behaviors: [describe lifecycle position]
-    status: unresolved
+    status: candidate
     provenance:
       sources:
         - type: aggregate-model
           reference: aggregate.asset-lifecycle.asset
-          description: Asset lifecycle state is aggregate-owned state; exact state vocabulary is not yet discovered.
-      confidence: medium
-      status: unresolved
+          description: Asset lifecycle state is aggregate-owned state distinct from Asset Condition.
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23
+          description: Mark accepted Out of Service and Retired as appropriate asset vocabulary and endorsed standard-informed terminology. In Service is modeled as the active lifecycle counterpart so Operating remains a condition rather than a lifecycle label.
+      confidence: high
+      status: candidate
 
   - id: value-object.reliability-verification.verification-result
     name: Verification Result
