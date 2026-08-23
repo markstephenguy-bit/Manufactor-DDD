@@ -2,19 +2,31 @@ id: bc.reliability-verification
 name: Reliability Verification
 purpose: Verify equipment at defined checkpoints and retain evidence that it was found known-good/compliant or failed verification.
 subdomain: subdomain.asset-reliability
-model_statement: Within Reliability Verification, a Verification is a discrete assessment fact with its own criteria, checkpoint, and result; it references an Asset but does not itself define the Asset's complete lifecycle.
+model_statement: >
+  Within Reliability Verification, a Verification is a discrete assessment fact with its own criteria,
+  checkpoint, result, and retained finding. A millwright may record the observed finding, but that observation
+  does not itself promote the item into a formal maintenance/reliability action or change authoritative Asset
+  condition/state. The maintenance supervisor decides whether the finding is promoted, while the Reliability
+  Manager is ultimately accountable for the reliability process. The Verification references an Asset but does
+  not itself define the Asset's complete lifecycle.
 responsibilities:
   - Represent scheduled, post-maintenance, or condition-triggered verification checkpoints.
   - Capture AFAL/category-check criteria and results.
-  - Retain verification evidence.
-  - Communicate verified/failed outcomes to Asset Lifecycle or corrective/maintenance work through explicit relationships.
+  - Allow millwrights to record reliability findings and supporting evidence.
+  - Retain verification evidence and finding history.
+  - Support maintenance-supervisor review and promotion decisions when a recorded finding may require formal action or an Asset-state change.
+  - Preserve Reliability Manager accountability for the reliability process.
+  - Communicate verified/failed outcomes to Asset Lifecycle or maintenance/corrective work through explicit relationships.
 scope:
   - Equipment verification checkpoints
   - AFAL/category checks
   - Known-good/compliance verification records
+  - Millwright-recorded reliability findings
+  - Maintenance-supervisor promotion/review decision
   - Verification-result history
 out_of_scope:
   - Full asset lifecycle/condition ownership
+  - Automatic Asset-state change based solely on a millwright observation or failed verification
   - MP2 work-request/work-order lifecycle
   - CAPA lifecycle
 owned_concepts:
@@ -23,6 +35,7 @@ owned_concepts:
   - AFAL Record
   - AFAL Category Check
   - Verification Result
+  - Reliability Finding
 external_concepts:
   - Asset
   - MP2 Work Request
@@ -35,20 +48,28 @@ ubiquitous_language:
   - known-good
   - compliant
   - failed verification
+  - reliability finding
+  - promotion decision
 business_rules:
-  - Verification records must preserve checkpoint, applicable criteria/category, and result.
+  - Verification records must preserve checkpoint, applicable criteria/category, result, recorder, and supporting evidence.
+  - A millwright may log a reliability finding.
+  - A millwright-recorded finding does not by itself promote the item into formal maintenance/reliability action or change Asset condition/state.
+  - The maintenance supervisor decides whether a recorded finding should be promoted.
+  - The Reliability Manager is ultimately accountable for the reliability process.
   - Verification result and Asset condition are distinct concepts.
-  - Any effect of a verification on Asset Lifecycle state must be expressed through an explicit cross-context rule.
-owner: unresolved
+  - Any effect of a verification or promoted finding on Asset Lifecycle state must be expressed through an explicit cross-context rule.
+owner: Reliability Manager
 domain_experts: [Mark]
 integration_surface:
   - References assets from Asset Lifecycle.
-  - May correlate to MP2 maintenance work.
-  - May produce findings consumed by Corrective Action where applicable.
+  - May correlate to MP2 maintenance work after an explicit promotion/routing decision.
+  - May produce findings consumed by Corrective Action where applicable without making CAPA the default maintenance path.
 upstream_dependencies:
   - bc.asset-lifecycle
 downstream_consumers:
-  - bc.corrective-action
+  - bc.asset-lifecycle
+  - external MP2/maintenance workflow when promoted
+  - bc.corrective-action where applicable
 status: candidate
 provenance:
   sources:
@@ -58,5 +79,8 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-10
       description: MP2 lacks meaningful asset management, supporting separate ManuFactor-owned Asset Lifecycle and verification semantics.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22
+      description: Mark clarified that a millwright can log a reliability item, the maintenance supervisor decides whether to promote it, and the Reliability Manager is ultimately responsible for the reliability process.
   confidence: high
   status: candidate
