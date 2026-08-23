@@ -1,4 +1,4 @@
-registry_version: 2026-08-23-scenario-validated
+registry_version: 2026-08-23-scenario-validated-batch2
 status: canonical
 purpose: >
   Define the complete canonical tactical registries after post-Phase-15 hardening and scenario-based validation. Where large historical index files remain intact, explicitly compose later sidecar additions and reconciliation overlays by stable ID so validators and future agents do not treat index.yaml alone as the complete registry.
@@ -9,7 +9,13 @@ rules:
   - Files listed under overlays modify only named fields of an existing stable-ID object; unspecified fields remain inherited from the baseline object.
   - Historical reconciliation sidecars are evidence/audit artifacts and do not add duplicate objects when their IDs already exist in the baseline index.
   - Scenario-validation additions are canonical when the scenario demonstrated a previously implicit but already-supported interaction or rule.
-  - unresolved issue registry is docs/ddd/issues/unresolved.yaml; issues: [] means no currently known domain-rule issue remains open.
+  - Open domain-rule issues are composed from docs/ddd/issues/unresolved.yaml plus any files listed under unresolved_issue_additions. An empty primary issues list does not mean zero open issues when canonical additions are present.
+
+unresolved_issue_registry:
+  baseline: docs/ddd/issues/unresolved.yaml
+  unresolved_issue_additions:
+    - docs/ddd/issues/scenario-validation-open.yaml
+  current_open_issue_count: 2
 
 registries:
   aggregates:
@@ -113,6 +119,8 @@ known_post_phase15_behavior:
   scenario_validated_project_routing:
     - rel.corrective-action-to-project-tracking
     - contract.corrective-action-to-project-tracking
+  scenario_validated_asset_identity:
+    - MP2 hierarchy restructuring does not by itself replace established ManuFactor Asset identity.
 
 validation_expectation: >
-  Validators and future sessions must load each baseline plus listed additions and overlays before calculating counts or checking references. Scenario validation results are recorded in docs/ddd/reports/scenario-validation.md. Do not infer unresolved domain questions from stale historical reports when docs/ddd/issues/unresolved.yaml contains issues: [].
+  Validators and future sessions must load each baseline plus listed additions and overlays before calculating counts or checking references. Scenario validation results are recorded in docs/ddd/reports/scenario-validation.md and the SCENARIOS YAML files. Current open issue count is composed from the primary unresolved registry plus canonical issue additions; do not rely on docs/ddd/issues/unresolved.yaml alone.
