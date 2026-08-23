@@ -1,26 +1,32 @@
 integration_contracts:
   - id: contract.protrack-moisture-to-kiln-operations
-    name: ProTrack Moisture Results to Kiln Operations
+    name: ProTrack Moisture Statistics to Kiln Operations
     provider_context: external.protrack-moisture
     consumer_context: bc.kiln-operations
-    purpose: Provide authoritative planer moisture measurements for correlation with retained kiln schedules/runs and drying history.
+    purpose: Provide authoritative planer moisture measurements/statistics by lumber dimension for statistical drying-performance analysis against retained kiln history without claiming run-level traceability.
     interaction_style: batch
     published_model:
       - ProTrack moisture measurement records
-      - Source measurement identity and recorded context available from the ProTrack database
+      - Lumber dimension recorded by ProTrack (thickness x width x length)
+      - Dimension-level moisture statistics derivable from authoritative ProTrack records
+      - Source provenance available from the ProTrack database
     operations:
-      - Read moisture measurement records for correlation and analysis
+      - Read moisture measurement records by lumber dimension
+      - Derive or read statistical moisture summaries by thickness x width x length for analysis
     events: []
-    compatibility_policy: Kiln Operations must preserve ProTrack source provenance and must not rewrite source measurements.
+    compatibility_policy: Kiln Operations must preserve ProTrack source provenance, must not rewrite source measurements, and must not invent a Kiln Run/Charge association that ProTrack does not record.
     translation_required: true
-    failure_semantics: Missing or uncorrelatable ProTrack records remain explicitly uncorrelated; Kiln Operations must not fabricate a kiln-run association.
-    ownership: ProTrack owns source moisture measurements; Kiln Operations owns correlation to kiln history and drying-performance interpretation.
+    failure_semantics: ProTrack records lacking a kiln-run identifier remain intentionally non-traceable to an individual Kiln Run/Charge; analysis may occur only at supported statistical grains such as lumber dimension.
+    ownership: ProTrack owns source moisture measurements; Kiln Operations owns statistical drying-performance interpretation against retained kiln history, not source measurement identity or run-level lineage.
     status: candidate
     provenance:
       sources:
         - type: domain-expert
           reference: Mark direct, 2026-08-10
           description: ProTrack moisture meter software stores planer moisture data in a database; ManuFactor must coordinate those records with kiln scheduling/operations history and dashboards.
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23
+          description: ProTrack moisture records are not tied to kiln runs and are recorded only by lumber dimension; meaningful analysis is statistical on thickness x width x length.
       confidence: high
       status: candidate
 
