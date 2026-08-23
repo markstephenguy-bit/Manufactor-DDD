@@ -1,20 +1,23 @@
 id: bc.asset-lifecycle
 name: Asset Lifecycle
-purpose: Provide the meaningful physical-asset identity, condition, lifecycle, and retained history that MP2 does not provide while correlating MP2 maintenance work to those assets.
+purpose: Provide the meaningful physical-asset identity, condition, lifecycle, and retained history that MP2 does not provide while correlating MP2 maintenance work to drillable asset levels.
 subdomain: subdomain.asset-reliability
 model_statement: >
-  Within Asset Lifecycle, an Asset includes mill equipment and vehicles under one physical-asset model with ManuFactor-owned identity, condition, lifecycle state, and history semantics. MP2 is treated primarily as the maintenance transaction mechanism for work requests and work orders; its asset references support maintenance execution but do not provide the richer asset model needed by ManuFactor.
+  Within Asset Lifecycle, an Asset includes mill equipment and vehicles under one physical-asset model with ManuFactor-owned identity, condition, lifecycle state, and history semantics. MP2 is treated primarily as the maintenance transaction mechanism for work requests and work orders. ManuFactor reuses the MP2 equipment hierarchy as the structural/navigation backbone so users can drill through asset levels and correlate MP2 records at the appropriate level, while ManuFactor remains authoritative for the richer asset semantics that MP2 does not provide.
 responsibilities:
   - Represent physical asset identity across mill equipment and vehicles.
-  - Represent meaningful lifecycle and condition state for physical assets.
+  - Reuse the MP2 equipment hierarchy for parent/child structure and drillable asset navigation where that hierarchy exists.
+  - Represent meaningful lifecycle and condition state for physical assets at appropriate drillable asset levels.
   - Retain asset history and operational-setting history where needed.
-  - Correlate MP2 work requests/work orders to assets without treating those transactions as the asset lifecycle itself.
+  - Correlate MP2 work requests/work orders to the asset level at which the maintenance transaction applies without treating those transactions as the asset lifecycle itself.
   - Expose asset identity/state to Operations, Quality, and Reliability Verification without transferring lifecycle ownership.
 scope:
   - Physical asset identity for equipment and vehicles
+  - MP2-derived equipment hierarchy as structural/navigation backbone
+  - Drillable parent/child asset levels
   - Asset condition and lifecycle state
   - Retained asset history
-  - Correlation to MP2 WR/WO activity
+  - Correlation of MP2 WR/WO activity to appropriate asset hierarchy levels
 out_of_scope:
   - A separate Vehicle Management model or Bounded Context
   - Ownership of MP2 work-request/work-order lifecycle
@@ -27,12 +30,17 @@ owned_concepts:
   - Asset History
   - Operational Setting History
 external_concepts:
+  - MP2 Equipment Hierarchy
   - MP2 Work Request
   - MP2 Work Order
 ubiquitous_language:
   - asset
   - equipment
   - vehicle
+  - asset hierarchy
+  - parent asset
+  - child asset
+  - drill-down
   - condition
   - lifecycle state
   - asset history
@@ -40,16 +48,19 @@ ubiquitous_language:
 business_rules:
   - Equipment and vehicles use the same Asset Lifecycle model unless later domain evidence establishes a real semantic boundary.
   - MP2 WR/WO records remain authoritative for their own maintenance-transaction lifecycle.
+  - MP2 equipment hierarchy is reused as the structural/navigation hierarchy rather than independently reinvented in ManuFactor where MP2 already provides the applicable parent/child structure.
   - ManuFactor owns the richer physical-asset model because MP2 is primarily effective as a WR/WO mechanism rather than as a complete asset-management model.
+  - MP2 maintenance records must be correlatable to the appropriate drillable asset hierarchy level.
   - ManuFactor asset state/history must not be silently derived from MP2 transaction status unless an explicit domain rule establishes that effect.
   - Reliability Verification may influence asset state only through explicit cross-context rules.
 owner: unresolved
 domain_experts: [Mark]
 integration_surface:
-  - Correlates MP2 WR/WO records to ManuFactor-owned assets.
+  - Consumes/reuses MP2 equipment hierarchy for asset structure and navigation while preserving MP2 provenance.
+  - Correlates MP2 WR/WO records to the appropriate ManuFactor asset hierarchy level.
   - Supplies asset identity/state references to Operations, Quality, Kiln Operations, and Reliability Verification.
 upstream_dependencies:
-  - MP2 maintenance system for WR/WO transaction facts
+  - MP2 maintenance system for equipment hierarchy and WR/WO transaction facts
 
 downstream_consumers:
   - bc.reliability-verification
@@ -68,5 +79,8 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-22 MP2 clarification
       description: Mark clarified that MP2 performs well as a CMMS work-request/work-order mechanism but does not do a good job representing the asset itself, reinforcing ManuFactor ownership of the richer asset model.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22 MP2 hierarchy clarification
+      description: Mark clarified that ManuFactor should use the MP2 equipment hierarchy and link MP2 records to drillable asset levels rather than inventing a separate flat or unrelated hierarchy.
   confidence: high
   status: candidate
