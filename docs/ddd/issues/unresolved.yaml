@@ -17,15 +17,6 @@ issues:
     needed_input: domain-rule discovery
     status: open
 
-  - id: ISSUE-0008
-    title: What identifiers and rules correlate Kiln Runs to ProTrack moisture records?
-    description: ProTrack remains source authority for planer moisture data while Kiln Operations owns correlation and Moisture Outcome semantics. Exact business correlation keys/rules remain unresolved.
-    affected_objects: [bc.kiln-operations, rel.protrack-moisture-to-kiln-operations, aggregate.kiln-operations.kiln-run]
-    evidence: [contract.protrack-moisture-to-kiln-operations, language.kiln-operations.moisture-outcome]
-    blocking: false
-    needed_input: domain-rule/integration discovery
-    status: open
-
   - id: ISSUE-0009
     title: What is the controlled Asset condition and lifecycle-state vocabulary?
     description: Asset identity and state ownership are established, but the exact allowed condition/state vocabulary and transition policy remain tactical work. This is also the remaining unknown needed when a maintenance supervisor promotes a Reliability finding into an Asset-state change.
@@ -86,6 +77,17 @@ resolved_issues:
     evidence: [bc.reliability-verification, invariant.verification.result-not-asset-condition, invariant.asset.state-change-records-history, contract.reliability-verification-to-asset-lifecycle]
     resolved_by: confirmed-domain-evidence-audit
     resolved_at: 2026-08-22
+    blocking: false
+    status: resolved
+
+  - id: ISSUE-0008
+    title: What identifiers and rules correlate Kiln Runs to ProTrack moisture records?
+    answer: There is no run-level correlation identifier; ProTrack records moisture by lumber dimension, so only statistical analysis by thickness x width x length is supported.
+    resolution: The prior model incorrectly implied that individual ProTrack moisture records could be correlated to a specific Kiln Run/Charge. Mark confirmed that ProTrack does not carry kiln-run identity and records moisture by lumber dimension. Kiln Operations now consumes ProTrack records/statistics at that supported grain and may compare dimension-level moisture behavior with retained kiln history statistically, but must not fabricate individual run-to-measurement lineage.
+    affected_objects: [bc.kiln-operations, contract.protrack-moisture-to-kiln-operations, query.kiln-operations.dimension-moisture-statistics, use-case.kiln-operations.run-history]
+    evidence: [bc.kiln-operations, contract.protrack-moisture-to-kiln-operations, "domain-expert: Mark, direct, 2026-08-23 — no kiln-run identifier; statistics on thickness x width x length"]
+    resolved_by: domain-expert
+    resolved_at: 2026-08-23
     blocking: false
     status: resolved
 
