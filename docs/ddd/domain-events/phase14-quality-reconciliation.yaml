@@ -1,0 +1,114 @@
+domain_events:
+  - id: event.quality-verification.quality-concern-recorded
+    name: QualityConcernRecorded
+    bounded_context: bc.quality-verification
+    owning_aggregate: aggregate.quality-verification.quality-concern
+    meaning: A suspected quality issue was retained as a Quality Concern for authorized triage.
+    trigger: Successful RecordQualityConcern command.
+    payload_concepts: [Quality Concern identity, subject/product context, reporter/source provenance]
+    consumers: [Quality Verification concern views]
+    business_significance: Establishes a retained intake record without implying a Quality Check or Nonconformity.
+    ordering_requirements: First lifecycle event for the Quality Concern.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Quality Concern is retained before formal determination.
+      confidence: high
+      status: candidate
+
+  - id: event.quality-verification.quality-concern-dispositioned
+    name: QualityConcernDispositioned
+    bounded_context: bc.quality-verification
+    owning_aggregate: aggregate.quality-verification.quality-concern
+    meaning: An authorized reviewer recorded a triage/disposition decision and rationale for a Quality Concern.
+    trigger: Successful DispositionQualityConcern command.
+    payload_concepts: [Quality Concern identity, disposition, rationale]
+    consumers: [Quality Verification concern views, authorized orchestration]
+    business_significance: Retains the formal triage decision separately from later Quality Check or CAPA lifecycle state.
+    ordering_requirements: Occurs after QualityConcernRecorded.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Management/designated quality technicians control formal triage and disposition.
+      confidence: high
+      status: candidate
+
+  - id: event.quality-verification.quality-check-linked-to-concern
+    name: QualityCheckLinkedToConcern
+    bounded_context: bc.quality-verification
+    owning_aggregate: aggregate.quality-verification.quality-concern
+    meaning: A formal Quality Check was linked to a concern as additional verification evidence.
+    trigger: Successful LinkQualityCheckToConcern command.
+    payload_concepts: [Quality Concern identity, Quality Check identity]
+    consumers: [Quality Verification concern/check views]
+    business_significance: Preserves the optional relationship without making Quality Check a mandatory gate.
+    ordering_requirements: Occurs after QualityConcernRecorded and after the referenced Quality Check exists.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Quality Check is optional before Nonconformity.
+      confidence: high
+      status: candidate
+
+  - id: event.quality-verification.nonconformity-linked-to-concern
+    name: NonconformityLinkedToConcern
+    bounded_context: bc.quality-verification
+    owning_aggregate: aggregate.quality-verification.quality-concern
+    meaning: A Quality Concern was linked to an independently accepted Corrective Action Nonconformity while the concern retained its own lifecycle.
+    trigger: Successful LinkNonconformityToConcern command.
+    payload_concepts: [Quality Concern identity, Nonconformity identity]
+    consumers: [Quality Verification concern views]
+    business_significance: Preserves traceability across the context boundary without transferring CAPA ownership or closing the concern implicitly.
+    ordering_requirements: Occurs only after the referenced Nonconformity exists in Corrective Action.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Direct promotion may occur when sufficient basis exists; the source concern remains open.
+      confidence: high
+      status: candidate
+
+  - id: event.quality-verification.quality-target-parameter-created
+    name: QualityTargetParameterCreated
+    bounded_context: bc.quality-verification
+    owning_aggregate: aggregate.quality-verification.applicable-quality-target
+    meaning: Salaried management established a ManuFactor quality target parameter for a defined applicability context.
+    trigger: Successful CreateQualityTargetParameter command.
+    payload_concepts: [Quality Target identity, criterion/value, mill/machine/process applicability, provenance]
+    consumers: [Quality Check target-resolution read models]
+    business_significance: Establishes a controlled contextual target that can be resolved for Quality Checks.
+    ordering_requirements: First lifecycle event for the target parameter.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: PHASE14-QUALITY-PARAMETERS / PHASE14-QUALITY-PARAMETER-AUTHORITY
+          description: ManuFactor owns contextual target parameters and salaried management may create/change them.
+      confidence: high
+      status: candidate
+
+  - id: event.quality-verification.quality-target-parameter-changed
+    name: QualityTargetParameterChanged
+    bounded_context: bc.quality-verification
+    owning_aggregate: aggregate.quality-verification.applicable-quality-target
+    meaning: A contextual quality target parameter changed while prior applicability/version history remained traceable.
+    trigger: Successful ChangeQualityTargetParameter command.
+    payload_concepts: [Quality Target identity, revised criterion/value or applicability, change rationale/provenance]
+    consumers: [Quality Check target-resolution read models, audit/history views]
+    business_significance: Changes current target configuration without changing the historical basis of retained Quality Checks.
+    ordering_requirements: Occurs after QualityTargetParameterCreated and is ordered within one target history.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: PHASE14-QUALITY-PARAMETER-AUTHORITY
+          description: Salaried management may change quality-target parameters.
+      confidence: high
+      status: candidate
