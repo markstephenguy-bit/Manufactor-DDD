@@ -1,26 +1,24 @@
 model_state: Strategic Stable / Tactical Candidate; Specification Phases 1-15 complete at current evidence level
-session_state: active-scenario-validation
-session_refreshed_at: 2026-08-23T15:50:00-05:00
-current_phase: scenario-based DDD validation
-last_completed: SCENARIO-001 validated suspected lumber quality concern through Quality Verification and Corrective Action; two stale tactical/context defects were reconciled without creating a new domain question
-current_focus: Run realistic ManuFactor situations end-to-end through the canonical model and use failures, contradictions, or unexplained ownership/state transitions as validation evidence
+session_state: scenario-validation-complete
+session_refreshed_at: 2026-08-23T18:31:00-05:00
+current_phase: post-scenario-validation stabilization decision
+last_completed: Ten realistic ManuFactor situations were executed end-to-end against the canonical DDD; all passed after two model refinements and no new domain-rule issue was required
+current_focus: Do not manufacture more scenarios or domain questions merely to continue discovery. Use new real mill situations, implementation feedback, or a deliberate tactical-stabilization review as the next evidence source.
 blocking_issues: []
 open_nonblocking_issues: []
 
 next_action: >
-  Continue the scenario suite in docs/ddd/scenario-validation/README.md. Execute scenarios against the canonical model rather than merely discussing them. A scenario may PASS, PASS_WITH_MODEL_REFINEMENT, expose a genuine DOMAIN_QUESTION_REQUIRED, or reveal a MODEL_DEFECT. Create a new unresolved issue only when the scenario exposes a material business rule that cannot be derived from confirmed evidence.
+  Treat the ten-scenario validation suite as complete. Before future modeling, read this handoff, docs/ddd/CANONICAL-REGISTRY.yaml, docs/ddd/reports/validation-report.md, docs/ddd/reports/scenario-validation.md, and docs/ddd/issues/unresolved.yaml. New modeling work should come from a real new ManuFactor situation/gap, implementation feedback, or an explicit Tactical Stable promotion review.
 
 startup_instructions:
   - Treat markstephenguy-bit/Manufactor-DDD as authoritative session state.
   - Read docs/ddd/SPECIFICATION.md before changing model semantics.
   - Read docs/ddd/CANONICAL-REGISTRY.yaml before counting or validating tactical objects.
-  - Read docs/ddd/scenario-validation/README.md and completed scenario files before continuing scenario validation.
+  - Read docs/ddd/reports/scenario-validation.md and docs/ddd/scenario-validation/README.md before adding more scenarios.
   - Read docs/ddd/reports/validation-report.md and docs/ddd/issues/unresolved.yaml before asking domain questions.
   - Do not reconstruct canonical state from chat when GitHub contains it.
   - Mark is the domain authority.
-  - Do not ask a domain question merely because a scenario is complex; first attempt to execute the scenario using confirmed model rules.
-  - Ask one high-value business question at a time only when a scenario exposes a genuinely material unresolved rule.
-  - Perform substantial model/repository work between questions.
+  - Ask one high-value business question at a time only when new evidence exposes a genuinely material unresolved rule.
   - Preserve stable IDs unless modeled identity changes.
   - Do not equate departments, capabilities, applications, Subdomains, or Bounded Contexts.
   - Do not use ArchiMate as canonical DDD authority.
@@ -37,34 +35,29 @@ maturity:
   phase14: complete
   phase15: complete
   post_phase15_targeted_refinement: complete
-  scenario_validation: active
+  whole_model_consolidation: complete
+  scenario_validation: complete
   current_open_issue_count: 0
 
 scenario_validation:
   methodology: docs/ddd/scenario-validation/README.md
-  completed:
-    - id: SCENARIO-001
-      file: docs/ddd/scenario-validation/SCENARIO-001-quality-concern-to-capa.yaml
-      result: PASS_WITH_MODEL_REFINEMENT
-      findings:
-        - Corrective Action context was stale and omitted the confirmed effectiveness-verification closure gate; reconciled.
-        - Policy registry contained stale resolved-issue notes; reconciled.
-      new_domain_questions: 0
-  pending:
-    - SCENARIO-002
-    - SCENARIO-003
-    - SCENARIO-004
-    - SCENARIO-005
-    - SCENARIO-006
-    - SCENARIO-007
-    - SCENARIO-008
-    - SCENARIO-009
-    - SCENARIO-010
+  report: docs/ddd/reports/scenario-validation.md
+  results_file: docs/ddd/scenario-validation/SCENARIOS-002-010.yaml
+  completed_count: 10
+  totals:
+    PASS: 8
+    PASS_WITH_MODEL_REFINEMENT: 2
+    DOMAIN_QUESTION_REQUIRED: 0
+    MODEL_DEFECT_REMAINING: 0
+  refinements:
+    - SCENARIO-001 corrected stale Corrective Action effectiveness-verification text and stale resolved-policy notes.
+    - SCENARIO-007 edge variation / SCENARIO-009 boundary stress added explicit Corrective Action to Project Tracking relationship and integration contract for corrective work that the business genuinely manages as a Project.
+  new_domain_questions: 0
 
 canonical_registry:
   manifest: docs/ddd/CANONICAL-REGISTRY.yaml
   note: >
-    Large Phase-15 index files remain baseline registries. Post-Phase-15 additions are canonical sidecars explicitly composed by CANONICAL-REGISTRY.yaml. Count unique stable IDs across baseline plus additions; do not count historical reconciliation duplicates.
+    Large baseline index files remain composed with canonical sidecars/overlays by stable ID. Scenario validation added one Context Map relationship and one Integration Contract. Count unique stable IDs across the complete manifest.
 
 current_model_counts:
   bounded_contexts: 10
@@ -80,34 +73,22 @@ current_model_counts:
   factories: 0
   queries: 13
   application_use_cases: 17
-  context_relationships: 9
-  integration_contracts: 9
+  context_relationships: 10
+  integration_contracts: 10
 
-important_completed_business_decisions:
-  - Operations Record owns concrete missing operational record workflows, not a generic catch-all form or analytics grain model.
-  - Kiln planning determines what lumber needs drying; downstream planer optimization determines finished SKU creation.
-  - ProTrack has no Kiln Run/Charge identifier; moisture analysis is statistical by lumber dimension thickness x width x length only.
-  - Project means a real Project using conventional project-management semantics.
-  - MP2 provides hierarchy and WR/WO transaction facts; ManuFactor owns richer Asset identity, condition, lifecycle, and retained history semantics.
-  - Asset Condition uses Operating, Degraded, Down.
-  - Asset Lifecycle State uses In Service, Out of Service, Retired.
-  - Reliability findings may be recorded by a millwright; maintenance supervisor decides promotion; Reliability Manager is accountable; Reliability Verification does not directly mutate Asset state.
-  - Operational Qualification may be granted by the employee supervisor or designated trainer/SME.
-  - Operational Qualification evidence is practical job shadowing/observed capability with the current competent worker; LMS completion alone does not establish qualification.
-  - Operational Qualification persists until explicitly withdrawn or superseded; elapsed time alone does not expire it; withdrawal preserves history.
-  - Workforce replacement requires qualification and availability, with final supervisor judgment retained as business history.
-  - Quality Concern, Quality Check, and Nonconformity are distinct lifecycle concepts.
-  - Quality Concern retains identity and full status/history through escalation/disposition and remains referenceable later.
-  - Quality Check is optional before Nonconformity; failed check does not automatically create Nonconformity.
-  - Nonconformity admission requires explicit authorized determination that an applicable requirement was not fulfilled.
-  - Applicable quality targets are ManuFactor-maintained contextual parameters; salaried management may create/change them.
-  - CAPA belongs to Quality; affected department salaried Quality office owns the Nonconformity/CAPA lifecycle while routed execution remains externally owned.
-  - Corrective work under CAPA is represented as tasks under the parent Nonconformity, not independent child Corrective Action aggregates.
-  - CAPA closure requires required corrective work to be complete plus retained post-correction verification that the correction was effective.
-  - LTV printing/issuance is an early lifecycle step.
-  - A used LTV becomes Recorded only after Safety Office receipt, scan, reliable match to the originating electronic record, and retained recording transition.
-  - LTV records never disappear on completion; identity/status/history remain referenceable.
-  - Environmental remains a confirmed opportunity area but is deferred until concrete process gaps are identified.
+scenario_validated_business_boundaries:
+  - Quality Concern, Quality Check, and Nonconformity remain distinct; failed checks do not automatically become Nonconformities.
+  - CAPA corrective work is task-based; routed execution remains externally owned; CAPA closure requires retained effectiveness verification.
+  - ProTrack moisture analysis is statistical by thickness x width x length and cannot fabricate kiln-run lineage.
+  - Workforce replacement requires current qualification plus availability and retained supervisor judgment.
+  - Operational Qualification is established by job shadowing/observed capability, persists until explicit withdrawal/supersession, and retains history.
+  - Reliability Verification findings do not directly mutate Asset state; maintenance supervisor promotion and Asset Lifecycle authority remain separate.
+  - Asset Condition and Asset Lifecycle State remain separate controlled concepts.
+  - LTV becomes Recorded only after Safety receipt, scan, and reliable match to the originating electronic record; LTV history is retained.
+  - Operations Record owns concrete structured-record gaps and correction/history semantics, not a generic catch-all form or analytics lifecycle.
+  - Project Tracking owns actual business Projects; routine tasks remain outside it; Project completion does not imply CAPA closure.
+  - Corrective work may be routed to Project Tracking only when the business genuinely recognizes/manages that work as a Project; CAPA and Project lifecycles remain separate.
+  - Environmental remains intentionally deferred until a concrete ManuFactor Environmental workflow/system gap is evidenced.
 
 resolved_targeted_issues:
   - ISSUE-0004: explicit Nonconformity admission policy
@@ -125,22 +106,17 @@ canonical_files_to_use:
   - docs/ddd/CANONICAL-REGISTRY.yaml
   - docs/ddd/issues/unresolved.yaml
   - docs/ddd/reports/validation-report.md
+  - docs/ddd/reports/scenario-validation.md
   - docs/ddd/scenario-validation/README.md
+  - docs/ddd/scenario-validation/SCENARIO-001-quality-concern-to-capa.yaml
+  - docs/ddd/scenario-validation/SCENARIOS-002-010.yaml
   - docs/ddd/context-map/context-map.yaml
+  - docs/ddd/context-map/scenario-project-routing.yaml
   - docs/ddd/integration-contracts/index.yaml
-  - docs/ddd/aggregates/index.yaml
-  - docs/ddd/entities/index.yaml
-  - docs/ddd/value-objects/index.yaml
-  - docs/ddd/invariants/index.yaml
-  - docs/ddd/commands/index.yaml
-  - docs/ddd/domain-events/index.yaml
-  - docs/ddd/policies/index.yaml
-  - docs/ddd/repositories/index.yaml
-  - docs/ddd/queries/index.yaml
-  - docs/ddd/application-use-cases/index.yaml
+  - docs/ddd/integration-contracts/scenario-project-routing.yaml
 
 historical_report_note: >
-  Phase-specific reports such as phase14-use-case-query-audit.md and phase15-integration-validation.md are historical completion snapshots and may show earlier counts or open-issue totals. Current state is validation-report.md plus this handoff and CANONICAL-REGISTRY.yaml.
+  Phase-specific reports such as phase14-use-case-query-audit.md and phase15-integration-validation.md are historical completion snapshots and may show earlier counts/open-issue totals. Current state is validation-report.md plus scenario-validation.md, this handoff, and CANONICAL-REGISTRY.yaml.
 
 session_resume: >
-  Specification Phases 1-15 and targeted post-Phase-15 rule refinement are complete. The current validation phase uses realistic ManuFactor situations to exercise the DDD end-to-end. SCENARIO-001 passed with model refinement and exposed two stale metadata defects but no new domain question. Continue with SCENARIO-002 rather than returning to abstract discovery.
+  Specification Phases 1-15, targeted post-Phase-15 refinement, consolidation, and the initial ten-scenario operational validation suite are complete. All ten scenarios passed after two model refinements; no new unresolved domain question was created. Current model is Strategic Stable / Tactical Candidate, PASS WITH WARNINGS, with 10 Context Map relationships and 10 Integration Contracts. Future work should be driven by real new situations, implementation evidence, or a deliberate Tactical Stable review rather than continued abstract discovery.
