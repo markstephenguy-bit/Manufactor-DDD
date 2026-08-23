@@ -1,0 +1,21 @@
+invariants:
+  - id: invariant.qualification.shadowing-demonstrates-capability
+    name: Shadowing and Observed Performance Support Operational Qualification
+    bounded_context: bc.training-competency
+    aggregate: aggregate.training-qualification.qualification
+    rule: >
+      Before Operational Qualification is granted for a mill job, the person shadows the current competent worker and is observed performing or learning the work sufficiently for an authorized supervisor or designated trainer/subject-matter expert to determine that the person is capable of doing the job.
+    reason: >
+      Operational Qualification is based on demonstrated practical capability in the actual job context rather than course completion, elapsed training time, or availability alone.
+    triggering_operations: [Establish Operational Qualification]
+    enforcement_boundary: Operational Qualification aggregate
+    failure_semantics: >
+      Do not grant Operational Qualification when the person has not had the job-shadowing/observed-performance opportunity needed to support the capability judgment, or when the authorized reviewer cannot determine that the person is capable of doing the job.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23
+          description: The trainee shadows the current worker so the business can see whether the trainee is capable of doing the job.
+      confidence: high
+      status: candidate
