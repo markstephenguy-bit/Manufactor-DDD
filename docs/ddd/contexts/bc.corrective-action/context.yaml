@@ -1,32 +1,34 @@
 id: bc.corrective-action
 name: Corrective Action
-purpose: Coordinate Nonconformity-driven correction and corrective action through root-cause, routing, and closure without duplicating work ownership held by other contexts or systems.
+purpose: Coordinate Nonconformity-driven correction and corrective tasks through root-cause, routing, and closure without duplicating work ownership held by other contexts or systems.
 subdomain: subdomain.quality
 model_statement: >
   Within Corrective Action, a Nonconformity is a finding that enters a remediation lifecycle of correction,
-  root-cause analysis, corrective action, routing, and closure. The salaried Quality office within the affected
+  root-cause analysis, corrective tasks, routing, and closure. The salaried Quality office within the affected
   department owns the active Nonconformity/CAPA work and is accountable for driving the issue through that
-  lifecycle. Routed work may be executed by other departments, contexts, or systems and does not become locally
-  owned merely because CAPA coordinates it.
+  lifecycle. The work needed to correct the issue is represented as tasks under the Nonconformity rather than as
+  independently identified child Corrective Action lifecycles. Routed work may be executed by other departments,
+  contexts, or systems and does not become locally owned merely because CAPA coordinates it.
 responsibilities:
   - Represent Nonconformities and Corrections.
-  - Coordinate root-cause and Corrective Action work.
+  - Coordinate root-cause and the tasks required to correct the issue.
   - Keep the department's salaried Quality office accountable for active Nonconformity/CAPA progression and closure.
   - Route resulting work to the context/system that owns that work class.
-  - Track CAPA coordination through closure.
+  - Track task/status/completion evidence needed for CAPA coordination through closure.
 scope:
   - Nonconformity lifecycle
-  - Correction and Corrective Action coordination
+  - Correction and corrective-task coordination
   - Root-cause work
   - Routing and closure semantics
 out_of_scope:
   - Product measurement/quality-check lifecycle
   - Ownership of routed maintenance, Safety, Operations, project, or other work
+  - Independent child Corrective Action aggregate/lifecycle for each corrective task
   - A monolithic QMS
 owned_concepts:
   - Nonconformity
   - Correction
-  - Corrective Action
+  - Corrective Task
   - CAPA Item
   - Routing Rule
 external_concepts:
@@ -37,14 +39,16 @@ external_concepts:
 ubiquitous_language:
   - Nonconformity
   - Correction
-  - Corrective Action
+  - corrective task
   - root cause
   - CAPA item
   - routing
   - closure
 business_rules:
-  - The salaried Quality office in the affected department is accountable for working the Nonconformity/CAPA issue through investigation, corrective-action coordination, and closure.
-  - CAPA closure must reflect the corrective-action lifecycle without falsely becoming authoritative for work owned by another context.
+  - The salaried Quality office in the affected department is accountable for working the Nonconformity/CAPA issue through investigation, corrective-task coordination, and closure.
+  - Work required to correct a Nonconformity is represented as one or more tasks under the Nonconformity; current evidence does not support an independently identified child Corrective Action lifecycle for each task.
+  - A corrective task may retain responsible party, status, completion evidence, and routing reference as needed for coordination.
+  - CAPA closure must reflect completion/disposition of required corrective tasks without falsely becoming authoritative for work owned by another context.
   - Routing execution work to another department/system does not transfer ownership of the Nonconformity/CAPA record away from Quality.
   - Planned project work is not inherently a CAPA item.
   - External standards may inform vocabulary/rules but do not define this Bounded Context boundary.
@@ -52,7 +56,7 @@ owner: department salaried Quality office
 domain_experts: [Mark]
 integration_surface:
   - Accepts eligible findings from Quality Verification and potentially other contexts when explicit rules allow.
-  - Routes corrective work to contexts/systems that own execution while retaining Quality ownership of the CAPA lifecycle.
+  - Routes corrective tasks to contexts/systems that own execution while retaining Quality ownership of the CAPA lifecycle and task coordination history.
 upstream_dependencies:
   - bc.quality-verification
 downstream_consumers:
@@ -67,6 +71,9 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-22
       description: Mark clarified that the salaried Quality office in the department works the Nonconformity/CAPA issue.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-23 ISSUE-0010 clarification
+      description: Corrective work under a Nonconformity is tasks to complete to get the issue corrected, not separate child Corrective Action lifecycles.
     - type: decision
       reference: DDD-0005
       description: CAPA vocabulary, trigger, routing, and ISO-boundary semantics were clarified.
