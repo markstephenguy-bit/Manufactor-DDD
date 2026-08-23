@@ -1,11 +1,11 @@
 issues:
   - id: ISSUE-0006
-    title: What evidence and rules establish, review, expire, or withdraw Operational Qualification?
-    description: Grant authority is already confirmed as the employee's supervisor or a designated trainer/subject-matter expert. Learning completion is not automatically Operational Qualification. Exact rules for acceptable evidence, review, expiration, and withdrawal remain to be discovered.
+    title: What evidence is acceptable to establish Operational Qualification for each job or role?
+    description: Grant authority is confirmed as the employee's supervisor or a designated trainer/subject-matter expert. Qualification persists until explicitly withdrawn or superseded and does not expire from elapsed time alone. Learning completion is not automatically Operational Qualification. The remaining unknown is the job-specific evidence rule used to support the original qualification decision.
     affected_objects: [bc.training-competency, aggregate.training-qualification.qualification]
-    evidence: [language.training-qualification.operational-qualification, invariant.qualification.requires-evidence, bc.training-competency]
+    evidence: [language.training-qualification.operational-qualification, invariant.qualification.requires-evidence, invariant.qualification.persists-until-withdrawn, invariant.qualification.withdrawal-preserves-history, bc.training-competency]
     blocking: false
-    needed_input: domain-rule discovery
+    needed_input: job-specific domain-rule discovery
     status: open
 
   - id: ISSUE-0007
