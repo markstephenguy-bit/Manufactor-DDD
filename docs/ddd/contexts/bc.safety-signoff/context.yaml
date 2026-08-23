@@ -1,40 +1,44 @@
 id: bc.safety-signoff
 name: LTV Form Management
-purpose: Manage the LTV form lifecycle, including maintaining form definitions/templates, producing printable instances, retaining and tracking issued forms, and supporting the normal completion/sign-off workflow as the record matures.
+purpose: Manage the LTV form lifecycle from controlled electronic record/template through printing, field use, Safety Office return, scanning, reconciliation to the originating electronic record, and retained recorded status/history.
 subdomain: subdomain.safety-compliance-signoff
 model_statement: >
-  Within LTV Form Management, ManuFactor is authoritative for the managed LTV form/template and the lifecycle of
-  each LTV form instance. The normal LTV record includes the exact template/version used, the job/equipment/process
-  to which the form applies, the people who complete or sign it and when, and the record's progression through its
-  workflow states. Printing/issuing is therefore an early lifecycle step rather than the complete business meaning
-  of the record.
+  Within LTV Form Management, ManuFactor is authoritative for the managed LTV form/template and the retained lifecycle of each LTV form instance. A printable instance originates from an electronic record and exact template/version. After field use, the paper form is picked up by the Safety Office, scanned into the system, and matched back to its originating electronic record. Once that reconciliation is successfully completed, the retained electronic record transitions to Recorded. The record never disappears; later handling is represented through retained status/history rather than deletion or replacement. Printing/issuing alone is therefore an early lifecycle step and does not mean the record has been recorded back into the system.
 responsibilities:
   - Maintain the LTV form/template information needed to produce current forms.
-  - Produce printable LTV form instances from the applicable managed form/template.
+  - Produce printable LTV form instances from the applicable managed form/template and originating electronic record.
   - Preserve the exact template/version used by each LTV instance.
   - Associate each LTV instance with the applicable job, equipment, and/or process context.
-  - Track who completes, approves, or signs the LTV record and when.
-  - Retain issued/printed LTV form instances and their complete workflow history.
-  - Support the record maturing through the applicable LTV workflow states through completion/sign-off.
+  - Track printed/issued paper instances through return to the Safety Office.
+  - Retain the scanned returned form as evidence.
+  - Match the scanned returned form to the originating electronic LTV record.
+  - Transition the retained electronic record to Recorded only after successful scan-and-match reconciliation.
+  - Retain the complete LTV status/history so old records remain referenceable.
 scope:
   - LTV form/template management
+  - LTV electronic originating records
   - LTV form printing and issue
-  - LTV form instances
-  - Job/equipment/process applicability
-  - Completion, approval, and sign-off
-  - LTV workflow state and history
+  - Returned-paper Safety Office intake
+  - Scanning returned LTV forms
+  - Reconciliation/matching to originating electronic record
+  - Recorded status transition
+  - LTV workflow state and retained history
   - Exact template-version traceability
+  - Job/equipment/process applicability
 out_of_scope:
   - General Safety incident management
   - CAPA lifecycle
   - Operations incident reporting
   - Entire Safety departmental scope
+  - Treating printing/issuance as equivalent to successful recording
 owned_concepts:
   - LTV Form
   - LTV Form Template
   - LTV Form Instance
+  - LTV Originating Electronic Record
   - LTV Form Status
   - LTV Form History
+  - Returned LTV Scan
 external_concepts:
   - Person
   - Job
@@ -45,24 +49,29 @@ ubiquitous_language:
   - LTV Form
   - LTV Template
   - LTV Form Instance
+  - electronic record
   - print
   - issue
-  - completion
-  - approval
-  - sign-off
+  - returned form
+  - Safety Office
+  - scan
+  - match
+  - Recorded
   - workflow
 business_rules:
-  - Every LTV form instance must remain traceable to the exact form/template version from which it was produced.
+  - Every LTV form instance must remain traceable to the exact form/template version and originating electronic record from which it was produced.
   - The LTV record must retain the job, equipment, and/or process context to which it applies.
-  - Completion, approval, and sign-off actions must retain who performed them and when.
-  - Printing or issuing an LTV form is an early workflow state and does not imply completion or sign-off.
-  - The LTV form instance may mature through workflow states, and that state history must be retained rather than overwritten.
+  - Printing or issuing an LTV form is an early workflow state and does not imply that the returned paper has been recorded into the system.
+  - A returned paper LTV must be picked up/received by the Safety Office, scanned, and matched to its originating electronic record before that record may transition to Recorded.
+  - The scan and successful originating-record match are retained evidence supporting the Recorded transition.
+  - LTV records are not destructively deleted as workflow completes; identity and status/history remain retained so prior records can be referenced later.
+  - Later status changes must preserve prior status/history rather than overwrite it.
   - LTV workflow state must not redefine unrelated Safety or CAPA lifecycles.
-owner: unresolved
+owner: Safety Office
 domain_experts: [Mark]
 integration_surface:
   - May reference jobs/processes from Operations and equipment from Asset Lifecycle.
-  - May provide LTV form status or completed-form references to other contexts where operational or corrective work needs them.
+  - May provide LTV form status or recorded-form references to other contexts where operational or corrective work needs them.
 upstream_dependencies:
   - bc.asset-lifecycle, when equipment applicability is required
 
@@ -80,6 +89,9 @@ provenance:
       description: Existing evidence supports managed LTV templates/forms, printable instances, and related lifecycle information.
     - type: domain-expert
       reference: Mark direct, 2026-08-22
-      description: Mark clarified that the normal LTV record must preserve the exact form/version, what job/equipment/process it applied to, who completed/signed it and when, and that the record can mature through its workflow.
+      description: Mark clarified that the normal LTV record must preserve the exact form/version and applicable job/equipment/process context.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-23 LTV recording clarification
+      description: After field use the Safety Office picks up the paper LTV, scans it into the system, matches it to the electronic initial record, and changes that retained record to Recorded; the record never dies and only changes status.
   confidence: high
   status: candidate
