@@ -33,23 +33,23 @@ queries:
       confidence: high
       status: candidate
 
-  - id: query.kiln-operations.run-moisture
-    name: Review Kiln Run Performance
+  - id: query.kiln-operations.dimension-moisture-statistics
+    name: Review Moisture Statistics by Lumber Dimension
     bounded_context: bc.kiln-operations
-    purpose: Review a completed Kiln Run/Charge and interpret drying performance using correlated downstream ProTrack moisture measurements.
-    inputs: [kiln run identity]
-    result: Retained kiln-run history plus correlated ProTrack moisture evidence and Kiln Operations drying-performance interpretation with source provenance preserved.
-    authoritative_source: Explicit composition of bc.kiln-operations and external.protrack-moisture through contract.protrack-moisture-to-kiln-operations; ProTrack owns source measurements and Kiln Operations owns correlation/interpretation.
-    consistency_expectation: Correlation may be incomplete; uncorrelatable source measurements remain explicitly uncorrelated and are never fabricated into a run association.
+    purpose: Review downstream ProTrack moisture behavior statistically by lumber dimension and compare it with retained kiln operating history without asserting that individual moisture records belong to a specific Kiln Run/Charge.
+    inputs: [lumber dimension thickness x width x length, optional mill or time scope]
+    result: ProTrack moisture measurements/statistics for the selected dimension plus relevant retained kiln-history context and Kiln Operations statistical interpretation, with source provenance and lack of run-level traceability explicit.
+    authoritative_source: Explicit composition of bc.kiln-operations and external.protrack-moisture through contract.protrack-moisture-to-kiln-operations; ProTrack owns source measurements and Kiln Operations owns statistical drying-performance interpretation.
+    consistency_expectation: No individual ProTrack measurement is attributed to a Kiln Run/Charge unless a future authoritative identifier exists; dimension-level statistics are analytical evidence rather than run-level lineage.
     status: candidate
     provenance:
       sources:
-        - type: discovery
-          reference: query-candidate.kiln-operations.run-moisture
-          description: Reconciled Phase 14 cross-context query candidate.
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23
+          description: ProTrack does not record kiln-run identity; moisture data is recorded by lumber dimension and can only support statistical analysis on thickness x width x length.
         - type: existing-model
           reference: contract.protrack-moisture-to-kiln-operations
-          description: Defines source authority, translation, and failure semantics.
+          description: Defines source authority, supported statistical grain, and no-fabricated-lineage rule.
       confidence: high
       status: candidate
 
@@ -205,7 +205,7 @@ queries:
       sources:
         - type: discovery
           reference: query-candidate.training-qualification.who-can-do-job
-          description: Reconciled Phase 14 query candidate.
+          description: Reconciled Phase 14 cross-context query candidate after grant-authority clarification.
       confidence: high
       status: candidate
 
