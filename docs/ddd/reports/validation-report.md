@@ -31,7 +31,7 @@ This report evaluates the canonical DDD repository through Phase 15, including D
 - 0 Factories currently justified
 - 13 canonical Queries
 - 14 canonical Application Use Cases
-- 9 open nonblocking tactical/domain-rule issues
+- 8 open nonblocking tactical/domain-rule issues
 
 ---
 
@@ -79,6 +79,8 @@ Phase 14 evidence justified:
 
 The earlier conclusion that Applicable Quality Target lacked evidence for an independent Aggregate is explicitly marked superseded in the canonical Aggregate index.
 
+Post-Phase-15 hardening resolved ISSUE-0011: vacation coverage remains inside the Operational Coverage Plan aggregate at current evidence level. A separate vacation aggregate is not justified unless future evidence introduces an independent lifecycle or schedule-wide invariant.
+
 Exact Quality Concern closure after escalation and exact target retirement/supersession behavior remain unresolved and are not invented.
 
 ## Gate F — Entity / Value Object validity: PASS WITH WARNINGS
@@ -87,7 +89,7 @@ Quality Concern and Applicable Quality Target Parameter now have explicit aggreg
 
 ## Gate G — Behavior validity: PASS WITH WARNINGS
 
-Canonical behavior now includes:
+Canonical behavior includes:
 
 - 29 first-class Invariants
 - 30 Commands
@@ -97,9 +99,9 @@ Canonical behavior now includes:
 
 Phase 15 corrected stale Workforce Availability references:
 
-- `SelectReplacement` now references canonical `invariant.coverage.requires-qualified-and-available`.
+- `SelectReplacement` references canonical `invariant.coverage.requires-qualified-and-available`.
 - `invariant.coverage.need-is-explicit` is first-class because the staffing need/job/time context is already an Aggregate consistency rule required by Coverage Plan creation and replacement selection.
-- workforce Domain Event provenance and ISSUE-0011 evidence now use canonical invariant IDs.
+- workforce Domain Event provenance uses canonical invariant IDs.
 
 Phase 14 Quality Concern/target Commands and Domain Events are merged into the canonical indexes; temporary command/event sidecars were removed to avoid duplicate IDs.
 
@@ -121,7 +123,7 @@ All 14 canonical Application Use Cases match the normative schema:
 
 Phase 14/15 corrections include:
 
-- Workforce coverage now creates the explicit Coverage Plan/staffing need before replacement selection.
+- Workforce coverage creates the explicit Coverage Plan/staffing need before replacement selection.
 - LTV orchestration is limited to currently modeled template publication, instance generation, and issuance rather than inventing completion/sign-off rules.
 - Quality Concern review retains only local concern/check queries; accepted Nonconformity traceability is handled through an explicit integration boundary.
 
@@ -143,7 +145,7 @@ Source facts remain authoritative in their owning system/context. Reading, corre
 
 ## Gate J — Repository / tactical schema validity: PASS WITH WARNINGS
 
-The Phase 14 Quality Concern and Applicable Quality Target Repository candidates were normalized to the normative Repository schema and now use `aggregate` rather than non-normative `aggregate_root`.
+The Phase 14 Quality Concern and Applicable Quality Target Repository candidates were normalized to the normative Repository schema and use `aggregate` rather than non-normative `aggregate_root`.
 
 Repository abstractions remain technology-independent.
 
@@ -157,15 +159,16 @@ Open nonblocking issues in `docs/ddd/issues/unresolved.yaml`:
 
 - ISSUE-0004 — failed Quality Check -> Nonconformity exact admission rule
 - ISSUE-0005 — Reliability Verification Result -> Asset state rule
-- ISSUE-0006 — Operational Qualification evidence/expiration/withdrawal rules
+- ISSUE-0006 — Operational Qualification evidence/review/expiration/withdrawal rules; grant authority is already known
 - ISSUE-0007 — process-specific LTV completion/approval/sign-off rules
 - ISSUE-0008 — Kiln Run -> ProTrack moisture correlation identifiers/rules
 - ISSUE-0009 — exact Asset condition/lifecycle vocabulary
 - ISSUE-0010 — child Corrective Action identity and detailed CAPA closure rules
-- ISSUE-0011 — whether vacation planning needs a distinct Aggregate
 - ISSUE-0012 — independent Quality Concern closure rule after disposition/escalation
 
-None blocks current Phase 14/15 completion because unsupported transitions remain unmodeled rather than guessed.
+ISSUE-0011 is resolved: no separate vacation-planning Aggregate is justified at current evidence level.
+
+None of the remaining issues blocks Phase 14/15 completion because unsupported transitions remain unmodeled rather than guessed.
 
 ---
 
@@ -188,6 +191,16 @@ The resulting graph has 9 unique Context Map relationships and 9 unique Integrat
 Detailed audit: `docs/ddd/reports/phase15-integration-validation.md`.
 
 **Specification Phase 15 — COMPLETE at current evidence level.**
+
+---
+
+# Post-Phase-15 targeted hardening
+
+The first targeted hardening pass reviewed whether the unresolved registry still contained questions already answerable from the canonical model.
+
+- ISSUE-0011 was closed because the Operational Coverage Plan already owns vacation/sick-call staffing coverage and no independent vacation invariant or lifecycle justifies another Aggregate.
+- ISSUE-0006 wording was narrowed so grant authority is no longer presented as unresolved.
+- ISSUE-0007 wording now distinguishes completion, approval, and sign-off transitions from printing/issuance.
 
 ---
 
