@@ -1,0 +1,30 @@
+domain_concepts:
+  - id: concept.quality-verification.quality-concern
+    name: Quality Concern
+    bounded_context: bc.quality-verification
+    definition: A retained suspicion or intake record about a possible product-quality issue that exists before any formal determination and remains distinct from Quality Check and Nonconformity.
+    identity_semantics: Has its own retained identity across intake, triage, disposition, and links to later formal quality records.
+    lifecycle: Reported/received, reviewed/triaged, dispositioned, optionally linked to a Quality Check or accepted Nonconformity, and closed only under an independent supported rule.
+    state: [reported, under-review, dispositioned, open-after-escalation, closed-when-supported]
+    behaviors: [record concern, retain triage rationale, link optional Quality Check, link accepted Nonconformity]
+    rules:
+      - Intake does not automatically create a Quality Check.
+      - Intake does not automatically create a Nonconformity.
+      - A failed Quality Check does not automatically create a Nonconformity.
+      - Promotion/linkage to Nonconformity does not close the concern automatically.
+    relationships: [Quality Check, Nonconformity, subject/product context]
+    candidate_model_role: aggregate-root
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Quality Concern was confirmed as a retained intake/triage concept with independent lifecycle and history.
+      confidence: high
+      status: candidate
+
+concept_reconciliation:
+  id: concept.quality-verification.applicable-quality-target
+  modeling_change: candidate_model_role should now be treated as aggregate-root rather than unresolved/reference-data-only in whole-model validation.
+  reason: Phase 14 confirmed ManuFactor maintenance responsibility, contextual applicability, retained change history, and salaried-management authority to create/change target parameters.
+  canonical_definition_remains_in: docs/ddd/concepts/index.yaml
