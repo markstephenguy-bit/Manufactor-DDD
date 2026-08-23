@@ -1,7 +1,7 @@
 # ManuFactor DDD Validation Report
 
 **Model version:** Current canonical model through Specification Phase 15 Integration Validation  
-**Date:** 2026-08-22  
+**Date:** 2026-08-23  
 **Maturity state:** **Strategic Stable / Tactical Candidate**  
 **Overall result:** **PASS WITH WARNINGS**
 
@@ -31,7 +31,7 @@ This report evaluates the canonical DDD repository through Phase 15, including D
 - 0 Factories currently justified
 - 13 canonical Queries
 - 14 canonical Application Use Cases
-- 6 open nonblocking tactical/domain-rule issues
+- 5 open nonblocking tactical/domain-rule issues
 
 ---
 
@@ -54,6 +54,8 @@ Quality integration is represented by:
 1. `rel.quality-verification-to-corrective-action` — Quality Concern or Quality Check evidence may be supplied for explicit Corrective Action admission evaluation.
 2. `rel.corrective-action-to-quality-verification` — accepted Nonconformity identity/reference may be consumed for Quality Concern traceability without importing CAPA lifecycle ownership.
 
+The ProTrack -> Kiln Operations integration is now explicitly statistical rather than traceability-based: ProTrack records moisture by lumber dimension (thickness x width x length) and does not provide a Kiln Run/Charge identifier. The contract therefore forbids fabricated run-level lineage and supports dimension-level moisture statistics for drying-performance interpretation.
+
 Redundant Phase 15 Quality Concern relationship/contract sidecars were removed after their semantics were reconciled into the canonical indexes. Several DDD `relationship_type` values remain deliberately `unresolved`; organizational relationship patterns are not guessed.
 
 ## Gate D — Language validity: PASS
@@ -66,6 +68,7 @@ Critical distinctions remain explicit:
 - Operational Qualification != Operational Availability
 - qualification + availability prerequisites != supervisor's final coverage judgment
 - ProTrack Moisture Measurement != Kiln Operations interpretation
+- ProTrack dimension-level moisture statistics != individual Kiln Run/Charge traceability
 - LTV Form Template != LTV Printed Instance != Sign-Off
 
 ## Gate E — Aggregate validity: PASS WITH WARNINGS
@@ -97,9 +100,9 @@ Canonical behavior includes:
 - 3 Policies
 - 0 Domain Services
 
-The Policy set now includes `policy.corrective-action.determine-nonconformity-admission`. This resolves the prior vague Quality Check -> Nonconformity transition by requiring an authorized reviewer to explicitly determine from retained evidence that an identified applicable requirement was not fulfilled. A Quality Concern or failed Quality Check alone remains insufficient, and a Quality Check is not a mandatory gate.
+The Policy set includes `policy.corrective-action.determine-nonconformity-admission`. This resolves the prior vague Quality Check -> Nonconformity transition by requiring an authorized reviewer to explicitly determine from retained evidence that an identified applicable requirement was not fulfilled. A Quality Concern or failed Quality Check alone remains insufficient, and a Quality Check is not a mandatory gate.
 
-Reliability hardening also clarified that there is no deterministic Reliability Verification Result -> Asset State mapping. A millwright records the finding; the maintenance supervisor decides whether to promote it; Asset Lifecycle owns any resulting state transition. The remaining unknown is the controlled Asset-state vocabulary/allowed transition tracked by ISSUE-0009.
+Reliability hardening clarified that there is no deterministic Reliability Verification Result -> Asset State mapping. A millwright records the finding; the maintenance supervisor decides whether to promote it; Asset Lifecycle owns any resulting state transition. The remaining unknown is the controlled Asset-state vocabulary/allowed transition tracked by ISSUE-0009.
 
 Phase 15 corrected stale Workforce Availability references:
 
@@ -119,17 +122,20 @@ All 13 canonical Queries match the normative schema:
 
 They remain read-only. Cross-context reads explicitly state composition and source authority.
 
+The prior `query.kiln-operations.run-moisture` identity was retired because the source data cannot support run-level correlation. It is replaced by `query.kiln-operations.dimension-moisture-statistics`, which reads ProTrack moisture behavior by thickness x width x length and explicitly preserves the absence of run-level lineage.
+
 ### Application Use Cases
 
 All 14 canonical Application Use Cases match the normative schema:
 
 `id`, `name`, `bounded_context`, `goal`, `actors`, `trigger`, `preconditions`, `commands`, `queries`, `domain_services`, `events_observed`, `result`, `failure_paths`, `status`, `provenance`.
 
-Phase 14/15 corrections include:
+Phase 14/15 and post-Phase-15 corrections include:
 
 - Workforce coverage creates the explicit Coverage Plan/staffing need before replacement selection.
 - LTV orchestration is limited to currently modeled template publication, instance generation, and issuance rather than inventing completion/sign-off rules.
 - Quality Concern review retains only local concern/check queries; accepted Nonconformity traceability is handled through an explicit integration boundary.
+- Kiln run history remains authoritative locally, while downstream moisture review is statistical by lumber dimension and must not be presented as individual kiln-run traceability.
 
 Application orchestration does not redefine Aggregate invariants or unresolved business rules.
 
@@ -139,13 +145,13 @@ No direct cross-context Aggregate/Entity sharing or Shared Kernel is modeled.
 
 Cross-context compositions include:
 
-- Kiln Operations + ProTrack moisture
+- Kiln Operations + ProTrack dimension-level moisture statistics
 - Asset Lifecycle + MP2 hierarchy/WR-WO facts
 - Reliability Verification + Asset identity/context
 - Workforce Availability + Operational Qualification + HR/timekeeping facts
 - Quality Concern + accepted Corrective Action Nonconformity reference
 
-Source facts remain authoritative in their owning system/context. Reading, correlating, or retaining a reference does not transfer authority.
+Source facts remain authoritative in their owning system/context. Reading, correlating, statistically comparing, or retaining a reference does not transfer source authority.
 
 ## Gate J — Repository / tactical schema validity: PASS WITH WARNINGS
 
@@ -155,7 +161,7 @@ Repository abstractions remain technology-independent.
 
 ## Gate K — Provenance: PASS
 
-Phase 14/15 changes distinguish domain-expert evidence from modeling inference. Stable IDs were preserved except where a newly modeled identity was introduced.
+Phase 14/15 and post-Phase-15 changes distinguish domain-expert evidence from modeling inference. Stable IDs were preserved except where modeled identity actually changed, as with the invalid run-level moisture query being replaced by a dimension-statistics query.
 
 ## Gate L — Unresolved questions: PASS WITH WARNINGS
 
@@ -163,7 +169,6 @@ Open nonblocking issues in `docs/ddd/issues/unresolved.yaml`:
 
 - ISSUE-0006 — Operational Qualification evidence/review/expiration/withdrawal rules; grant authority is already known
 - ISSUE-0007 — process-specific LTV completion/approval/sign-off rules
-- ISSUE-0008 — Kiln Run -> ProTrack moisture correlation identifiers/rules
 - ISSUE-0009 — exact Asset condition/lifecycle vocabulary and allowed transitions
 - ISSUE-0010 — child Corrective Action identity and detailed CAPA closure rules
 - ISSUE-0012 — independent Quality Concern closure rule after Nonconformity escalation
@@ -172,6 +177,7 @@ Resolved during post-Phase-15 hardening:
 
 - ISSUE-0004 — Nonconformity admission now has an explicit domain Policy.
 - ISSUE-0005 — no deterministic Reliability Result -> Asset State mapping exists; maintenance-supervisor promotion is the gate and ISSUE-0009 owns the remaining state-transition detail.
+- ISSUE-0008 — ProTrack has no kiln-run identifier; moisture analysis is statistical by thickness x width x length and must not fabricate run-level lineage.
 - ISSUE-0011 — no separate vacation-planning Aggregate is justified at current evidence level.
 
 None of the remaining issues blocks Phase 14/15 completion because unsupported transitions remain unmodeled rather than guessed.
@@ -202,13 +208,14 @@ Detailed audit: `docs/ddd/reports/phase15-integration-validation.md`.
 
 # Post-Phase-15 targeted hardening
 
-The first targeted hardening pass reviewed whether the unresolved registry still contained questions already answerable from canonical evidence.
+The targeted hardening pass reviewed whether the unresolved registry still contained questions already answerable from canonical evidence or from direct domain clarification.
 
 - ISSUE-0011 was closed because Operational Coverage Plan already owns vacation/sick-call staffing coverage and no independent vacation invariant or lifecycle justifies another Aggregate.
 - ISSUE-0004 was closed by modeling the confirmed Nonconformity-admission decision as a Policy rather than leaving it as vague application orchestration.
 - ISSUE-0005 was closed because the confirmed maintenance-supervisor promotion decision means no automatic Reliability Verification -> Asset State mapping should exist.
+- ISSUE-0008 was closed after Mark clarified that ProTrack does not record a kiln-run identifier. The model now uses dimension-level moisture statistics (thickness x width x length) and explicitly prohibits fabricated run-to-measurement lineage.
 - ISSUE-0006 wording was narrowed so grant authority is no longer presented as unresolved.
-- ISSUE-0007 wording now distinguishes completion, approval, and sign-off transitions from printing/issuance.
+- ISSUE-0007 wording distinguishes completion, approval, and sign-off transitions from printing/issuance.
 - ISSUE-0012 was narrowed to the genuinely unresolved case: closure after Nonconformity escalation; no-escalation disposition/closure with retained reason is already supported by Phase 14 evidence.
 
 ---
