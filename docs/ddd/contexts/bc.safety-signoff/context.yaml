@@ -1,20 +1,29 @@
 id: bc.safety-signoff
 name: LTV Form Management
-purpose: Manage the LTV form lifecycle, including maintaining form definitions/templates, producing printable instances, retaining and tracking issued forms, and supporting approval/sign-off where the business process requires it.
+purpose: Manage the LTV form lifecycle, including maintaining form definitions/templates, producing printable instances, retaining and tracking issued forms, and supporting the normal completion/sign-off workflow as the record matures.
 subdomain: subdomain.safety-compliance-signoff
-model_statement: Within LTV Form Management, ManuFactor is authoritative for the managed LTV form/template and the lifecycle of printable/issued LTV form instances; printing and form management are the primary gap, while approval/sign-off is one possible lifecycle step rather than the defining model.
+model_statement: >
+  Within LTV Form Management, ManuFactor is authoritative for the managed LTV form/template and the lifecycle of
+  each LTV form instance. The normal LTV record includes the exact template/version used, the job/equipment/process
+  to which the form applies, the people who complete or sign it and when, and the record's progression through its
+  workflow states. Printing/issuing is therefore an early lifecycle step rather than the complete business meaning
+  of the record.
 responsibilities:
   - Maintain the LTV form/template information needed to produce current forms.
   - Produce printable LTV form instances from the applicable managed form/template.
-  - Track and retain issued/printed LTV form instances and their history.
-  - Support approval, completion, or sign-off state where required by the applicable LTV process.
-  - Preserve traceability between a printed/issued instance and the form/template from which it was produced.
+  - Preserve the exact template/version used by each LTV instance.
+  - Associate each LTV instance with the applicable job, equipment, and/or process context.
+  - Track who completes, approves, or signs the LTV record and when.
+  - Retain issued/printed LTV form instances and their complete workflow history.
+  - Support the record maturing through the applicable LTV workflow states through completion/sign-off.
 scope:
   - LTV form/template management
-  - LTV form printing
-  - LTV printed/issued instances
-  - LTV form history and traceability
-  - Approval/sign-off where applicable to an LTV form lifecycle
+  - LTV form printing and issue
+  - LTV form instances
+  - Job/equipment/process applicability
+  - Completion, approval, and sign-off
+  - LTV workflow state and history
+  - Exact template-version traceability
 out_of_scope:
   - General Safety incident management
   - CAPA lifecycle
@@ -23,29 +32,40 @@ out_of_scope:
 owned_concepts:
   - LTV Form
   - LTV Form Template
-  - LTV Printed Instance
+  - LTV Form Instance
   - LTV Form Status
   - LTV Form History
 external_concepts:
   - Person
+  - Job
+  - Asset/Equipment
+  - Process
   - Safety requirement
 ubiquitous_language:
   - LTV Form
   - LTV Template
-  - LTV Printed Instance
+  - LTV Form Instance
   - print
   - issue
+  - completion
   - approval
   - sign-off
+  - workflow
 business_rules:
-  - A printed or issued LTV form instance must remain traceable to the form/template version from which it was produced.
-  - Printing or issuing a form does not by itself imply approval or sign-off unless the applicable LTV process requires that state.
-  - Approval/sign-off state, where required, belongs to the managed LTV form instance and must not redefine unrelated Safety or CAPA lifecycles.
+  - Every LTV form instance must remain traceable to the exact form/template version from which it was produced.
+  - The LTV record must retain the job, equipment, and/or process context to which it applies.
+  - Completion, approval, and sign-off actions must retain who performed them and when.
+  - Printing or issuing an LTV form is an early workflow state and does not imply completion or sign-off.
+  - The LTV form instance may mature through workflow states, and that state history must be retained rather than overwritten.
+  - LTV workflow state must not redefine unrelated Safety or CAPA lifecycles.
 owner: unresolved
 domain_experts: [Mark]
 integration_surface:
+  - May reference jobs/processes from Operations and equipment from Asset Lifecycle.
   - May provide LTV form status or completed-form references to other contexts where operational or corrective work needs them.
-upstream_dependencies: []
+upstream_dependencies:
+  - bc.asset-lifecycle, when equipment applicability is required
+
 downstream_consumers:
   - bc.corrective-action
   - bc.operations-record
@@ -58,5 +78,8 @@ provenance:
     - type: existing-model
       reference: ManuFactor-arch LTV template/instance evidence
       description: Existing evidence supports managed LTV templates/forms, printable instances, and related lifecycle information.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22
+      description: Mark clarified that the normal LTV record must preserve the exact form/version, what job/equipment/process it applied to, who completed/signed it and when, and that the record can mature through its workflow.
   confidence: high
   status: candidate
