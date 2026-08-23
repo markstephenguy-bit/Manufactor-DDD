@@ -17,15 +17,6 @@ issues:
     needed_input: domain-rule discovery
     status: open
 
-  - id: ISSUE-0012
-    title: What independent rule closes a Quality Concern after disposition or Nonconformity escalation?
-    description: Quality Concern is a retained independent lifecycle. A concern may be closed/dispositioned with retained reason when authorized review determines no formal escalation is justified. Promotion/linkage to a Nonconformity explicitly does not close it automatically; the independent closure rule after escalation remains unknown.
-    affected_objects: [bc.quality-verification, aggregate.quality-verification.quality-concern]
-    evidence: [invariant.quality-concern.promotion-does-not-close, contract.corrective-action-to-quality-verification, Phase 14 Quality reconciliation]
-    blocking: false
-    needed_input: domain-rule discovery
-    status: open
-
 resolved_issues:
   - id: ISSUE-0003
     title: Should Vehicle Management merge into Physical Asset Management?
@@ -103,5 +94,16 @@ resolved_issues:
     evidence: [bc.workforce-availability, invariant.coverage.need-is-explicit, invariant.coverage.requires-qualified-and-available]
     resolved_by: model-evidence audit
     resolved_at: 2026-08-22
+    blocking: false
+    status: resolved
+
+  - id: ISSUE-0012
+    title: What independent rule closes a Quality Concern after disposition or Nonconformity escalation?
+    answer: A Quality Concern is never destroyed by closure or escalation; it retains its identity and history and changes status so it remains referenceable later.
+    resolution: Active handling ending is represented as a retained Quality Concern status transition, not deletion or replacement. Escalation/linkage to a Nonconformity may change the concern's status and adds the retained Nonconformity reference, but the original Quality Concern remains independently referenceable with its full status/disposition history. Exact status labels may be refined without reopening the lifecycle boundary decision.
+    affected_objects: [bc.quality-verification, aggregate.quality-verification.quality-concern, invariant.quality-concern.retained-status-history]
+    evidence: ["domain-expert: Mark, direct, 2026-08-23 — things like this never die; they just change their status so they can be referenced later", invariant.quality-concern.retained-status-history, contract.corrective-action-to-quality-verification]
+    resolved_by: domain-expert-and-model-reconciliation
+    resolved_at: 2026-08-23
     blocking: false
     status: resolved
