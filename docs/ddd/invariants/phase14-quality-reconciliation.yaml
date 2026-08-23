@@ -22,7 +22,7 @@ invariants:
     bounded_context: bc.quality-verification
     aggregate: aggregate.quality-verification.quality-concern
     rule: Formal concern triage/promotion must be performed by management or a designated quality technician; non-salaried employee concerns enter through the QC channel.
-    reason: The domain-expert clarified who controls formal quality triage without defining the implementation of the QC intake channel.
+    reason: The domain expert clarified who controls formal quality triage without defining the implementation of the QC intake channel.
     triggering_operations: [Disposition Quality Concern, Link Quality Check to Concern, Link Nonconformity to Concern]
     enforcement_boundary: Quality Concern aggregate
     failure_semantics: Reject formal disposition/promotion when the acting authority is not supported by the confirmed role rule.
@@ -41,9 +41,9 @@ invariants:
     aggregate: aggregate.quality-verification.quality-concern
     rule: Linking or promoting a concern to an accepted Nonconformity must not silently close the source Quality Concern.
     reason: The two records retain independent lifecycles after escalation.
-    triggering_operations: [Link Nonconformity to Concern, Close Quality Concern]
+    triggering_operations: [Link Nonconformity to Concern]
     enforcement_boundary: Quality Concern aggregate
-    failure_semantics: Preserve the concern as open unless a separate supported closure decision is made.
+    failure_semantics: Preserve the concern as open unless a separate supported closure decision is modeled later.
     status: candidate
     provenance:
       sources:
@@ -77,7 +77,7 @@ invariants:
     aggregate: aggregate.quality-verification.applicable-quality-target
     rule: Changing a quality-target parameter must preserve prior target versions or snapshots needed to interpret retained Quality Checks.
     reason: Historical checks must remain interpretable against the target applicable when they were evaluated.
-    triggering_operations: [Change Quality Target Parameter, Retire Quality Target Parameter]
+    triggering_operations: [Change Quality Target Parameter]
     enforcement_boundary: Applicable Quality Target Parameter aggregate
     failure_semantics: Reject changes that destroy the historical evaluation basis referenced by retained checks.
     status: candidate
