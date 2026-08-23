@@ -1,0 +1,109 @@
+registry_version: 2026-08-23-consolidated
+status: canonical
+purpose: >
+  Define the complete canonical tactical registries after post-Phase-15 hardening. Where large historical index files remain intact, explicitly compose later sidecar additions by stable ID so validators and future agents do not treat index.yaml alone as the complete registry.
+
+rules:
+  - Stable IDs are authoritative; duplicate IDs across files are one model object only when the content is a historical reconciliation copy, otherwise duplication is a validation error.
+  - Files listed under additions extend the corresponding baseline index and are canonical until physically folded into that index.
+  - Historical reconciliation sidecars are evidence/audit artifacts and do not add duplicate objects when their IDs already exist in the baseline index.
+  - unresolved issue registry is docs/ddd/issues/unresolved.yaml; issues: [] means no currently known domain-rule issue remains open.
+
+registries:
+  aggregates:
+    baseline: docs/ddd/aggregates/index.yaml
+    additions: []
+    unique_count: 14
+  aggregate_root_entities:
+    baseline: docs/ddd/entities/index.yaml
+    additions: []
+    unique_count: 14
+  value_objects:
+    baseline: docs/ddd/value-objects/index.yaml
+    additions: []
+    unique_count: 8
+  invariants:
+    baseline: docs/ddd/invariants/index.yaml
+    additions:
+      - docs/ddd/invariants/post-phase15-qualification-lifecycle.yaml
+      - docs/ddd/invariants/post-phase15-qualification-evidence.yaml
+      - docs/ddd/invariants/quality-concern-retained-status.yaml
+      - docs/ddd/invariants/capa-corrective-tasks.yaml
+      - docs/ddd/invariants/post-phase15-capa-effectiveness.yaml
+      - docs/ddd/invariants/ltv-recording-lifecycle.yaml
+    historical_reconciliation_sidecars:
+      - docs/ddd/invariants/phase14-quality-reconciliation.yaml
+      - docs/ddd/invariants/phase14-workforce-reconciliation.yaml
+    unique_count: 37
+  commands:
+    baseline: docs/ddd/commands/index.yaml
+    additions:
+      - docs/ddd/commands/asset-lifecycle-state.yaml
+      - docs/ddd/commands/post-phase15-qualification-lifecycle.yaml
+      - docs/ddd/commands/ltv-recording.yaml
+    unique_count: 33
+  domain_events:
+    baseline: docs/ddd/domain-events/index.yaml
+    additions:
+      - docs/ddd/domain-events/asset-lifecycle-state.yaml
+      - docs/ddd/domain-events/post-phase15-qualification-lifecycle.yaml
+      - docs/ddd/domain-events/ltv-recording.yaml
+    unique_count: 33
+  policies:
+    baseline: docs/ddd/policies/index.yaml
+    additions: []
+    unique_count: 3
+  domain_services:
+    unique_count: 0
+  repositories:
+    baseline: docs/ddd/repositories/index.yaml
+    additions: []
+    unique_count: 14
+  factories:
+    unique_count: 0
+  queries:
+    baseline: docs/ddd/queries/index.yaml
+    additions: []
+    unique_count: 13
+  application_use_cases:
+    baseline: docs/ddd/application-use-cases/index.yaml
+    additions:
+      - docs/ddd/application-use-cases/asset-lifecycle-state.yaml
+      - docs/ddd/application-use-cases/post-phase15-qualification-lifecycle.yaml
+      - docs/ddd/application-use-cases/ltv-recording.yaml
+    unique_count: 17
+  context_relationships:
+    baseline: docs/ddd/context-map/context-map.yaml
+    additions: []
+    unique_count: 9
+  integration_contracts:
+    baseline: docs/ddd/integration-contracts/index.yaml
+    additions: []
+    unique_count: 9
+
+known_post_phase15_behavior:
+  asset_lifecycle:
+    - command.asset-lifecycle.change-lifecycle-state
+    - event.asset-lifecycle.lifecycle-state-changed
+    - use-case.asset-lifecycle.change-lifecycle-state
+  operational_qualification:
+    - invariant.qualification.shadowing-demonstrates-capability
+    - invariant.qualification.persists-until-withdrawn
+    - invariant.qualification.withdrawal-preserves-history
+    - command.training-qualification.withdraw-qualification
+    - event.training-qualification.operational-qualification-withdrawn
+    - use-case.training-qualification.withdraw-qualification
+  quality_concern:
+    - invariant.quality-concern.retained-status-history
+  corrective_action:
+    - invariant.nonconformity.corrective-work-is-tasked
+    - invariant.nonconformity.requires-effectiveness-verification
+  ltv_form_management:
+    - invariant.ltv-instance.recorded-requires-scan-match
+    - invariant.ltv-instance.retained-status-history
+    - command.ltv-form-management.record-returned-form
+    - event.ltv-form-management.form-recorded
+    - use-case.ltv-form-management.record-returned-form
+
+validation_expectation: >
+  Validators and future sessions must load the baseline plus listed additions before calculating counts or checking references. Do not infer unresolved domain questions from stale historical reports when docs/ddd/issues/unresolved.yaml contains issues: [].
