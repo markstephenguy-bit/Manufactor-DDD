@@ -1,24 +1,26 @@
 model_state: Strategic Stable / Tactical Candidate; Specification Phases 1-15 complete at current evidence level
-session_state: current-discovery-cycle-complete
-session_refreshed_at: 2026-08-23T15:44:00-05:00
-current_phase: post-Phase-15 consolidation complete
-last_completed: Whole-model consolidation and validation after resolving the final LTV workflow issue
-current_focus: Do not manufacture additional domain questions. Begin a new discovery issue only when new business evidence, implementation feedback, or a newly identified ManuFactor gap requires it.
+session_state: active-scenario-validation
+session_refreshed_at: 2026-08-23T15:50:00-05:00
+current_phase: scenario-based DDD validation
+last_completed: SCENARIO-001 validated suspected lumber quality concern through Quality Verification and Corrective Action; two stale tactical/context defects were reconciled without creating a new domain question
+current_focus: Run realistic ManuFactor situations end-to-end through the canonical model and use failures, contradictions, or unexplained ownership/state transitions as validation evidence
 blocking_issues: []
 open_nonblocking_issues: []
 
 next_action: >
-  Treat the current discovery/refinement cycle as complete. Before future modeling, read this handoff, docs/ddd/CANONICAL-REGISTRY.yaml, docs/ddd/reports/validation-report.md, and docs/ddd/issues/unresolved.yaml. If work continues, choose deliberately among model stabilization, implementation-oriented projection, or new gap/domain discovery rather than restarting completed Phase 14/15 work.
+  Continue the scenario suite in docs/ddd/scenario-validation/README.md. Execute scenarios against the canonical model rather than merely discussing them. A scenario may PASS, PASS_WITH_MODEL_REFINEMENT, expose a genuine DOMAIN_QUESTION_REQUIRED, or reveal a MODEL_DEFECT. Create a new unresolved issue only when the scenario exposes a material business rule that cannot be derived from confirmed evidence.
 
 startup_instructions:
   - Treat markstephenguy-bit/Manufactor-DDD as authoritative session state.
   - Read docs/ddd/SPECIFICATION.md before changing model semantics.
   - Read docs/ddd/CANONICAL-REGISTRY.yaml before counting or validating tactical objects.
+  - Read docs/ddd/scenario-validation/README.md and completed scenario files before continuing scenario validation.
   - Read docs/ddd/reports/validation-report.md and docs/ddd/issues/unresolved.yaml before asking domain questions.
   - Do not reconstruct canonical state from chat when GitHub contains it.
   - Mark is the domain authority.
-  - Ask one high-value business question at a time only when a genuinely new unresolved rule exists.
-  - Do substantial model/repository work between questions.
+  - Do not ask a domain question merely because a scenario is complex; first attempt to execute the scenario using confirmed model rules.
+  - Ask one high-value business question at a time only when a scenario exposes a genuinely material unresolved rule.
+  - Perform substantial model/repository work between questions.
   - Preserve stable IDs unless modeled identity changes.
   - Do not equate departments, capabilities, applications, Subdomains, or Bounded Contexts.
   - Do not use ArchiMate as canonical DDD authority.
@@ -35,7 +37,29 @@ maturity:
   phase14: complete
   phase15: complete
   post_phase15_targeted_refinement: complete
+  scenario_validation: active
   current_open_issue_count: 0
+
+scenario_validation:
+  methodology: docs/ddd/scenario-validation/README.md
+  completed:
+    - id: SCENARIO-001
+      file: docs/ddd/scenario-validation/SCENARIO-001-quality-concern-to-capa.yaml
+      result: PASS_WITH_MODEL_REFINEMENT
+      findings:
+        - Corrective Action context was stale and omitted the confirmed effectiveness-verification closure gate; reconciled.
+        - Policy registry contained stale resolved-issue notes; reconciled.
+      new_domain_questions: 0
+  pending:
+    - SCENARIO-002
+    - SCENARIO-003
+    - SCENARIO-004
+    - SCENARIO-005
+    - SCENARIO-006
+    - SCENARIO-007
+    - SCENARIO-008
+    - SCENARIO-009
+    - SCENARIO-010
 
 canonical_registry:
   manifest: docs/ddd/CANONICAL-REGISTRY.yaml
@@ -101,6 +125,7 @@ canonical_files_to_use:
   - docs/ddd/CANONICAL-REGISTRY.yaml
   - docs/ddd/issues/unresolved.yaml
   - docs/ddd/reports/validation-report.md
+  - docs/ddd/scenario-validation/README.md
   - docs/ddd/context-map/context-map.yaml
   - docs/ddd/integration-contracts/index.yaml
   - docs/ddd/aggregates/index.yaml
@@ -118,4 +143,4 @@ historical_report_note: >
   Phase-specific reports such as phase14-use-case-query-audit.md and phase15-integration-validation.md are historical completion snapshots and may show earlier counts or open-issue totals. Current state is validation-report.md plus this handoff and CANONICAL-REGISTRY.yaml.
 
 session_resume: >
-  Specification Phases 1-15 and the current post-Phase-15 targeted domain-rule refinement cycle are complete. The unresolved registry contains zero open issues. The model remains Strategic Stable / Tactical Candidate, PASS WITH WARNINGS. Do not continue asking questions merely to extend discovery; new questions require new domain evidence or a newly identified gap.
+  Specification Phases 1-15 and targeted post-Phase-15 rule refinement are complete. The current validation phase uses realistic ManuFactor situations to exercise the DDD end-to-end. SCENARIO-001 passed with model refinement and exposed two stale metadata defects but no new domain question. Continue with SCENARIO-002 rather than returning to abstract discovery.
