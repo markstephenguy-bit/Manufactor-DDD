@@ -17,14 +17,11 @@ commands:
   - Disposition Quality Concern
   - Link Quality Check to Concern
   - Link Nonconformity to Concern
-  - Close Quality Concern
-
 domain_events:
   - QualityConcernRecorded
   - QualityConcernDispositioned
   - QualityCheckLinkedToConcern
   - NonconformityLinkedToConcern
-  - QualityConcernClosed
 transaction_boundary: One concern's retained intake, authorized triage/disposition, and formal-record references must remain coherent through the Quality Concern root.
 external_references:
   - Nonconformity
@@ -33,10 +30,9 @@ repository: repository.quality-verification.quality-concern
 creation_rules:
   - A concern represents a specific suspected quality issue that is sufficiently identified to retain and review.
   - Non-salaried employee concerns enter formal triage through the QC channel; the implementation form of that channel remains unspecified.
-deleting_rules_note: null
 deletion_rules:
   - Retained concerns and their disposition history are not destructively deleted under current evidence.
-  - Exact closure behavior after escalation remains unresolved and is tracked explicitly.
+  - Exact closure behavior after escalation remains unresolved and is tracked explicitly rather than modeled as a command.
 status: candidate
 provenance:
   sources:
