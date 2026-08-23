@@ -8,17 +8,20 @@ model_statement: >
   ownership, status, dates, milestones/tasks, dependencies, progress visibility, and completion semantics
   as needed by the project. Project Tracking must not become a generic container for small operational
   tasks, investigations, process tweaks, software changes, or recurring problems merely because they involve work.
-  A Project is also distinct from CAPA even when project work is later related to corrective action.
+  A Project is also distinct from CAPA even when project work is later related to corrective action. If a Project
+  is cancelled or abandoned after work has begun, the work already performed remains retained as work but is no
+  longer treated as current work attached to that Project.
 responsibilities:
   - Track the lifecycle, ownership, status, dates, milestones/tasks, dependencies, and progress of actual projects.
   - Provide clear project-level visibility using familiar project-management concepts rather than inventing ManuFactor-specific project semantics without need.
   - Preserve distinction between project work and Nonconformity-driven corrective work.
   - Preserve distinction between projects and smaller operational tasks or investigations that belong elsewhere.
+  - Preserve work already performed if a Project is cancelled/abandoned while ending its current Project association.
 scope:
   - Recognized business projects
   - Capital projects
   - Continuous-improvement projects when they are genuinely managed as projects
-  - Project milestones, tasks/actions, dependencies, schedule/status, and progress tracking
+  - Project milestones, tasks/actions, dependencies, schedule/status, progress tracking, and project cancellation/abandonment
 out_of_scope:
   - Small operational tasks merely because they require action
   - Ad hoc investigations or trials that are not managed as projects
@@ -33,6 +36,7 @@ owned_concepts:
 external_concepts:
   - CAPA item
   - Asset
+  - retained work outside an active Project association
 ubiquitous_language:
   - Project
   - project owner
@@ -42,15 +46,20 @@ ubiquitous_language:
   - due date
   - status
   - progress
+  - cancelled
+  - abandoned
 business_rules:
   - A Project exists because the business recognizes and manages the work as a project; ManuFactor must not infer project status merely from complexity or duration.
   - Project status and completion belong to the project lifecycle and must not be inferred from CAPA closure or maintenance work status without an explicit relationship.
   - A Project is not a CAPA item solely because it may address a problem.
+  - If a Project is cancelled or abandoned after work has begun, work already performed remains logged/retained as work but is no longer attached to the Project as current project work.
+  - Ending a Project association must not erase the fact that the work occurred or rewrite unrelated work ownership.
   - Conventional project-management concepts are the default modeling baseline unless mill-specific evidence requires deviation.
 owner: unresolved
 domain_experts: [Mark]
 integration_surface:
   - May reference CAPA, assets, or maintenance work without owning those lifecycles.
+  - Cancellation/abandonment ends the current Project association for retained work without deleting that work history.
 upstream_dependencies: []
 downstream_consumers: []
 status: candidate
@@ -62,6 +71,9 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-22
       description: Mark clarified that a project is simply a project, should not absorb smaller operational work, and that he prefers the way Monday.com handles projects as the conceptual reference point.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-23 project cancellation clarification
+      description: When a Project is cancelled/abandoned, work already done remains logged as work but is no longer attached to the Project.
     - type: decision
       reference: DDD-0005
       description: Existing decision distinguishes Project Tracking from CAPA by trigger and lifecycle.
