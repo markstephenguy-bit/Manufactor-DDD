@@ -1,0 +1,22 @@
+domain_events:
+  - id: event.asset-lifecycle.lifecycle-state-changed
+    name: AssetLifecycleStateChanged
+    bounded_context: bc.asset-lifecycle
+    owning_aggregate: aggregate.asset-lifecycle.asset
+    meaning: An authorized Asset Lifecycle decision changed the Asset's lifecycle position while preserving prior history.
+    trigger: Successful ChangeAssetLifecycleState command.
+    payload_concepts: [Asset identity, prior lifecycle state, new lifecycle state, transition evidence/reason, effective time]
+    consumers: [Asset Lifecycle history/read models, authorized downstream asset-state consumers]
+    business_significance: Distinguishes lifecycle movement such as In Service, Out of Service, or Retired from functional condition such as Operating, Degraded, or Down.
+    ordering_requirements: Ordered within the retained lifecycle history of one Asset.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23
+          description: Mark accepted the standard-informed controlled vocabulary and the distinction between operational condition and lifecycle position.
+        - type: invariant-model
+          reference: invariant.asset.state-change-records-history
+          description: Asset lifecycle-state transitions must preserve historical traceability.
+      confidence: high
+      status: candidate
