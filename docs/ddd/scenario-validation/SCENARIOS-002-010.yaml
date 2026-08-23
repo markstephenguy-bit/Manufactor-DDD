@@ -1,0 +1,136 @@
+scenarios:
+  - id: SCENARIO-002
+    situation: Planer moisture statistics indicate a drying problem, but individual ProTrack measurements cannot be traced to a Kiln Run/Charge.
+    context_path: [external.protrack-moisture, bc.kiln-operations]
+    key_rules:
+      - ProTrack owns source moisture measurements.
+      - Moisture analysis is statistical by thickness x width x length.
+      - No run-level lineage may be fabricated.
+      - Dashboards are projections, not authoritative state.
+    retained_evidence: [ProTrack provenance, dimension-level statistics, retained kiln schedule/run/operating history]
+    model_changes: []
+    domain_questions: []
+    result: PASS
+
+  - id: SCENARIO-003
+    situation: An operator calls in sick and a supervisor must select a qualified and available replacement.
+    context_path: [external.hr-timekeeping, bc.training-competency, bc.workforce-availability]
+    key_rules:
+      - HR/timekeeping owns absence facts.
+      - Training and Qualification owns Operational Qualification.
+      - Workforce Availability owns staffing-gap and coverage decisions.
+      - Qualification and availability are prerequisites, not automatic selection.
+      - Supervisor judgment selects coverage and is retained.
+    retained_evidence: [staffing need, qualification reference, availability facts, supervisor selection history]
+    model_changes: []
+    domain_questions: []
+    result: PASS
+
+  - id: SCENARIO-004
+    situation: A worker shadows an experienced operator, becomes qualified for a second job, and later has the qualification explicitly withdrawn.
+    context_path: [external.learning-system, bc.training-competency, bc.workforce-availability]
+    key_rules:
+      - Practical shadowing/observed capability establishes qualification evidence.
+      - LMS completion alone does not establish qualification.
+      - Qualification persists until explicit withdrawal/supersession.
+      - Withdrawal preserves prior evidence/history.
+      - Workforce Availability consumes current qualification state without redefining it.
+    retained_evidence: [shadowing/observed capability evidence, qualification decision, withdrawal reason/actor/effective time]
+    model_changes: []
+    domain_questions: []
+    result: PASS
+
+  - id: SCENARIO-005
+    situation: Equipment is found degraded/down, maintenance work exists in MP2, and Asset condition/lifecycle decisions must remain distinct from MP2 transaction status.
+    context_path: [external.mp2-maintenance, bc.reliability-verification, bc.asset-lifecycle]
+    key_rules:
+      - MP2 owns WR/WO transaction status and supplies equipment hierarchy facts.
+      - Reliability Verification owns verification findings, not Asset state.
+      - Maintenance supervisor decides whether a finding is promoted.
+      - Asset Lifecycle owns explicit condition/lifecycle transitions.
+      - Asset Condition and Asset Lifecycle State are distinct.
+    retained_evidence: [verification evidence, supervisor promotion decision, Asset state-change reason/history, MP2 provenance]
+    model_changes: []
+    domain_questions: []
+    result: PASS
+
+  - id: SCENARIO-006
+    situation: An LTV is printed, used in the field, returned to Safety, scanned, matched to its electronic record, and becomes Recorded.
+    context_path: [bc.safety-signoff]
+    key_rules:
+      - Printing/issuing is an early lifecycle state.
+      - Returned paper must be received by Safety and scanned.
+      - Scan must match the originating electronic record before Recorded.
+      - LTV identity/status/history remains retained.
+    retained_evidence: [template/version, originating electronic record, returned scan, match evidence, Recorded transition/history]
+    model_changes: []
+    domain_questions: []
+    result: PASS
+
+  - id: SCENARIO-007
+    situation: A Nonconformity requires multiple corrective tasks, some executed in other systems, and cannot close until effectiveness is verified.
+    context_path: [bc.corrective-action, external execution owner as applicable]
+    key_rules:
+      - Corrective work is task-based under the parent Nonconformity/CAPA.
+      - Routed execution remains owned by the destination system/context.
+      - CAPA retains task/reference coordination history.
+      - Task completion alone is insufficient for closure.
+      - Post-correction effectiveness must be verified and retained.
+    edge_variation:
+      situation: One routed corrective task is explicitly recognized by the business as a real Project.
+      outcome: Project Tracking owns the Project lifecycle while Corrective Action retains CAPA/task coordination and closure semantics.
+      model_refinement:
+        - rel.corrective-action-to-project-tracking
+        - contract.corrective-action-to-project-tracking
+    retained_evidence: [corrective tasks, routing references, completion evidence, effectiveness verification]
+    domain_questions: []
+    result: PASS_WITH_MODEL_REFINEMENT
+
+  - id: SCENARIO-008
+    situation: A retained operational record is later found wrong and must be corrected without destroying the original history.
+    context_path: [bc.operations-record]
+    key_rules:
+      - The record exists because of a concrete structured-recording gap.
+      - Each operational record type corresponds to a distinct business need.
+      - Correction preserves prior submitted state/history.
+      - References to Asset/Person/Quality/Safety do not transfer lifecycle ownership.
+      - Analytics may consume the record but does not become authoritative.
+    retained_evidence: [original record, corrected record state, correction reason/provenance/history]
+    model_changes: []
+    domain_questions: []
+    result: PASS
+
+  - id: SCENARIO-009
+    situation: A genuine Project is created from an operational improvement need and must remain distinct from routine tasks and CAPA-owned work.
+    context_path: [bc.project-tracking]
+    key_rules:
+      - The business must actually recognize/manage the work as a Project.
+      - Complexity or duration alone does not make work a Project.
+      - Project owns its owner/status/dates/milestones/tasks/dependencies/progress/completion.
+      - Routine operational tasks remain outside Project Tracking.
+      - CAPA-related work remains distinct unless a routed task is separately recognized as a Project.
+      - Project completion does not imply CAPA closure.
+    retained_evidence: [Project identity, owner, plan/milestones/tasks, status/progress, completion history]
+    model_changes: []
+    domain_questions: []
+    result: PASS
+
+  - id: SCENARIO-010
+    situation: An Environmental gap is proposed but has insufficient concrete process evidence.
+    context_path: []
+    key_rules:
+      - Department existence does not establish a Bounded Context.
+      - Environmental is a confirmed business/opportunity area but currently deferred.
+      - Without a concrete workflow/system gap, owned concepts, aggregates, invariants, commands, and integrations must not be invented.
+      - New concrete evidence may open a focused future discovery cycle.
+    retained_evidence: [decision to defer until concrete gap evidence exists]
+    model_changes: []
+    domain_questions: []
+    result: PASS
+
+summary:
+  pass: 8
+  pass_with_model_refinement: 1
+  domain_question_required: 0
+  model_defect_remaining: 0
+  note: SCENARIO-001 is recorded separately and resulted in PASS_WITH_MODEL_REFINEMENT, producing the overall ten-scenario totals of 8 PASS and 2 PASS_WITH_MODEL_REFINEMENT.
