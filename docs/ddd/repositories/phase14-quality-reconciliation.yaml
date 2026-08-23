@@ -1,0 +1,42 @@
+repositories:
+  - id: repository.quality-verification.quality-concern
+    name: Quality Concern Repository
+    bounded_context: bc.quality-verification
+    aggregate_root: aggregate.quality-verification.quality-concern
+    purpose: Retrieve and persist Quality Concern aggregate roots by business identity while preserving retained triage/disposition history and cross-context references.
+    retrieval_semantics:
+      - Retrieve one concern by its stable business identity.
+      - Support business retrieval by status, time, mill/operational scope, or subject/product context without changing ownership semantics.
+    persistence_semantics:
+      - Persist concern lifecycle changes through the aggregate root.
+      - Preserve disposition history and formal-record references.
+    consistency_expectation: Repository operations preserve the aggregate boundary; linked Nonconformity state remains externally authoritative in Corrective Action.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.quality-verification.quality-concern
+          description: Quality Concern now has supported identity/lifecycle and aggregate semantics.
+      confidence: high
+      status: candidate
+
+  - id: repository.quality-verification.applicable-quality-target
+    name: Applicable Quality Target Repository
+    bounded_context: bc.quality-verification
+    aggregate_root: aggregate.quality-verification.applicable-quality-target
+    purpose: Retrieve and persist contextual quality-target parameters and their retained versions so current and historical applicability can be resolved.
+    retrieval_semantics:
+      - Resolve target parameters by stable identity.
+      - Resolve the target applicable to a mill/machine/process context and effective business time where supported.
+    persistence_semantics:
+      - Persist target creation/change through the aggregate root.
+      - Preserve prior target versions once used as Quality Check evaluation basis.
+    consistency_expectation: Repository operations preserve target identity/version history and do not rewrite historical Quality Check evidence.
+    status: candidate
+    provenance:
+      sources:
+        - type: aggregate-model
+          reference: aggregate.quality-verification.applicable-quality-target
+          description: Phase 14 confirmed a maintained contextual parameter lifecycle and management authority.
+      confidence: high
+      status: candidate
