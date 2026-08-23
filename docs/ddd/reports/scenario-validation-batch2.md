@@ -16,10 +16,10 @@
 | SCENARIO-016 | Kiln schedule is revised after a Kiln Run has already started | PASS |
 | SCENARIO-017 | Two quality targets overlap so applicability is ambiguous | PASS |
 | SCENARIO-018 | Operations Record is corrected after analytics consumed the old value | PASS |
-| SCENARIO-019 | A genuine Project is cancelled/abandoned after work begins | DOMAIN QUESTION REQUIRED |
+| SCENARIO-019 | A genuine Project is cancelled/abandoned after work begins | PASS WITH MODEL REFINEMENT |
 | SCENARIO-020 | Late ProTrack measurements change previously viewed dimension statistics | PASS |
 
-**Corrected batch result:** 7 PASS, 2 PASS WITH MODEL REFINEMENT, 1 DOMAIN QUESTION REQUIRED, 0 MODEL DEFECT.
+**Final batch result:** 7 PASS, 3 PASS WITH MODEL REFINEMENT, 0 DOMAIN QUESTION REQUIRED, 0 MODEL DEFECT.
 
 ## SCENARIO-011 — Quality target changes after a check begins
 
@@ -78,10 +78,12 @@ Operations Record remains authoritative for the record and correction history. A
 
 ## SCENARIO-019 — Project cancellation/abandonment
 
-A real Project can plausibly end without successful completion. The current Project aggregate models creation and completion and preserves historical identity once work has begun, but no confirmed cancellation/abandonment command, authority, status transition, or evidence rule exists.
+When a genuine Project is cancelled or abandoned after work has begun, work already performed remains logged and retained as work but is no longer attached to the Project as current project work. Ending the Project association does not erase the work history or transfer unrelated work ownership.
 
-**Result: DOMAIN QUESTION REQUIRED**  
-**Open:** `ISSUE-0014`
+The Project Tracking context was refined to make this rule explicit.
+
+**Result: PASS WITH MODEL REFINEMENT**  
+**ISSUE-0014:** resolved.
 
 ## SCENARIO-020 — Late ProTrack measurements
 
@@ -91,10 +93,6 @@ Late authoritative ProTrack records can change dimension-level statistical analy
 
 # Cross-batch conclusion
 
-After twenty scenarios, no confirmed boundary failure requires a Bounded Context merge/split or Aggregate redesign. Batch 2 produced two useful model refinements and one genuine lifecycle question.
+After twenty scenarios, no confirmed boundary failure requires a Bounded Context merge/split or Aggregate redesign. Batch 2 produced three useful model refinements and no remaining domain question.
 
-Current open scenario-discovered issue:
-
-- `ISSUE-0014` — Project cancellation/abandonment lifecycle after work begins.
-
-`ISSUE-0013` is not open; it was removed after domain clarification showed that the scenario itself assumed an impossible/unsupported separation between qualification withdrawal and supervisor-controlled coverage judgment.
+Current open scenario-discovered issues: **none**.
