@@ -1,247 +1,175 @@
 # ManuFactor DDD Validation Report
 
-**Model version:** Current canonical model through Specification Phase 15 Integration Validation  
+**Model version:** Current canonical model through Specification Phase 15 plus post-Phase-15 targeted hardening  
 **Date:** 2026-08-23  
 **Maturity state:** **Strategic Stable / Tactical Candidate**  
 **Overall result:** **PASS WITH WARNINGS**
 
 ## Scope
 
-This report evaluates the canonical DDD repository through Phase 15, including Domain, Subdomains, Bounded Contexts, Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregates, Entities/Value Objects, Invariants, Commands, Domain Events, Policies, Domain Service evaluation, Repositories, Factory evaluation, Queries, Application Use Cases, unresolved issues, and whole-map integration consistency.
+This report validates the current ManuFactor DDD model after completion of Specification Phases 1-15 and the subsequent targeted domain-rule refinement pass. Canonical tactical registry composition is defined in `docs/ddd/CANONICAL-REGISTRY.yaml`; validators must load each baseline index plus the listed canonical additions before calculating counts or checking references.
 
 ## Current model summary
 
 - 1 top-level Domain: ManuFactor
-- Major active Subdomains: Operations, Quality, Maintenance / Reliability, Safety
-- Environmental retained as a real business area but deferred until a concrete ManuFactor process/gap list exists
-- Human Resources rejected as the active Subdomain for known operational qualification/workforce gaps
-- Identity & Access treated as shared platform infrastructure, not a business Subdomain
 - 10 active candidate Bounded Contexts
-- 9 unique Context Map relationships
-- 9 unique Integration Contracts
-- 14 candidate Aggregates
-- 14 candidate aggregate-root Entities
-- 8 Value Object candidates
-- 29 first-class Invariants
-- 31 Commands
-- 31 Domain Events
-- 3 supported Policies
-- 0 Domain Services currently justified
-- 14 technology-independent Repository abstractions
-- 0 Factories currently justified
-- 13 canonical Queries
-- 15 canonical Application Use Cases
-- 4 open nonblocking tactical/domain-rule issues
+- 9 Context Map relationships
+- 9 Integration Contracts
+- 14 Aggregates
+- 14 aggregate-root Entities
+- 8 Value Objects
+- 37 unique Invariants
+- 33 unique Commands
+- 33 unique Domain Events
+- 3 Policies
+- 0 Domain Services
+- 14 Repositories
+- 0 Factories
+- 13 Queries
+- 17 Application Use Cases
+- **0 open domain-rule issues** in `docs/ddd/issues/unresolved.yaml`
+
+Environmental remains a confirmed business/opportunity area but is intentionally deferred until concrete ManuFactor process gaps are identified. Identity & Access remains shared platform infrastructure rather than a business Subdomain.
 
 ---
 
-## Gate A — Domain completeness: PASS
+## Gate A — Domain and strategic boundaries: PASS
 
-The top-level Domain remains consistent with ManuFactor's role as gap filler, source-system reader/aggregator/correlator, and owner of missing workflows/records only where real gaps exist. No Phase 14/15 change expands ManuFactor into wholesale ERP, MES, CMMS, HR, QMS, or analytics ownership.
+ManuFactor remains a gap filler, source-system reader/aggregator/correlator, and owner of missing workflows/records where real gaps exist. The model does not expand ManuFactor into wholesale ERP, MES, CMMS, HR, QMS, Safety, or analytics ownership.
 
-## Gate B — Bounded Context validity: PASS WITH WARNINGS
+Departments, applications, capabilities, Subdomains, and Bounded Contexts remain distinct concepts. ArchiMate is not used as canonical DDD authority.
 
-The ten supported Bounded Contexts remain semantically distinct. No new Bounded Context was created merely because a department, application, query, workflow, or integration exists.
+## Gate B — Bounded Context validity: PASS
 
-Warnings remain because most contexts are still `candidate` and several exact tactical transition rules remain unresolved.
+The ten supported Bounded Contexts remain semantically distinct. No new context was introduced merely because a form, department, integration, workflow, or application exists.
 
-## Gate C — Context Map validity: PASS WITH WARNINGS
+## Gate C — Context Map and source authority: PASS WITH WARNINGS
 
-The canonical map contains 9 unique relationships backed by 9 Integration Contracts.
+The map contains 9 relationships backed by 9 Integration Contracts. Cross-context reads preserve source authority.
 
-Quality integration is represented by:
+Key validated distinctions include:
 
-1. `rel.quality-verification-to-corrective-action` — Quality Concern or Quality Check evidence may be supplied for explicit Corrective Action admission evaluation.
-2. `rel.corrective-action-to-quality-verification` — accepted Nonconformity identity/reference may be consumed for Quality Concern traceability without importing CAPA lifecycle ownership.
+- ProTrack moisture data is authoritative at lumber-dimension grain; there is no Kiln Run/Charge identifier and no fabricated run-level lineage.
+- MP2 owns hierarchy and WR/WO transaction facts; Asset Lifecycle owns richer ManuFactor Asset condition/lifecycle/history semantics.
+- Reliability Verification produces assessment facts; Asset state changes require an explicit Asset Lifecycle decision.
+- Quality Verification may supply evidence to Corrective Action, but Nonconformity admission and CAPA lifecycle remain owned by Corrective Action.
 
-The ProTrack -> Kiln Operations integration is explicitly statistical rather than traceability-based: ProTrack records moisture by lumber dimension (thickness x width x length) and does not provide a Kiln Run/Charge identifier. The contract therefore forbids fabricated run-level lineage and supports dimension-level moisture statistics for drying-performance interpretation.
+Some `relationship_type` values remain deliberately unresolved where no organizational pattern has been evidenced. This is a modeling warning, not an open domain-rule issue.
 
-Redundant Phase 15 Quality Concern relationship/contract sidecars were removed after their semantics were reconciled into the canonical indexes. Several DDD `relationship_type` values remain deliberately `unresolved`; organizational relationship patterns are not guessed.
+## Gate D — Ubiquitous Language: PASS
 
-## Gate D — Language validity: PASS
-
-Critical distinctions remain explicit:
+Critical distinctions are explicit:
 
 - Quality Concern != Quality Check != Nonconformity
 - Failed Quality Check != Nonconformity
-- Failed Reliability Verification != Asset Condition
+- Verification Result != Asset Condition
 - Asset Condition != Asset Lifecycle State
-- Operating / Degraded / Down are functional condition values
-- In Service / Out of Service / Retired are lifecycle-state values
+- Operating / Degraded / Down = Asset Condition
+- In Service / Out of Service / Retired = Asset Lifecycle State
 - Operational Qualification != Operational Availability
-- qualification + availability prerequisites != supervisor's final coverage judgment
-- ProTrack Moisture Measurement != Kiln Operations interpretation
-- ProTrack dimension-level moisture statistics != individual Kiln Run/Charge traceability
-- LTV Form Template != LTV Printed Instance != Sign-Off
+- qualification + availability prerequisites != supervisor coverage judgment
+- ProTrack dimension statistics != individual kiln-run traceability
+- LTV printed/issued != LTV Recorded
 
 ## Gate E — Aggregate validity: PASS WITH WARNINGS
 
-The canonical aggregate index contains 14 candidate Aggregates.
+The model contains 14 candidate Aggregates. Post-Phase-15 refinement confirmed:
 
-Phase 14 evidence justified:
+- Quality Concern retains stable identity and full status/history across triage, escalation, disposition, and later reference.
+- Nonconformity/CAPA owns corrective tasks rather than independent child Corrective Action aggregates.
+- CAPA closure requires required corrective work to be complete **and** retained post-correction verification that the correction was effective.
+- Operational Qualification remains the same person-job qualification record through later withdrawal/supersession; history is retained.
+- LTV form instances remain retained records whose lifecycle continues by status/history rather than deletion.
 
-- **Quality Concern** — independent retained identity, triage/disposition history, and formal-record references.
-- **Applicable Quality Target Parameter** — ManuFactor-owned contextual parameter identity/version history with confirmed salaried-management create/change authority.
+Warnings remain because the tactical artifacts are generally `candidate` rather than formally promoted to `stable`, and some ordinary implementation-detail vocabularies may still be refined without changing current domain boundaries.
 
-The earlier conclusion that Applicable Quality Target lacked evidence for an independent Aggregate is explicitly marked superseded in the canonical Aggregate index.
+## Gate F — Entity / Value Object validity: PASS
 
-Post-Phase-15 hardening resolved ISSUE-0011: vacation coverage remains inside the Operational Coverage Plan aggregate at current evidence level. A separate vacation aggregate is not justified unless future evidence introduces an independent lifecycle or schedule-wide invariant.
-
-Asset lifecycle hardening resolved ISSUE-0009 without creating a new aggregate: condition and lifecycle position remain Value Objects inside the existing Asset aggregate.
-
-Exact Quality Concern closure after escalation and exact target retirement/supersession behavior remain unresolved and are not invented.
-
-## Gate F — Entity / Value Object validity: PASS WITH WARNINGS
-
-Quality Concern and Applicable Quality Target Parameter have explicit aggregate-root identity continuity.
-
-Asset Value Objects now have controlled vocabularies:
+Asset condition and lifecycle position remain separate Value Objects within the Asset aggregate:
 
 - `value-object.asset-lifecycle.asset-condition`: Operating, Degraded, Down
 - `value-object.asset-lifecycle.lifecycle-state`: In Service, Out of Service, Retired
 
-The distinction is intentional: Down is a functional condition and is not synonymous with Out of Service; Retired is a lifecycle position and not a condition.
+No unsupported independent identity was introduced for values that are currently modeled by value semantics.
 
-## Gate G — Behavior validity: PASS WITH WARNINGS
+## Gate G — Behavior validity: PASS
 
-Canonical behavior includes:
+The composed canonical behavior set contains 37 Invariants, 33 Commands, 33 Domain Events, 3 Policies, and 0 justified Domain Services.
 
-- 29 first-class Invariants
-- 31 Commands
-- 31 Domain Events
-- 3 Policies
-- 0 Domain Services
+Post-Phase-15 behavior includes:
 
-The Policy set includes `policy.corrective-action.determine-nonconformity-admission`. This requires an authorized reviewer to explicitly determine from retained evidence that an identified applicable requirement was not fulfilled. A Quality Concern or failed Quality Check alone remains insufficient, and a Quality Check is not a mandatory gate.
+### Asset Lifecycle
 
-Reliability hardening clarified that there is no deterministic Reliability Verification Result -> Asset State mapping. A millwright records the finding; the maintenance supervisor decides whether to promote it; Asset Lifecycle owns any resulting state transition.
+`ChangeAssetLifecycleState` changes lifecycle position under explicit Asset-domain authority, preserves history, and is not inferred from MP2 status or Reliability Verification result alone.
 
-ISSUE-0009 hardening completed previously dangling Asset lifecycle behavior:
+### Operational Qualification
 
-- `command.asset-lifecycle.change-lifecycle-state`
-- `event.asset-lifecycle.lifecycle-state-changed`
-- `use-case.asset-lifecycle.change-lifecycle-state`
+Qualification requires practical evidence: the person shadows the current competent worker and is observed sufficiently for an authorized supervisor or designated trainer/SME to determine capability. LMS/course completion may support the decision but does not create qualification automatically. Qualification persists until explicit withdrawal/supersession; withdrawal preserves prior evidence/history.
 
-The transition uses the controlled lifecycle vocabulary and preserves history under the existing Asset invariants. MP2 status or Reliability Verification result alone cannot silently drive the transition.
+### Quality Concern
 
-Phase 15 corrected stale Workforce Availability references:
+A Quality Concern never disappears merely because active handling ends or a Nonconformity is created. Status/history and cross-record references remain retained.
 
-- `SelectReplacement` references canonical `invariant.coverage.requires-qualified-and-available`.
-- `invariant.coverage.need-is-explicit` is first-class because the staffing need/job/time context is already an Aggregate consistency rule required by Coverage Plan creation and replacement selection.
-- workforce Domain Event provenance uses canonical invariant IDs.
+### Corrective Action / CAPA
 
-## Gate H — Query and Application Use Case validity: PASS
+Corrective work is represented as tasks under the parent Nonconformity/CAPA. Routed execution may remain externally owned. Completing tasks is necessary but insufficient for closure; effectiveness must be verified afterward and retained as closure evidence.
 
-### Queries
+### LTV Form Management
 
-All 13 canonical Queries match the normative schema and remain read-only.
+Printing/issuance is an early lifecycle step. A returned used LTV becomes `Recorded` only after the Safety Office receives it, scans it, reliably matches the scan to the originating electronic record, and records that transition. The same record remains permanently referenceable and later changes are status/history transitions.
 
-The prior `query.kiln-operations.run-moisture` identity was retired because the source data cannot support run-level correlation. It is replaced by `query.kiln-operations.dimension-moisture-statistics`, which reads ProTrack moisture behavior by thickness x width x length and explicitly preserves the absence of run-level lineage.
+## Gate H — Queries and Application Use Cases: PASS
 
-### Application Use Cases
+There are 13 Queries and 17 composed Application Use Cases.
 
-There are now 15 canonical Application Use Cases. The additional Asset lifecycle-state use case explicitly orchestrates `ChangeAssetLifecycleState` without collapsing condition and lifecycle semantics.
+The kiln moisture query is dimension-statistical and explicitly non-traceability-based. Post-Phase-15 use cases cover Asset lifecycle-state change, Operational Qualification withdrawal, and returned-LTV recording without moving domain invariants into application orchestration.
 
-Other corrections include:
+## Gate I — Repository / Factory / Service validity: PASS
 
-- Workforce coverage creates the explicit Coverage Plan/staffing need before replacement selection.
-- LTV orchestration is limited to currently modeled template publication, instance generation, and issuance rather than inventing completion/sign-off rules.
-- Quality Concern review retains only local concern/check queries; accepted Nonconformity traceability is handled through an explicit integration boundary.
-- Kiln run history remains authoritative locally, while downstream moisture review is statistical by lumber dimension and must not be presented as individual kiln-run traceability.
+Repository abstractions remain technology-independent. No Factory or Domain Service is introduced merely as glue where aggregate behavior, policies, or application orchestration already suffice.
 
-Application orchestration does not redefine Aggregate invariants or unresolved business rules.
+## Gate J — Provenance: PASS
 
-## Gate I — Boundary leakage and source authority: PASS
+Direct domain-expert clarification, model inference, prior canonical artifacts, and external-system evidence remain distinguishable. Stable IDs are preserved except where modeled identity genuinely changed, such as replacing the invalid run-level kiln-moisture query with the dimension-statistics query.
 
-No direct cross-context Aggregate/Entity sharing or Shared Kernel is modeled.
+## Gate K — Unresolved registry: PASS
 
-Cross-context compositions include:
+`docs/ddd/issues/unresolved.yaml` currently contains:
 
-- Kiln Operations + ProTrack dimension-level moisture statistics
-- Asset Lifecycle + MP2 hierarchy/WR-WO facts
-- Reliability Verification + Asset identity/context
-- Workforce Availability + Operational Qualification + HR/timekeeping facts
-- Quality Concern + accepted Corrective Action Nonconformity reference
+```yaml
+issues: []
+```
 
-Source facts remain authoritative in their owning system/context. Reading, correlating, statistically comparing, or retaining a reference does not transfer source authority.
+The post-Phase-15 pass resolved ISSUE-0004 through ISSUE-0012 that remained relevant to the targeted hardening set, including qualification evidence/lifecycle, Asset vocabulary, kiln/ProTrack grain, CAPA task/effectiveness rules, Quality Concern persistence, and LTV recording workflow.
 
-## Gate J — Repository / tactical schema validity: PASS WITH WARNINGS
+**Zero open issues does not mean future domain discovery is complete forever.** New evidence or newly identified ManuFactor gaps may legitimately create new issues. It means there is no currently known unresolved business rule blocking or qualifying the present model.
 
-The Phase 14 Quality Concern and Applicable Quality Target Repository candidates use the normative Repository schema and remain technology-independent.
+## Gate L — Canonical registry composition: PASS WITH WARNING
 
-## Gate K — Provenance: PASS
+`docs/ddd/CANONICAL-REGISTRY.yaml` is now the authoritative composition manifest for tactical registries. Large Phase-15 baseline `index.yaml` files remain intact while post-Phase-15 additions are listed explicitly as canonical additions by stable ID.
 
-Phase 14/15 and post-Phase-15 changes distinguish domain-expert evidence from modeling inference. Stable IDs were preserved except where modeled identity actually changed or a previously missing behavior was introduced.
-
-## Gate L — Unresolved questions: PASS WITH WARNINGS
-
-Open nonblocking issues in `docs/ddd/issues/unresolved.yaml`:
-
-- ISSUE-0006 — Operational Qualification evidence/review/expiration/withdrawal rules; grant authority is already known
-- ISSUE-0007 — process-specific LTV completion/approval/sign-off rules
-- ISSUE-0010 — child Corrective Action identity and detailed CAPA closure rules
-- ISSUE-0012 — independent Quality Concern closure rule after Nonconformity escalation
-
-Resolved during post-Phase-15 hardening:
-
-- ISSUE-0004 — Nonconformity admission now has an explicit domain Policy.
-- ISSUE-0005 — no deterministic Reliability Result -> Asset State mapping exists; maintenance-supervisor promotion is the gate.
-- ISSUE-0008 — ProTrack has no kiln-run identifier; moisture analysis is statistical by thickness x width x length and must not fabricate run-level lineage.
-- ISSUE-0009 — Asset condition/lifecycle vocabularies and lifecycle transition behavior are now explicit.
-- ISSUE-0011 — no separate vacation-planning Aggregate is justified at current evidence level.
-
-None of the remaining issues blocks Phase 14/15 completion because unsupported transitions remain unmodeled rather than guessed.
+This avoids destructive rewrites and prevents validators from undercounting the model. A future mechanical refactor may physically fold the additions into the large indexes and delete the corresponding sidecars, but that refactor must preserve IDs and semantics and is **not** domain discovery.
 
 ---
 
-# Phase 14 assessment — Use Cases and Queries: PASS
+# Phase status
 
-The reconciled discovery candidates were normalized into canonical Queries and Application Use Cases. Tactical Quality Concern and Applicable Quality Target behavior was reconciled where confirmed business decisions required first-class model objects.
+- Specification Phases 1-13: complete at current evidence level
+- Phase 14 — Use Cases and Queries: complete
+- Phase 15 — Integration Validation: complete
+- Post-Phase-15 targeted domain-rule refinement: complete for the current issue registry
 
-Detailed audit: `docs/ddd/reports/phase14-use-case-query-audit.md`.
-
-**Specification Phase 14 — COMPLETE at current evidence level.**
-
----
-
-# Phase 15 assessment — Integration Validation: PASS WITH WARNINGS
-
-Whole-map integration validation found and corrected stale command/invariant references, a superseded Aggregate challenge conclusion, redundant Quality integration sidecars, and cross-context concern/Nonconformity traceability semantics.
-
-The resulting graph has 9 unique Context Map relationships and 9 unique Integration Contracts. No significant cross-context interaction used by current artifacts is hidden as shared domain state.
-
-Detailed audit: `docs/ddd/reports/phase15-integration-validation.md`.
-
-**Specification Phase 15 — COMPLETE at current evidence level.**
-
----
-
-# Post-Phase-15 targeted hardening
-
-The targeted hardening pass reviewed whether unresolved questions were already answerable from canonical evidence or direct domain clarification.
-
-- ISSUE-0011 closed: Operational Coverage Plan already owns vacation/sick-call staffing coverage; no independent vacation lifecycle/invariant justifies another Aggregate.
-- ISSUE-0004 closed: Nonconformity admission is an explicit Policy decision.
-- ISSUE-0005 closed: Reliability Verification does not deterministically map to Asset State; supervisor promotion is the gate.
-- ISSUE-0008 closed: ProTrack has no kiln-run identifier; moisture interpretation is statistical by thickness x width x length.
-- ISSUE-0009 closed: Asset Condition is Operating/Degraded/Down; Asset Lifecycle State is In Service/Out of Service/Retired; lifecycle-state transition behavior is now explicit and history-preserving.
-- ISSUE-0006 wording is narrowed so grant authority is no longer presented as unresolved.
-- ISSUE-0007 wording distinguishes completion, approval, and sign-off transitions from printing/issuance.
-- ISSUE-0012 is narrowed to the genuinely unresolved case: closure after Nonconformity escalation.
-
----
+Historical Phase 14/15 reports are snapshots of those phase-completion points and may show earlier counts/open-issue totals. This report and `SESSION-HANDOFF.yaml` represent current state.
 
 # Maturity assessment
 
 ## Strategic Stable: PASS
 
-Major Subdomains, Bounded Contexts, contextual language, source authority, and integration boundaries are established with no known blocking strategic ambiguity.
+Major Subdomains, Bounded Contexts, language boundaries, source authority, and integration boundaries are established with no known blocking strategic ambiguity.
 
 ## Tactical Candidate: PASS
 
-The tactical model is complete through Specification Phase 15 but remains Candidate rather than Stable because four domain-specific lifecycle/rule questions remain open.
-
----
+The current tactical model is coherent and has no open domain-rule issues, but most tactical artifacts remain marked `candidate`. Candidate status should not be promoted merely because the issue registry is empty; promotion requires an explicit stabilization decision and/or implementation feedback.
 
 # Overall conclusion
 
@@ -249,4 +177,4 @@ The tactical model is complete through Specification Phase 15 but remains Candid
 
 > **Strategic Stable / Tactical Candidate**
 
-Specification Phases 1-15 are complete at the current evidence level. Remaining work is targeted domain-rule refinement against four explicit unresolved issues, not continuation of a missing specification phase.
+The current DDD discovery/refinement cycle is complete at the present evidence level. The next work should be deliberate model stabilization, implementation-oriented projection, or new gap/domain discovery—not continued questioning simply to keep the DDD exercise moving.
