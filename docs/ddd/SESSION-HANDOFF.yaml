@@ -1,32 +1,29 @@
 model_state: Strategic Stable / Tactical Candidate; Specification Phases 1-15 complete at current evidence level
 session_state: scenario-validation-batch2-complete
-session_refreshed_at: 2026-08-23T18:36:00-05:00
+session_refreshed_at: 2026-08-23T18:40:00-05:00
 current_phase: scenario-based DDD validation
-last_completed: Second ten-scenario batch (SCENARIO-011 through SCENARIO-020) completed; one model refinement and two genuine nonblocking lifecycle questions discovered
-current_focus: Resolve scenario-discovered temporal lifecycle rules before any Tactical Stable promotion; continue scenario validation only with deliberately new edge cases or real mill situations
+last_completed: Second ten-scenario batch corrected after Mark clarified that the supervisor manages qualification; SCENARIO-012 is a model refinement, not a domain question
+current_focus: Resolve the one remaining scenario-discovered Project lifecycle question before any Tactical Stable promotion
 blocking_issues: []
 open_nonblocking_issues:
-  - ISSUE-0013
   - ISSUE-0014
 
 next_action: >
-  Treat twenty-scenario validation as complete. Read docs/ddd/reports/scenario-validation.md, docs/ddd/reports/scenario-validation-batch2.md, docs/ddd/scenario-validation/SCENARIOS-011-020.yaml, docs/ddd/CANONICAL-REGISTRY.yaml, and the composed open-issue registry before further modeling. The next high-value domain question should resolve ISSUE-0013 or ISSUE-0014; do not invent their answers.
+  Resolve ISSUE-0014: Project cancellation/abandonment after work has begun. Do not recreate ISSUE-0013; Mark clarified that the supervisor manages qualification, so withdrawal is not an independent surprise event to the supervisor-managed coverage decision.
 
 startup_instructions:
   - Treat markstephenguy-bit/Manufactor-DDD as authoritative session state.
   - Read docs/ddd/SPECIFICATION.md before changing model semantics.
   - Read docs/ddd/CANONICAL-REGISTRY.yaml before counting or validating tactical objects or open issues.
-  - Open issues are composed from docs/ddd/issues/unresolved.yaml plus docs/ddd/issues/scenario-validation-open.yaml.
-  - Read both scenario reports and scenario YAML files before adding new scenarios.
+  - Open scenario-discovered issues are in docs/ddd/issues/scenario-validation-open.yaml.
+  - Read both scenario reports before adding more scenarios.
   - Do not reconstruct canonical state from chat when GitHub contains it.
   - Mark is the domain authority.
   - Ask one high-value business question at a time only when a scenario exposes a genuinely material unresolved rule.
   - Preserve stable IDs unless modeled identity changes.
   - Do not equate departments, capabilities, applications, Subdomains, or Bounded Contexts.
   - Do not use ArchiMate as canonical DDD authority.
-  - Prefer standard-informed terminology where useful, but do not claim a standard mandates terminology without evidence.
-  - Use ISO 9000/9001 as the default Quality/QMS conceptual vocabulary baseline without inventing a monolithic QMS.
-  - ManuFactor is a gap filler, source-system reader/aggregator/correlator, and owner of missing workflows/records where real gaps exist; it is not a wholesale ERP/MES/CMMS/HR/QMS/Safety/analytics replacement.
+  - ManuFactor is a gap filler, source-system reader/aggregator/correlator, and owner of missing workflows/records where real gaps exist.
   - Reading, correlating, or statistically comparing source data does not transfer source authority or create lineage that source data does not contain.
   - Retained business records generally change status/history rather than disappearing when current domain evidence establishes continued referenceability.
 
@@ -41,28 +38,25 @@ maturity:
   scenario_validation_batch1: complete
   scenario_validation_batch2: complete
   scenario_count: 20
-  current_open_issue_count: 2
+  current_open_issue_count: 1
 
 scenario_validation:
-  methodology: docs/ddd/scenario-validation/README.md
   batch1_report: docs/ddd/reports/scenario-validation.md
   batch2_report: docs/ddd/reports/scenario-validation-batch2.md
-  batch1_results: docs/ddd/scenario-validation/SCENARIOS-002-010.yaml
-  batch2_results: docs/ddd/scenario-validation/SCENARIOS-011-020.yaml
-  totals:
+  totals_after_correction:
     PASS: 15
-    PASS_WITH_MODEL_REFINEMENT: 3
-    DOMAIN_QUESTION_REQUIRED: 2
+    PASS_WITH_MODEL_REFINEMENT: 4
+    DOMAIN_QUESTION_REQUIRED: 1
     MODEL_DEFECT_REMAINING: 0
   batch2_findings:
-    - SCENARIO-012 exposed ISSUE-0013: selected Operational Coverage Plan when qualification is withdrawn before coverage execution.
+    - SCENARIO-012 refined qualification authority: withdrawal/supersession is supervisor-managed; ISSUE-0013 removed as an invalid scenario assumption.
     - SCENARIO-013 refined Asset Lifecycle so MP2 hierarchy restructuring does not silently replace established ManuFactor Asset identity.
     - SCENARIO-019 exposed ISSUE-0014: Project cancellation/abandonment lifecycle after work begins.
 
-canonical_registry:
-  manifest: docs/ddd/CANONICAL-REGISTRY.yaml
-  note: >
-    Large baseline index files remain composed with canonical sidecars/overlays by stable ID. Scenario validation adds explicit relationships/contracts, context refinements, and scenario-discovered issue sidecars where needed.
+qualification_authority:
+  grant: employee supervisor or designated trainer/subject-matter expert may determine capability under current confirmed evidence
+  withdrawal_or_supersession: responsible employee supervisor manages the qualification
+  staffing_consequence: future coverage judgment must use current qualification state; qualification withdrawal is not modeled as an unrelated external surprise to the supervisor
 
 current_model_counts:
   bounded_contexts: 10
@@ -82,24 +76,10 @@ current_model_counts:
   integration_contracts: 10
 
 open_issue_details:
-  - id: ISSUE-0013
-    question: What happens to an already-selected Operational Coverage Plan when the selected person's qualification is withdrawn before the coverage is used?
-    known: Withdrawn qualification is no longer current eligibility.
-    unknown: Whether coverage selection is automatically invalidated/reopened or requires an explicit supervisor reselection transition.
   - id: ISSUE-0014
     question: What is the Project cancellation/abandonment lifecycle after work has begun?
     known: Project identity/history must be retained and Project lifecycle remains independently owned.
     unknown: Exact cancellation/abandonment transition, authority, status, and retained evidence.
-
-scenario_validated_business_boundaries:
-  - Quality target changes do not silently rewrite historical Quality Check evaluation basis.
-  - Ambiguous target applicability blocks evaluation rather than selecting arbitrarily.
-  - ProTrack late data may change analytical projections but cannot create fabricated kiln-run lineage.
-  - Kiln Schedule revisions do not rewrite already-started Kiln Run execution history.
-  - LTV scan without a reliable originating-record match cannot transition to Recorded.
-  - Failed CAPA effectiveness verification keeps CAPA active even when all planned tasks were completed.
-  - Operations Record correction preserves source history even after downstream analytics consumed an earlier value.
-  - MP2 hierarchy restructuring changes external structural mapping, not established ManuFactor physical-asset identity by itself.
 
 canonical_files_to_use:
   - docs/ddd/SPECIFICATION.md
@@ -109,10 +89,7 @@ canonical_files_to_use:
   - docs/ddd/reports/validation-report.md
   - docs/ddd/reports/scenario-validation.md
   - docs/ddd/reports/scenario-validation-batch2.md
-  - docs/ddd/scenario-validation/README.md
-  - docs/ddd/scenario-validation/SCENARIO-001-quality-concern-to-capa.yaml
-  - docs/ddd/scenario-validation/SCENARIOS-002-010.yaml
   - docs/ddd/scenario-validation/SCENARIOS-011-020.yaml
 
 session_resume: >
-  Twenty realistic ManuFactor scenarios have been executed. The strategic model has survived without a confirmed context/aggregate defect. Scenario batch 2 surfaced two real temporal lifecycle questions (ISSUE-0013 and ISSUE-0014) and one Asset identity representation refinement. Current state is Strategic Stable / Tactical Candidate, PASS WITH WARNINGS. Resolve the two open rules before considering Tactical Stable promotion.
+  Twenty realistic ManuFactor scenarios have been executed. After Mark corrected SCENARIO-012's assumption, there is one genuine open scenario-derived question: ISSUE-0014 Project cancellation/abandonment. The strategic model still has no confirmed context/aggregate defect. Current state is Strategic Stable / Tactical Candidate, PASS WITH WARNINGS.
