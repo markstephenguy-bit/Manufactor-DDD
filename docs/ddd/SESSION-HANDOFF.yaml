@@ -1,29 +1,32 @@
 model_state: Strategic Stable / Tactical Candidate; Specification Phases 1-15 complete at current evidence level
-session_state: targeted-domain-rule-refinement-complete
-session_refreshed_at: 2026-08-23T14:35:00-05:00
-current_phase: post-Phase-15 tactical hardening complete at current evidence level
-last_completed: Resolved ISSUE-0007 by modeling Safety Office LTV return, scan, origin-record reconciliation, Recorded status transition, and permanent retained status/history
-current_focus: No open tactical/domain-rule issues remain in the current registry; next work should be validation/consolidation or new domain discovery, not reopening settled rules
+session_state: current-discovery-cycle-complete
+session_refreshed_at: 2026-08-23T15:44:00-05:00
+current_phase: post-Phase-15 consolidation complete
+last_completed: Whole-model consolidation and validation after resolving the final LTV workflow issue
+current_focus: Do not manufacture additional domain questions. Begin a new discovery issue only when new business evidence, implementation feedback, or a newly identified ManuFactor gap requires it.
 blocking_issues: []
+open_nonblocking_issues: []
 
 next_action: >
-  Perform a whole-model consistency and consolidation pass against the now-empty unresolved registry. Prefer correcting stale canonical indexes/reports and duplicate sidecars before opening any new business question. Ask Mark only when genuinely new domain evidence exposes a material ambiguity.
+  Treat the current discovery/refinement cycle as complete. Before future modeling, read this handoff, docs/ddd/CANONICAL-REGISTRY.yaml, docs/ddd/reports/validation-report.md, and docs/ddd/issues/unresolved.yaml. If work continues, choose deliberately among model stabilization, implementation-oriented projection, or new gap/domain discovery rather than restarting completed Phase 14/15 work.
 
 startup_instructions:
   - Treat markstephenguy-bit/Manufactor-DDD as authoritative session state.
-  - Read docs/ddd/SPECIFICATION.md, docs/ddd/reports/validation-report.md, this handoff, and docs/ddd/issues/unresolved.yaml before further modeling.
-  - Do not reconstruct the model from chat when GitHub holds current state.
+  - Read docs/ddd/SPECIFICATION.md before changing model semantics.
+  - Read docs/ddd/CANONICAL-REGISTRY.yaml before counting or validating tactical objects.
+  - Read docs/ddd/reports/validation-report.md and docs/ddd/issues/unresolved.yaml before asking domain questions.
+  - Do not reconstruct canonical state from chat when GitHub contains it.
   - Mark is the domain authority.
-  - Ask one high-value business question at a time only when genuinely material.
-  - Perform substantial whole-map work between questions.
+  - Ask one high-value business question at a time only when a genuinely new unresolved rule exists.
+  - Do substantial model/repository work between questions.
   - Preserve stable IDs unless modeled identity changes.
-  - Existing systems/code/databases/documents are evidence, not automatic domain truth.
   - Do not equate departments, capabilities, applications, Subdomains, or Bounded Contexts.
-  - Do not use ArchiMate for canonical DDD work.
-  - Use ISO 9001/ISO 9000 as the default Quality/QMS vocabulary baseline without creating a monolithic QMS context.
-  - Prefer standard-informed terminology where it clarifies domain vocabulary, but do not claim that a standard mandates a term unless evidence supports that claim.
-  - ManuFactor is a gap filler, source-system reader/aggregator/correlator, and owner of missing workflows/records where real gaps exist; it is not a wholesale ERP/MES/CMMS/HR/QMS/analytics replacement.
-  - Reading/correlating/statistically comparing source data does not transfer source authority or create lineage that the source data does not contain.
+  - Do not use ArchiMate as canonical DDD authority.
+  - Prefer standard-informed terminology where useful, but do not claim a standard mandates terminology without evidence.
+  - Use ISO 9000/9001 as the default Quality/QMS conceptual vocabulary baseline without inventing a monolithic QMS.
+  - ManuFactor is a gap filler, source-system reader/aggregator/correlator, and owner of missing workflows/records where real gaps exist; it is not a wholesale ERP/MES/CMMS/HR/QMS/Safety/analytics replacement.
+  - Reading, correlating, or statistically comparing source data does not transfer source authority or create lineage that source data does not contain.
+  - Retained business records generally change status/history rather than disappearing when current domain evidence establishes continued referenceability.
 
 maturity:
   strategic: Strategic Stable
@@ -31,13 +34,20 @@ maturity:
   validated: PASS WITH WARNINGS
   phase14: complete
   phase15: complete
+  post_phase15_targeted_refinement: complete
+  current_open_issue_count: 0
+
+canonical_registry:
+  manifest: docs/ddd/CANONICAL-REGISTRY.yaml
+  note: >
+    Large Phase-15 index files remain baseline registries. Post-Phase-15 additions are canonical sidecars explicitly composed by CANONICAL-REGISTRY.yaml. Count unique stable IDs across baseline plus additions; do not count historical reconciliation duplicates.
 
 current_model_counts:
   bounded_contexts: 10
   aggregates: 14
   aggregate_root_entities: 14
   value_objects: 8
-  invariants: 35
+  invariants: 37
   commands: 33
   domain_events: 33
   policies: 3
@@ -49,69 +59,63 @@ current_model_counts:
   context_relationships: 9
   integration_contracts: 9
 
-post_phase15_hardening:
-  resolved:
-    - issue: ISSUE-0004
-      result: Nonconformity admission requires explicit authorized determination that retained evidence proves nonfulfillment of an identified applicable requirement.
-    - issue: ISSUE-0005
-      result: Reliability Verification never deterministically maps to Asset state; maintenance-supervisor promotion is the decision gate and Asset Lifecycle owns resulting state transitions.
-    - issue: ISSUE-0006
-      result: Operational Qualification is based on practical job shadowing/observed capability, is granted by supervisor or designated trainer/SME, persists until explicitly withdrawn/superseded, and retains history.
-    - issue: ISSUE-0007
-      result: A used paper LTV is received by the Safety Office, scanned, matched to the originating electronic record, and that retained record transitions to Recorded. The record never dies; later handling is status/history.
-    - issue: ISSUE-0008
-      result: ProTrack has no kiln-run identifier; moisture analysis is statistical by thickness x width x length only and must not fabricate run-level lineage.
-    - issue: ISSUE-0009
-      result: Asset Condition is Operating/Degraded/Down; Asset Lifecycle State is In Service/Out of Service/Retired; condition and lifecycle are separate and all transitions retain history.
-    - issue: ISSUE-0010
-      result: CAPA corrective work is task-based under the parent Nonconformity; closure requires required tasks plus retained post-correction effectiveness verification.
-    - issue: ISSUE-0011
-      result: Vacation coverage remains within Operational Coverage Plan; no separate vacation aggregate is justified at current evidence level.
-    - issue: ISSUE-0012
-      result: Quality Concern identity/history persists through status changes and escalation; records are not deleted when active handling ends.
-
-open_nonblocking_issues: []
-
 important_completed_business_decisions:
   - Operations Record owns concrete missing operational record workflows, not a generic catch-all form or analytics grain model.
   - Kiln planning determines what lumber needs drying; downstream planer optimization determines finished SKU creation.
-  - ProTrack moisture records are not traceable to individual Kiln Runs/Charges; they support statistical analysis by lumber dimension thickness x width x length only.
+  - ProTrack has no Kiln Run/Charge identifier; moisture analysis is statistical by lumber dimension thickness x width x length only.
   - Project means a real Project using conventional project-management semantics.
-  - Operational Qualification evidence is practical job shadowing/observed capability with the current competent worker; LMS/course completion alone does not equal qualification.
-  - Operational Qualification remains valid until explicitly withdrawn or superseded; elapsed time alone does not expire it.
-  - Workforce replacement selection is ultimately a supervisor judgment retained as business history; qualification and availability remain prerequisite inputs.
-  - MP2 provides hierarchy and WR/WO transaction facts; ManuFactor owns richer Asset identity/condition/lifecycle/history semantics.
-  - Asset Condition is Operating, Degraded, or Down; Asset Lifecycle State is In Service, Out of Service, or Retired.
-  - Reliability findings may be logged by a millwright; maintenance supervisor decides promotion; Reliability Manager is accountable.
+  - MP2 provides hierarchy and WR/WO transaction facts; ManuFactor owns richer Asset identity, condition, lifecycle, and retained history semantics.
+  - Asset Condition uses Operating, Degraded, Down.
+  - Asset Lifecycle State uses In Service, Out of Service, Retired.
+  - Reliability findings may be recorded by a millwright; maintenance supervisor decides promotion; Reliability Manager is accountable; Reliability Verification does not directly mutate Asset state.
+  - Operational Qualification may be granted by the employee supervisor or designated trainer/SME.
+  - Operational Qualification evidence is practical job shadowing/observed capability with the current competent worker; LMS completion alone does not establish qualification.
+  - Operational Qualification persists until explicitly withdrawn or superseded; elapsed time alone does not expire it; withdrawal preserves history.
+  - Workforce replacement requires qualification and availability, with final supervisor judgment retained as business history.
   - Quality Concern, Quality Check, and Nonconformity are distinct lifecycle concepts.
-  - Quality Concern records never disappear when handling ends; they change status and retain identity/history so they can be referenced later.
-  - Quality Check is optional before Nonconformity; a failed check is not automatically a Nonconformity.
+  - Quality Concern retains identity and full status/history through escalation/disposition and remains referenceable later.
+  - Quality Check is optional before Nonconformity; failed check does not automatically create Nonconformity.
   - Nonconformity admission requires explicit authorized determination that an applicable requirement was not fulfilled.
-  - Corrective work under a CAPA is represented as tasks; tasks are not independent child Corrective Action lifecycles.
-  - CAPA closure requires all required corrective work plus retained effectiveness verification showing that the correction actually worked.
   - Applicable quality targets are ManuFactor-maintained contextual parameters; salaried management may create/change them.
-  - CAPA belongs to Quality; the affected department's salaried Quality office owns the Nonconformity/CAPA lifecycle while routed execution remains externally owned.
-  - LTV printed/issued paper is returned to the Safety Office, scanned, matched to the originating electronic record, and then the retained record transitions to Recorded.
-  - LTV records never disappear after recording; later changes are retained status/history transitions.
+  - CAPA belongs to Quality; affected department salaried Quality office owns the Nonconformity/CAPA lifecycle while routed execution remains externally owned.
+  - Corrective work under CAPA is represented as tasks under the parent Nonconformity, not independent child Corrective Action aggregates.
+  - CAPA closure requires required corrective work to be complete plus retained post-correction verification that the correction was effective.
+  - LTV printing/issuance is an early lifecycle step.
+  - A used LTV becomes Recorded only after Safety Office receipt, scan, reliable match to the originating electronic record, and retained recording transition.
+  - LTV records never disappear on completion; identity/status/history remain referenceable.
   - Environmental remains a confirmed opportunity area but is deferred until concrete process gaps are identified.
 
+resolved_targeted_issues:
+  - ISSUE-0004: explicit Nonconformity admission policy
+  - ISSUE-0005: no deterministic Reliability Result to Asset State mapping
+  - ISSUE-0006: qualification evidence and persistent-until-withdrawn lifecycle
+  - ISSUE-0007: LTV returned-paper scan/match/Recorded workflow and retained status history
+  - ISSUE-0008: ProTrack dimension-level statistics only; no kiln-run lineage
+  - ISSUE-0009: controlled Asset condition/lifecycle vocabularies and explicit lifecycle-state transition
+  - ISSUE-0010: CAPA corrective tasks plus effectiveness verification before closure
+  - ISSUE-0011: no separate vacation aggregate at current evidence level
+  - ISSUE-0012: Quality Concern retained identity/status/history
+
 canonical_files_to_use:
-  - docs/ddd/queries/index.yaml
-  - docs/ddd/application-use-cases/index.yaml
-  - docs/ddd/application-use-cases/ltv-recording.yaml
-  - docs/ddd/aggregates/index.yaml
-  - docs/ddd/commands/index.yaml
-  - docs/ddd/commands/ltv-recording.yaml
-  - docs/ddd/domain-events/index.yaml
-  - docs/ddd/domain-events/ltv-recording.yaml
-  - docs/ddd/invariants/index.yaml
-  - docs/ddd/invariants/ltv-recording-lifecycle.yaml
-  - docs/ddd/value-objects/index.yaml
-  - docs/ddd/policies/index.yaml
+  - docs/ddd/SPECIFICATION.md
+  - docs/ddd/CANONICAL-REGISTRY.yaml
+  - docs/ddd/issues/unresolved.yaml
+  - docs/ddd/reports/validation-report.md
   - docs/ddd/context-map/context-map.yaml
   - docs/ddd/integration-contracts/index.yaml
-  - docs/ddd/reports/validation-report.md
-  - docs/ddd/issues/unresolved.yaml
+  - docs/ddd/aggregates/index.yaml
+  - docs/ddd/entities/index.yaml
+  - docs/ddd/value-objects/index.yaml
+  - docs/ddd/invariants/index.yaml
+  - docs/ddd/commands/index.yaml
+  - docs/ddd/domain-events/index.yaml
+  - docs/ddd/policies/index.yaml
+  - docs/ddd/repositories/index.yaml
+  - docs/ddd/queries/index.yaml
+  - docs/ddd/application-use-cases/index.yaml
+
+historical_report_note: >
+  Phase-specific reports such as phase14-use-case-query-audit.md and phase15-integration-validation.md are historical completion snapshots and may show earlier counts or open-issue totals. Current state is validation-report.md plus this handoff and CANONICAL-REGISTRY.yaml.
 
 session_resume: >
-  Specification Phases 1-15 are complete at the current evidence level and the post-Phase-15 unresolved registry is now empty. The final issue was LTV recording: Safety receives the used paper form, scans it, matches it to the originating electronic record, and changes that same retained record to Recorded; it never disappears and only changes status/history. Next work is whole-model validation/consolidation and stale-artifact cleanup, not more targeted issue questioning unless new domain evidence appears.
+  Specification Phases 1-15 and the current post-Phase-15 targeted domain-rule refinement cycle are complete. The unresolved registry contains zero open issues. The model remains Strategic Stable / Tactical Candidate, PASS WITH WARNINGS. Do not continue asking questions merely to extend discovery; new questions require new domain evidence or a newly identified gap.
