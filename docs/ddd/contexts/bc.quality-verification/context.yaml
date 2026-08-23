@@ -2,15 +2,21 @@ id: bc.quality-verification
 name: Quality Verification
 purpose: Evaluate lumber against the applicable quality target for its mill, machine, and process context and retain the verification evidence.
 subdomain: subdomain.quality
-model_statement: Within Quality Verification, a quality check is a contextual measurement interpreted against the target applicable to its mill/machine/process path; a failed check is a verification fact and is not automatically identical to a Corrective Action Nonconformity.
+model_statement: >
+  Within Quality Verification, a quality check is a contextual measurement interpreted against a target
+  maintained as a ManuFactor parameter for the applicable mill/machine/process path. The target is therefore
+  part of ManuFactor's quality-verification model rather than an ad hoc external lookup performed at check time.
+  A failed check is a verification fact and is not automatically identical to a Corrective Action Nonconformity.
 responsibilities:
-  - Determine the applicable quality target for the relevant mill/machine/process context.
+  - Maintain quality-target parameters needed for the relevant mill/machine/process contexts.
+  - Determine which maintained target parameter applies to a given quality check.
   - Capture product measurements and checks.
   - Interpret measurements against applicable targets.
-  - Retain verification results and evidence.
+  - Retain verification results and evidence, including the target/basis used for evaluation.
 scope:
   - Product quality measurements
-  - Contextual target selection
+  - Quality-target parameter maintenance
+  - Contextual target applicability by mill, machine, and process path
   - Quality check evaluation
   - Verification-result history
 out_of_scope:
@@ -22,6 +28,7 @@ owned_concepts:
   - Quality Measurement
   - Quality Verification Result
   - Applicable Quality Target
+  - Quality Target Parameter
 external_concepts:
   - Mill
   - Machine
@@ -29,6 +36,7 @@ external_concepts:
   - External finished-size standard
 ubiquitous_language:
   - quality target
+  - quality parameter
   - quality check
   - measurement
   - mill context
@@ -36,13 +44,15 @@ ubiquitous_language:
   - process context
   - finished size
 business_rules:
-  - A quality result must be evaluated against the target applicable to its mill/machine/process context.
-  - Verification evidence must preserve the measurement and evaluation basis.
+  - Quality targets required for ManuFactor quality verification are maintained as ManuFactor parameters.
+  - A quality result must be evaluated against the maintained target applicable to its mill/machine/process context.
+  - Verification evidence must preserve the measurement and the target/evaluation basis used at the time of the check.
   - A failed check does not become a Corrective Action Nonconformity without an explicit domain transition/rule.
 owner: unresolved
 domain_experts: [Mark]
 integration_surface:
   - References machine/process context from Operations or Asset Lifecycle as needed.
+  - External standards or Lumber Division guidance may inform parameter values without becoming the runtime authority for each check.
   - May produce a finding consumed by Corrective Action when domain rules require it.
 upstream_dependencies:
   - bc.asset-lifecycle
@@ -54,5 +64,8 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-09 through 2026-08-10
       description: Mark described ad hoc caliper checks, missing target visibility/recording, and mill/machine/process-specific target semantics.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-22
+      description: Mark clarified that the quality targets should be parameters maintained in ManuFactor.
   confidence: high
   status: candidate
