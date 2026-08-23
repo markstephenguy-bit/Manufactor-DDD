@@ -1,0 +1,31 @@
+application_use_cases:
+  - id: use-case.asset-lifecycle.change-lifecycle-state
+    name: Change Asset Lifecycle State
+    bounded_context: bc.asset-lifecycle
+    goal: Move an Asset between controlled lifecycle positions without confusing lifecycle status with functional condition or external maintenance state.
+    actors: [authorized asset or reliability role]
+    trigger: An explicit business decision is made that an Asset should enter In Service, Out of Service, or Retired state.
+    preconditions:
+      - The Asset exists.
+      - The requested lifecycle position is within the controlled vocabulary.
+      - The decision is not inferred solely from MP2 work status or a Reliability Verification result.
+    commands: [command.asset-lifecycle.change-lifecycle-state]
+    queries: [query.asset-lifecycle.asset-history]
+    domain_services: []
+    events_observed: [event.asset-lifecycle.lifecycle-state-changed]
+    result: The Asset's lifecycle position changes with retained evidence/history while Asset Condition remains a separate value.
+    failure_paths:
+      - Requested state is outside the controlled vocabulary.
+      - A functional condition such as Degraded or Down is incorrectly used as a lifecycle position.
+      - MP2 or verification state is treated as automatic Asset Lifecycle authority.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23
+          description: Mark accepted Operating, Degraded, Down, Out of Service, and Retired as appropriate standard-informed Asset terminology.
+        - type: model-reconciliation
+          reference: ISSUE-0009 hardening
+          description: Existing Asset invariants referenced lifecycle-state transitions, but canonical application behavior had not yet represented that transition explicitly.
+      confidence: high
+      status: candidate
