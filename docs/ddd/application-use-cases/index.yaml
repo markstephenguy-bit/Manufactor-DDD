@@ -37,7 +37,7 @@ application_use_cases:
     goal: Preserve one Kiln Run/Charge and review performance using authoritative ProTrack moisture evidence.
     actors: [employees involved in kiln execution and review]
     trigger: A kiln run is executed, completed, or reviewed.
-    preconditions: [The run is distinguishable; ProTrack measurements are consumed through the integration boundary.]
+    preconditions: [The run is distinguishable; ProTrack measurements are consumed through contract.protrack-moisture-to-kiln-operations.]
     commands: [command.kiln-operations.start-kiln-run, command.kiln-operations.record-kiln-operation, command.kiln-operations.complete-kiln-run]
     queries: [query.kiln-operations.run-moisture]
     domain_services: []
@@ -82,18 +82,18 @@ application_use_cases:
   - id: use-case.quality-verification.review-concern
     name: Review and Disposition a Quality Concern
     bounded_context: bc.quality-verification
-    goal: Retain authorized concern disposition and links to later formal records where independently justified.
+    goal: Retain authorized concern disposition and explicit links to independently created formal quality records where justified.
     actors: [management, designated quality technician]
     trigger: A retained concern is ready for formal triage.
     preconditions: [The concern exists; reviewer has formal triage authority.]
     commands: [command.quality-verification.disposition-quality-concern, command.quality-verification.link-quality-check-to-concern, command.quality-verification.link-nonconformity-to-concern]
-    queries: [query.quality-verification.concerns, query.quality-verification.check, query.corrective-action.capa-status]
+    queries: [query.quality-verification.concerns, query.quality-verification.check]
     domain_services: []
     events_observed: [event.quality-verification.quality-concern-dispositioned, event.quality-verification.quality-check-linked-to-concern, event.quality-verification.nonconformity-linked-to-concern]
-    result: Authorized disposition is retained with explicit links to independently owned formal records.
-    failure_paths: [Unauthorized reviewer; treating Quality Check as mandatory; implicit Nonconformity creation; automatic concern closure on escalation.]
+    result: Authorized disposition is retained with explicit references to any independently owned formal records.
+    failure_paths: [Unauthorized reviewer; treating Quality Check as mandatory; implicit Nonconformity creation; automatic concern closure on escalation; fabricated Corrective Action state.]
     status: candidate
-    provenance: {sources: [{type: discovery, reference: use-case-candidate.quality-verification.review-concern, description: Reconciled Phase 14 candidate.}], confidence: high, status: candidate}
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.quality-verification.review-concern, description: Reconciled Phase 14 candidate; cross-context CAPA lifecycle remains independently orchestrated.}], confidence: high, status: candidate}
 
   - id: use-case.quality-verification.perform-check
     name: Perform and Evaluate a Quality Check
@@ -149,7 +149,7 @@ application_use_cases:
     goal: Maintain ManuFactor asset identity/condition/lifecycle/history while reusing MP2 hierarchy and linked WR/WO facts.
     actors: [authorized asset or reliability users, controlled import processes]
     trigger: An asset is registered or an accepted asset-domain condition change occurs.
-    preconditions: [The physical asset is distinguishable; MP2 facts remain source-owned.]
+    preconditions: [The physical asset is distinguishable; MP2 facts remain source-owned through contract.mp2-maintenance-to-asset-lifecycle.]
     commands: [command.asset-lifecycle.register-asset, command.asset-lifecycle.change-asset-condition]
     queries: [query.asset-lifecycle.asset-history]
     domain_services: []
@@ -165,31 +165,31 @@ application_use_cases:
     goal: Retain reliability verification evidence/results while leaving Asset state changes to Asset Lifecycle authority.
     actors: [millwright, maintenance supervisor, Reliability Manager as accountable process role]
     trigger: A reliability verification/finding is completed and reviewed.
-    preconditions: [Asset is resolved; applicable verification evidence is available.]
+    preconditions: [Asset is resolved through contract.asset-lifecycle-to-reliability-verification; applicable verification evidence is available.]
     commands: [command.reliability-verification.complete-verification]
     queries: [query.reliability-verification.verification-history]
     domain_services: []
     events_observed: [event.reliability-verification.verification-completed]
-    result: An authoritative verification fact is retained; any Asset-state promotion remains a separate explicit decision.
+    result: An authoritative verification fact is retained; any Asset-state promotion remains a separate explicit Asset Lifecycle decision through contract.reliability-verification-to-asset-lifecycle.
     failure_paths: [Insufficient evidence; result treated as Asset condition; fabricated Asset transition.]
     status: candidate
     provenance: {sources: [{type: discovery, reference: use-case-candidate.reliability-verification.verify-asset, description: Reconciled Phase 14 candidate with authority clarification.}], confidence: high, status: candidate}
 
   - id: use-case.ltv-form-management.manage-forms
-    name: Manage an LTV Record Through Its Workflow
+    name: Publish and Issue LTV Form Records
     bounded_context: bc.safety-signoff
-    goal: Manage versioned LTV templates/instances with exact version, applicability, completion/sign-off evidence, and workflow progression.
+    goal: Publish a versioned LTV template, generate a traceable instance, and record issuance without inventing unresolved completion/sign-off transition rules.
     actors: [employees participating where LTV work applies, subject to workflow role]
-    trigger: An LTV template is published or an instance is generated.
-    preconditions: [A managed template/version exists; workflow role requirements are respected.]
-    commands: [command.ltv-form-management.publish-template, command.ltv-form-management.generate-form-instance]
+    trigger: An LTV template is published or an instance must be generated/issued for applicable work.
+    preconditions: [A managed template/version exists or can be published; exact source version and applicability are preserved.]
+    commands: [command.ltv-form-management.publish-template, command.ltv-form-management.generate-form-instance, command.ltv-form-management.mark-form-issued]
     queries: [query.ltv-form-management.forms]
     domain_services: []
-    events_observed: [event.ltv-form-management.template-version-published, event.ltv-form-management.form-instance-generated]
-    result: LTV records retain exact template/version provenance and individual workflow history.
-    failure_paths: [Source version cannot be preserved; print/issue treated as sign-off; process-specific approval rules invented.]
+    events_observed: [event.ltv-form-management.template-version-published, event.ltv-form-management.form-instance-generated, event.ltv-form-management.form-instance-issued]
+    result: The issued LTV record retains exact template/version provenance, applicability, and issuance history; later completion/sign-off behavior remains governed by ISSUE-0007 until its exact rules are modeled.
+    failure_paths: [Source version cannot be preserved; print/issue treated as sign-off; process-specific completion/approval rules invented in application orchestration.]
     status: candidate
-    provenance: {sources: [{type: discovery, reference: use-case-candidate.ltv-form-management.manage-forms, description: Reconciled Phase 14 candidate.}], confidence: high, status: candidate}
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.ltv-form-management.manage-forms, description: Phase 14 canonicalization narrowed orchestration to currently modeled commands while retaining confirmed LTV workflow semantics as future tactical rule work.}], confidence: high, status: candidate}
 
   - id: use-case.training-qualification.establish-qualification
     name: Establish Operational Qualification
@@ -210,15 +210,15 @@ application_use_cases:
   - id: use-case.workforce-availability.fill-gap
     name: Fill an Operational Staffing Gap
     bounded_context: bc.workforce-availability
-    goal: Support and retain a supervisor's judgment about who can cover a specific job at a specific time.
+    goal: Establish the staffing need, support the supervisor's judgment with qualification/availability facts, and retain the selected replacement decision.
     actors: [supervisor]
     trigger: A staffing gap requires replacement coverage.
-    preconditions: [Staffing need identifies job/time context; qualification and availability facts are available or explicitly unknown.]
-    commands: [command.workforce-availability.select-replacement]
+    preconditions: [The job/time/crew need can be defined; qualification and HR/timekeeping source facts are available or explicitly unknown through their integration contracts.]
+    commands: [command.workforce-availability.create-coverage-plan, command.workforce-availability.select-replacement]
     queries: [query.workforce-availability.coverage]
     domain_services: []
-    events_observed: [event.workforce-availability.replacement-selected]
-    result: The supervisor's selected replacement decision is retained with qualification/availability evidence references.
-    failure_paths: [Qualification/availability prerequisites fail; missing source facts fabricated; orchestration replaces supervisor judgment with an unsupported deterministic rule.]
+    events_observed: [event.workforce-availability.staffing-gap-identified, event.workforce-availability.replacement-selected]
+    result: A retained Coverage Plan identifies the staffing need and the supervisor's selected replacement with decision-time qualification/availability references.
+    failure_paths: [Staffing need cannot be defined; qualification/availability prerequisites fail; missing source facts fabricated; orchestration replaces supervisor judgment with an unsupported deterministic rule.]
     status: candidate
-    provenance: {sources: [{type: discovery, reference: use-case-candidate.workforce-availability.fill-gap, description: Reconciled Phase 14 candidate after supervisor-judgment clarification.}], confidence: high, status: candidate}
+    provenance: {sources: [{type: discovery, reference: use-case-candidate.workforce-availability.fill-gap, description: Phase 14 audit reconciled the use case with the existing Coverage Plan creation command and supervisor-judgment decision.}], confidence: high, status: candidate}
