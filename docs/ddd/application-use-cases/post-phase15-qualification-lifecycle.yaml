@@ -3,20 +3,23 @@ application_use_cases:
     name: Withdraw Operational Qualification
     bounded_context: bc.training-competency
     goal: Explicitly end a person's current Operational Qualification for a job while preserving the complete qualification and withdrawal history.
-    actors: [employee supervisor, designated trainer or subject-matter expert]
-    trigger: An authorized person determines that an existing Operational Qualification should no longer remain current.
-    preconditions: [The Operational Qualification exists and is currently valid; the actor is within confirmed qualification authority.]
+    actors: [employee supervisor]
+    trigger: The responsible supervisor determines that an existing Operational Qualification should no longer remain current.
+    preconditions: [The Operational Qualification exists and is currently valid; the actor is the responsible supervisor managing the qualification.]
     commands: [command.training-qualification.withdraw-qualification]
     queries: [query.training-qualification.who-can-do-job]
     domain_services: []
     events_observed: [event.training-qualification.operational-qualification-withdrawn]
-    result: The qualification is no longer current for future staffing/coverage decisions, while its prior establishment, evidence, withdrawal reason, actor, and effective time remain retained history.
-    failure_paths: [Actor lacks authority; qualification is not current; history would be erased; elapsed time is treated as automatic expiration.]
+    result: The qualification is no longer current for future staffing/coverage decisions, while its prior establishment, evidence, withdrawal reason, actor, and effective time remain retained history. Any future coverage decision managed by that supervisor must use the person's now-current qualification state rather than the prior qualification.
+    failure_paths: [Actor is not the responsible supervisor; qualification is not current; history would be erased; elapsed time is treated as automatic expiration.]
     status: candidate
     provenance:
       sources:
         - type: domain-expert
           reference: Mark direct, 2026-08-23 qualification lifecycle clarification
           description: Operational Qualification remains valid until explicitly withdrawn.
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23 scenario-012 clarification
+          description: The supervisor manages qualification, so withdrawal and subsequent staffing judgment are not independent surprise events.
       confidence: high
       status: candidate
