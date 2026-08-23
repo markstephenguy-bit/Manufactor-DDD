@@ -79,17 +79,35 @@ context_map:
       upstream: bc.quality-verification
       downstream: bc.corrective-action
       relationship_type: unresolved
-      description: Quality Verification may supply a failed/unacceptable quality finding that Corrective Action can evaluate as a possible Nonconformity trigger.
-      model_influence: Quality Verification owns measurement/check meaning; Corrective Action owns Nonconformity and CAPA meaning.
+      description: Quality Verification may supply retained Quality Concern or Quality Check evidence that Corrective Action can evaluate for explicit admission into the Nonconformity lifecycle.
+      model_influence: Quality Verification owns concern/check meaning; Corrective Action owns Nonconformity and CAPA meaning.
       integration_contracts: [contract.quality-verification-to-corrective-action]
-      translation_boundary: Required. A failed check is not automatically a Nonconformity; an explicit transition rule must translate the finding into Corrective Action semantics.
-      organizational_notes: Both contexts belong to Quality but have distinct triggers and lifecycles.
+      translation_boundary: Required. Concern intake, concern disposition, and a failed Quality Check are not automatically Nonconformities; explicit acceptance translates qualifying evidence into Corrective Action semantics.
+      organizational_notes: Both contexts belong to Quality but retain separate intake/verification and CAPA lifecycles.
       status: candidate
       provenance:
         sources:
           - type: domain-expert
-            reference: Mark direct, 2026-08-09 through 2026-08-10
-            description: Product Quality Verification and CAPA are distinct Quality responsibilities.
+            reference: Phase 14 reconciliation, 2026-08-22
+            description: Quality Check is optional before Nonconformity and direct concern promotion may occur when sufficient basis exists, but Nonconformity admission remains independently owned.
+        confidence: high
+        status: candidate
+
+    - id: rel.corrective-action-to-quality-verification
+      upstream: bc.corrective-action
+      downstream: bc.quality-verification
+      relationship_type: unresolved
+      description: Quality Verification may retain a reference to an independently accepted Nonconformity for traceability from the source Quality Concern.
+      model_influence: Corrective Action supplies only the accepted Nonconformity identity/fact; Quality Verification does not import CAPA lifecycle state.
+      integration_contracts: [contract.corrective-action-to-quality-verification]
+      translation_boundary: Required. Nonconformity identity may be referenced, but CAPA status, routed-work state, and closure remain Corrective Action semantics.
+      organizational_notes: This reverse relationship exists for traceability only and does not create shared ownership of the quality record.
+      status: candidate
+      provenance:
+        sources:
+          - type: domain-expert
+            reference: Phase 14 reconciliation, 2026-08-22
+            description: Quality Concern and Nonconformity remain linked records with independent lifecycles; escalation does not close the concern or transfer CAPA ownership.
         confidence: high
         status: candidate
 
