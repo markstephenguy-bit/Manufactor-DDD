@@ -1,0 +1,227 @@
+queries:
+  - id: query.operations-record.history
+    name: View Operational Record History
+    bounded_context: bc.operations-record
+    purpose: Show retained records for one or more concrete business-need-driven operational record types, including correction/history.
+    inputs: [mill or operational scope, time period, concrete record type]
+    result: Records of the selected business-defined type with retained correction/history context.
+    authoritative_source: bc.operations-record
+    consistency_expectation: Read current retained record state together with its preserved history; this query does not create a generic catch-all form model or analytical grain model.
+    status: candidate
+    provenance:
+      sources:
+        - type: discovery
+          reference: query-candidate.operations-record.history
+          description: Reconciled Phase 14 query candidate.
+      confidence: high
+      status: candidate
+
+  - id: query.kiln-operations.schedule
+    name: View Kiln Drying Plan
+    bounded_context: bc.kiln-operations
+    purpose: Show the retained plan translating human business/Sales market-demand direction and upstream green-lumber availability into what lumber needs to be dried.
+    inputs: [mill, kiln or planning scope, planning period]
+    result: Current drying/loading plan plus historically traceable revisions and retained planning basis where available.
+    authoritative_source: bc.kiln-operations; human Sales/business direction and upstream green-lumber availability remain inputs rather than locally invented source authority.
+    consistency_expectation: The plan reflects the retained Kiln Schedule model and revision history; downstream planer SKU optimization is excluded.
+    status: candidate
+    provenance:
+      sources:
+        - type: discovery
+          reference: query-candidate.kiln-operations.schedule
+          description: Reconciled Phase 14 query candidate.
+      confidence: high
+      status: candidate
+
+  - id: query.kiln-operations.run-moisture
+    name: Review Kiln Run Performance
+    bounded_context: bc.kiln-operations
+    purpose: Review a completed Kiln Run/Charge and interpret drying performance using correlated downstream ProTrack moisture measurements.
+    inputs: [kiln run identity]
+    result: Retained kiln-run history plus correlated ProTrack moisture evidence and Kiln Operations drying-performance interpretation with source provenance preserved.
+    authoritative_source: Explicit composition of bc.kiln-operations and external.protrack-moisture through contract.protrack-moisture-to-kiln-operations; ProTrack owns source measurements and Kiln Operations owns correlation/interpretation.
+    consistency_expectation: Correlation may be incomplete; uncorrelatable source measurements remain explicitly uncorrelated and are never fabricated into a run association.
+    status: candidate
+    provenance:
+      sources:
+        - type: discovery
+          reference: query-candidate.kiln-operations.run-moisture
+          description: Reconciled Phase 14 cross-context query candidate.
+        - type: existing-model
+          reference: contract.protrack-moisture-to-kiln-operations
+          description: Defines source authority, translation, and failure semantics.
+      confidence: high
+      status: candidate
+
+  - id: query.project-tracking.project-status
+    name: View Project Status
+    bounded_context: bc.project-tracking
+    purpose: Show a real Project using conventional project-management semantics including purpose, ownership, lifecycle status, dates, milestones/tasks, dependencies, and progress where applicable.
+    inputs: [project identity or project filters]
+    result: Project lifecycle/status and Project-owned planning/progress information.
+    authoritative_source: bc.project-tracking
+    consistency_expectation: Project status reflects Project-owned work and must not be inferred from CAPA, MP2 work-order, or ordinary operational-task state.
+    status: candidate
+    provenance:
+      sources:
+        - type: discovery
+          reference: query-candidate.project-tracking.project-status
+          description: Reconciled Phase 14 query candidate after Project boundary clarification.
+      confidence: high
+      status: candidate
+
+  - id: query.quality-verification.concerns
+    name: Review Quality Concerns
+    bounded_context: bc.quality-verification
+    purpose: Show retained suspected product-quality concerns and their authorized triage/disposition/escalation state.
+    inputs: [mill or operational scope, time period, concern status, subject or product context]
+    result: Concern lifecycle and disposition history plus links to an optional Quality Check or independently owned Nonconformity where present.
+    authoritative_source: bc.quality-verification owns Quality Concern lifecycle; any linked Nonconformity state is read as an explicit cross-context reference from bc.corrective-action and remains authoritative there.
+    consistency_expectation: Concern and Nonconformity remain separate records; escalation does not imply concern closure and stale/unavailable CAPA state must not be invented locally.
+    status: candidate
+    provenance:
+      sources:
+        - type: discovery
+          reference: query-candidate.quality-verification.concerns
+          description: Reconciled Phase 14 query candidate promoted after Quality Concern tactical reconciliation.
+      confidence: high
+      status: candidate
+
+  - id: query.quality-verification.check
+    name: Review Quality Check
+    bounded_context: bc.quality-verification
+    purpose: Show a Quality Check with measurement evidence, the applicable historical ManuFactor quality target, and the retained evaluation result.
+    inputs: [quality check identity]
+    result: Quality Check evidence, target/evaluation basis, and result without implying Nonconformity or CAPA status.
+    authoritative_source: bc.quality-verification
+    consistency_expectation: Historical evaluation basis remains the basis used for the retained result even if current target parameters later change.
+    status: candidate
+    provenance:
+      sources:
+        - type: discovery
+          reference: query-candidate.quality-verification.check
+          description: Reconciled Phase 14 query candidate.
+      confidence: high
+      status: candidate
+
+  - id: query.quality-verification.targets
+    name: Review Applicable Quality Targets
+    bounded_context: bc.quality-verification
+    purpose: Show ManuFactor-maintained quality-target parameters and their applicability/version history for mill, machine, and process context.
+    inputs: [quality characteristic or criterion, mill, machine, process path, effective time or current-state filter]
+    result: Applicable target parameter identity, contextual applicability, current or historical value/rule, version/effective history, and provenance.
+    authoritative_source: bc.quality-verification
+    consistency_expectation: Current target lookup and historical target lookup are distinguished so later changes do not reinterpret retained Quality Checks.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: PHASE14-QUALITY-PARAMETERS / PHASE14-QUALITY-PARAMETER-AUTHORITY
+          description: ManuFactor maintains contextual targets and management controls target changes.
+      confidence: high
+      status: candidate
+
+  - id: query.corrective-action.capa-status
+    name: Review Nonconformity and CAPA Status
+    bounded_context: bc.corrective-action
+    purpose: Show a Nonconformity being worked through investigation, corrective-action coordination/routing, and closure by the affected department's salaried Quality office.
+    inputs: [nonconformity identity]
+    result: CAPA-owned lifecycle state, source finding references, corrective-action coordination, routed-work references, and closure evidence/status.
+    authoritative_source: bc.corrective-action owns Nonconformity/CAPA semantics; source-finding and destination execution facts remain authoritative in their source contexts/systems and are composed only through explicit references/contracts.
+    consistency_expectation: Routed execution status is never fabricated locally; unavailable external state remains unavailable or unresolved rather than converted into CAPA-owned execution state.
+    status: candidate
+    provenance:
+      sources:
+        - type: discovery
+          reference: query-candidate.corrective-action.capa-status
+          description: Reconciled Phase 14 query candidate.
+      confidence: high
+      status: candidate
+
+  - id: query.asset-lifecycle.asset-history
+    name: Drill Through Asset State and History
+    bounded_context: bc.asset-lifecycle
+    purpose: Navigate the MP2 equipment hierarchy to an appropriate asset level and show ManuFactor-owned richer asset identity, condition/lifecycle, and history together with linked MP2 WR/WO records.
+    inputs: [MP2 hierarchy node or ManuFactor asset identity]
+    result: Drillable MP2 hierarchy position, richer ManuFactor asset state/history, and linked MP2 work references clearly identified as external maintenance transactions.
+    authoritative_source: Explicit composition of bc.asset-lifecycle with external.mp2-maintenance through contract.mp2-maintenance-to-asset-lifecycle; MP2 owns hierarchy/WR-WO facts and Asset Lifecycle owns richer asset semantics.
+    consistency_expectation: Unmatched MP2 references remain unresolved; MP2 work status must not be silently converted into ManuFactor Asset condition/lifecycle state.
+    status: candidate
+    provenance:
+      sources:
+        - type: discovery
+          reference: query-candidate.asset-lifecycle.asset-history
+          description: Reconciled Phase 14 cross-context query candidate.
+        - type: existing-model
+          reference: contract.mp2-maintenance-to-asset-lifecycle
+          description: Defines MP2/Asset Lifecycle ownership and translation boundary.
+      confidence: high
+      status: candidate
+
+  - id: query.reliability-verification.verification-history
+    name: Review Reliability Verification History
+    bounded_context: bc.reliability-verification
+    purpose: Show recorded reliability findings/verifications and retained evidence for a selected asset.
+    inputs: [asset identity, optional time period]
+    result: Reliability verification evidence/results and retained promotion/reference information without treating a raw finding as an automatic Asset condition change.
+    authoritative_source: bc.reliability-verification owns verification facts; Asset identity/context is referenced from bc.asset-lifecycle through contract.asset-lifecycle-to-reliability-verification.
+    consistency_expectation: Reliability result and Asset state remain distinct; any Asset-state effect requires Asset Lifecycle authority and its own rule.
+    status: candidate
+    provenance:
+      sources:
+        - type: discovery
+          reference: query-candidate.reliability-verification.verification-history
+          description: Reconciled Phase 14 query candidate.
+      confidence: high
+      status: candidate
+
+  - id: query.ltv-form-management.forms
+    name: Find and Review LTV Records
+    bounded_context: bc.safety-signoff
+    purpose: Find current and historical LTV templates and workflow records with exact version traceability, applicability, completion/sign-off evidence, and workflow maturity.
+    inputs: [form type or template, job/equipment/process context, date or status, instance identity]
+    result: Exact template/version, applicable job/equipment/process, who completed/signed where applicable and when, and retained workflow state/history.
+    authoritative_source: bc.safety-signoff
+    consistency_expectation: Template/version provenance and individual instance lifecycle remain distinguishable; printing/issuance never implies sign-off by itself.
+    status: candidate
+    provenance:
+      sources:
+        - type: discovery
+          reference: query-candidate.ltv-form-management.forms
+          description: Reconciled Phase 14 query candidate.
+      confidence: high
+      status: candidate
+
+  - id: query.training-qualification.who-can-do-job
+    name: Who Can Do This Job
+    bounded_context: bc.training-competency
+    purpose: Show people with an explicit retained Operational Qualification for a selected job or operational role.
+    inputs: [job or operational role, optional mill or crew scope]
+    result: Qualification/cross-training coverage and supporting evidence references where available.
+    authoritative_source: bc.training-competency owns Operational Qualification; external learning records remain evidence through contract.learning-source-to-training-qualification and are not equivalent by default.
+    consistency_expectation: Only retained qualification state is reported as qualification; source course completion alone must not be promoted into qualified state by the query.
+    status: candidate
+    provenance:
+      sources:
+        - type: discovery
+          reference: query-candidate.training-qualification.who-can-do-job
+          description: Reconciled Phase 14 query candidate.
+      confidence: high
+      status: candidate
+
+  - id: query.workforce-availability.coverage
+    name: Who Can Cover This Job Now
+    bounded_context: bc.workforce-availability
+    purpose: Support and review a supervisor's staffing judgment using qualification and current availability while retaining the actual replacement decision as business history.
+    inputs: [job or position, required time or shift, mill or crew context]
+    result: Qualified/available candidate inputs plus the retained supervisor judgment/selection for the staffing need; no claim that final ability-to-cover is fully deterministic.
+    authoritative_source: Explicit composition of bc.workforce-availability, bc.training-competency through contract.training-qualification-to-workforce-availability, and external.hr-timekeeping through contract.hr-timekeeping-to-workforce-availability; Workforce Availability owns the retained staffing decision only.
+    consistency_expectation: Qualification and availability source facts are read at decision time and retain their own authority; missing facts remain unknown and supervisor selection history remains a separate retained business decision.
+    status: candidate
+    provenance:
+      sources:
+        - type: discovery
+          reference: query-candidate.workforce-availability.coverage
+          description: Reconciled Phase 14 cross-context query candidate after supervisor-judgment clarification.
+      confidence: high
+      status: candidate
