@@ -1,13 +1,13 @@
 model_state: Strategic Stable / Tactical Candidate; Specification Phases 1-15 complete at current evidence level
 session_state: active-targeted-domain-rule-refinement
-session_refreshed_at: 2026-08-23T14:24:00-05:00
+session_refreshed_at: 2026-08-23T14:28:00-05:00
 current_phase: post-Phase-15 targeted domain-rule refinement
-last_completed: Post-Phase-15 hardening resolved ISSUE-0006 by modeling practical job-shadowing evidence and persistent-until-withdrawn qualification lifecycle
+last_completed: Post-Phase-15 hardening resolved ISSUE-0012 by modeling Quality Concern as a retained status-history record that never disappears on escalation or disposition
 current_focus: Continue narrowing genuine unresolved business rules; ask Mark only when a remaining rule cannot be derived from confirmed canonical evidence
 blocking_issues: []
 
 next_action: >
-  Continue from the three remaining open issues. Prefer repository/model evidence first. Ask Mark one high-value business question at a time only where the remaining rule is genuinely domain-specific and materially changes the model.
+  Continue from the two remaining open issues. Prefer repository/model evidence first. Ask Mark one high-value business question at a time only where the remaining rule is genuinely domain-specific and materially changes the model.
 
 startup_instructions:
   - Treat markstephenguy-bit/Manufactor-DDD as authoritative session state.
@@ -38,7 +38,7 @@ current_model_counts:
   aggregates: 14
   aggregate_root_entities: 14
   value_objects: 8
-  invariants: 30
+  invariants: 31
   commands: 32
   domain_events: 32
   policies: 3
@@ -66,20 +66,20 @@ post_phase15_hardening:
         ProTrack does not record a Kiln Run/Charge identifier. Moisture data is recorded by lumber dimension, so Kiln Operations may analyze moisture statistically by thickness x width x length but must not attribute individual ProTrack measurements to a specific kiln run. The prior run-moisture query was replaced with query.kiln-operations.dimension-moisture-statistics.
     - issue: ISSUE-0009
       result: >
-        Asset Condition uses Operating, Degraded, and Down. Asset Lifecycle State uses In Service, Out of Service, and Retired. Functional condition and lifecycle position remain separate Value Objects. The previously dangling Change Asset Lifecycle State behavior is now represented explicitly; accepted transitions preserve history and are not inferred from MP2 or Reliability Verification alone.
+        Asset Condition uses Operating, Degraded, and Down. Asset Lifecycle State uses In Service, Out of Service, and Retired. Functional condition and lifecycle position remain separate Value Objects. Accepted transitions preserve history and are not inferred from MP2 or Reliability Verification alone.
     - issue: ISSUE-0011
       result: >
         No separate vacation-planning Aggregate is justified at current evidence level. Vacation coverage is a staffing need handled within Operational Coverage Plan unless future schedule-wide invariants establish a distinct consistency boundary.
+    - issue: ISSUE-0012
+      result: >
+        Quality Concern is a retained historical record whose identity persists through triage, escalation, disposition, and later status changes. Ending active handling changes status rather than deleting or replacing the concern. Links to accepted Nonconformities remain references while CAPA lifecycle stays externally owned.
   narrowed:
     - issue: ISSUE-0007
       result: Printing/issuance is modeled; only process-specific completion/approval/sign-off transitions remain unresolved.
-    - issue: ISSUE-0012
-      result: No-escalation disposition/closure with retained reason is supported; only independent closure after Nonconformity escalation remains unresolved.
 
 open_nonblocking_issues:
   - ISSUE-0007: process-specific LTV completion/approval/sign-off transition rules
   - ISSUE-0010: child Corrective Action identity and detailed CAPA closure rules
-  - ISSUE-0012: independent Quality Concern closure rule after Nonconformity escalation
 
 important_completed_business_decisions:
   - Operations Record owns concrete missing operational record workflows, not a generic catch-all form or analytics grain model.
@@ -94,6 +94,7 @@ important_completed_business_decisions:
   - Asset Condition is Operating, Degraded, or Down; Asset Lifecycle State is In Service, Out of Service, or Retired.
   - Reliability findings may be logged by a millwright; maintenance supervisor decides promotion; Reliability Manager is accountable.
   - Quality Concern, Quality Check, and Nonconformity are distinct lifecycle concepts.
+  - Quality Concern records never disappear when handling ends; they change status and retain their identity/history so they can be referenced later.
   - Management/designated quality technicians control formal Quality Concern triage; non-salaried concerns route through the QC channel without inventing its implementation.
   - Quality Check is optional before Nonconformity; a failed check is not automatically a Nonconformity.
   - Nonconformity admission requires explicit authorized determination that an applicable requirement was not fulfilled.
@@ -105,17 +106,11 @@ important_completed_business_decisions:
 canonical_files_to_use:
   - docs/ddd/queries/index.yaml
   - docs/ddd/application-use-cases/index.yaml
-  - docs/ddd/application-use-cases/asset-lifecycle-state.yaml
-  - docs/ddd/application-use-cases/qualification-withdrawal.yaml
   - docs/ddd/aggregates/index.yaml
   - docs/ddd/commands/index.yaml
-  - docs/ddd/commands/asset-lifecycle-state.yaml
-  - docs/ddd/commands/qualification-withdrawal.yaml
   - docs/ddd/domain-events/index.yaml
-  - docs/ddd/domain-events/asset-lifecycle-state.yaml
-  - docs/ddd/domain-events/qualification-withdrawal.yaml
   - docs/ddd/invariants/index.yaml
-  - docs/ddd/invariants/post-phase15-qualification-evidence.yaml
+  - docs/ddd/invariants/quality-concern-retained-status.yaml
   - docs/ddd/value-objects/index.yaml
   - docs/ddd/policies/index.yaml
   - docs/ddd/context-map/context-map.yaml
@@ -124,4 +119,4 @@ canonical_files_to_use:
   - docs/ddd/issues/unresolved.yaml
 
 session_resume: >
-  Specification Phases 14 and 15 are complete. Post-Phase-15 hardening has reduced the unresolved registry from nine to three issues. Operational Qualification is now grounded in practical shadowing/observed capability and persists until explicit withdrawal/supersession. Continue targeted rule refinement from canonical GitHub state; do not restart Phase 14 discovery or whole-map canonicalization.
+  Specification Phases 14 and 15 are complete. Post-Phase-15 hardening has reduced the unresolved registry from nine to two issues. Quality Concern lifecycle now uses retained identity and status history rather than deletion/closure semantics that would erase referenceability. Continue targeted rule refinement from canonical GitHub state; do not restart Phase 14 discovery or whole-map canonicalization.
