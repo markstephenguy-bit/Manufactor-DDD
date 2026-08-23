@@ -1,12 +1,4 @@
-issues:
-  - id: ISSUE-0007
-    title: Which LTV processes require completion, approval, or sign-off transitions and under what rules?
-    description: LTV printing/issuance does not imply completion, approval, or sign-off. Process-specific workflow transition requirements remain unknown and must not be generalized.
-    affected_objects: [bc.safety-signoff, aggregate.ltv-form-management.printed-instance]
-    evidence: [invariant.ltv-instance.printing-not-signoff]
-    blocking: false
-    needed_input: domain-rule discovery
-    status: open
+issues: []
 
 resolved_issues:
   - id: ISSUE-0003
@@ -50,6 +42,17 @@ resolved_issues:
     resolution: The trainee shadows the current competent worker and is observed sufficiently for the authorized reviewer to determine that the trainee is capable of doing the job. Course/LMS completion may support the decision but does not itself establish Operational Qualification. Qualification does not expire merely because time passes. Withdrawal or supersession is explicit and preserves prior qualification evidence/history.
     affected_objects: [bc.training-competency, aggregate.training-qualification.qualification, invariant.qualification.requires-evidence, invariant.qualification.shadowing-demonstrates-capability, invariant.qualification.persists-until-withdrawn, invariant.qualification.withdrawal-preserves-history]
     evidence: ["domain-expert: Mark, direct, 2026-08-23 — qualification persists until explicitly withdrawn", "domain-expert: Mark, direct, 2026-08-23 — person shadows current worker to see if capable of doing the job", bc.training-competency]
+    resolved_by: domain-expert-and-model-reconciliation
+    resolved_at: 2026-08-23
+    blocking: false
+    status: resolved
+
+  - id: ISSUE-0007
+    title: Which LTV processes require completion, approval, or sign-off transitions and under what rules?
+    answer: A used paper LTV is picked up by the Safety Office, scanned into the system, matched to its originating electronic record, and that retained record transitions to Recorded; it never disappears and only changes status/history.
+    resolution: Printing/issuance remains an early lifecycle state. The concrete completion/recording workflow is Safety Office receipt of the used paper form, scanning, reconciliation to the originating electronic LTV record, and a Recorded status transition backed by retained scan-and-match evidence. The same record identity remains permanently referenceable; later changes are status/history transitions rather than deletion. Generic approval/sign-off was removed as the defining completion mechanism where not supported by this workflow.
+    affected_objects: [bc.safety-signoff, aggregate.ltv-form-management.printed-instance, invariant.ltv-instance.recorded-requires-scan-match, invariant.ltv-instance.retained-status-history, command.ltv-form-management.record-returned-form, event.ltv-form-management.form-recorded, use-case.ltv-form-management.record-returned-form]
+    evidence: ["domain-expert: Mark, direct, 2026-08-23 — Safety Office picks up the used LTV, scans it, matches it to the electronic initial record, and changes the record status to Recorded; it never dies and only changes status"]
     resolved_by: domain-expert-and-model-reconciliation
     resolved_at: 2026-08-23
     blocking: false
