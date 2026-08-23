@@ -1,0 +1,110 @@
+scenario_batch: second
+executed_at: 2026-08-23
+scenarios:
+  - id: SCENARIO-011
+    title: Quality target changes after a check begins
+    situation: A Quality Check is initiated and measurements are captured against a target that is later changed by salaried management before the check is reviewed again.
+    expected_model_behavior:
+      - Preserve the target/evaluation basis applicable to the retained check rather than silently reevaluating historical evidence against the new parameter revision.
+      - Keep the new target revision available for later checks without overwriting the historical target version.
+    result: PASS
+    rationale: Existing Quality Check and Applicable Quality Target invariants require historical target/basis traceability and retained target revisions.
+
+  - id: SCENARIO-012
+    title: Qualification withdrawn after replacement selection but before the shift
+    situation: A supervisor selects a replacement who is currently qualified and available. Before that coverage is actually used, the person's Operational Qualification is explicitly withdrawn.
+    expected_model_behavior:
+      - Qualification withdrawal is authoritative in Training and Qualification.
+      - Workforce Availability must not treat a withdrawn qualification as current eligibility.
+      - The model needs a rule for whether an already-selected coverage decision must be invalidated/reopened/reselected before execution.
+    result: DOMAIN_QUESTION_REQUIRED
+    new_issue: ISSUE-0013
+    rationale: Current policy defines eligibility at selection time and current qualification semantics, but no confirmed rule states what happens to an already-selected Operational Coverage Plan when a prerequisite qualification changes before coverage execution.
+
+  - id: SCENARIO-013
+    title: MP2 hierarchy changes after ManuFactor Asset identity is established
+    situation: MP2 reparents or restructures an equipment node after ManuFactor has already established a stable Asset identity and retained history for that physical asset.
+    expected_model_behavior:
+      - Preserve ManuFactor Asset identity.
+      - Treat the changed MP2 hierarchy as updated external structural/navigation evidence rather than a new physical Asset identity.
+      - Preserve provenance/history of the mapping rather than rewriting the past.
+    result: PASS_WITH_MODEL_REFINEMENT
+    refinement: Explicitly state in Asset Lifecycle that MP2 hierarchy restructuring does not by itself replace ManuFactor Asset identity.
+
+  - id: SCENARIO-014
+    title: LTV scan arrives but cannot yet be matched
+    situation: Safety receives and scans a returned LTV, but the scan cannot initially be matched reliably to the originating electronic record. A reliable match becomes possible later.
+    expected_model_behavior:
+      - Do not transition to Recorded while the match is unresolved.
+      - Retain the scan/evidence without fabricating a match.
+      - Allow the later reliable match to support the single Recorded transition.
+    result: PASS
+    rationale: The LTV recorded-requires-scan-match invariant and idempotent RecordLTVForm behavior already enforce this.
+
+  - id: SCENARIO-015
+    title: CAPA effectiveness verification fails
+    situation: Every required corrective task is completed, but post-correction effectiveness verification shows the correction did not actually work.
+    expected_model_behavior:
+      - Keep the Nonconformity/CAPA active.
+      - Retain the failed effectiveness evidence.
+      - Do not close merely because tasks were completed.
+      - Additional corrective work may be coordinated under the same parent lifecycle without creating an independent child Corrective Action aggregate.
+    result: PASS
+    rationale: The effectiveness-verification invariant explicitly blocks closure when effectiveness is not demonstrated.
+
+  - id: SCENARIO-016
+    title: Kiln schedule revision after execution has started
+    situation: A retained kiln schedule is revised after a specific Kiln Run has already started from the earlier planning state.
+    expected_model_behavior:
+      - Preserve prior schedule revisions.
+      - Preserve the Kiln Run as the execution fact that actually occurred.
+      - Do not rewrite the already-started run merely because the planning aggregate changes later.
+    result: PASS
+    rationale: Kiln Schedule and Kiln Run are separate aggregates with revision-aware planning and retained execution history.
+
+  - id: SCENARIO-017
+    title: Ambiguous overlapping quality targets
+    situation: Two active Quality Target Parameter revisions appear applicable to the same mill, machine, process, and characteristic so the applicable target cannot be resolved unambiguously.
+    expected_model_behavior:
+      - Do not evaluate the Quality Check against an arbitrarily chosen target.
+      - Fail target resolution until applicability is unambiguous.
+      - Preserve the incomplete check/evidence rather than creating a false result or Nonconformity.
+    result: PASS
+    rationale: Quality target applicability must be explicit enough to resolve context; Quality Check evaluation fails when the applicable target cannot be established.
+
+  - id: SCENARIO-018
+    title: Operations Record corrected after analytics consumed the old value
+    situation: An operational record is published to downstream analytics, then corrected later while preserving the original submission.
+    expected_model_behavior:
+      - Operations Record remains authoritative for retained record/correction history.
+      - Analytics remains a projection and may refresh to current meaning while historical record states remain available.
+      - No analytical projection may overwrite the source record history.
+    result: PASS
+    rationale: Operations Record correction/history and analytics ownership boundaries already cover the case.
+
+  - id: SCENARIO-019
+    title: Project is abandoned or cancelled after work begins
+    situation: The business created a genuine Project, work began, but management later abandons/cancels it rather than completing it.
+    expected_model_behavior:
+      - Preserve Project identity and history.
+      - Represent cancellation/abandonment as a Project lifecycle state rather than destructive deletion.
+      - Determine the authoritative transition/actor/evidence required for that non-completion terminal state.
+    result: DOMAIN_QUESTION_REQUIRED
+    new_issue: ISSUE-0014
+    rationale: Current Project aggregate models creation and completion and explicitly says exact archival rules remain unresolved; no confirmed cancellation/abandonment transition exists.
+
+  - id: SCENARIO-020
+    title: ProTrack publishes late measurements after a dashboard already showed earlier statistics
+    situation: Additional authoritative ProTrack moisture records for a lumber dimension arrive after a prior drying-performance dashboard was viewed.
+    expected_model_behavior:
+      - ProTrack remains source authority.
+      - Recomputed dimension-level statistics may change the analytical view.
+      - Prior dashboard output is not authoritative lifecycle state and does not create a contradiction.
+      - No late measurement may be backfilled into a fabricated Kiln Run identity.
+    result: PASS
+    rationale: Kiln/ProTrack boundary already defines statistical dimension-grain analysis, source provenance, and dashboards as projections.
+summary:
+  pass: 7
+  pass_with_model_refinement: 1
+  domain_question_required: 2
+  model_defect: 0
