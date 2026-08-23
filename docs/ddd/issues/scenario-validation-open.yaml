@@ -1,0 +1,20 @@
+issues:
+  - id: ISSUE-0013
+    title: What happens to a selected coverage plan when qualification is withdrawn before the coverage is used?
+    description: >
+      Scenario validation established that Workforce Availability must consume current qualification and that a withdrawn qualification cannot satisfy eligibility. What remains unknown is the lifecycle rule for an Operational Coverage Plan when a replacement was validly selected and the person's qualification is then explicitly withdrawn before the planned shift/coverage occurs. The model must not guess whether selection is automatically invalidated, whether the plan reopens, or whether a supervisor must explicitly reselect coverage.
+    affected_objects: [bc.training-competency, bc.workforce-availability, aggregate.workforce-availability.coverage-plan, policy.workforce-availability.replacement-eligibility]
+    evidence: [SCENARIO-012]
+    blocking: false
+    needed_input: domain-rule discovery
+    status: open
+
+  - id: ISSUE-0014
+    title: What is the Project cancellation or abandonment lifecycle after work has begun?
+    description: >
+      Project Tracking models creation and completion and preserves historical identity once work has begun, but scenario validation exposed a real non-completion path: the business may cancel or abandon a genuine Project. The exact Project-owned status transition, authority, and retained evidence for cancellation/abandonment are not yet confirmed and must not be inferred from deletion or CAPA state.
+    affected_objects: [bc.project-tracking, aggregate.project-tracking.project]
+    evidence: [SCENARIO-019]
+    blocking: false
+    needed_input: domain-rule discovery
+    status: open
