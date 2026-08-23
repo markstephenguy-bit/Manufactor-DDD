@@ -1,0 +1,72 @@
+aggregate_overrides:
+  - id: aggregate.asset-lifecycle.asset
+    replace:
+      commands: [Register Asset, Change Asset Condition, Change Asset Lifecycle State]
+      domain_events: [AssetRegistered, AssetConditionChanged, AssetLifecycleStateChanged]
+    rationale: >
+      ISSUE-0009 added explicit lifecycle-state transition behavior while retaining the existing Asset aggregate identity and boundary.
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23
+          description: Asset Condition and Asset Lifecycle State use separate controlled vocabularies; lifecycle-state changes are explicit and history-preserving.
+      confidence: high
+      status: candidate
+
+  - id: aggregate.training-qualification.qualification
+    replace:
+      members: [Operational Qualification, qualification evidence references, retained qualification/withdrawal history]
+      invariants:
+        - Qualification requires practical job-shadowing/observed-capability evidence.
+        - Learning completion alone does not automatically establish qualification.
+        - Availability is not qualification.
+        - Qualification persists until explicitly withdrawn or superseded.
+        - Withdrawal preserves prior qualification evidence/history.
+      commands: [Establish Operational Qualification, Withdraw Operational Qualification]
+      domain_events: [OperationalQualificationEstablished, OperationalQualificationWithdrawn]
+      transaction_boundary: >
+        The qualification decision, supporting practical evidence, current validity, and explicit withdrawal/supersession history remain coherent for one person-job relationship.
+      creation_rules:
+        - Requires person and job/role.
+        - Person shadows the current competent worker and is observed sufficiently for an authorized supervisor or designated trainer/SME to determine capability.
+        - Grant is made by the employee supervisor or designated trainer/SME.
+      deletion_rules:
+        - Qualification is never destructively deleted merely because it is withdrawn or superseded; prior qualification evidence and history remain retained.
+    rationale: >
+      ISSUE-0006 resolved evidence, persistence, and withdrawal semantics without changing aggregate identity.
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23
+          description: Qualification is based on shadowing/observed capability and remains valid until explicitly withdrawn.
+      confidence: high
+      status: candidate
+
+  - id: aggregate.ltv-form-management.printed-instance
+    replace:
+      purpose: >
+        Keep one generated/issued LTV record's template provenance, applicability, returned-paper evidence, current status, and retained lifecycle history consistent.
+      members: [LTV Printed Instance, LTV Form Status, issuance history, returned scan reference, originating electronic-record match evidence, retained status history]
+      invariants:
+        - Every instance remains traceable to the exact template version.
+        - Printing/issuing does not imply Recorded status.
+        - Recorded requires Safety Office receipt of the returned paper, scanning, and reliable match to the originating electronic record.
+        - The record identity and prior status history remain retained rather than being deleted when handling completes.
+      commands: [Generate LTV Form Instance, Mark Printed or Issued, Record LTV Form]
+      domain_events: [LTVFormInstanceGenerated, LTVFormInstanceIssued, LTVFormRecorded]
+      transaction_boundary: >
+        Template provenance, issuance state, returned scan/match evidence, Recorded transition, and retained status history of one LTV record remain coherent.
+      deletion_rules:
+        - LTV records are not destructively deleted when field handling or recording completes; the same identity remains referenceable through status/history transitions.
+    rationale: >
+      ISSUE-0007 established the concrete returned-paper workflow and Recorded transition; generic approval/sign-off is not the defining completion rule for this workflow.
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23
+          description: Safety picks up the used paper LTV, scans it, matches it to the electronic initial record, sets the record to Recorded, and the record never dies but changes status.
+      confidence: high
+      status: candidate
+
+overlay_rule: >
+  These records modify only the named fields of the existing aggregate with the same stable ID in docs/ddd/aggregates/index.yaml. All unspecified aggregate fields remain inherited from the baseline record. This is a canonical reconciliation overlay, not a second aggregate.
