@@ -8,34 +8,22 @@ domain_events:
     payload_concepts: [Operational Record identity, record type, occurrence/report provenance]
     consumers: [Operations read models, authorized downstream references]
     business_significance: Establishes the authoritative ManuFactor operational record for what was reported.
-    ordering_requirements: Must precede any OperationalRecordCorrected event for the same record.
+    ordering_requirements: Must precede corrections for the same record.
     status: candidate
-    provenance:
-      sources:
-        - type: aggregate-model
-          reference: aggregate.operations-record.operational-record
-          description: Operational Record creation is domain-significant retained history.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: aggregate-model, reference: aggregate.operations-record.operational-record, description: Operational Record creation is domain-significant retained history.}], confidence: high, status: candidate}
 
   - id: event.operations-record.operational-record-corrected
     name: OperationalRecordCorrected
     bounded_context: bc.operations-record
     owning_aggregate: aggregate.operations-record.operational-record
-    meaning: A retained Operational Record was corrected while preserving its prior state/history.
+    meaning: A retained Operational Record was corrected while preserving prior state/history.
     trigger: Successful CorrectOperationalRecord command.
-    payload_concepts: [Operational Record identity, corrected fields/facts, correction provenance]
+    payload_concepts: [Operational Record identity, corrected facts, correction provenance]
     consumers: [Operations read models, audit/history projections]
-    business_significance: Makes later consumers aware that the current interpreted record changed without erasing prior evidence.
-    ordering_requirements: Ordered after OperationalRecordRecorded and after prior corrections for the same record.
+    business_significance: Current interpretation changes without erasing prior evidence.
+    ordering_requirements: Ordered after recording and prior corrections for the same record.
     status: candidate
-    provenance:
-      sources:
-        - type: invariant-model
-          reference: invariant.operations-record.preserve-history
-          description: Correction history is part of the domain meaning.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: invariant-model, reference: invariant.operations-record.preserve-history, description: Correction history is part of the domain meaning.}], confidence: high, status: candidate}
 
   - id: event.kiln-operations.kiln-schedule-created
     name: KilnScheduleCreated
@@ -44,36 +32,24 @@ domain_events:
     meaning: A retained kiln planning object was established for a defined planning scope/period.
     trigger: Successful CreateKilnSchedule command.
     payload_concepts: [Kiln Schedule identity, planning scope, planning period]
-    consumers: [Kiln Operations planning views, Kiln Run creation/orchestration]
-    business_significance: Establishes the retained planning model replacing spreadsheet-only state.
-    ordering_requirements: Precedes KilnScheduleRevised events for the same schedule.
+    consumers: [Kiln Operations planning views, Kiln Run orchestration]
+    business_significance: Establishes retained planning replacing spreadsheet-only state.
+    ordering_requirements: Precedes revisions for the same schedule.
     status: candidate
-    provenance:
-      sources:
-        - type: aggregate-model
-          reference: docs/ddd/aggregates/kiln-schedule.yaml
-          description: Schedule lifecycle has retained identity and revision history.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: aggregate-model, reference: aggregate.kiln-operations.kiln-schedule, description: Schedule lifecycle has retained identity and revision history.}], confidence: high, status: candidate}
 
   - id: event.kiln-operations.kiln-schedule-revised
     name: KilnScheduleRevised
     bounded_context: bc.kiln-operations
     owning_aggregate: aggregate.kiln-operations.kiln-schedule
-    meaning: The current planning state of a Kiln Schedule changed while prior revision history remained traceable.
+    meaning: A Kiln Schedule changed while prior revision history remained traceable.
     trigger: Successful ReviseKilnSchedule command.
     payload_concepts: [Kiln Schedule identity, revision information, revised planning state]
     consumers: [Kiln Operations planning views]
-    business_significance: Preserves how kiln planning changed over time instead of overwriting spreadsheet state.
+    business_significance: Preserves how kiln planning changed over time.
     ordering_requirements: Ordered by revision for the same Kiln Schedule.
     status: candidate
-    provenance:
-      sources:
-        - type: invariant-model
-          reference: invariant.kiln-schedule.preserve-revisions
-          description: Revision history is a first-class business invariant.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: invariant-model, reference: invariant.kiln-schedule.preserve-revisions, description: Revision history is a business invariant.}], confidence: high, status: candidate}
 
   - id: event.kiln-operations.kiln-run-started
     name: KilnRunStarted
@@ -83,16 +59,10 @@ domain_events:
     trigger: Successful StartKilnRun command.
     payload_concepts: [Kiln Run identity, Kiln asset reference, schedule reference, start context]
     consumers: [Kiln Operations history/read models]
-    business_significance: Marks the transition from planned work to retained execution history for one distinguishable run.
-    ordering_requirements: Must precede KilnRunCompleted for the same run.
+    business_significance: Marks the start of retained execution history for one run.
+    ordering_requirements: Must precede completion for the same run.
     status: candidate
-    provenance:
-      sources:
-        - type: aggregate-model
-          reference: aggregate.kiln-operations.kiln-run
-          description: Run execution lifecycle is distinct from schedule planning.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: aggregate-model, reference: aggregate.kiln-operations.kiln-run, description: Run execution lifecycle is distinct from schedule planning.}], confidence: high, status: candidate}
 
   - id: event.kiln-operations.kiln-operation-recorded
     name: KilnOperationRecorded
@@ -102,16 +72,10 @@ domain_events:
     trigger: Successful RecordKilnOperation command.
     payload_concepts: [Kiln Run identity, operating fact/parameter, timestamp/context, provenance]
     consumers: [Kiln Operations history, drying-performance projections]
-    business_significance: Builds the retained operational history needed to understand drying performance later.
-    ordering_requirements: Ordered within the run by business time/source ordering where known.
+    business_significance: Builds the retained operating history needed for later performance interpretation.
+    ordering_requirements: Ordered within the run by business/source time where known.
     status: candidate
-    provenance:
-      sources:
-        - type: domain-expert
-          reference: Mark direct, 2026-08-10
-          description: Kiln operating records must be retained instead of spreadsheet-only state.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Mark direct, 2026-08-10, description: Kiln operating records must be retained instead of spreadsheet-only state.}], confidence: high, status: candidate}
 
   - id: event.kiln-operations.kiln-run-completed
     name: KilnRunCompleted
@@ -120,36 +84,24 @@ domain_events:
     meaning: A specific Kiln Run/Charge completed and became a historical correlation anchor for downstream moisture outcomes.
     trigger: Successful CompleteKilnRun command.
     payload_concepts: [Kiln Run identity, completion information]
-    consumers: [Kiln Operations history, moisture-correlation processes/read models]
-    business_significance: Establishes the completed run whose drying history can be compared to ProTrack moisture outcomes.
+    consumers: [Kiln Operations history, moisture-correlation read models]
+    business_significance: Establishes the completed run whose history can be compared with ProTrack moisture outcomes.
     ordering_requirements: Occurs after KilnRunStarted for the same run.
     status: candidate
-    provenance:
-      sources:
-        - type: aggregate-model
-          reference: aggregate.kiln-operations.kiln-run
-          description: Completed runs remain retained for downstream correlation.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: aggregate-model, reference: aggregate.kiln-operations.kiln-run, description: Completed runs remain retained for downstream correlation.}], confidence: high, status: candidate}
 
   - id: event.project-tracking.project-created
     name: ProjectCreated
     bounded_context: bc.project-tracking
     owning_aggregate: aggregate.project-tracking.project
-    meaning: A discrete planned improvement/capital Project was established.
+    meaning: A distinct Project was established.
     trigger: Successful CreateProject command.
-    payload_concepts: [Project identity, project purpose, initial lifecycle state]
+    payload_concepts: [Project identity, purpose, initial lifecycle state]
     consumers: [Project Tracking views]
-    business_significance: Establishes a planned-work lifecycle independent of CAPA.
-    ordering_requirements: Precedes later Project lifecycle events for the same Project.
+    business_significance: Establishes an independent project lifecycle.
+    ordering_requirements: Precedes later Project lifecycle events.
     status: candidate
-    provenance:
-      sources:
-        - type: canonical-context
-          reference: docs/ddd/contexts/bc.project-tracking/context.yaml
-          description: Project is its own planned-work lifecycle.
-      confidence: medium
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 project reconciliation, 2026-08-22, description: A Project is conventional project-managed work, not a generic task bucket.}], confidence: high, status: candidate}
 
   - id: event.project-tracking.project-completed
     name: ProjectCompleted
@@ -158,36 +110,76 @@ domain_events:
     meaning: A Project reached completion according to its own lifecycle rules.
     trigger: Successful CompleteProject command.
     payload_concepts: [Project identity, completion evidence/status]
-    consumers: [Project Tracking views, external references where explicitly contracted]
-    business_significance: Records project completion without equating it to CAPA closure or another context state.
-    ordering_requirements: Occurs after ProjectCreated and applicable project lifecycle changes.
+    consumers: [Project Tracking views]
+    business_significance: Records Project completion independently of CAPA or other external work state.
+    ordering_requirements: Occurs after ProjectCreated and applicable Project-owned work.
     status: candidate
-    provenance:
-      sources:
-        - type: invariant-model
-          reference: invariant.project.status-owned-by-project
-          description: Project status/completion belongs to the Project lifecycle.
-      confidence: medium
-      status: candidate
+    provenance: {sources: [{type: invariant-model, reference: invariant.project.status-owned-by-project, description: Project status/completion belongs to Project lifecycle.}], confidence: high, status: candidate}
+
+  - id: event.quality-verification.quality-concern-recorded
+    name: QualityConcernRecorded
+    bounded_context: bc.quality-verification
+    owning_aggregate: aggregate.quality-verification.quality-concern
+    meaning: A suspected quality issue was retained as a Quality Concern for authorized triage.
+    trigger: Successful RecordQualityConcern command.
+    payload_concepts: [Quality Concern identity, subject/product context, reporter/source provenance]
+    consumers: [Quality Verification concern views]
+    business_significance: Establishes retained intake without implying a Quality Check or Nonconformity.
+    ordering_requirements: First lifecycle event for the Quality Concern.
+    status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 reconciliation, 2026-08-22, description: Quality Concern is retained before formal determination.}], confidence: high, status: candidate}
+
+  - id: event.quality-verification.quality-concern-dispositioned
+    name: QualityConcernDispositioned
+    bounded_context: bc.quality-verification
+    owning_aggregate: aggregate.quality-verification.quality-concern
+    meaning: An authorized reviewer recorded a triage/disposition decision and rationale for a Quality Concern.
+    trigger: Successful DispositionQualityConcern command.
+    payload_concepts: [Quality Concern identity, disposition, rationale]
+    consumers: [Quality Verification concern views, authorized orchestration]
+    business_significance: Retains the formal triage decision separately from later Quality Check or CAPA state.
+    ordering_requirements: Occurs after QualityConcernRecorded.
+    status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 reconciliation, 2026-08-22, description: Management/designated quality technicians control formal triage.}], confidence: high, status: candidate}
+
+  - id: event.quality-verification.quality-check-linked-to-concern
+    name: QualityCheckLinkedToConcern
+    bounded_context: bc.quality-verification
+    owning_aggregate: aggregate.quality-verification.quality-concern
+    meaning: A formal Quality Check was linked to a concern as additional verification evidence.
+    trigger: Successful LinkQualityCheckToConcern command.
+    payload_concepts: [Quality Concern identity, Quality Check identity]
+    consumers: [Quality Verification concern/check views]
+    business_significance: Preserves the optional relationship without making Quality Check a mandatory gate.
+    ordering_requirements: Occurs after the concern and referenced Quality Check exist.
+    status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 reconciliation, 2026-08-22, description: Quality Check is optional before Nonconformity.}], confidence: high, status: candidate}
+
+  - id: event.quality-verification.nonconformity-linked-to-concern
+    name: NonconformityLinkedToConcern
+    bounded_context: bc.quality-verification
+    owning_aggregate: aggregate.quality-verification.quality-concern
+    meaning: A Quality Concern was linked to an independently accepted Corrective Action Nonconformity while retaining its own lifecycle.
+    trigger: Successful LinkNonconformityToConcern command.
+    payload_concepts: [Quality Concern identity, Nonconformity identity]
+    consumers: [Quality Verification concern views]
+    business_significance: Preserves traceability without transferring CAPA ownership or implicitly closing the concern.
+    ordering_requirements: Occurs only after the referenced Nonconformity exists in Corrective Action.
+    status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 reconciliation, 2026-08-22, description: Direct promotion may occur with sufficient basis; source concern remains open.}], confidence: high, status: candidate}
 
   - id: event.quality-verification.quality-check-initiated
     name: QualityCheckInitiated
     bounded_context: bc.quality-verification
     owning_aggregate: aggregate.quality-verification.quality-check
-    meaning: A specific Quality Check was opened with contextual information needed to evaluate lumber against the applicable target.
+    meaning: A specific Quality Check was opened with contextual information needed to resolve the applicable target.
     trigger: Successful InitiateQualityCheck command.
     payload_concepts: [Quality Check identity, mill/machine/process context, subject/product context]
     consumers: [Quality Verification workflow/read models]
     business_significance: Establishes a retained check occurrence rather than an ad hoc unrecorded measurement.
     ordering_requirements: Precedes measurement and evaluation events for the same check.
     status: candidate
-    provenance:
-      sources:
-        - type: domain-expert
-          reference: Mark direct, 2026-08-09
-          description: The current gap is an ad hoc quality check with no formal system or retained record.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Mark direct, 2026-08-09, description: The current gap includes ad hoc checks with no retained record.}], confidence: high, status: candidate}
 
   - id: event.quality-verification.quality-measurement-recorded
     name: QualityMeasurementRecorded
@@ -197,16 +189,10 @@ domain_events:
     trigger: Successful RecordQualityMeasurement command.
     payload_concepts: [Quality Check identity, Quality Measurement]
     consumers: [Quality Check evaluation behavior, Quality Verification views]
-    business_significance: Creates retained evidence used to determine whether the applicable target is met.
+    business_significance: Creates retained evidence used to evaluate the applicable target.
     ordering_requirements: Occurs after QualityCheckInitiated and before or as part of evaluation.
     status: candidate
-    provenance:
-      sources:
-        - type: value-object-model
-          reference: value-object.quality-verification.quality-measurement
-          description: Measurement is retained evidence inside the check.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: value-object-model, reference: value-object.quality-verification.quality-measurement, description: Measurement is retained evidence inside the check.}], confidence: high, status: candidate}
 
   - id: event.quality-verification.quality-check-evaluated
     name: QualityCheckEvaluated
@@ -215,36 +201,50 @@ domain_events:
     meaning: A Quality Check was evaluated against its applicable historical target/basis and produced a retained result.
     trigger: Successful EvaluateQualityCheck command.
     payload_concepts: [Quality Check identity, Quality Verification Result, applicable target/basis reference or snapshot]
-    consumers: [Quality Verification views, potential cross-context finding transition process]
-    business_significance: Records acceptable/failed verification meaning while remaining distinct from Nonconformity.
+    consumers: [Quality Verification views, contract.quality-verification-to-corrective-action]
+    business_significance: Records verification meaning while remaining distinct from Nonconformity.
     ordering_requirements: Follows required measurement evidence for the same check.
     status: candidate
-    provenance:
-      sources:
-        - type: invariant-model
-          reference: invariant.quality-check.failure-not-nonconformity
-          description: Evaluation result remains a Quality Verification fact even when failed.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: invariant-model, reference: invariant.quality-check.failure-not-nonconformity, description: Evaluation remains a Quality Verification fact even when failed.}], confidence: high, status: candidate}
+
+  - id: event.quality-verification.quality-target-parameter-created
+    name: QualityTargetParameterCreated
+    bounded_context: bc.quality-verification
+    owning_aggregate: aggregate.quality-verification.applicable-quality-target
+    meaning: Salaried management established a ManuFactor quality-target parameter for a defined applicability context.
+    trigger: Successful CreateQualityTargetParameter command.
+    payload_concepts: [Quality Target identity, criterion/value, mill/machine/process applicability, provenance]
+    consumers: [Quality Check target-resolution read models]
+    business_significance: Establishes controlled contextual target configuration.
+    ordering_requirements: First lifecycle event for the target parameter.
+    status: candidate
+    provenance: {sources: [{type: domain-expert, reference: PHASE14-QUALITY-PARAMETERS / PHASE14-QUALITY-PARAMETER-AUTHORITY, description: ManuFactor owns contextual target parameters and salaried management may create/change them.}], confidence: high, status: candidate}
+
+  - id: event.quality-verification.quality-target-parameter-changed
+    name: QualityTargetParameterChanged
+    bounded_context: bc.quality-verification
+    owning_aggregate: aggregate.quality-verification.applicable-quality-target
+    meaning: A contextual quality-target parameter changed while prior applicability/version history remained traceable.
+    trigger: Successful ChangeQualityTargetParameter command.
+    payload_concepts: [Quality Target identity, revised criterion/value or applicability, change rationale/provenance]
+    consumers: [Quality Check target-resolution read models, audit/history views]
+    business_significance: Changes current target configuration without changing historical Quality Check basis.
+    ordering_requirements: Occurs after creation and is ordered within one target history.
+    status: candidate
+    provenance: {sources: [{type: domain-expert, reference: PHASE14-QUALITY-PARAMETER-AUTHORITY, description: Salaried management may change quality-target parameters.}], confidence: high, status: candidate}
 
   - id: event.corrective-action.nonconformity-accepted
     name: NonconformityAccepted
     bounded_context: bc.corrective-action
     owning_aggregate: aggregate.corrective-action.nonconformity
-    meaning: An eligible finding was explicitly accepted into the Corrective Action lifecycle as a Nonconformity.
+    meaning: An eligible finding was explicitly accepted as a Nonconformity.
     trigger: Successful AcceptNonconformity command.
     payload_concepts: [Nonconformity identity, source finding reference, unmet requirement/evidence, acceptance rationale]
-    consumers: [Corrective Action workflow/read models]
-    business_significance: Marks the semantic boundary crossing from a source finding into CAPA ownership.
-    ordering_requirements: First lifecycle event for the Nonconformity aggregate.
+    consumers: [Corrective Action workflow/read models, contract.corrective-action-to-quality-verification]
+    business_significance: Marks semantic admission into CAPA ownership.
+    ordering_requirements: First lifecycle event for the Nonconformity.
     status: candidate
-    provenance:
-      sources:
-        - type: invariant-model
-          reference: invariant.nonconformity.explicit-acceptance
-          description: Findings require explicit admission into the Nonconformity lifecycle.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: invariant-model, reference: invariant.nonconformity.explicit-acceptance, description: Findings require explicit admission into the Nonconformity lifecycle.}], confidence: high, status: candidate}
 
   - id: event.corrective-action.corrective-work-routed
     name: CorrectiveWorkRouted
@@ -253,36 +253,24 @@ domain_events:
     meaning: Corrective work was routed to the context/system that owns execution of that work class.
     trigger: Successful RouteCorrectiveWork command.
     payload_concepts: [Nonconformity identity, Corrective Action reference, destination context/system, routing information]
-    consumers: [Corrective Action coordination views, destination integration when explicitly contracted]
-    business_significance: Records CAPA coordination without transferring destination work ownership into Corrective Action.
+    consumers: [Corrective Action coordination views, destination integration where explicitly contracted]
+    business_significance: Records CAPA coordination without transferring execution ownership.
     ordering_requirements: Occurs after NonconformityAccepted and after the relevant corrective action is defined.
     status: candidate
-    provenance:
-      sources:
-        - type: domain-expert
-          reference: Mark direct, ISSUE-0002
-          description: CAPA routes work to the system/context that already owns it.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Mark direct, ISSUE-0002, description: CAPA routes work to the system/context that owns it.}], confidence: high, status: candidate}
 
   - id: event.corrective-action.nonconformity-closed
     name: NonconformityClosed
     bounded_context: bc.corrective-action
     owning_aggregate: aggregate.corrective-action.nonconformity
-    meaning: A Nonconformity completed its CAPA lifecycle and was closed under the applicable closure rules.
+    meaning: A Nonconformity completed its CAPA lifecycle and was closed under applicable closure rules.
     trigger: Successful CloseNonconformity command.
     payload_concepts: [Nonconformity identity, closure evidence]
-    consumers: [Corrective Action views, explicitly contracted downstream references]
+    consumers: [Corrective Action views, explicitly contracted references]
     business_significance: Establishes CAPA closure without asserting ownership of externally routed work lifecycle.
-    ordering_requirements: Final lifecycle event after required remediation/closure evidence.
+    ordering_requirements: Final lifecycle event after required closure evidence.
     status: candidate
-    provenance:
-      sources:
-        - type: canonical-context
-          reference: docs/ddd/contexts/bc.corrective-action/context.yaml
-          description: Corrective Action owns CAPA closure semantics.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: canonical-context, reference: docs/ddd/contexts/bc.corrective-action/context.yaml, description: Corrective Action owns CAPA closure semantics.}], confidence: high, status: candidate}
 
   - id: event.asset-lifecycle.asset-registered
     name: AssetRegistered
@@ -291,74 +279,50 @@ domain_events:
     meaning: ManuFactor identity was established for a physical Asset.
     trigger: Successful RegisterAsset command.
     payload_concepts: [Asset identity, physical/business identity, external reference mappings if present]
-    consumers: [Asset Lifecycle views, Reliability Verification, Kiln Operations, Quality Verification where explicitly integrated]
-    business_significance: Creates the stable asset identity MP2 does not meaningfully provide as an asset-management model.
-    ordering_requirements: Precedes Asset condition/lifecycle state changes for the same Asset.
+    consumers: [Asset Lifecycle views, Reliability Verification, other explicitly integrated consumers]
+    business_significance: Creates stable ManuFactor Asset identity while MP2 remains source authority for its hierarchy/WR-WO facts.
+    ordering_requirements: Precedes Asset condition changes for the same Asset.
     status: candidate
-    provenance:
-      sources:
-        - type: domain-expert
-          reference: Mark direct, 2026-08-10
-          description: ManuFactor fills meaningful asset-management gaps absent from MP2.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 asset reconciliation, 2026-08-22, description: ManuFactor owns richer Asset semantics while reusing MP2 hierarchy.}], confidence: high, status: candidate}
 
   - id: event.asset-lifecycle.asset-condition-changed
     name: AssetConditionChanged
     bounded_context: bc.asset-lifecycle
     owning_aggregate: aggregate.asset-lifecycle.asset
-    meaning: The ManuFactor-owned condition of an Asset changed under an accepted asset-domain rule and the transition was retained in history.
+    meaning: The ManuFactor-owned condition of an Asset changed under an accepted Asset-domain rule and was retained in history.
     trigger: Successful ChangeAssetCondition command.
     payload_concepts: [Asset identity, prior condition, new condition, transition evidence/reason]
-    consumers: [Asset Lifecycle history/views, Reliability Verification or other explicitly contracted consumers]
-    business_significance: Records meaningful asset condition independently of MP2 WR/WO status and individual verification results.
-    ordering_requirements: Ordered with other Asset state/history events for the same Asset.
+    consumers: [Asset Lifecycle history/views]
+    business_significance: Records meaningful Asset condition independently of MP2 WR/WO state and raw verification results.
+    ordering_requirements: Ordered with other Asset history for the same Asset.
     status: candidate
-    provenance:
-      sources:
-        - type: invariant-model
-          reference: invariant.asset.state-change-records-history
-          description: Asset state changes require retained history.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: invariant-model, reference: invariant.asset.state-change-records-history, description: Asset state changes require retained history.}], confidence: high, status: candidate}
 
   - id: event.reliability-verification.verification-completed
     name: VerificationCompleted
     bounded_context: bc.reliability-verification
     owning_aggregate: aggregate.reliability-verification.verification
-    meaning: A Reliability Verification completed with a result supported by its applicable checkpoint/category-check evidence.
+    meaning: A Reliability Verification completed with a result supported by applicable retained evidence.
     trigger: Successful CompleteVerification command.
     payload_concepts: [Verification identity, Asset reference, Verification Result, checkpoint/check evidence references]
-    consumers: [Reliability Verification views, Asset Lifecycle integration/policy evaluation]
-    business_significance: Establishes the authoritative verification fact while leaving any Asset-state effect to explicit Asset-domain policy.
-    ordering_requirements: Final result follows the verification's applicable evidence/check recording.
+    consumers: [Reliability Verification views, contract.reliability-verification-to-asset-lifecycle]
+    business_significance: Establishes authoritative verification fact while leaving any Asset-state effect to Asset Lifecycle.
+    ordering_requirements: Final result follows applicable evidence/check recording.
     status: candidate
-    provenance:
-      sources:
-        - type: invariant-model
-          reference: invariant.verification.result-supported-by-checks
-          description: Verification result must derive from retained evidence.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: invariant-model, reference: invariant.verification.result-supported-by-checks, description: Verification result derives from retained evidence.}], confidence: high, status: candidate}
 
   - id: event.ltv-form-management.template-version-published
     name: LTVFormTemplateVersionPublished
     bounded_context: bc.safety-signoff
     owning_aggregate: aggregate.ltv-form-management.form-template
-    meaning: A distinguishable LTV Form Template version became available for generating printable/issued instances.
+    meaning: A distinguishable LTV Form Template version became available for generating instances.
     trigger: Successful PublishLTVFormTemplate command.
     payload_concepts: [LTV Form Template identity, published version, applicability]
-    consumers: [LTV Form generation behavior, LTV Form Management views]
-    business_significance: Establishes the exact managed form definition from which later form instances may be generated.
-    ordering_requirements: Ordered by version/revision for the same LTV Form Template.
+    consumers: [LTV form generation behavior, LTV Form Management views]
+    business_significance: Establishes the exact managed definition from which instances may be generated.
+    ordering_requirements: Ordered by version/revision for the same template.
     status: candidate
-    provenance:
-      sources:
-        - type: invariant-model
-          reference: invariant.ltv-template.preserve-published-versions
-          description: Published versions must remain distinguishable and historically available.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: invariant-model, reference: invariant.ltv-template.preserve-published-versions, description: Published versions remain distinguishable and historical.}], confidence: high, status: candidate}
 
   - id: event.ltv-form-management.form-instance-generated
     name: LTVFormInstanceGenerated
@@ -368,54 +332,36 @@ domain_events:
     trigger: Successful GenerateLTVFormInstance command.
     payload_concepts: [LTV Printed Instance identity, source template identity/version, intended use/context]
     consumers: [LTV printing/issue workflow, LTV Form Management views]
-    business_significance: Establishes the individual managed form instance and its immutable template provenance.
-    ordering_requirements: Precedes issue/print and any later completion/approval/sign-off events for the same instance.
+    business_significance: Establishes individual form identity and exact template provenance.
+    ordering_requirements: Precedes issue/print and any later supported lifecycle events.
     status: candidate
-    provenance:
-      sources:
-        - type: domain-expert
-          reference: Mark direct, 2026-08-10
-          description: LTV form printing and management are the actual Safety gap.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Mark direct, 2026-08-10, description: LTV form printing and management are the concrete Safety gap.}], confidence: high, status: candidate}
 
   - id: event.ltv-form-management.form-instance-issued
     name: LTVFormInstanceIssued
     bounded_context: bc.safety-signoff
     owning_aggregate: aggregate.ltv-form-management.printed-instance
-    meaning: A specific LTV Form Instance was printed or issued while remaining distinct from approval/sign-off state.
+    meaning: A specific LTV Form Instance was printed or issued while remaining distinct from completion/approval/sign-off state.
     trigger: Successful MarkLTVFormIssued command.
     payload_concepts: [LTV Printed Instance identity, print/issue facts]
-    consumers: [LTV Form Management views, later applicable completion/approval workflow]
-    business_significance: Records the core printing/issue gap without collapsing it into sign-off semantics.
+    consumers: [LTV Form Management views, later applicable workflow]
+    business_significance: Records printing/issuance without collapsing it into sign-off semantics.
     ordering_requirements: Occurs after LTVFormInstanceGenerated for the same instance.
     status: candidate
-    provenance:
-      sources:
-        - type: invariant-model
-          reference: invariant.ltv-instance.printing-not-signoff
-          description: Printing/issuing does not imply sign-off.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: invariant-model, reference: invariant.ltv-instance.printing-not-signoff, description: Printing/issuing does not imply sign-off.}], confidence: high, status: candidate}
 
   - id: event.training-qualification.operational-qualification-established
     name: OperationalQualificationEstablished
     bounded_context: bc.training-competency
     owning_aggregate: aggregate.training-qualification.qualification
-    meaning: A person was established as operationally qualified for a specific job/role based on acceptable evidence.
+    meaning: A person was established as operationally qualified for a specific job/role based on acceptable evidence and confirmed authority.
     trigger: Successful EstablishOperationalQualification command.
     payload_concepts: [Operational Qualification identity, Person reference, Job/Position reference, supporting evidence references]
     consumers: [Operational Training/Qualification views, Operational Workforce Availability]
-    business_significance: Makes the operationally usable person-job capability explicit for crew depth and replacement decisions.
-    ordering_requirements: Ordered with later qualification review/withdrawal events for the same person-job qualification identity.
+    business_significance: Makes operational person-job capability explicit for staffing decisions.
+    ordering_requirements: Ordered with later qualification review/withdrawal events when such rules are modeled.
     status: candidate
-    provenance:
-      sources:
-        - type: domain-expert
-          reference: Mark direct, 2026-08-10
-          description: Cross-operator training depth must identify who can perform another operational job.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 training reconciliation, 2026-08-22, description: Supervisor or designated trainer/SME may grant Operational Qualification.}], confidence: high, status: candidate}
 
   - id: event.workforce-availability.staffing-gap-identified
     name: StaffingGapIdentified
@@ -425,32 +371,20 @@ domain_events:
     trigger: Successful CreateOperationalCoveragePlan command.
     payload_concepts: [Operational Coverage Plan identity, Staffing Gap]
     consumers: [Operational Workforce Availability workflow/read models]
-    business_significance: Establishes the real operational need that replacement options will be evaluated against.
+    business_significance: Establishes the real operational need replacement options are evaluated against.
     ordering_requirements: Precedes replacement selection for the same Coverage Plan.
     status: candidate
-    provenance:
-      sources:
-        - type: domain-expert
-          reference: Mark direct, 2026-08-10
-          description: Sick calls and vacation create operational staffing gaps that need explicit coverage planning.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: invariant-model, reference: invariant.coverage.need-is-explicit, description: Coverage requires an explicit staffing need.}], confidence: high, status: candidate}
 
   - id: event.workforce-availability.replacement-selected
     name: ReplacementSelected
     bounded_context: bc.workforce-availability
     owning_aggregate: aggregate.workforce-availability.coverage-plan
-    meaning: A replacement was selected for a staffing gap after satisfying the applicable qualification and availability checks at decision time.
+    meaning: A supervisor selected a replacement for a staffing gap after qualification and availability prerequisites were satisfied.
     trigger: Successful SelectReplacement command.
-    payload_concepts: [Operational Coverage Plan identity, Staffing Gap, selected Person reference, qualification reference/evidence, availability reference/evidence]
+    payload_concepts: [Operational Coverage Plan identity, Staffing Gap, selected Person reference, qualification reference/evidence, availability reference/evidence, supervisor decision provenance]
     consumers: [Operational Workforce Availability views, mill operations users]
-    business_significance: Records who can actually cover the operational need without re-owning HR absence or qualification source facts.
-    ordering_requirements: Occurs after StaffingGapIdentified and after evaluation of replacement evidence for the same Coverage Plan.
+    business_significance: Records the supervisor's actual coverage decision without re-owning HR or qualification source facts.
+    ordering_requirements: Occurs after StaffingGapIdentified and decision-time evidence evaluation for the same Coverage Plan.
     status: candidate
-    provenance:
-      sources:
-        - type: invariant-model
-          reference: invariant.coverage.replacement-must-be-qualified-and-available
-          description: Selected replacement must satisfy both qualification and availability.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: invariant-model, reference: invariant.coverage.requires-qualified-and-available, description: Selected replacement must satisfy both qualification and availability; final selection remains supervisor judgment.}], confidence: high, status: candidate}
