@@ -25,13 +25,13 @@ This report evaluates the canonical DDD repository through Phase 15, including D
 - 29 first-class Invariants
 - 30 Commands
 - 30 Domain Events
-- 2 supported Policies
+- 3 supported Policies
 - 0 Domain Services currently justified
 - 14 technology-independent Repository abstractions
 - 0 Factories currently justified
 - 13 canonical Queries
 - 14 canonical Application Use Cases
-- 8 open nonblocking tactical/domain-rule issues
+- 6 open nonblocking tactical/domain-rule issues
 
 ---
 
@@ -94,8 +94,12 @@ Canonical behavior includes:
 - 29 first-class Invariants
 - 30 Commands
 - 30 Domain Events
-- 2 Policies
+- 3 Policies
 - 0 Domain Services
+
+The Policy set now includes `policy.corrective-action.determine-nonconformity-admission`. This resolves the prior vague Quality Check -> Nonconformity transition by requiring an authorized reviewer to explicitly determine from retained evidence that an identified applicable requirement was not fulfilled. A Quality Concern or failed Quality Check alone remains insufficient, and a Quality Check is not a mandatory gate.
+
+Reliability hardening also clarified that there is no deterministic Reliability Verification Result -> Asset State mapping. A millwright records the finding; the maintenance supervisor decides whether to promote it; Asset Lifecycle owns any resulting state transition. The remaining unknown is the controlled Asset-state vocabulary/allowed transition tracked by ISSUE-0009.
 
 Phase 15 corrected stale Workforce Availability references:
 
@@ -157,16 +161,18 @@ Phase 14/15 changes distinguish domain-expert evidence from modeling inference. 
 
 Open nonblocking issues in `docs/ddd/issues/unresolved.yaml`:
 
-- ISSUE-0004 — failed Quality Check -> Nonconformity exact admission rule
-- ISSUE-0005 — Reliability Verification Result -> Asset state rule
 - ISSUE-0006 — Operational Qualification evidence/review/expiration/withdrawal rules; grant authority is already known
 - ISSUE-0007 — process-specific LTV completion/approval/sign-off rules
 - ISSUE-0008 — Kiln Run -> ProTrack moisture correlation identifiers/rules
-- ISSUE-0009 — exact Asset condition/lifecycle vocabulary
+- ISSUE-0009 — exact Asset condition/lifecycle vocabulary and allowed transitions
 - ISSUE-0010 — child Corrective Action identity and detailed CAPA closure rules
-- ISSUE-0012 — independent Quality Concern closure rule after disposition/escalation
+- ISSUE-0012 — independent Quality Concern closure rule after Nonconformity escalation
 
-ISSUE-0011 is resolved: no separate vacation-planning Aggregate is justified at current evidence level.
+Resolved during post-Phase-15 hardening:
+
+- ISSUE-0004 — Nonconformity admission now has an explicit domain Policy.
+- ISSUE-0005 — no deterministic Reliability Result -> Asset State mapping exists; maintenance-supervisor promotion is the gate and ISSUE-0009 owns the remaining state-transition detail.
+- ISSUE-0011 — no separate vacation-planning Aggregate is justified at current evidence level.
 
 None of the remaining issues blocks Phase 14/15 completion because unsupported transitions remain unmodeled rather than guessed.
 
@@ -196,11 +202,14 @@ Detailed audit: `docs/ddd/reports/phase15-integration-validation.md`.
 
 # Post-Phase-15 targeted hardening
 
-The first targeted hardening pass reviewed whether the unresolved registry still contained questions already answerable from the canonical model.
+The first targeted hardening pass reviewed whether the unresolved registry still contained questions already answerable from canonical evidence.
 
-- ISSUE-0011 was closed because the Operational Coverage Plan already owns vacation/sick-call staffing coverage and no independent vacation invariant or lifecycle justifies another Aggregate.
+- ISSUE-0011 was closed because Operational Coverage Plan already owns vacation/sick-call staffing coverage and no independent vacation invariant or lifecycle justifies another Aggregate.
+- ISSUE-0004 was closed by modeling the confirmed Nonconformity-admission decision as a Policy rather than leaving it as vague application orchestration.
+- ISSUE-0005 was closed because the confirmed maintenance-supervisor promotion decision means no automatic Reliability Verification -> Asset State mapping should exist.
 - ISSUE-0006 wording was narrowed so grant authority is no longer presented as unresolved.
 - ISSUE-0007 wording now distinguishes completion, approval, and sign-off transitions from printing/issuance.
+- ISSUE-0012 was narrowed to the genuinely unresolved case: closure after Nonconformity escalation; no-escalation disposition/closure with retained reason is already supported by Phase 14 evidence.
 
 ---
 
