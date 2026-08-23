@@ -1,124 +1,100 @@
 phase: Specification Phase 14 — Use Cases and Queries
-status: discovery-candidate
+status: discovery-candidate-reconciled
 purpose: >
-  Capture the whole-map application-facing information needs and orchestration flows
-  implied by the established domain model before promoting them to canonical Queries
-  and Application Use Cases.
+  Capture the whole-map application-facing information needs and orchestration flows implied by the established domain model before promoting them to canonical Queries and Application Use Cases. This file has been reconciled against the 2026-08-22 subdomain-by-subdomain domain-expert validation pass.
 
 actor_model:
   direct_user_scope: every employee may be a direct ManuFactor user where a workflow applies
   interpretation: >
-    ManuFactor is a frontline-through-management work system, not primarily a supervisor or
-    specialist application. Specific actions may still be constrained by role, authority,
-    qualification, or workflow rules; broad direct-user scope does not mean every employee
-    can perform every command.
+    ManuFactor is a frontline-through-management work system. Specific actions remain constrained by role, authority, qualification, and workflow rules; broad direct-user scope does not mean every employee can perform every command.
   mill_management_definition: all salaried employees at the mill are considered management
-  strongest_current_example: bc.safety-signoff / LTV Form Management
-  evidence:
-    - type: domain-expert
-      reference: Mark direct, 2026-08-22
-      description: Mark stated that ManuFactor direct use extends all the way down to every employee and that this is manifest in the LTV subdomain.
-    - type: domain-expert
-      reference: Mark direct, 2026-08-22 quality concern clarification
-      description: Any employee may report a suspected lumber-quality concern, but a selected role starts the formal Quality Check.
-    - type: domain-expert
-      reference: Mark direct, 2026-08-22 quality authorization clarification
-      description: At the mill, all salaried employees are considered management; formal Quality Checks may be started by management and designated quality technicians.
-    - type: domain-expert
-      reference: Mark direct, 2026-08-22 quality concern disposition clarification
-      description: A reported quality concern that does not rise to formal quality action is closed/dispositioned with a retained reason.
-    - type: domain-expert
-      reference: Mark direct, 2026-08-22 concern promotion lifecycle clarification
-      description: When a Quality Concern is promoted to a Nonconformity, the Quality Concern remains open rather than closing at promotion.
+  quality_intake_rule: >
+    Non-salaried employees route QMS-based quality concerns through the QC channel for triage rather than directly creating formal QMS records. Management and designated quality technicians control formal quality triage/promotion.
   confidence: high
 
 quality_terminology_guardrail:
+  framework_default: ISO 9001 / ISO 9000 terminology and conceptual structure where applicable
   rule: >
-    Preserve established quality-management terminology in the canonical model. Domain-expert
-    shorthand such as "issue" may describe intent conversationally, but should map to the
-    appropriate quality term when the meaning is clear. In the current workflow the formal
-    escalated quality record is Nonconformity, not a generic Issue.
+    Preserve established quality-management terminology. Do not create a monolithic QMS bounded context merely because ISO terminology is used.
   current_terms:
     - Quality Concern: reported suspicion/intake before formal determination
     - Quality Check: optional formal verification/measurement activity used to gather/evaluate evidence
-    - Nonconformity: formal quality record when the concern is accepted as failure to meet an applicable requirement
+    - Nonconformity: formal quality record when sufficient basis exists that an applicable requirement was not fulfilled
+    - Correction: action addressing the detected nonconformity itself
     - Corrective Action: action addressing cause/recurrence within the CAPA lifecycle
 
 quality_concern_lifecycle_candidate:
   concept_name: Quality Concern
   bounded_context: bc.quality-verification
-  meaning: A reported suspicion of a product-quality problem that exists before any formal Quality Check or Nonconformity.
-  cmms_analogy: >
-    Quality Concern behaves like a work request in a CMMS for intake and review, but differs in one
-    important respect established by Mark: promotion to a formal Nonconformity does not close the
-    source concern. The concern and Nonconformity remain related records with independent lifecycles.
-  reported_by: any employee
+  meaning: A retained suspicion/intake record that exists before any formal Quality Check or Nonconformity.
+  intake_channels:
+    salaried_management_or_designated_quality_technician: may participate directly according to role
+    non_salaried_employee: routes concern through QC channel for triage; implementation of that channel remains unspecified
   reviewed_by: [management, designated quality technician]
   lifecycle:
-    - reported
+    - received/reported
     - reviewed/triaged
-    - closed/dispositioned with reason when no formal quality escalation is justified
-    - or linked/promoted directly to a Nonconformity when sufficient basis exists, while concern remains open
+    - closed/dispositioned with retained reason when no formal escalation is justified
     - or linked to a formal Quality Check when additional measurement/evaluation is useful
-    - concern closure after escalation requires its own later rule and must not be inferred from Nonconformity creation
+    - or linked/promoted directly to a Nonconformity when sufficient basis exists; source concern remains open
   important_rules:
-    - Reporting a Quality Concern does not create a Quality Check.
-    - Reporting a Quality Concern does not create a Nonconformity.
-    - A Quality Check is not a mandatory gate before Nonconformity.
-    - Management or a designated quality technician may promote a Quality Concern directly to Nonconformity when sufficient basis exists.
-    - If the concern does not justify formal escalation, it must be closed/dispositioned with a retained reason.
-    - When a Quality Check is used, its result remains evidence and does not automatically create a Nonconformity.
+    - Concern intake does not itself create a Quality Check.
+    - Concern intake does not itself create a Nonconformity.
+    - A Quality Check is optional and is not a mandatory gate before Nonconformity.
+    - Management or a designated quality technician may promote directly to Nonconformity when sufficient basis exists.
+    - A failed Quality Check does not automatically create a Nonconformity.
     - Promotion to Nonconformity does not close the Quality Concern.
-    - Quality Concern and Nonconformity retain independent lifecycles and remain linked by identity/reference, not by aggregate containment.
-  modeling_implication: >
-    Quality Concern has meaningful identity/lifecycle/history and is therefore a strong candidate
-    for a first-class Domain Concept and likely its own Aggregate rather than a transient notification.
+    - Quality Concern and Nonconformity remain linked records with independent lifecycles.
+  modeling_implication: Quality Concern remains a strong candidate for a first-class Domain Concept and likely its own Aggregate.
 
 candidate_queries:
   - id: query-candidate.operations-record.history
     bounded_context: bc.operations-record
     name: View Operational Record History
-    purpose: Show retained operational records, including corrections/history, for a selected operational scope and time period.
-    likely_inputs: [mill or operational scope, time period, record type]
-    likely_result: Operational records with retained correction/history context.
+    purpose: Show retained records for one or more concrete business-need-driven operational record types, including correction/history.
+    likely_inputs: [mill or operational scope, time period, concrete record type]
+    likely_result: Records of the selected business-defined type with retained correction/history context.
     authoritative_source: bc.operations-record
+    guardrail: Do not imply one generic catch-all operational form or confuse this context with Superset/grain analytics.
 
   - id: query-candidate.kiln-operations.schedule
     bounded_context: bc.kiln-operations
-    name: View Kiln Schedule
-    purpose: Show the current retained kiln plan and relevant schedule revision history.
+    name: View Kiln Drying Plan
+    purpose: Show the retained plan that translates human business/Sales market-demand direction and upstream green-lumber availability into what lumber needs to be dried.
     likely_inputs: [mill, kiln or planning scope, planning period]
-    likely_result: Current schedule plus historically traceable revisions as needed.
+    likely_result: Current drying/loading plan plus historically traceable revisions and planning basis where retained.
     authoritative_source: bc.kiln-operations
+    guardrail: The plan determines what lumber needs drying; downstream planer optimization determines finished SKU creation.
 
   - id: query-candidate.kiln-operations.run-moisture
     bounded_context: bc.kiln-operations
-    name: Review Kiln Run and Moisture Outcome
-    purpose: Review one completed Kiln Run/Charge together with correlated downstream ProTrack moisture measurements/outcome information.
+    name: Review Kiln Run Performance
+    purpose: Review a completed Kiln Run/Charge and analyze how the drying outcome performed downstream at the planer using correlated ProTrack moisture measurements.
     likely_inputs: [kiln run identity]
-    likely_result: Retained run history plus composed/correlated moisture outcome information with ProTrack provenance preserved.
+    likely_result: Retained kiln-run history plus correlated downstream moisture/performance evidence with ProTrack provenance preserved.
     authoritative_source: Composition of bc.kiln-operations and external.protrack-moisture; not one shared model.
 
   - id: query-candidate.project-tracking.project-status
     bounded_context: bc.project-tracking
     name: View Project Status
-    purpose: Show project purpose, lifecycle/status, and retained project information.
+    purpose: Show a real Project using conventional project-management semantics: purpose, ownership, status, dates, milestones/tasks, dependencies, and progress visibility as applicable.
     likely_inputs: [project identity or project filters]
-    likely_result: Project status and owned project information.
+    likely_result: Project lifecycle/status and owned project information.
     authoritative_source: bc.project-tracking
+    guardrail: Project means a project; do not use this context as a bucket for ordinary tasks, investigations, maintenance work orders, or CAPA items.
 
   - id: query-candidate.quality-verification.concerns
     bounded_context: bc.quality-verification
-    name: Review Reported Quality Concerns
-    purpose: Show suspected product-quality concerns reported by employees and their disposition/escalation state.
+    name: Review Quality Concerns
+    purpose: Show retained suspected product-quality concerns and their triage/disposition/escalation state.
     likely_inputs: [mill or operational scope, time period, concern status, subject/product context]
-    likely_result: Reported concerns, review status, retained disposition reason, linked Quality Check where used, or linked Nonconformity while the concern may remain open.
+    likely_result: Concern status, retained disposition reason, linked Quality Check where used, or linked Nonconformity while the concern may remain open.
     authoritative_source: bc.quality-verification for concern lifecycle; linked Nonconformity remains authoritative in bc.corrective-action.
 
   - id: query-candidate.quality-verification.check
     bounded_context: bc.quality-verification
     name: Review Quality Check
-    purpose: Show a Quality Check with its measurement evidence, applicable historical target/basis, and evaluation result.
+    purpose: Show a Quality Check with measurement evidence, the ManuFactor-maintained target parameter applicable to its mill/machine/process context, and the evaluation result.
     likely_inputs: [quality check identity]
     likely_result: Quality Check evidence and result without implying CAPA/Nonconformity status.
     authoritative_source: bc.quality-verification
@@ -126,217 +102,220 @@ candidate_queries:
   - id: query-candidate.corrective-action.capa-status
     bounded_context: bc.corrective-action
     name: Review Nonconformity and CAPA Status
-    purpose: Show a Nonconformity, its corrective-action coordination state, routed-work references, and closure status.
+    purpose: Show a Nonconformity being worked by the department's salaried Quality office, including corrective-action coordination, routed-work references, and closure status.
     likely_inputs: [nonconformity identity]
     likely_result: CAPA-owned status plus source concern/check references and externally owned execution references where applicable.
-    authoritative_source: bc.corrective-action for Nonconformity/CAPA semantics; source contexts retain authority for their own facts.
+    authoritative_source: bc.corrective-action for Nonconformity/CAPA semantics; source/execution contexts retain authority for their own facts.
 
   - id: query-candidate.asset-lifecycle.asset-history
     bounded_context: bc.asset-lifecycle
-    name: Review Asset State and History
-    purpose: Show a physical asset's ManuFactor identity, condition/lifecycle state, retained history, and correlated MP2 work references.
-    likely_inputs: [asset identity]
-    likely_result: Asset Lifecycle state/history with MP2 facts clearly identified as external.
-    authoritative_source: bc.asset-lifecycle plus external.mp2-maintenance references.
+    name: Drill Through Asset State and History
+    purpose: Navigate the MP2 equipment hierarchy to an appropriate asset level and show ManuFactor-owned richer asset state/history together with linked MP2 WR/WO records.
+    likely_inputs: [MP2 hierarchy node or ManuFactor asset identity]
+    likely_result: Drillable hierarchy position, richer ManuFactor asset semantics/history, and MP2 work references clearly identified as external maintenance transactions.
+    authoritative_source: bc.asset-lifecycle for richer asset semantics; MP2 remains authoritative for hierarchy structure and WR/WO facts.
 
   - id: query-candidate.reliability-verification.verification-history
     bounded_context: bc.reliability-verification
     name: Review Reliability Verification History
-    purpose: Show verification instances/results and retained evidence for a selected asset.
+    purpose: Show recorded reliability findings/verifications and retained evidence for a selected asset.
     likely_inputs: [asset identity, optional time period]
-    likely_result: Reliability Verification facts without treating results as Asset Condition.
+    likely_result: Reliability evidence and promotion/status information without treating the raw finding as an automatic Asset condition change.
     authoritative_source: bc.reliability-verification
 
   - id: query-candidate.ltv-form-management.forms
     bounded_context: bc.safety-signoff
-    name: Find and Review LTV Forms
-    purpose: Find current/past LTV templates and printed/issued form instances with exact template-version traceability.
-    likely_inputs: [form type/template, date/status, instance identity]
-    likely_result: Template/version and printed-instance information, including lifecycle state where known.
+    name: Find and Review LTV Records
+    purpose: Find current/past LTV templates and workflow records with exact template-version traceability, applicability, completion/sign-off, and workflow maturity.
+    likely_inputs: [form type/template, job/equipment/process context, date/status, instance identity]
+    likely_result: Exact template/version, applicable job/equipment/process, who completed/signed it and when, and workflow state/history.
     authoritative_source: bc.safety-signoff
 
   - id: query-candidate.training-qualification.who-can-do-job
     bounded_context: bc.training-competency
     name: Who Can Do This Job
-    purpose: Show personnel currently represented as operationally qualified for a selected job/role.
+    purpose: Show people with an explicit retained Operational Qualification for a selected job/role.
     likely_inputs: [job or operational role, optional mill/crew scope]
-    likely_result: Qualification/cross-training coverage with evidence references as available.
-    authoritative_source: bc.training-competency; external learning facts remain evidence only.
+    likely_result: Qualification/cross-training coverage and supporting evidence where available.
+    authoritative_source: bc.training-competency; source learning records remain evidence only.
 
   - id: query-candidate.workforce-availability.coverage
     bounded_context: bc.workforce-availability
     name: Who Can Cover This Job Now
-    purpose: Show replacement options for a staffing need by composing operational qualification with current availability.
+    purpose: Support a supervisor's staffing judgment using qualification and current availability while retaining the supervisor's actual replacement decision as business history.
     likely_inputs: [job/position, required time or shift, mill/crew context]
-    likely_result: Eligible replacement options and the qualification/availability basis used at decision time.
-    authoritative_source: bc.workforce-availability for coverage decision; qualification and HR/timekeeping facts retain their source authority.
+    likely_result: Available/qualified candidates plus retained supervisor judgment/selection; no claim that eligibility is fully deterministic.
+    authoritative_source: bc.workforce-availability for retained coverage decision; qualification and HR/timekeeping facts retain source authority.
 
 candidate_use_cases:
   - id: use-case-candidate.operations-record.record-and-correct
     bounded_context: bc.operations-record
-    name: Record and Correct an Operational Occurrence
-    goal: Capture a retained operational fact and allow later correction without destroying the original history.
-    actor_scope: Employees may directly participate where the operational workflow applies; correction authority may be narrower than record creation.
+    name: Capture and Correct a Specific Operational Record
+    goal: Capture a structured record for a concrete operational need that otherwise lacks an appropriate system of record, and retain corrections without destroying history.
+    actor_scope: Employees participate where that specific record workflow applies; each form/record type must be justified by a distinct business need.
     established_commands: [RecordOperationalFact, CorrectOperationalRecord]
     supporting_queries: [View Operational Record History]
+    boundary_rule: Captured records may feed Superset/grain analytics downstream but this context is not the analytics/grain layer.
 
   - id: use-case-candidate.kiln-operations.manage-schedule
     bounded_context: bc.kiln-operations
-    name: Maintain the Kiln Schedule
-    goal: Replace spreadsheet-only planning with a retained schedule that can be revised without losing history.
-    actor_scope: Direct users are employees participating in kiln operations; exact authority to create/revise schedules remains workflow-specific.
+    name: Plan What Lumber Needs Drying
+    goal: Translate human business/Sales direction based on market demand and upstream green-lumber availability into a retained, revisable kiln loading/drying plan.
+    actor_scope: Employees responsible for kiln planning participate according to mill workflow.
     established_commands: [CreateKilnSchedule, ReviseKilnSchedule]
-    supporting_queries: [View Kiln Schedule]
+    supporting_queries: [View Kiln Drying Plan]
+    boundary_rule: Finished SKU selection is determined later by planer optimization and is outside Kiln Operations.
 
   - id: use-case-candidate.kiln-operations.run-history
     bounded_context: bc.kiln-operations
-    name: Record a Kiln Run and Review Drying Outcome
-    goal: Start, record, complete, and later review a distinct Kiln Run/Charge together with downstream moisture outcome information.
-    actor_scope: Employees involved in kiln work may directly use the workflow according to their responsibilities.
+    name: Record a Kiln Run and Review Drying Performance
+    goal: Preserve a distinct Kiln Run/Charge and evaluate how it performed downstream at the planer using ProTrack moisture evidence.
+    actor_scope: Employees involved in kiln work participate according to responsibility.
     established_commands: [StartKilnRun, RecordKilnOperation, CompleteKilnRun]
-    supporting_queries: [Review Kiln Run and Moisture Outcome]
+    supporting_queries: [Review Kiln Run Performance]
 
   - id: use-case-candidate.project-tracking.manage-project
     bounded_context: bc.project-tracking
-    name: Track an Improvement or Capital Project
-    goal: Establish and complete a discrete Project according to its own lifecycle rather than CAPA lifecycle.
-    actor_scope: Direct use is not limited to management; employees participating in a project may interact with it as the workflow allows.
+    name: Manage a Project
+    goal: Manage a real Project using conventional project-management lifecycle semantics similar in practical shape to Monday.com.
+    actor_scope: Project participants interact according to project role and authority.
     established_commands: [CreateProject, CompleteProject]
     supporting_queries: [View Project Status]
+    boundary_rule: Ordinary operational tasks, MP2 work orders, and CAPA actions are not Projects merely because they involve work.
 
-  - id: use-case-candidate.quality-verification.report-concern
+  - id: use-case-candidate.quality-verification.intake-concern
     bounded_context: bc.quality-verification
-    name: Report a Suspected Quality Concern
-    goal: Allow any employee who notices a possible lumber-quality problem to report it without creating a formal Quality Check or Nonconformity.
-    actors: [any employee]
-    trigger: Employee notices or suspects a possible lumber-quality problem.
-    result: A retained Quality Concern is available for management or a designated quality technician to review.
-    supporting_queries: [Review Reported Quality Concerns]
-    boundary_rule: Reporting a concern does not itself create a Quality Check and does not create a Nonconformity.
+    name: Intake and Triage a Quality Concern
+    goal: Retain a suspected quality concern and route it into authorized quality review without prematurely creating a Quality Check or Nonconformity.
+    actors: [management, designated quality technician, QC channel for non-salaried employee intake]
+    trigger: A possible lumber-quality problem is observed or communicated.
+    result: A retained Quality Concern is available for authorized review/triage.
+    supporting_queries: [Review Quality Concerns]
+    boundary_rules:
+      - Non-salaried employees route QMS-based concerns through QC rather than directly creating formal QMS records.
+      - Do not invent whether QC channel is software, human handoff, or designated quality-tech interaction.
 
   - id: use-case-candidate.quality-verification.review-concern
     bounded_context: bc.quality-verification
     name: Review and Disposition a Quality Concern
-    goal: Review a reported Quality Concern and choose its proper disposition using quality-management terminology.
+    goal: Authorized quality review chooses the proper disposition using established quality-management terminology.
     actors: [management, designated quality technician]
     actor_definition: At the mill all salaried employees are considered management.
-    trigger: A reported Quality Concern is awaiting review.
     result_options:
-      - close/disposition the concern with a retained reason when no formal escalation is justified
-      - start/link a formal Quality Check when additional evidence or measurement is useful
-      - promote/link directly to a Nonconformity when sufficient basis exists without requiring a Quality Check; the concern remains open
-    supporting_queries: [Review Reported Quality Concerns]
-    boundary_rules:
-      - Quality Check is optional and is not a mandatory gate to Nonconformity.
-      - The Quality Concern remains retained as the source intake record regardless of disposition.
-      - Promotion to a Nonconformity does not close the Quality Concern.
-      - The Nonconformity, once accepted, belongs to bc.corrective-action rather than becoming a larger Quality Concern object.
+      - close/disposition with retained reason when no formal escalation is justified
+      - start/link a Quality Check when additional evidence is useful
+      - promote/link directly to a Nonconformity when sufficient basis exists; source concern remains open
+    supporting_queries: [Review Quality Concerns]
 
   - id: use-case-candidate.quality-verification.perform-check
     bounded_context: bc.quality-verification
     name: Perform and Evaluate a Quality Check
-    goal: Management or a designated quality technician starts a formal Quality Check when measurement/evaluation is useful, captures evidence, resolves the applicable target/basis, and records the evaluation result.
+    goal: Start a formal Quality Check, capture evidence, resolve the applicable ManuFactor quality-target parameter, and record the evaluation result.
     actors: [management, designated quality technician]
-    actor_definition: At the mill all salaried employees are considered management.
-    trigger: Management or a designated quality technician determines that a concern or other valid trigger warrants formal measurement/evaluation.
+    parameter_authority: salaried management may create/change quality-target parameters
     established_commands: [InitiateQualityCheck, RecordQualityMeasurement, EvaluateQualityCheck]
-    supporting_queries: [Review Reported Quality Concerns, Review Quality Check]
-    boundary_rule: A failed Quality Check does not automatically become a Nonconformity; explicit acceptance into the Nonconformity lifecycle remains required.
+    supporting_queries: [Review Quality Concerns, Review Quality Check]
+    boundary_rule: A failed Quality Check does not automatically become a Nonconformity.
 
   - id: use-case-candidate.corrective-action.manage-nonconformity
     bounded_context: bc.corrective-action
     name: Manage a Nonconformity Through CAPA
-    goal: Accept an eligible finding, coordinate/route corrective work, and close the Nonconformity under CAPA-owned rules.
-    actor_scope: ManuFactor is broadly accessible, but Nonconformity admission/routing/closure authority may be role-specific.
+    goal: The affected department's salaried Quality office works the Nonconformity through investigation, corrective-action coordination/routing, and closure.
+    actors: [department salaried Quality office]
     established_commands: [AcceptNonconformity, RouteCorrectiveWork, CloseNonconformity]
     supporting_queries: [Review Nonconformity and CAPA Status]
     established_policy: Route Corrective Work to Its Owning Context
-    source_paths:
-      - direct promotion from a reviewed Quality Concern when sufficient basis exists; the source Quality Concern remains open
-      - explicit acceptance following a Quality Check or another supported finding source
-    unresolved_boundary: Exact general admission and closure details remain ISSUE-0004 and ISSUE-0010.
+    boundary_rule: Execution may occur in another context/system without transferring ownership of the quality record.
 
   - id: use-case-candidate.asset-lifecycle.manage-asset
     bounded_context: bc.asset-lifecycle
-    name: Manage Physical Asset State and History
-    goal: Establish stable identity for equipment/vehicles and maintain meaningful condition/lifecycle history independent of MP2 work status.
-    actor_scope: Employees may directly consume asset information; authority to register/change asset state remains workflow-specific.
+    name: Manage Rich Asset State and History
+    goal: Use MP2 hierarchy as the structural/drillable backbone while ManuFactor owns richer asset identity, condition, lifecycle, and retained history semantics.
     established_commands: [RegisterAsset, ChangeAssetCondition]
-    supporting_queries: [Review Asset State and History]
-    unresolved_boundary: Exact condition/lifecycle vocabulary remains ISSUE-0009.
+    supporting_queries: [Drill Through Asset State and History]
+    boundary_rules:
+      - MP2 remains authoritative for WR/WO transaction lifecycle.
+      - MP2 hierarchy is reused rather than replaced.
+      - MP2 asset data is not treated as the complete rich asset model.
 
   - id: use-case-candidate.reliability-verification.verify-asset
     bounded_context: bc.reliability-verification
-    name: Perform a Reliability Verification
-    goal: Record applicable verification evidence and complete a supported verification result for an asset.
-    actor_scope: Employees assigned or authorized to perform the relevant verification directly use ManuFactor.
+    name: Record and Review a Reliability Finding
+    goal: Retain reliability evidence, allow a millwright to log the finding, and require maintenance-supervisor judgment before promotion into formal action/state change.
+    actors: [millwright, maintenance supervisor]
+    accountability: Reliability Manager is ultimately responsible for the reliability process.
     established_commands: [CompleteVerification]
     supporting_queries: [Review Reliability Verification History]
-    unresolved_boundary: Result-to-Asset-state effect remains ISSUE-0005.
+    boundary_rule: A millwright-recorded finding does not itself authorize Asset condition/state change.
 
   - id: use-case-candidate.ltv-form-management.manage-forms
     bounded_context: bc.safety-signoff
-    name: Manage and Issue an LTV Form
-    goal: Publish/manage a versioned LTV template, generate a traceable form instance, and track its print/issue lifecycle.
-    actor_scope: Every employee is within the direct-user boundary where LTV work applies; this context is the strongest current evidence that ManuFactor extends to frontline employees.
+    name: Manage an LTV Record Through Its Workflow
+    goal: Manage a versioned LTV record from template/issuance through job/equipment/process applicability, completion/sign-off, and later workflow states while retaining full traceability.
+    actor_scope: Every employee is within the direct-user boundary where LTV work applies, subject to workflow role.
     established_commands: [PublishLTVFormTemplate, GenerateLTVFormInstance]
-    supporting_queries: [Find and Review LTV Forms]
-    unresolved_boundary: Process-specific approval/sign-off rules remain ISSUE-0007.
+    supporting_queries: [Find and Review LTV Records]
+    boundary_rule: Exact template/version, applicability, signers/timestamps, and workflow progression are all normal parts of the LTV record.
 
   - id: use-case-candidate.training-qualification.establish-qualification
     bounded_context: bc.training-competency
     name: Establish Operational Qualification
-    goal: Determine and retain that a person can perform a particular operational job based on acceptable evidence.
-    actor_scope: Employees may directly view/interact with qualification information where appropriate; establishment authority remains role/workflow-specific.
+    goal: Replace overly informal knowledge of who can do what with an explicit retained determination that a person can perform a specific operational job.
+    actors: [employee supervisor, designated trainer or subject-matter expert]
+    authority_rule: Either the employee's supervisor or a designated trainer/subject-matter expert may grant Operational Qualification.
     established_commands: [EstablishOperationalQualification]
     supporting_queries: [Who Can Do This Job]
-    unresolved_boundary: Exact evidence/authorization/expiration rules remain ISSUE-0006.
+    boundary_rule: LMS/course completion may be evidence but is not automatically equivalent to Operational Qualification.
 
   - id: use-case-candidate.workforce-availability.fill-gap
     bounded_context: bc.workforce-availability
     name: Fill an Operational Staffing Gap
-    goal: Identify and select a replacement who is both qualified and available for the specific operational need.
-    actor_scope: ManuFactor direct use extends to employees, while staffing selection authority may be constrained to roles responsible for coverage.
+    goal: Support and retain the supervisor's judgment about who can cover a specific job at a specific time.
+    actors: [supervisor]
     established_commands: [SelectReplacement]
     supporting_queries: [Who Can Cover This Job Now]
-    established_policy: Determine Operational Replacement Eligibility
-    unresolved_boundary: Vacation planning aggregate question remains ISSUE-0011.
+    boundary_rules:
+      - Qualification and availability are inputs, not a fully deterministic replacement rule.
+      - The supervisor's ability-to-cover judgment is subjective but should be a retained matter of record.
 
 whole_map_observation: >
-  ManuFactor is an enterprise-wide employee-facing work system. Use Cases therefore should
-  not assume manager/specialist actors by default. Quality demonstrates a reusable intake-to-formal-work pattern:
-  broad employee reporting creates a retained concern; authorized review either dispositions it,
-  requests further formal evidence through a Quality Check, or promotes it directly into the
-  formal Nonconformity lifecycle. Promotion does not terminate the source concern; the two records
-  remain linked and independently open/closed according to their own lifecycle rules.
+  Phase 14 validation reinforced ManuFactor as a gap-filler and record/workflow owner where existing systems are weak, while preserving external authority where systems are strong. Several contexts intentionally combine external source facts with ManuFactor-owned business judgment or richer semantics: MP2 hierarchy/WR-WO with richer Asset Lifecycle, ProTrack moisture with kiln performance analysis, LMS evidence with Operational Qualification, and HR/timekeeping facts with supervisor-owned staffing decisions.
+
+environmental_compliance:
+  status: deferred-confirmed-gap-area
+  finding: >
+    Environmental has real spreadsheet/email/paper/informal process gaps, but the domain expert does not yet have a proper list. Do not invent Environmental bounded contexts, aggregates, or workflows until concrete processes are identified.
 
 answered_questions:
-  - id: PHASE14-Q1
-    answer: Every employee may be a direct ManuFactor user where the workflow applies; LTV Form Management is explicit evidence of that scope.
-    evidence: domain-expert Mark, direct, 2026-08-22
-  - id: PHASE14-Q2
-    answer: Any employee may report a suspected lumber-quality concern, but a selected role starts the formal Quality Check.
-    evidence: domain-expert Mark, direct, 2026-08-22
-  - id: PHASE14-Q3
-    answer: Formal Quality Checks may be started by management or designated quality technicians; at the mill all salaried employees are considered management.
-    evidence: domain-expert Mark, direct, 2026-08-22
-  - id: PHASE14-Q4
-    answer: If a reported Quality Concern does not warrant formal escalation, it is closed/dispositioned with a retained reason.
-    evidence: domain-expert Mark, direct, 2026-08-22
-  - id: PHASE14-Q5
-    answer: Quality Concern should follow a CMMS work-request-like intake pattern; if it rises to the level of a formal quality problem, canonical terminology should promote it to the appropriate formal quality record rather than a generic "issue".
-    evidence: domain-expert Mark, direct, 2026-08-22
-  - id: PHASE14-Q6
-    answer: A Quality Concern may be promoted directly to a Nonconformity without first performing a Quality Check.
-    evidence: domain-expert Mark, direct, 2026-08-22
-  - id: PHASE14-Q7
-    answer: When a Quality Concern is promoted to a Nonconformity, the Quality Concern remains open.
-    evidence: domain-expert Mark, direct, 2026-08-22
+  - id: PHASE14-PROJECT
+    answer: A project is a project; use conventional project-management semantics with Monday.com as a practical reference point rather than treating small tasks/investigations as Projects.
+  - id: PHASE14-TRAINING-CURRENT
+    answer: Qualification is currently informal to a fault, establishing a ManuFactor control/evidence gap.
+  - id: PHASE14-TRAINING-AUTHORITY
+    answer: Operational Qualification may be granted by either the employee's supervisor or a designated trainer/subject-matter expert.
+  - id: PHASE14-WORKFORCE
+    answer: Ability to cover a job is subjective to the supervisor but should be retained as a matter of record.
+  - id: PHASE14-RELIABILITY-AUTHORITY
+    answer: A millwright may log a finding; the maintenance supervisor decides whether to promote it; the Reliability Manager is ultimately responsible.
+  - id: PHASE14-ASSET-MP2
+    answer: MP2 is primarily effective as a WR/WO mechanism; ManuFactor owns richer asset semantics while reusing MP2 hierarchy and linking MP2 records to drillable asset levels.
+  - id: PHASE14-QUALITY-PARAMETERS
+    answer: Applicable quality targets should be ManuFactor parameters keyed by applicable context.
+  - id: PHASE14-QUALITY-PARAMETER-AUTHORITY
+    answer: Salaried management may create/change quality-target parameters.
+  - id: PHASE14-CAPA-OWNER
+    answer: The department's salaried Quality office works the Nonconformity/CAPA issue.
+  - id: PHASE14-LTV
+    answer: Exact form/version, applicability, completion/sign-off, and workflow maturation are all part of the normal LTV record.
+  - id: PHASE14-ENVIRONMENTAL
+    answer: Environmental has real gaps but no proper process list yet; keep it deferred rather than inventing a model.
 
-material_question:
-  id: PHASE14-Q8
-  topic: Quality Concern closure after escalation
-  question: >
-    If a Quality Concern has been promoted to a Nonconformity and remains open, what business event should eventually allow the Quality Concern itself to close: closure of the linked Nonconformity, management/designated-quality review that the original concern is adequately addressed, or some other rule?
-  why_it_matters: >
-    Promotion no longer supplies the terminal disposition. The Quality Concern therefore needs an explicit closure condition independent from Nonconformity creation, and this rule determines whether closure is coupled to CAPA completion or remains a separate Quality Verification decision.
+remaining_material_questions:
+  - id: PHASE14-QC-CLOSURE
+    topic: Quality Concern closure after escalation
+    status: nonblocking; defer unless canonical Aggregate semantics require it
+    note: ISO/QMS defaults should be used before re-asking generic lifecycle mechanics.
+  - id: PHASE14-NORMALIZATION
+    topic: Canonical Query and Application Use Case promotion
+    status: next
+    question: Normalize reconciled candidates to the exact Specification Phase 14 required schemas, then validate against canonical Commands/Policies/Context Map before promotion.
