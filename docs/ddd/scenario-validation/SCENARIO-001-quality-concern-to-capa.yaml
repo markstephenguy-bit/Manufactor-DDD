@@ -1,0 +1,86 @@
+id: SCENARIO-001
+title: Suspected out-of-size lumber progresses from concern through verification and CAPA
+status: validated
+validation_result: PASS_WITH_MODEL_REFINEMENT
+
+situation: >
+  A person in or near the mill's quality function suspects that lumber is out of size. The person may take caliper measurements. The applicable target must be resolved for the mill/machine/process context. The evidence may justify a formal Nonconformity, which then requires corrective tasks and effectiveness verification before closure.
+
+initiating_fact: suspected product-quality problem
+expected_business_outcome: >
+  Retain the concern, obtain and interpret measurement evidence when useful, admit a Nonconformity only through an authorized explicit decision supported by an identifiable applicable requirement and sufficient evidence, coordinate corrective tasks without stealing ownership of routed execution work, verify afterward that the correction worked, and retain all historical records/references.
+
+context_path:
+  - bc.quality-verification
+  - bc.corrective-action
+
+aggregate_path:
+  - aggregate.quality-verification.quality-concern
+  - aggregate.quality-verification.quality-check
+  - aggregate.quality-verification.applicable-quality-target
+  - aggregate.corrective-action.nonconformity
+
+representative_flow:
+  - step: Retain suspected issue
+    command: command.quality-verification.record-quality-concern
+    result: Quality Concern retains independent identity and status/history.
+  - step: Gather measurement evidence when needed
+    commands:
+      - command.quality-verification.initiate-quality-check
+      - command.quality-verification.record-quality-measurement
+      - command.quality-verification.evaluate-quality-check
+    result: Measurement is interpreted against the target applicable to mill/machine/process context.
+  - step: Determine whether evidence establishes Nonconformity
+    policy: policy.corrective-action.determine-nonconformity-admission
+    result: Concern/check evidence does not automatically become Nonconformity; authorized determination is required.
+  - step: Admit formal Nonconformity when supported
+    command: AcceptNonconformity
+    result: Corrective Action owns CAPA lifecycle while Quality Concern remains independently referenceable.
+  - step: Define/route corrective work
+    policy: policy.corrective-action.route-to-work-owner
+    result: Corrective work is represented as tasks under the Nonconformity; external execution remains owned by the proper system/context.
+  - step: Complete corrective tasks
+    invariant: invariant.nonconformity.corrective-work-is-tasked
+    result: Task completion is retained but is not sufficient for closure.
+  - step: Verify effectiveness
+    invariant: invariant.nonconformity.requires-effectiveness-verification
+    result: Post-correction evidence must show that the correction actually worked.
+  - step: Close only when effective
+    result: Nonconformity may reach completed/closed status only after required tasks and successful retained effectiveness verification.
+
+key_invariants:
+  - invariant.quality-concern.retained-status-history
+  - invariant.quality-check.applicable-target
+  - invariant.quality-check.preserve-evaluation-basis
+  - invariant.quality-check.failure-not-nonconformity
+  - invariant.nonconformity.explicit-acceptance
+  - invariant.nonconformity.corrective-work-is-tasked
+  - invariant.nonconformity.do-not-own-routed-work
+  - invariant.nonconformity.requires-effectiveness-verification
+
+source_authority_and_boundary_rules:
+  - ManuFactor owns the retained Quality Concern, Quality Check interpretation, contextual quality-target parameter, and CAPA coordination records described by the model.
+  - External standards or division guidance may inform target values but do not become runtime ownership of the Quality Check.
+  - Routed maintenance/project/other execution work remains authoritative in its owning context/system.
+  - A Quality Concern remains referenceable after Nonconformity admission and later status changes.
+
+observed_model_findings:
+  - type: stale-model-metadata
+    finding: bc.corrective-action did not yet state the confirmed effectiveness-verification closure gate.
+    correction: Context reconciled to require retained post-correction effectiveness verification before closure.
+  - type: stale-model-metadata
+    finding: docs/ddd/policies/index.yaml still described ISSUE-0005, ISSUE-0006, ISSUE-0007, and ISSUE-0008 as unresolved.
+    correction: Policy modeling notes reconciled to current resolved rules.
+
+new_domain_questions: []
+new_bounded_contexts_required: []
+new_aggregates_required: []
+
+conclusion: >
+  The strategic boundaries and aggregate structure successfully represent the scenario. Scenario execution exposed stale tactical/context metadata but no new domain ambiguity. After reconciliation, the model explains the situation end-to-end without inventing ownership or collapsing Quality Concern, Quality Check, Nonconformity, or routed execution work into one lifecycle.
+
+provenance:
+  - type: domain-expert
+    reference: Mark direct quality examples and post-Phase-15 clarifications through 2026-08-23
+  - type: canonical-model
+    reference: docs/ddd/CANONICAL-REGISTRY.yaml
