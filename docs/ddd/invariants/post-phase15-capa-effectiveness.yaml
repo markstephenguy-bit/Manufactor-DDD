@@ -1,0 +1,18 @@
+invariants:
+  - id: invariant.nonconformity.requires-effectiveness-verification
+    name: Nonconformity Closure Requires Effectiveness Verification
+    bounded_context: bc.corrective-action
+    aggregate: aggregate.corrective-action.nonconformity
+    rule: A Nonconformity/CAPA must not transition to its completed or closed status merely because required corrective tasks are complete; retained evidence must also show that the correction/corrective action was verified afterward and found effective.
+    reason: Task completion proves that planned work was performed, not that the underlying nonconformity was actually corrected or prevented from recurring.
+    triggering_operations: [Complete Corrective Task, Verify Corrective Effectiveness, Close Nonconformity]
+    enforcement_boundary: Nonconformity aggregate
+    failure_semantics: Keep the Nonconformity active when required corrective tasks are incomplete or when post-correction effectiveness has not been verified successfully.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23
+          description: CAPA closure requires verifying afterward that the correction actually worked.
+      confidence: high
+      status: candidate
