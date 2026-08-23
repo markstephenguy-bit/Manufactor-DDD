@@ -1,18 +1,17 @@
 model_state: Strategic Stable / Tactical Candidate; Specification Phases 1-15 complete at current evidence level
-session_state: active-targeted-domain-rule-refinement
-session_refreshed_at: 2026-08-23T14:32:00-05:00
-current_phase: post-Phase-15 targeted domain-rule refinement
-last_completed: Post-Phase-15 hardening resolved ISSUE-0010 by modeling corrective work as CAPA-owned tasks and requiring post-correction effectiveness verification before closure
-current_focus: Resolve the final remaining tactical/domain-rule issue without reopening settled boundaries
+session_state: targeted-domain-rule-refinement-complete
+session_refreshed_at: 2026-08-23T14:35:00-05:00
+current_phase: post-Phase-15 tactical hardening complete at current evidence level
+last_completed: Resolved ISSUE-0007 by modeling Safety Office LTV return, scan, origin-record reconciliation, Recorded status transition, and permanent retained status/history
+current_focus: No open tactical/domain-rule issues remain in the current registry; next work should be validation/consolidation or new domain discovery, not reopening settled rules
 blocking_issues: []
 
 next_action: >
-  Continue from the one remaining open issue, ISSUE-0007. Prefer repository/model evidence first. Ask Mark one high-value business question only where the remaining LTV completion/approval/sign-off rule is genuinely domain-specific and materially changes the model.
+  Perform a whole-model consistency and consolidation pass against the now-empty unresolved registry. Prefer correcting stale canonical indexes/reports and duplicate sidecars before opening any new business question. Ask Mark only when genuinely new domain evidence exposes a material ambiguity.
 
 startup_instructions:
   - Treat markstephenguy-bit/Manufactor-DDD as authoritative session state.
-  - Read docs/ddd/SPECIFICATION.md and docs/ddd/reports/validation-report.md before further modeling.
-  - Read this handoff and docs/ddd/issues/unresolved.yaml before asking domain questions.
+  - Read docs/ddd/SPECIFICATION.md, docs/ddd/reports/validation-report.md, this handoff, and docs/ddd/issues/unresolved.yaml before further modeling.
   - Do not reconstruct the model from chat when GitHub holds current state.
   - Mark is the domain authority.
   - Ask one high-value business question at a time only when genuinely material.
@@ -38,57 +37,46 @@ current_model_counts:
   aggregates: 14
   aggregate_root_entities: 14
   value_objects: 8
-  invariants: 33
-  commands: 32
-  domain_events: 32
+  invariants: 35
+  commands: 33
+  domain_events: 33
   policies: 3
   domain_services: 0
   repositories: 14
   factories: 0
   queries: 13
-  application_use_cases: 16
+  application_use_cases: 17
   context_relationships: 9
   integration_contracts: 9
 
 post_phase15_hardening:
   resolved:
     - issue: ISSUE-0004
-      result: >
-        Nonconformity admission is modeled by policy.corrective-action.determine-nonconformity-admission. An authorized management/designated-quality-technician reviewer must explicitly determine from retained evidence that an identified applicable requirement was not fulfilled. Quality Concern or failed Quality Check alone never creates a Nonconformity automatically, and Quality Check is not a mandatory gate.
+      result: Nonconformity admission requires explicit authorized determination that retained evidence proves nonfulfillment of an identified applicable requirement.
     - issue: ISSUE-0005
-      result: >
-        There is no deterministic Reliability Verification Result to Asset State mapping. A millwright records the finding; the maintenance supervisor decides whether to promote it; Asset Lifecycle owns any resulting state transition.
+      result: Reliability Verification never deterministically maps to Asset state; maintenance-supervisor promotion is the decision gate and Asset Lifecycle owns resulting state transitions.
     - issue: ISSUE-0006
-      result: >
-        Operational Qualification is supported by practical job evidence: the person shadows the current competent worker and is observed sufficiently for an authorized supervisor or designated trainer/SME to determine that the person is capable of doing the job. Course/LMS completion may support but does not establish qualification automatically. Once granted, qualification persists until explicitly withdrawn or superseded; elapsed time alone does not expire it. Withdrawal preserves prior evidence/history.
-    - issue: ISSUE-0008
-      result: >
-        ProTrack does not record a Kiln Run/Charge identifier. Moisture data is recorded by lumber dimension, so Kiln Operations may analyze moisture statistically by thickness x width x length but must not attribute individual ProTrack measurements to a specific kiln run. The prior run-moisture query was replaced with query.kiln-operations.dimension-moisture-statistics.
-    - issue: ISSUE-0009
-      result: >
-        Asset Condition uses Operating, Degraded, and Down. Asset Lifecycle State uses In Service, Out of Service, and Retired. Functional condition and lifecycle position remain separate Value Objects. Accepted transitions preserve history and are not inferred from MP2 or Reliability Verification alone.
-    - issue: ISSUE-0010
-      result: >
-        Corrective work is represented as tasks owned by the parent Nonconformity/CAPA rather than independent child Corrective Action lifecycles. Completing tasks is necessary but not sufficient for closure. The CAPA remains active until post-correction effectiveness is verified and retained as closure evidence. Routed execution work may remain externally owned.
-    - issue: ISSUE-0011
-      result: >
-        No separate vacation-planning Aggregate is justified at current evidence level. Vacation coverage is a staffing need handled within Operational Coverage Plan unless future schedule-wide invariants establish a distinct consistency boundary.
-    - issue: ISSUE-0012
-      result: >
-        Quality Concern is a retained historical record whose identity persists through triage, escalation, disposition, and later status changes. Ending active handling changes status rather than deleting or replacing the concern. Links to accepted Nonconformities remain references while CAPA lifecycle stays externally owned.
-  narrowed:
+      result: Operational Qualification is based on practical job shadowing/observed capability, is granted by supervisor or designated trainer/SME, persists until explicitly withdrawn/superseded, and retains history.
     - issue: ISSUE-0007
-      result: Printing/issuance is modeled; only process-specific completion/approval/sign-off transitions remain unresolved.
+      result: A used paper LTV is received by the Safety Office, scanned, matched to the originating electronic record, and that retained record transitions to Recorded. The record never dies; later handling is status/history.
+    - issue: ISSUE-0008
+      result: ProTrack has no kiln-run identifier; moisture analysis is statistical by thickness x width x length only and must not fabricate run-level lineage.
+    - issue: ISSUE-0009
+      result: Asset Condition is Operating/Degraded/Down; Asset Lifecycle State is In Service/Out of Service/Retired; condition and lifecycle are separate and all transitions retain history.
+    - issue: ISSUE-0010
+      result: CAPA corrective work is task-based under the parent Nonconformity; closure requires required tasks plus retained post-correction effectiveness verification.
+    - issue: ISSUE-0011
+      result: Vacation coverage remains within Operational Coverage Plan; no separate vacation aggregate is justified at current evidence level.
+    - issue: ISSUE-0012
+      result: Quality Concern identity/history persists through status changes and escalation; records are not deleted when active handling ends.
 
-open_nonblocking_issues:
-  - ISSUE-0007: process-specific LTV completion/approval/sign-off transition rules
+open_nonblocking_issues: []
 
 important_completed_business_decisions:
   - Operations Record owns concrete missing operational record workflows, not a generic catch-all form or analytics grain model.
   - Kiln planning determines what lumber needs drying; downstream planer optimization determines finished SKU creation.
   - ProTrack moisture records are not traceable to individual Kiln Runs/Charges; they support statistical analysis by lumber dimension thickness x width x length only.
   - Project means a real Project using conventional project-management semantics.
-  - Operational Qualification grant authority includes the employee supervisor or a designated trainer/SME.
   - Operational Qualification evidence is practical job shadowing/observed capability with the current competent worker; LMS/course completion alone does not equal qualification.
   - Operational Qualification remains valid until explicitly withdrawn or superseded; elapsed time alone does not expire it.
   - Workforce replacement selection is ultimately a supervisor judgment retained as business history; qualification and availability remain prerequisite inputs.
@@ -96,27 +84,28 @@ important_completed_business_decisions:
   - Asset Condition is Operating, Degraded, or Down; Asset Lifecycle State is In Service, Out of Service, or Retired.
   - Reliability findings may be logged by a millwright; maintenance supervisor decides promotion; Reliability Manager is accountable.
   - Quality Concern, Quality Check, and Nonconformity are distinct lifecycle concepts.
-  - Quality Concern records never disappear when handling ends; they change status and retain their identity/history so they can be referenced later.
-  - Management/designated quality technicians control formal Quality Concern triage; non-salaried concerns route through the QC channel without inventing its implementation.
+  - Quality Concern records never disappear when handling ends; they change status and retain identity/history so they can be referenced later.
   - Quality Check is optional before Nonconformity; a failed check is not automatically a Nonconformity.
   - Nonconformity admission requires explicit authorized determination that an applicable requirement was not fulfilled.
   - Corrective work under a CAPA is represented as tasks; tasks are not independent child Corrective Action lifecycles.
   - CAPA closure requires all required corrective work plus retained effectiveness verification showing that the correction actually worked.
   - Applicable quality targets are ManuFactor-maintained contextual parameters; salaried management may create/change them.
   - CAPA belongs to Quality; the affected department's salaried Quality office owns the Nonconformity/CAPA lifecycle while routed execution remains externally owned.
-  - LTV is a controlled workflow record with exact template/version, applicability, completion/sign-off evidence, and workflow progression; exact later transition rules remain ISSUE-0007.
+  - LTV printed/issued paper is returned to the Safety Office, scanned, matched to the originating electronic record, and then the retained record transitions to Recorded.
+  - LTV records never disappear after recording; later changes are retained status/history transitions.
   - Environmental remains a confirmed opportunity area but is deferred until concrete process gaps are identified.
 
 canonical_files_to_use:
   - docs/ddd/queries/index.yaml
   - docs/ddd/application-use-cases/index.yaml
+  - docs/ddd/application-use-cases/ltv-recording.yaml
   - docs/ddd/aggregates/index.yaml
   - docs/ddd/commands/index.yaml
+  - docs/ddd/commands/ltv-recording.yaml
   - docs/ddd/domain-events/index.yaml
+  - docs/ddd/domain-events/ltv-recording.yaml
   - docs/ddd/invariants/index.yaml
-  - docs/ddd/invariants/quality-concern-retained-status.yaml
-  - docs/ddd/invariants/corrective-task-identity.yaml
-  - docs/ddd/invariants/post-phase15-capa-effectiveness.yaml
+  - docs/ddd/invariants/ltv-recording-lifecycle.yaml
   - docs/ddd/value-objects/index.yaml
   - docs/ddd/policies/index.yaml
   - docs/ddd/context-map/context-map.yaml
@@ -125,4 +114,4 @@ canonical_files_to_use:
   - docs/ddd/issues/unresolved.yaml
 
 session_resume: >
-  Specification Phases 14 and 15 are complete. Post-Phase-15 hardening has reduced the unresolved registry from nine to one issue. CAPA corrective work is task-based and parent closure requires retained post-correction effectiveness verification. Continue targeted rule refinement from canonical GitHub state; do not restart Phase 14 discovery or whole-map canonicalization.
+  Specification Phases 1-15 are complete at the current evidence level and the post-Phase-15 unresolved registry is now empty. The final issue was LTV recording: Safety receives the used paper form, scans it, matches it to the originating electronic record, and changes that same retained record to Recorded; it never disappears and only changes status/history. Next work is whole-model validation/consolidation and stale-artifact cleanup, not more targeted issue questioning unless new domain evidence appears.
