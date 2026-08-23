@@ -1,237 +1,140 @@
-model_state: Strategic Stable / Tactical Candidate; Context Map, Integration Contracts, Ubiquitous Language, Domain Concepts, Aggregates, Entities/Value Objects, Invariants, Commands, Domain Events, supported Policies, Repositories, and explicit Domain Service/Factory evaluations are canonical
+model_state: Strategic Stable / Tactical Candidate; Specification Phases 1-15 complete at current evidence level
 session_state: ready-for-new-chatgpt-session
-session_refreshed_at: 2026-08-22T21:37:00-05:00
-current_phase: Specification Phase 14 — Use Cases and Queries
-last_completed: Phase 14 whole-map subdomain-by-subdomain domain-expert clarification pass completed and discovery candidates reconciled; canonical Phase 14 promotion is not yet complete
-current_focus: Normalize reconciled Phase 14 Query and Application Use Case candidates to the exact normative schemas, validate them against existing Commands/Policies/Context Map, then promote only supported artifacts
+session_refreshed_at: 2026-08-22T22:15:00-05:00
+current_phase: post-Phase-15 targeted domain-rule refinement
+last_completed: Specification Phase 15 — Integration Validation
+current_focus: Resolve explicit nonblocking tactical/domain-rule issues only when useful; do not restart completed whole-map discovery passes
 blocking_issues: []
+
 next_action: >
-  Start a fresh ChatGPT session. Read the normative specification, validation report, this handoff, and the reconciled Phase 14 candidate file. Do not restart business discovery. Perform a canonicalization pass: validate each candidate Query and Application Use Case against established domain boundaries and behavior, normalize to required schemas, resolve only genuinely material remaining questions, update validation, then proceed to Specification Phase 15 Integration Validation when Phase 14 is complete.
+  Continue from the explicit unresolved issue registry rather than starting another specification phase. Use Mark as domain authority and ask one high-value business question at a time only when a material rule is needed. Preserve the completed Phase 14 Queries/Application Use Cases and Phase 15 integration boundaries unless new domain evidence changes them.
 
 startup_instructions:
   - Treat markstephenguy-bit/Manufactor-DDD as authoritative session state.
-  - Read docs/ddd/SPECIFICATION.md before modeling.
-  - Read docs/ddd/reports/validation-report.md, this SESSION-HANDOFF.yaml, and docs/ddd/discovery/phase14-use-case-query-candidates.yaml before doing Phase 14 work.
+  - Read docs/ddd/SPECIFICATION.md and docs/ddd/reports/validation-report.md before further modeling.
+  - Read this handoff and docs/ddd/issues/unresolved.yaml before asking domain questions.
+  - Do not reconstruct the model from chat when GitHub holds current state.
   - Mark is the domain authority.
-  - Do not reconstruct the model from chat when GitHub holds the current state.
-  - Do not restart the just-completed Phase 14 subdomain interview pass.
-  - Ask one high-value business question at a time only if canonicalization exposes a genuinely material unresolved business rule.
+  - Ask one high-value business question at a time only when genuinely material.
   - Perform substantial whole-map work between questions.
-  - Preserve stable IDs when names/framing change unless modeled identity changes.
+  - Preserve stable IDs unless modeled identity changes.
   - Existing systems/code/databases/documents are evidence, not automatic domain truth.
-  - Do not equate departments, capabilities, applications, or systems with Subdomains/Bounded Contexts.
-  - Do not use ArchiMate for this DDD work.
-  - For Quality/QMS concepts, use ISO 9001/ISO 9000 terminology and conceptual structure as the default baseline; do not rediscover generic QMS mechanics unless mill practice materially differs.
-  - ManuFactor remains a gap filler, source-system reader/aggregator/correlator, and owner of missing workflows/records where a real gap exists; it is not wholesale ERP/MES/CMMS/HR/QMS/analytics replacement.
+  - Do not equate departments, capabilities, applications, Subdomains, or Bounded Contexts.
+  - Do not use ArchiMate for canonical DDD work.
+  - Use ISO 9001/ISO 9000 as the default Quality/QMS vocabulary baseline without creating a monolithic QMS context.
+  - ManuFactor is a gap filler, source-system reader/aggregator/correlator, and owner of missing workflows/records where real gaps exist; it is not a wholesale ERP/MES/CMMS/HR/QMS/analytics replacement.
   - Reading/correlating source data does not transfer source authority.
-
-repository_roles:
-  canonical: markstephenguy-bit/Manufactor-DDD
-  evidence:
-    - markstephenguy-bit/ManuFactor-arch
-    - markstephenguy-bit/Manufactor
 
 maturity:
   strategic: Strategic Stable
   tactical: Tactical Candidate
   validated: PASS WITH WARNINGS
-  phase14_discovery: reconciled
-  phase14_canonical: not-yet-promoted
+  phase14: complete
+  phase15: complete
 
-business_positioning:
-  - ManuFactor is a gap filler, current-system reader, extractor, aggregator, correlator, analysis enabler, and owner of missing workflows/records when a real gap exists.
-  - ManuFactor is not a wholesale ERP, MES, CMMS, HR, QMS, or analytics replacement.
-  - Superset/grain analytics is downstream analytical composition, not Operations Record transactional capture.
-  - Reading or correlating data does not transfer source authority.
+phase14_result:
+  queries:
+    path: docs/ddd/queries/index.yaml
+    count: 13
+    status: canonical-candidate
+  application_use_cases:
+    path: docs/ddd/application-use-cases/index.yaml
+    count: 14
+    status: canonical-candidate
+  rules_preserved:
+    - Queries are read-only information requests.
+    - Cross-context reads are explicit compositions with separate source authority.
+    - Application Use Cases orchestrate existing Commands/Queries/Events and do not redefine invariants.
+    - No Domain Service was invented to glue application flows together.
 
-active_candidate_bounded_contexts:
-  - bc.operations-record: Operations Record
-  - bc.kiln-operations: Kiln Operations
-  - bc.project-tracking: Project Tracking
-  - bc.quality-verification: Quality Verification
-  - bc.corrective-action: Corrective Action
-  - bc.asset-lifecycle: Asset Lifecycle
-  - bc.reliability-verification: Reliability Verification
-  - bc.safety-signoff: LTV Form Management
-  - bc.training-competency: Operational Training and Qualification
-  - bc.workforce-availability: Operational Workforce Availability
+phase14_tactical_reconciliation:
+  new_candidate_aggregates:
+    - aggregate.quality-verification.quality-concern
+    - aggregate.quality-verification.applicable-quality-target
+  new_candidate_commands: 6
+  new_candidate_domain_events: 6
+  new_candidate_invariants: 6
+  new_candidate_entities: 2
+  new_candidate_repositories: 2
+  rationale:
+    quality_concern: >
+      Phase 14 confirmed independent retained identity, triage/disposition history, authorized formal review, optional Quality Check linkage, and independent Nonconformity linkage. Exact closure after escalation remains unresolved and is not modeled as a command.
+    applicable_quality_target: >
+      Phase 14 confirmed ManuFactor-maintained contextual target parameters plus salaried-management create/change authority and historical applicability requirements. This supersedes the earlier aggregate challenge note that lacked enough evidence for an independent consistency boundary.
 
-deferred_contexts:
-  - bc.environmental-compliance: >
-      Deferred but confirmed as a real ManuFactor opportunity. Environmental has spreadsheet/email/paper/informal process gaps, but Mark does not yet have a proper list. Do not invent bounded contexts/workflows until concrete processes are identified.
+phase15_result:
+  status: complete-at-current-evidence
+  context_relationship_count: 10
+  integration_contract_count: 10
+  additions:
+    - rel.quality-concern-to-corrective-action / contract.quality-concern-to-corrective-action
+    - rel.corrective-action-to-quality-verification / contract.corrective-action-to-quality-verification
+  validation:
+    - No direct cross-context Aggregate/Entity sharing was introduced.
+    - No Shared Kernel is asserted.
+    - Every cross-context interaction used by current canonical Phase 14 artifacts is represented through explicit relationship/contract semantics.
+    - Quality Concern -> Nonconformity is an explicit semantic translation, never automatic admission.
+    - Corrective Action remains authoritative for CAPA state; Quality Verification retains only cross-context traceability references.
 
-phase14_reconciled_business_decisions:
-  operations_record:
-    - Operations Record owns structured transactional capture for specific operational needs that otherwise lack an appropriate system of record.
-    - Each form/record type must represent a distinct concrete business need; do not model one generic catch-all form merely for convenience.
-    - Captured records may feed Superset/grains downstream, but Operations Record is not the analytics/grain layer.
-  kiln_operations:
-    - Kiln scheduling translates human business/Sales direction based on market demand plus upstream green-lumber availability into what lumber needs to be dried.
-    - Market/Sales direction is not currently available as a structured data source.
-    - Kiln planning determines what lumber needs drying, not finished SKU creation.
-    - Planer optimization determines SKU creation downstream and is outside Kiln Operations.
-    - Kiln run review is performance analysis comparing retained kiln history with downstream planer results using ProTrack moisture data.
-    - ProTrack remains authoritative for its source moisture measurements.
-  project_tracking:
-    - A project is a project; use conventional project-management semantics with Monday.com as a practical reference point.
-    - Do not use Project Tracking as a bucket for ordinary tasks, investigations, MP2 work orders, or CAPA actions.
-  training_qualification:
-    - Current qualification practice is informal to a fault; ManuFactor fills a control/evidence gap by making qualification explicit and retained.
-    - Operational Qualification may be granted by either the employee's supervisor or a designated trainer/subject-matter expert.
-    - LMS/course completion may be evidence but is not automatically the Operational Qualification.
-  workforce_availability:
-    - Qualification and current availability are inputs to staffing decisions.
-    - Ability to cover a specific job is ultimately a supervisor's subjective judgment.
-    - That judgment/selection should be retained as a matter of record rather than existing only in supervisor memory.
-  asset_lifecycle:
-    - MP2 is primarily effective as a WR/WO mechanism and is weak as a rich asset-management model.
-    - Reuse MP2 hierarchy as the structural/drillable asset backbone.
-    - Link MP2 records to the appropriate drillable asset levels.
-    - ManuFactor owns richer asset identity/condition/lifecycle/history semantics while MP2 retains authority for its hierarchy and WR/WO transaction facts.
-  reliability_verification:
-    - A millwright may log a reliability finding.
-    - The maintenance supervisor decides whether to promote the finding into formal action/state change.
-    - The Reliability Manager is ultimately accountable for the reliability process.
-    - A logged finding does not automatically change Asset state.
-  quality_verification:
-    - ISO 9001/ISO 9000 is the default QMS conceptual/terminology baseline without creating a monolithic QMS context.
-    - Non-salaried employees route QMS-based quality concerns through the QC channel for triage; do not invent whether that channel is software or human workflow.
-    - Management (all salaried employees at the mill) and designated quality technicians control formal quality triage/promotion and may initiate Quality Checks.
-    - Quality Check is optional before Nonconformity; sufficient evidence may allow direct promotion.
-    - Failed Quality Check does not automatically create a Nonconformity.
-    - Quality Concern remains open when promoted to a Nonconformity unless a later independent closure rule is established.
-    - Applicable quality targets are ManuFactor-maintained parameters resolved by mill/machine/process context.
-    - Salaried management may create/change quality-target parameters.
-  corrective_action:
-    - CAPA belongs to Quality.
-    - The affected department's salaried Quality office works the Nonconformity through investigation, corrective-action coordination/routing, and closure.
-    - Routed execution may occur in another system/context without transferring ownership of the quality record.
-  ltv_form_management:
-    - LTV is a controlled workflow record, not merely a printable document.
-    - The normal record includes exact form/template version, the job/equipment/process it applies to, who completed/signed it and when, and progression/maturity through workflow states.
-    - General Safety incident management remains outside this bounded context.
-  environmental_compliance:
-    - Real gaps exist, but detail is insufficient. Keep deferred until Mark has a concrete list.
-
-phase14_candidate_file:
-  path: docs/ddd/discovery/phase14-use-case-query-candidates.yaml
-  status: discovery-candidate-reconciled
-  latest_reconciliation_commit: 18274368f4a6837c21c89e2a268dc6413172b1ff
-  warnings:
-    - Candidate artifacts still use discovery-oriented fields and are not yet normalized to exact normative Query/Application Use Case schemas.
-    - Canonical promotion must validate names/IDs/behavior references against existing canonical Commands, Policies, Aggregates, Context Map, and Integration Contracts.
-    - Do not blindly promote every discovery concept; Quality Concern remains a strong candidate but may require tactical artifact work beyond Phase 14 application artifacts.
-
-normative_phase14_schema_reminder:
-  query_required_fields:
-    - id
-    - name
-    - bounded_context
-    - purpose
-    - inputs
-    - result
-    - authoritative_source
-    - consistency_expectation
-    - status
-    - provenance
-  application_use_case_required_fields:
-    - id
-    - name
-    - bounded_context
-    - goal
-    - actors
-    - trigger
-    - preconditions
-    - commands
-    - queries
-    - domain_services
-    - events_observed
-    - result
-    - failure_paths
-    - status
-    - provenance
-  rules:
-    - Query requests information without intent to change domain state.
-    - Cross-context read composition must be explicit, not disguised as a shared model.
-    - Use Cases orchestrate around the domain model and must not redefine invariants.
-    - Business rules remain in Aggregates/Policies rather than application orchestration.
-
-behavior_model:
-  invariants: docs/ddd/invariants/index.yaml
-  invariant_count: 22
-  commands: docs/ddd/commands/index.yaml
-  command_count: 23
-  domain_events: docs/ddd/domain-events/index.yaml
-  domain_event_count: 21
-  policies: docs/ddd/policies/index.yaml
-  policy_count: 2
-  domain_services: docs/ddd/domain-services/index.yaml
-  domain_service_count: 0
-  domain_service_evaluation: No Domain Service is currently justified at current evidence level.
-
-repository_factory_model:
-  repositories: docs/ddd/repositories/index.yaml
-  repository_count: 12
-  factories: docs/ddd/factories/index.yaml
-  factory_count: 0
-  factory_evaluation: No Factory is currently justified; Aggregate creation remains simple enough to belong to Aggregate Root commands/invariants.
-
-aggregate_model:
-  candidate_aggregate_count: 12
-  candidates:
-    - Operational Record
-    - Kiln Schedule
-    - Kiln Run/Charge
-    - Project
-    - Quality Check
-    - Nonconformity
-    - Asset
-    - Reliability Verification
-    - LTV Form Template
-    - LTV Printed Instance
-    - Operational Qualification
-    - Operational Coverage Plan
-  strong_additional_discovery_candidate:
-    - Quality Concern: meaningful identity/lifecycle/history; likely requires first-class tactical modeling if promoted
+current_model_counts:
+  bounded_contexts: 10
+  aggregates: 14
+  aggregate_root_entities: 14
+  value_objects: 8
+  invariants: 28
+  commands: 29
+  domain_events: 27
+  policies: 2
+  domain_services: 0
+  repositories: 14
+  factories: 0
+  queries: 13
+  application_use_cases: 14
+  context_relationships: 10
+  integration_contracts: 10
 
 open_nonblocking_issues:
-  - ISSUE-0004: failed Quality Check to Nonconformity exact admission rule; first audit against ISO default before asking Mark generic QMS mechanics
-  - ISSUE-0005: Reliability Verification Result to Asset state exact transition; authority is now partly known (millwright logs, maintenance supervisor promotes, Reliability Manager accountable)
-  - ISSUE-0006: Operational Qualification evidence/expiration/withdrawal rules; grant authority is now known (supervisor or designated trainer/SME)
-  - ISSUE-0007: exact LTV workflow states/transition rules; normal record content and workflow maturation are now confirmed
+  - ISSUE-0004: failed Quality Check to Nonconformity exact admission rule
+  - ISSUE-0005: Reliability Verification Result to Asset state exact transition rule
+  - ISSUE-0006: Operational Qualification evidence/expiration/withdrawal rules; grant authority is known
+  - ISSUE-0007: process-specific LTV approval/sign-off transition rules
   - ISSUE-0008: Kiln Run to ProTrack moisture correlation identifiers/rules
   - ISSUE-0009: exact Asset condition/lifecycle-state vocabulary
-  - ISSUE-0010: child Corrective Action identity and CAPA closure rules; salaried department Quality office is now the active lifecycle owner
+  - ISSUE-0010: child Corrective Action identity and CAPA closure rules
   - ISSUE-0011: whether vacation planning needs a distinct aggregate
+  - ISSUE-0012: independent Quality Concern closure rule after disposition/escalation
 
-resolved_since_prior_handoff:
-  - ISSUE-0003: Vehicle Management merged into Physical Asset Management / Asset Lifecycle
-  - Phase14 Project boundary clarified: real Projects only; conventional project-management semantics
-  - Phase14 Training authority clarified: supervisor or designated trainer/SME
-  - Phase14 Workforce decision clarified: supervisor judgment retained as record
-  - Phase14 Reliability authority clarified
-  - Phase14 Asset/MP2 hierarchy relationship clarified
-  - Phase14 Quality target parameter ownership and authority clarified
-  - Phase14 CAPA working ownership clarified
-  - Phase14 LTV workflow-record semantics clarified
-  - Environmental gap confirmed but intentionally deferred
+important_completed_business_decisions:
+  - Operations Record owns concrete missing operational record workflows, not a generic catch-all form or analytics grain model.
+  - Kiln planning determines what lumber needs drying; downstream planer optimization determines finished SKU creation.
+  - Project means a real Project using conventional project-management semantics.
+  - Operational Qualification grant authority includes the employee supervisor or a designated trainer/SME.
+  - Workforce replacement selection is ultimately a supervisor judgment retained as business history; qualification and availability remain prerequisite inputs.
+  - MP2 provides hierarchy and WR/WO transaction facts; ManuFactor owns richer asset identity/condition/lifecycle/history semantics.
+  - Reliability findings may be logged by a millwright; maintenance supervisor decides promotion; Reliability Manager is accountable.
+  - Quality Concern, Quality Check, and Nonconformity are distinct lifecycle concepts.
+  - Management/designated quality technicians control formal Quality Concern triage; non-salaried concerns route through the QC channel without inventing its implementation.
+  - Quality Check is optional before Nonconformity; a failed check is not automatically a Nonconformity.
+  - Applicable quality targets are ManuFactor-maintained contextual parameters; salaried management may create/change them.
+  - CAPA belongs to Quality; the affected department's salaried Quality office owns the Nonconformity/CAPA lifecycle while routed execution remains externally owned.
+  - LTV is a controlled workflow record with exact template/version, applicability, completion/sign-off evidence, and workflow progression.
+  - Environmental remains a confirmed opportunity area but is deferred until concrete process gaps are identified.
 
-specification_authority:
-  source_document: ManuFactor_DDD_Modeling_Specification.docx
-  repository_specification: docs/ddd/SPECIFICATION.md
-  validation_report: docs/ddd/reports/validation-report.md
-
-files_to_read_first_in_new_session:
-  - docs/ddd/SPECIFICATION.md
+canonical_phase14_15_files:
+  - docs/ddd/queries/index.yaml
+  - docs/ddd/application-use-cases/index.yaml
+  - docs/ddd/aggregates/quality-concern.yaml
+  - docs/ddd/aggregates/applicable-quality-target.yaml
+  - docs/ddd/concepts/phase14-quality-reconciliation.yaml
+  - docs/ddd/entities/phase14-quality-reconciliation.yaml
+  - docs/ddd/invariants/phase14-quality-reconciliation.yaml
+  - docs/ddd/commands/phase14-quality-reconciliation.yaml
+  - docs/ddd/domain-events/phase14-quality-reconciliation.yaml
+  - docs/ddd/repositories/phase14-quality-reconciliation.yaml
+  - docs/ddd/context-map/phase15-quality-concern.yaml
+  - docs/ddd/integration-contracts/phase15-quality-concern.yaml
   - docs/ddd/reports/validation-report.md
-  - docs/ddd/SESSION-HANDOFF.yaml
-  - docs/ddd/discovery/phase14-use-case-query-candidates.yaml
-  - docs/ddd/commands/index.yaml
-  - docs/ddd/policies/index.yaml
-  - docs/ddd/domain-events/index.yaml
-  - docs/ddd/context-map/context-map.yaml
-  - docs/ddd/integration-contracts/index.yaml
   - docs/ddd/issues/unresolved.yaml
 
 session_resume: >
-  Continue Specification Phase 14 from the reconciled candidate file. Do not redo the subdomain-by-subdomain interview. Normalize and validate Queries and Application Use Cases to the exact specification schemas, preserve explicit cross-context composition, keep invariants out of orchestration, reconcile any affected tactical candidate artifacts, update validation, and then proceed to Phase 15 Integration Validation when Phase 14 is genuinely complete.
+  Specification Phases 14 and 15 are complete at current evidence level. Do not reopen the Phase 14 subdomain interview or redo canonicalization. Continue only with targeted unresolved business-rule refinement or model hardening, using GitHub as source of truth and keeping cross-context authority explicit.
