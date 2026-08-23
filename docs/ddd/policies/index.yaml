@@ -1,4 +1,44 @@
 policies:
+  - id: policy.corrective-action.determine-nonconformity-admission
+    name: Determine Nonconformity Admission
+    bounded_context: bc.corrective-action
+    purpose: Determine whether retained quality evidence is sufficient to admit a finding into the Corrective Action lifecycle as a Nonconformity without treating every concern or failed check as a Nonconformity automatically.
+    inputs:
+      - source Quality Concern or Quality Check evidence/reference
+      - applicable requirement
+      - retained evidence showing whether the requirement was fulfilled
+      - authorized quality-review determination and rationale
+    conditions:
+      - The reviewer is management or a designated quality technician with formal quality-triage/promotion authority.
+      - A specific applicable requirement can be identified.
+      - The retained evidence is sufficient for the authorized reviewer to determine that the applicable requirement was not fulfilled.
+    decision: Admit the finding as a Nonconformity only when the authorized reviewer explicitly determines from retained evidence that an identified applicable requirement was not fulfilled.
+    resulting_commands:
+      - AcceptNonconformity
+    related_events:
+      - QualityConcernDispositioned
+      - QualityCheckEvaluated
+      - NonconformityAccepted
+    exceptions:
+      - A Quality Concern by itself does not establish a Nonconformity.
+      - A failed Quality Check by itself does not automatically establish a Nonconformity.
+      - If the applicable requirement cannot be identified or the evidence is insufficient, retain the source quality record without admitting a Nonconformity.
+      - A Quality Check is not a mandatory gate; sufficient retained concern evidence may support direct admission when the authorized reviewer can establish nonfulfillment of an applicable requirement.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 Quality reconciliation, 2026-08-22
+          description: Management and designated quality technicians control formal quality triage/promotion; a Quality Check is optional; sufficient evidence may allow direct promotion; failed checks do not automatically create Nonconformities.
+        - type: decision
+          reference: ISO 9000 / ISO 9001 conceptual vocabulary baseline adopted by ManuFactor DDD
+          description: Nonconformity is modeled using the established quality-management meaning that an applicable requirement was not fulfilled, without creating a monolithic QMS context.
+        - type: invariant-model
+          reference: invariant.nonconformity.explicit-acceptance
+          description: Entry into the Nonconformity lifecycle requires explicit supported acceptance rather than inference from a source finding.
+      confidence: high
+      status: candidate
+
   - id: policy.corrective-action.route-to-work-owner
     name: Route Corrective Work to Its Owning Context
     bounded_context: bc.corrective-action
@@ -69,18 +109,15 @@ policies:
 
 policy_modeling_notes:
   intentionally_unmodeled_until_domain_rule_exists:
-    - subject: Failed Quality Check to Nonconformity admission
-      issue: ISSUE-0004
-      reason: QualityCheckEvaluated establishes a Quality Verification fact, but the exact decision rule that admits a failed check into CAPA is not known.
     - subject: Reliability Verification Result to Asset state
       issue: ISSUE-0005
       reason: VerificationCompleted produces a verification fact, but the Asset-domain transition rule is not known.
-    - subject: Operational Qualification evidence, authorization, and expiration
+    - subject: Operational Qualification evidence, review, expiration, and withdrawal
       issue: ISSUE-0006
-      reason: The model knows qualification requires acceptable evidence but not the exact decision mechanism for completion, demonstrated capability, authorization, expiration, or withdrawal.
-    - subject: LTV approval/sign-off
+      reason: Grant authority is known, but the exact evidence and lifecycle decision mechanisms remain unresolved.
+    - subject: LTV completion/approval/sign-off
       issue: ISSUE-0007
-      reason: Sign-off is process-specific and cannot be generalized from printing/issuance.
+      reason: Later workflow transitions are process-specific and cannot be generalized from printing/issuance.
     - subject: Kiln to ProTrack moisture correlation
       issue: ISSUE-0008
       reason: Correlation is required, but the exact identity/matching rule is not yet known well enough to model a decision policy.
