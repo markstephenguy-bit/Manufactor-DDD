@@ -1,13 +1,13 @@
 model_state: Strategic Stable / Tactical Candidate; Specification Phases 1-15 complete at current evidence level
 session_state: active-targeted-domain-rule-refinement
-session_refreshed_at: 2026-08-23T14:09:00-05:00
+session_refreshed_at: 2026-08-23T14:18:00-05:00
 current_phase: post-Phase-15 targeted domain-rule refinement
-last_completed: Post-Phase-15 hardening resolved ISSUE-0008 and corrected kiln moisture analysis from false run-level correlation to dimension-level statistics
+last_completed: Post-Phase-15 hardening resolved ISSUE-0009 and completed explicit Asset lifecycle-state transition behavior
 current_focus: Continue narrowing genuine unresolved business rules; ask Mark only when a remaining rule cannot be derived from confirmed canonical evidence
 blocking_issues: []
 
 next_action: >
-  Continue from the five remaining open issues. Prefer repository/model evidence first. Ask Mark one high-value business question at a time only where the remaining rule is genuinely domain-specific and materially changes the model.
+  Continue from the four remaining open issues. Prefer repository/model evidence first. Ask Mark one high-value business question at a time only where the remaining rule is genuinely domain-specific and materially changes the model.
 
 startup_instructions:
   - Treat markstephenguy-bit/Manufactor-DDD as authoritative session state.
@@ -22,6 +22,7 @@ startup_instructions:
   - Do not equate departments, capabilities, applications, Subdomains, or Bounded Contexts.
   - Do not use ArchiMate for canonical DDD work.
   - Use ISO 9001/ISO 9000 as the default Quality/QMS vocabulary baseline without creating a monolithic QMS context.
+  - Prefer standard-informed terminology where it clarifies domain vocabulary, but do not claim that a standard mandates a term unless evidence supports that claim.
   - ManuFactor is a gap filler, source-system reader/aggregator/correlator, and owner of missing workflows/records where real gaps exist; it is not a wholesale ERP/MES/CMMS/HR/QMS/analytics replacement.
   - Reading/correlating/statistically comparing source data does not transfer source authority or create lineage that the source data does not contain.
 
@@ -38,14 +39,14 @@ current_model_counts:
   aggregate_root_entities: 14
   value_objects: 8
   invariants: 29
-  commands: 30
-  domain_events: 30
+  commands: 31
+  domain_events: 31
   policies: 3
   domain_services: 0
   repositories: 14
   factories: 0
   queries: 13
-  application_use_cases: 14
+  application_use_cases: 15
   context_relationships: 9
   integration_contracts: 9
 
@@ -56,10 +57,13 @@ post_phase15_hardening:
         Nonconformity admission is modeled by policy.corrective-action.determine-nonconformity-admission. An authorized management/designated-quality-technician reviewer must explicitly determine from retained evidence that an identified applicable requirement was not fulfilled. Quality Concern or failed Quality Check alone never creates a Nonconformity automatically, and Quality Check is not a mandatory gate.
     - issue: ISSUE-0005
       result: >
-        There is no deterministic Reliability Verification Result to Asset State mapping. A millwright records the finding; the maintenance supervisor decides whether to promote it; Asset Lifecycle owns any resulting state transition. The remaining state vocabulary/transition detail is ISSUE-0009.
+        There is no deterministic Reliability Verification Result to Asset State mapping. A millwright records the finding; the maintenance supervisor decides whether to promote it; Asset Lifecycle owns any resulting state transition.
     - issue: ISSUE-0008
       result: >
         ProTrack does not record a Kiln Run/Charge identifier. Moisture data is recorded by lumber dimension, so Kiln Operations may analyze moisture statistically by thickness x width x length but must not attribute individual ProTrack measurements to a specific kiln run. The prior run-moisture query was replaced with query.kiln-operations.dimension-moisture-statistics.
+    - issue: ISSUE-0009
+      result: >
+        Asset Condition uses Operating, Degraded, and Down. Asset Lifecycle State uses In Service, Out of Service, and Retired. Functional condition and lifecycle position remain separate Value Objects. The previously dangling Change Asset Lifecycle State behavior is now represented by command.asset-lifecycle.change-lifecycle-state, event.asset-lifecycle.lifecycle-state-changed, and use-case.asset-lifecycle.change-lifecycle-state; accepted transitions preserve history and are not inferred from MP2 or Reliability Verification alone.
     - issue: ISSUE-0011
       result: >
         No separate vacation-planning Aggregate is justified at current evidence level. Vacation coverage is a staffing need handled within Operational Coverage Plan unless future schedule-wide invariants establish a distinct consistency boundary.
@@ -74,7 +78,6 @@ post_phase15_hardening:
 open_nonblocking_issues:
   - ISSUE-0006: Operational Qualification evidence/review/expiration/withdrawal rules; grant authority is known
   - ISSUE-0007: process-specific LTV completion/approval/sign-off transition rules
-  - ISSUE-0009: exact Asset condition/lifecycle-state vocabulary and allowed transitions
   - ISSUE-0010: child Corrective Action identity and detailed CAPA closure rules
   - ISSUE-0012: independent Quality Concern closure rule after Nonconformity escalation
 
@@ -86,6 +89,7 @@ important_completed_business_decisions:
   - Operational Qualification grant authority includes the employee supervisor or a designated trainer/SME.
   - Workforce replacement selection is ultimately a supervisor judgment retained as business history; qualification and availability remain prerequisite inputs.
   - MP2 provides hierarchy and WR/WO transaction facts; ManuFactor owns richer Asset identity/condition/lifecycle/history semantics.
+  - Asset Condition is Operating, Degraded, or Down; Asset Lifecycle State is In Service, Out of Service, or Retired.
   - Reliability findings may be logged by a millwright; maintenance supervisor decides promotion; Reliability Manager is accountable.
   - Quality Concern, Quality Check, and Nonconformity are distinct lifecycle concepts.
   - Management/designated quality technicians control formal Quality Concern triage; non-salaried concerns route through the QC channel without inventing its implementation.
@@ -99,9 +103,13 @@ important_completed_business_decisions:
 canonical_files_to_use:
   - docs/ddd/queries/index.yaml
   - docs/ddd/application-use-cases/index.yaml
+  - docs/ddd/application-use-cases/asset-lifecycle-state.yaml
   - docs/ddd/aggregates/index.yaml
   - docs/ddd/commands/index.yaml
+  - docs/ddd/commands/asset-lifecycle-state.yaml
   - docs/ddd/domain-events/index.yaml
+  - docs/ddd/domain-events/asset-lifecycle-state.yaml
+  - docs/ddd/value-objects/index.yaml
   - docs/ddd/policies/index.yaml
   - docs/ddd/context-map/context-map.yaml
   - docs/ddd/integration-contracts/index.yaml
@@ -109,4 +117,4 @@ canonical_files_to_use:
   - docs/ddd/issues/unresolved.yaml
 
 session_resume: >
-  Specification Phases 14 and 15 are complete. Post-Phase-15 hardening has reduced the unresolved registry from nine to five issues. Kiln/ProTrack moisture analysis is explicitly statistical by lumber dimension, not run-level traceability. Continue targeted rule refinement from canonical GitHub state; do not restart Phase 14 discovery or whole-map canonicalization.
+  Specification Phases 14 and 15 are complete. Post-Phase-15 hardening has reduced the unresolved registry from nine to four issues. Kiln/ProTrack moisture analysis is statistical by lumber dimension, not run-level traceability. Asset condition and lifecycle vocabularies are now controlled and separate, with explicit lifecycle-state transition behavior. Continue targeted rule refinement from canonical GitHub state; do not restart Phase 14 discovery or whole-map canonicalization.
