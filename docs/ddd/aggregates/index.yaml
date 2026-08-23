@@ -4,27 +4,34 @@ aggregates:
     bounded_context: bc.operations-record
     purpose: Preserve one operational record and its correction/history semantics as a consistent unit.
     aggregate_root: Operational Record
-    members: [Operational Record, Operational Incident or other recorded occurrence details]
-    invariants:
-      - Corrections must preserve the history of what was originally recorded rather than silently replacing it.
-      - References to external subjects must not become locally authoritative lifecycle state.
+    members: [Operational Record, occurrence details, correction/history entries]
+    invariants: [Corrections preserve prior history; external subject references do not become locally authoritative lifecycle state.]
     commands: [Record Operational Fact, Correct Operational Record]
     domain_events: [OperationalRecordRecorded, OperationalRecordCorrected]
-    transaction_boundary: Creating or correcting a single operational record and its retained history must be consistent.
+    transaction_boundary: Creating or correcting one operational record and its retained history must be consistent.
     external_references: [Asset, Person, Nonconformity, Safety finding]
-    repository: unresolved
-    creation_rules:
-      - A record must represent a specific operational occurrence/report and preserve provenance.
-    deletion_rules:
-      - Destructive deletion is not supported by current domain evidence; retention/correction is preferred.
+    repository: repository.operations-record.operational-record
+    creation_rules: [A record represents a specific operational occurrence/report and preserves provenance.]
+    deletion_rules: [Destructive deletion is unsupported by current evidence; retention/correction is preferred.]
     status: candidate
-    provenance:
-      sources:
-        - type: canonical-context
-          reference: docs/ddd/contexts/bc.operations-record/context.yaml
-          description: Operations Record explicitly owns retained record and correction/history semantics.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: canonical-context, reference: docs/ddd/contexts/bc.operations-record/context.yaml, description: Operations Record owns retained record and correction/history semantics.}], confidence: high, status: candidate}
+
+  - id: aggregate.kiln-operations.kiln-schedule
+    name: Kiln Schedule
+    bounded_context: bc.kiln-operations
+    purpose: Preserve a coherent revision-aware kiln planning state separate from execution history.
+    aggregate_root: Kiln Schedule
+    members: [schedule revision/planning details]
+    invariants: [Prior schedule state remains historically traceable; each revision remains coherent for its planning scope/period; Kiln Run execution remains outside this aggregate.]
+    commands: [Create Kiln Schedule, Revise Kiln Schedule]
+    domain_events: [KilnScheduleCreated, KilnScheduleRevised]
+    transaction_boundary: One schedule revision and its planning relationships are committed consistently.
+    external_references: [Kiln Run/Charge, Asset, human Sales/business direction, upstream green-lumber availability]
+    repository: repository.kiln-operations.kiln-schedule
+    creation_rules: [A schedule establishes the planning period/work scope it represents.]
+    deletion_rules: [Historical schedule revisions must not be silently deleted or overwritten.]
+    status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Mark direct, 2026-08-10, description: Kiln scheduling must replace Excel while keeping retained history.}], confidence: high, status: candidate}
 
   - id: aggregate.kiln-operations.kiln-run
     name: Kiln Run
@@ -32,110 +39,101 @@ aggregates:
     purpose: Keep the operational identity and retained history of one kiln run/charge internally consistent.
     aggregate_root: Kiln Run/Charge
     members: [Kiln Run/Charge, Kiln Operating Record references]
-    invariants:
-      - A run must remain distinguishable from every other run so later outcomes can be correlated correctly.
-      - Operating history associated with a run must not be silently rewritten as ephemeral spreadsheet state.
-      - Source ProTrack measurements remain external facts and are not mutated through the run.
-    commands: [Schedule Kiln Run, Start Kiln Run, Record Kiln Operation, Complete Kiln Run]
-    domain_events: [KilnRunScheduled, KilnRunStarted, KilnOperationRecorded, KilnRunCompleted]
-    transaction_boundary: State transitions and operating facts that define one run must be consistent for that run; downstream moisture correlation may occur separately.
-    external_references: [Kiln Asset, ProTrack Moisture Measurement]
-    repository: unresolved
-    creation_rules:
-      - A run requires a distinguishable business identity and association to the relevant kiln/schedule context.
-    deletion_rules:
-      - Completed run history must be retained for outcome correlation and analysis.
+    invariants: [A run remains distinguishable from every other run; operating history is retained; ProTrack measurements remain external facts.]
+    commands: [Start Kiln Run, Record Kiln Operation, Complete Kiln Run]
+    domain_events: [KilnRunStarted, KilnOperationRecorded, KilnRunCompleted]
+    transaction_boundary: State transitions and operating facts defining one run must be consistent; downstream moisture correlation may occur separately.
+    external_references: [Kiln Schedule, Kiln Asset, ProTrack Moisture Measurement]
+    repository: repository.kiln-operations.kiln-run
+    creation_rules: [A run requires a distinguishable business identity and relevant kiln/schedule context.]
+    deletion_rules: [Completed run history is retained for outcome correlation and analysis.]
     status: candidate
-    provenance:
-      sources:
-        - type: domain-expert
-          reference: Mark direct, 2026-08-10
-          description: Kiln scheduling/operations must replace Excel while retaining history and supporting downstream moisture correlation.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Mark direct, 2026-08-10, description: Kiln operations history must be retained and correlated with downstream moisture evidence.}], confidence: high, status: candidate}
 
   - id: aggregate.project-tracking.project
     name: Project
     bounded_context: bc.project-tracking
-    purpose: Maintain the planned-work lifecycle, milestones/actions, and status of one operational project consistently.
+    purpose: Maintain the lifecycle, plan, and status of one real Project consistently.
     aggregate_root: Project
     members: [Project, Milestone, Project Action]
-    invariants:
-      - Project completion/status must reflect the state of project-owned work rather than CAPA closure or unrelated external state.
-      - A project remains distinct from a Nonconformity-driven CAPA lifecycle.
-    commands: [Create Project, Plan Project Work, Update Project Status, Complete Project, Cancel Project]
-    domain_events: [ProjectCreated, ProjectActivated, ProjectCompleted, ProjectCancelled]
-    transaction_boundary: Changes that establish the coherent status of one project and its owned plan must be consistent through the Project root.
+    invariants: [Project completion/status reflects Project-owned work; a Project remains distinct from ordinary tasks, investigations, MP2 work orders, and CAPA lifecycle.]
+    commands: [Create Project, Complete Project]
+    domain_events: [ProjectCreated, ProjectCompleted]
+    transaction_boundary: Changes establishing coherent Project status and its owned plan go through the Project root.
     external_references: [Asset, Corrective Action reference]
-    repository: unresolved
-    creation_rules:
-      - A project represents discrete planned improvement/capital work and is not created merely because a CAPA exists.
-    deletion_rules:
-      - Historical project identity/status should be retained once work has begun; exact archival rules unresolved.
+    repository: repository.project-tracking.project
+    creation_rules: [A Project represents a distinguishable project lifecycle rather than merely another work item.]
+    deletion_rules: [Historical identity/status should be retained once work has begun; exact archival rules remain unresolved.]
     status: candidate
-    provenance:
-      sources:
-        - type: canonical-context
-          reference: docs/ddd/contexts/bc.project-tracking/context.yaml
-          description: Project Tracking owns a planned-work lifecycle distinct from CAPA.
-      confidence: medium
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 project reconciliation, 2026-08-22, description: A project is a project using conventional project-management semantics.}], confidence: high, status: candidate}
+
+  - id: aggregate.quality-verification.quality-concern
+    name: Quality Concern
+    bounded_context: bc.quality-verification
+    purpose: Preserve one suspected product-quality concern, its authorized triage history, disposition, and links to later formal quality records without equating intake with a Quality Check or Nonconformity.
+    aggregate_root: Quality Concern
+    members: [Quality Concern, retained triage/disposition history, references to linked Quality Check or Nonconformity]
+    invariants: [Concern intake does not automatically create formal quality records; formal triage is restricted to confirmed roles; Nonconformity linkage does not silently close the concern; CAPA lifecycle remains externally owned.]
+    commands: [Record Quality Concern, Disposition Quality Concern, Link Quality Check to Concern, Link Nonconformity to Concern]
+    domain_events: [QualityConcernRecorded, QualityConcernDispositioned, QualityCheckLinkedToConcern, NonconformityLinkedToConcern]
+    transaction_boundary: One concern's intake, authorized triage/disposition, and formal-record references remain coherent through the Quality Concern root.
+    external_references: [Quality Check, Nonconformity, employee/person reference]
+    repository: repository.quality-verification.quality-concern
+    creation_rules: [A concern is a sufficiently identifiable suspected quality issue; non-salaried intake reaches formal triage through the QC channel without specifying implementation.]
+    deletion_rules: [Retained concerns and disposition history are not destructively deleted; exact closure after escalation remains unresolved.]
+    status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 reconciliation, 2026-08-22, description: Quality Concern is a retained intake/triage record with lifecycle independent of Quality Check and Nonconformity.}], confidence: high, status: candidate}
 
   - id: aggregate.quality-verification.quality-check
     name: Quality Check
     bounded_context: bc.quality-verification
     purpose: Keep the measurement, applicable target, evaluation basis, and result of one quality verification internally consistent.
     aggregate_root: Quality Check
-    members: [Quality Check, Quality Measurement, Quality Verification Result, snapshot/reference of Applicable Quality Target]
-    invariants:
-      - The result must be evaluated against the target applicable to the recorded mill/machine/process context.
-      - The retained check must preserve both the measurement and the evaluation basis used at that time.
-      - Failed result does not automatically create a Nonconformity inside this aggregate.
-    commands: [Initiate Quality Check, Record Measurement, Evaluate Quality Check]
+    members: [Quality Check, Quality Measurement, Quality Verification Result, applicable-target snapshot/reference]
+    invariants: [Result uses the target applicable to recorded mill/machine/process context; retained check preserves measurement and evaluation basis; failed result does not automatically create a Nonconformity.]
+    commands: [Initiate Quality Check, Record Quality Measurement, Evaluate Quality Check]
     domain_events: [QualityCheckInitiated, QualityMeasurementRecorded, QualityCheckEvaluated]
-    transaction_boundary: Measurement, evaluation basis, and resulting outcome for one check must remain coherent; Corrective Action transition occurs outside the aggregate.
-    external_references: [Mill, Machine, Process Path, Applicable external standard]
-    repository: unresolved
-    creation_rules:
-      - A check must identify the relevant product/process context sufficiently to resolve an applicable target.
-    deletion_rules:
-      - Evaluated checks are retained as verification evidence; correction should preserve history.
+    transaction_boundary: Measurement, evaluation basis, and result for one check remain coherent; Corrective Action admission occurs outside this aggregate.
+    external_references: [Mill, Machine, Process Path, Applicable Quality Target Parameter, applicable external standard]
+    repository: repository.quality-verification.quality-check
+    creation_rules: [A check identifies enough product/process context to resolve an applicable target.]
+    deletion_rules: [Evaluated checks are retained as verification evidence; correction preserves history.]
     status: candidate
-    provenance:
-      sources:
-        - type: domain-expert
-          reference: Mark direct, 2026-08-09 through 2026-08-10
-          description: The gap is an unrecorded contextual quality measurement with difficult target discovery.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Mark direct, 2026-08-09 through 2026-08-22, description: The gap is contextual quality verification with retained evidence and target visibility.}], confidence: high, status: candidate}
+
+  - id: aggregate.quality-verification.applicable-quality-target
+    name: Applicable Quality Target Parameter
+    bounded_context: bc.quality-verification
+    purpose: Maintain one contextual quality-target parameter and its version/history so Quality Checks can resolve the target applicable to mill, machine, process, and evaluation time.
+    aggregate_root: Applicable Quality Target Parameter
+    members: [Applicable Quality Target Parameter, retained target revisions/history]
+    invariants: [Applicability is explicit enough to resolve context; historical versions used by Quality Checks remain traceable; only salaried management may create/change parameters under current evidence.]
+    commands: [Create Quality Target Parameter, Change Quality Target Parameter]
+    domain_events: [QualityTargetParameterCreated, QualityTargetParameterChanged]
+    transaction_boundary: Creating/changing one contextual target parameter and its retained version history remains consistent through this root.
+    external_references: [Mill, Machine, Process Path, applicable external quality standard]
+    repository: repository.quality-verification.applicable-quality-target
+    creation_rules: [A target requires a defined criterion/value and enough contextual applicability; creation authority is salaried management.]
+    deletion_rules: [A target version referenced by a retained Quality Check remains historically resolvable; retirement/supersession rules remain future work.]
+    status: candidate
+    provenance: {sources: [{type: domain-expert, reference: PHASE14-QUALITY-PARAMETERS / PHASE14-QUALITY-PARAMETER-AUTHORITY, description: ManuFactor maintains contextual targets and salaried management may create/change them.}], confidence: high, status: candidate}
 
   - id: aggregate.corrective-action.nonconformity
     name: Nonconformity
     bounded_context: bc.corrective-action
-    purpose: Coordinate one Nonconformity through correction, root-cause, corrective actions, routing, and closure without taking ownership of routed external work.
+    purpose: Coordinate one Nonconformity through correction, investigation, corrective-action routing, and closure without taking ownership of externally routed work.
     aggregate_root: Nonconformity
-    members: [Nonconformity, Correction, Corrective Action coordination records, Routing Rule application, closure evidence]
-    invariants:
-      - Only findings accepted under an explicit rule enter this lifecycle as Nonconformities.
-      - Closure must reflect the CAPA lifecycle while preserving the distinction between coordinated actions and externally owned execution work.
-      - Routed work status cannot be invented locally when another context/system owns it.
-    commands: [Accept Nonconformity, Record Correction, Record Root Cause, Add Corrective Action, Route Corrective Work, Evaluate Closure, Close Nonconformity]
-    domain_events: [NonconformityAccepted, CorrectionRecorded, CorrectiveActionAdded, CorrectiveWorkRouted, NonconformityClosed]
-    transaction_boundary: State changes that determine the coherent CAPA lifecycle of one Nonconformity must go through its root; external work executes separately.
-    external_references: [Quality Verification Result, Project, Maintenance Work, Safety finding]
-    repository: unresolved
-    creation_rules:
-      - Requires a finding plus a domain rule/decision that accepts it as a Nonconformity.
-    deletion_rules:
-      - Closed or actioned Nonconformities should remain historical records; destructive deletion unsupported.
+    members: [Nonconformity, Correction, Corrective Action coordination records, routing information, closure evidence]
+    invariants: [Only explicitly accepted findings enter this lifecycle; CAPA closure preserves distinction from external execution work; routed work status is not invented locally.]
+    commands: [Accept Nonconformity, Route Corrective Work, Close Nonconformity]
+    domain_events: [NonconformityAccepted, CorrectiveWorkRouted, NonconformityClosed]
+    transaction_boundary: State changes determining one Nonconformity's coherent CAPA lifecycle go through its root; external work executes separately.
+    external_references: [Quality Concern, Quality Verification Result, Project, Maintenance Work, Safety finding]
+    repository: repository.corrective-action.nonconformity
+    creation_rules: [Requires a finding plus an explicit supported decision admitting it as a Nonconformity.]
+    deletion_rules: [Closed/actioned Nonconformities remain historical records; destructive deletion is unsupported.]
     status: candidate
-    provenance:
-      sources:
-        - type: canonical-context
-          reference: docs/ddd/contexts/bc.corrective-action/context.yaml
-          description: Corrective Action owns the Nonconformity remediation and closure lifecycle.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: canonical-context, reference: docs/ddd/contexts/bc.corrective-action/context.yaml, description: Corrective Action owns the Nonconformity remediation/closure lifecycle.}], confidence: high, status: candidate}
 
   - id: aggregate.asset-lifecycle.asset
     name: Asset
@@ -143,111 +141,67 @@ aggregates:
     purpose: Keep one physical asset's ManuFactor-owned identity, condition/lifecycle state, and retained history consistent.
     aggregate_root: Asset
     members: [Asset, Asset Condition, Asset Lifecycle State, Asset History entries, Operational Setting History]
-    invariants:
-      - Asset identity remains stable across lifecycle and condition changes.
-      - MP2 WR/WO status must not silently define ManuFactor asset state.
-      - Verification results change asset state only through explicit asset-domain transition rules.
-      - State changes must be represented in retained asset history.
-    commands: [Register Asset, Change Asset Condition, Change Asset Lifecycle State, Record Operational Setting]
-    domain_events: [AssetRegistered, AssetConditionChanged, AssetLifecycleStateChanged, AssetOperationalSettingRecorded]
-    transaction_boundary: A state/condition change and its corresponding retained history entry must be consistent for one asset.
-    external_references: [MP2 Work Request, MP2 Work Order, Reliability Verification Result]
-    repository: unresolved
-    creation_rules:
-      - Asset must have stable ManuFactor identity and enough physical/business identity to correlate external machine references.
-    deletion_rules:
-      - Retirement should preserve historical identity; physical deletion of established assets is not supported by current evidence.
+    invariants: [Asset identity remains stable; MP2 WR/WO status does not silently define Asset state; verification results require explicit Asset-domain transition rules; state changes retain history.]
+    commands: [Register Asset, Change Asset Condition]
+    domain_events: [AssetRegistered, AssetConditionChanged]
+    transaction_boundary: A condition/state change and its retained history entry remain consistent for one Asset.
+    external_references: [MP2 hierarchy node, MP2 Work Request, MP2 Work Order, Reliability Verification Result]
+    repository: repository.asset-lifecycle.asset
+    creation_rules: [Asset has stable ManuFactor identity and enough physical/business identity to correlate external references.]
+    deletion_rules: [Retirement preserves historical identity; physical deletion of established Assets is unsupported.]
     status: candidate
-    provenance:
-      sources:
-        - type: domain-expert
-          reference: Mark direct, 2026-08-10
-          description: MP2 does not provide meaningful asset management beyond WR/WO posting to machine assets.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 asset reconciliation, 2026-08-22, description: Reuse MP2 hierarchy/WR-WO facts while ManuFactor owns richer Asset semantics and history.}], confidence: high, status: candidate}
 
   - id: aggregate.reliability-verification.verification
     name: Reliability Verification
     bounded_context: bc.reliability-verification
-    purpose: Keep one verification checkpoint, its criteria/category checks, evidence, and final result consistent.
+    purpose: Keep one verification checkpoint, criteria/category checks, evidence, and final result consistent.
     aggregate_root: Reliability Verification
     members: [Reliability Verification, Verification Checkpoint, AFAL Category Check, Verification Result]
-    invariants:
-      - Result must derive from the criteria/category checks applicable to that verification checkpoint.
-      - Verification result remains distinct from Asset Condition.
-      - A verification cannot rewrite MP2 maintenance work or Asset Lifecycle state directly.
-    commands: [Schedule Verification, Start Verification, Record Category Check, Complete Verification]
-    domain_events: [VerificationScheduled, VerificationStarted, VerificationCheckRecorded, VerificationCompleted]
-    transaction_boundary: Completing a verification requires its required criteria/check evidence and result to be internally coherent.
+    invariants: [Result derives from applicable retained evidence; Verification Result remains distinct from Asset Condition; verification does not rewrite MP2 work or Asset state directly.]
+    commands: [Complete Verification]
+    domain_events: [VerificationCompleted]
+    transaction_boundary: Completing a verification requires internally coherent applicable evidence and result.
     external_references: [Asset, MP2 Work Request, MP2 Work Order]
-    repository: unresolved
-    creation_rules:
-      - Must identify the Asset, checkpoint/trigger, and applicable verification criteria.
-    deletion_rules:
-      - Completed verification evidence should be retained; exact cancellation/void semantics unresolved.
+    repository: repository.reliability-verification.verification
+    creation_rules: [Must identify the Asset, checkpoint/trigger, and applicable verification criteria.]
+    deletion_rules: [Completed verification evidence is retained; exact cancellation/void semantics remain unresolved.]
     status: candidate
-    provenance:
-      sources:
-        - type: existing-model
-          reference: ManuFactor-arch AFAL evidence
-          description: AFAL/checkpoint records have discrete verification criteria and results.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: existing-model, reference: ManuFactor-arch AFAL evidence, description: AFAL/checkpoint records have discrete verification criteria and results.}], confidence: high, status: candidate}
 
   - id: aggregate.ltv-form-management.form-template
     name: LTV Form Template
     bounded_context: bc.safety-signoff
-    purpose: Maintain a versioned LTV form definition while preserving the historical template versions required for printed-instance traceability.
+    purpose: Maintain a versioned LTV form definition while preserving historical template versions required for instance traceability.
     aggregate_root: LTV Form Template
     members: [LTV Form Template, template version metadata]
-    invariants:
-      - Each published/usable template version must remain distinguishable from prior versions.
-      - Historical versions referenced by printed instances cannot be silently overwritten.
-    commands: [Create LTV Form Template, Revise LTV Form Template, Publish LTV Form Template, Retire LTV Form Template]
-    domain_events: [LTVFormTemplateCreated, LTVFormTemplateVersionPublished, LTVFormTemplateRetired]
-    transaction_boundary: Publishing or revising one template must produce a coherent distinguishable version without mutating historical versions used by issued forms.
+    invariants: [Each published version remains distinguishable; historical versions referenced by instances are not silently overwritten.]
+    commands: [Publish LTV Form Template]
+    domain_events: [LTVFormTemplateVersionPublished]
+    transaction_boundary: Publishing/revising one template produces a coherent distinguishable version without mutating historical versions.
     external_references: [Safety requirement]
-    repository: unresolved
-    creation_rules:
-      - A template must have stable identity distinct from its individual versions.
-    deletion_rules:
-      - A template/version referenced by an issued/printed instance must remain available for historical traceability.
+    repository: repository.ltv-form-management.form-template
+    creation_rules: [A template has stable identity distinct from individual versions.]
+    deletion_rules: [A referenced template/version remains historically available.]
     status: candidate
-    provenance:
-      sources:
-        - type: domain-expert
-          reference: Mark direct, 2026-08-10
-          description: The real Safety gap is managing and printing LTV forms.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Mark direct, 2026-08-10, description: The concrete Safety gap includes managing and printing LTV forms.}], confidence: high, status: candidate}
 
   - id: aggregate.ltv-form-management.printed-instance
     name: LTV Printed Instance
     bounded_context: bc.safety-signoff
-    purpose: Keep one issued/printed LTV form's template provenance and applicable lifecycle state consistent.
+    purpose: Keep one generated/issued LTV form's template provenance, applicability, and supported lifecycle state consistent.
     aggregate_root: LTV Printed Instance
-    members: [LTV Printed Instance, LTV Form Status, completion/approval/sign-off evidence when applicable]
-    invariants:
-      - Every instance must remain traceable to the exact template version that produced it.
-      - Printing/issuing does not imply completion, approval, or sign-off unless the applicable process requires it.
-      - Lifecycle changes must apply to the individual instance, not alter the source template.
-    commands: [Generate LTV Form Instance, Mark Printed or Issued, Record Completion, Record Approval or Sign-Off, Retain LTV Form Instance]
-    domain_events: [LTVFormInstanceGenerated, LTVFormInstanceIssued, LTVFormInstanceCompleted, LTVFormInstanceApproved]
-    transaction_boundary: Template-version provenance and lifecycle state of one LTV instance must remain coherent.
+    members: [LTV Printed Instance, LTV Form Status, supported issuance history, later completion/sign-off evidence when rules are known]
+    invariants: [Every instance remains traceable to exact template version; printing/issuing does not imply completion/approval/sign-off; lifecycle changes apply to the instance, not source template.]
+    commands: [Generate LTV Form Instance, Mark Printed or Issued]
+    domain_events: [LTVFormInstanceGenerated, LTVFormInstanceIssued]
+    transaction_boundary: Template-version provenance and supported lifecycle state of one LTV instance remain coherent.
     external_references: [Person, Safety requirement, LTV Form Template identity/version]
-    repository: unresolved
-    creation_rules:
-      - Must be generated from a specific managed LTV Form Template version.
-    deletion_rules:
-      - Issued/completed instances should be retained according to business record requirements; exact retention period unresolved.
+    repository: repository.ltv-form-management.printed-instance
+    creation_rules: [Instance is generated from a specific managed LTV Form Template version.]
+    deletion_rules: [Issued instances remain retained; exact retention period and later completion/sign-off rules remain unresolved.]
     status: candidate
-    provenance:
-      sources:
-        - type: canonical-context
-          reference: docs/ddd/contexts/bc.safety-signoff/context.yaml
-          description: LTV Form Management owns printed-instance traceability and lifecycle.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 LTV reconciliation, 2026-08-22, description: Exact form/version, applicability, completion/sign-off evidence, and workflow maturation are normal record semantics, while exact later transition rules remain unresolved.}], confidence: high, status: candidate}
 
   - id: aggregate.training-qualification.qualification
     name: Operational Qualification
@@ -255,72 +209,43 @@ aggregates:
     purpose: Keep the evidence-backed qualification relationship between one person and one operational job/role consistent.
     aggregate_root: Operational Qualification
     members: [Operational Qualification, qualification evidence references]
-    invariants:
-      - Qualification must be supported by acceptable evidence under the applicable operational rule.
-      - Learning completion alone does not imply qualification unless explicitly allowed by the rule.
-      - Availability is not part of qualification state.
-    commands: [Establish Operational Qualification, Add Qualification Evidence, Withdraw Operational Qualification, Review Operational Qualification]
-    domain_events: [OperationalQualificationEstablished, QualificationEvidenceAdded, OperationalQualificationWithdrawn]
-    transaction_boundary: The decision that one person is operationally qualified for one job and the evidence supporting that decision must remain coherent.
+    invariants: [Qualification is supported by acceptable evidence; learning completion alone does not automatically imply qualification; availability is not qualification.]
+    commands: [Establish Operational Qualification]
+    domain_events: [OperationalQualificationEstablished]
+    transaction_boundary: The qualification decision and its supporting evidence remain coherent for one person-job relationship.
     external_references: [Person, Job/Position, Learning Completion]
-    repository: unresolved
-    creation_rules:
-      - Requires a person, job/role, and sufficient evidence under the applicable qualification rule.
-    deletion_rules:
-      - Qualification history should be retained when withdrawn or superseded; exact expiration semantics unresolved.
+    repository: repository.training-qualification.qualification
+    creation_rules: [Requires person, job/role, acceptable evidence, and grant by supervisor or designated trainer/SME.]
+    deletion_rules: [Qualification history is retained when later withdrawn/superseded; exact expiration/withdrawal semantics remain unresolved.]
     status: candidate
-    provenance:
-      sources:
-        - type: domain-expert
-          reference: Mark direct, 2026-08-10
-          description: Cross-operator training depth is required to know who can step into another operational job.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 training reconciliation, 2026-08-22, description: Qualification is explicit retained evidence and may be granted by supervisor or designated trainer/SME.}], confidence: high, status: candidate}
 
   - id: aggregate.workforce-availability.coverage-plan
     name: Operational Coverage Plan
     bounded_context: bc.workforce-availability
-    purpose: Maintain a staffing need and the selected/possible coverage for a defined operational time/job requirement consistently.
+    purpose: Maintain a staffing need and the selected coverage for a defined operational time/job requirement consistently.
     aggregate_root: Operational Coverage Plan
-    members: [Operational Coverage Plan, Staffing Gap, Replacement Option, Vacation Coverage Plan details]
-    invariants:
-      - A selected replacement must be both operationally available for the required time and sufficiently qualified for the required job.
-      - Coverage decisions must not rewrite authoritative HR/timekeeping absence records or qualification records.
-      - The staffing need/time/job being covered must remain explicit.
-    commands: [Create Staffing Gap, Add Replacement Option, Select Replacement, Schedule Vacation Coverage, Revise Coverage Plan]
-    domain_events: [StaffingGapIdentified, ReplacementOptionAdded, ReplacementSelected, CoveragePlanRevised]
-    transaction_boundary: Selecting or revising coverage for one staffing need must validate availability and qualification references consistently at decision time.
+    members: [Operational Coverage Plan, Staffing Gap, Replacement Option references, retained supervisor selection]
+    invariants: [The staffing need/time/job remains explicit; selected replacement is qualified and available; coverage decisions do not rewrite HR/timekeeping or qualification source facts.]
+    commands: [Create Operational Coverage Plan, Select Replacement]
+    domain_events: [StaffingGapIdentified, ReplacementSelected]
+    transaction_boundary: Creating/selecting coverage for one staffing need validates referenced qualification/availability facts consistently at decision time and retains the supervisor decision.
     external_references: [Person, Operational Qualification, HR/Timekeeping Absence Fact, Crew, Shift]
-    repository: unresolved
-    creation_rules:
-      - Requires a defined operational staffing need in time/job/crew terms.
-    deletion_rules:
-      - Historical coverage decisions should remain traceable after the staffing period; exact retention rules unresolved.
+    repository: repository.workforce-availability.coverage-plan
+    creation_rules: [Requires a defined staffing need in time/job/crew terms.]
+    deletion_rules: [Historical coverage decisions remain traceable after the staffing period; exact retention rules remain unresolved.]
     status: candidate
-    provenance:
-      sources:
-        - type: domain-expert
-          reference: Mark direct, 2026-08-10
-          description: Vacation scheduling and sick-call replacement require knowing both who is available and who can perform the job.
-      confidence: high
-      status: candidate
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 workforce reconciliation, 2026-08-22, description: Qualification and availability are inputs; final ability-to-cover is supervisor judgment retained as record.}], confidence: high, status: candidate}
 
 aggregate_challenge_notes:
-  rejected_or_not_supported_as_separate_aggregates:
-    - concept: Moisture Outcome
-      reason: It is a derived interpretation tied to Kiln Run and external ProTrack measurements; no independent invariant or command lifecycle currently justifies its own aggregate.
+  superseded_findings:
     - concept: Applicable Quality Target
-      reason: It may become reference data, policy-owned configuration, or another model later, but current evidence does not establish an independent transactional consistency boundary.
-    - concept: Asset Condition
-      reason: It is state of the Asset and should change through the Asset root under current evidence.
-    - concept: Verification Result
-      reason: It is produced by and belongs to a Reliability Verification.
-    - concept: Replacement Option
-      reason: It exists within a staffing/coverage decision and has no supported independent lifecycle.
-    - concept: LTV Form Status
-      reason: It is state of a Printed Instance, not an independent consistency boundary.
-  unresolved_candidates:
-    - subject: Kiln Schedule
-      reason: Current evidence supports retained schedule history, but it is not yet clear whether schedule planning requires its own aggregate separate from Kiln Run or is primarily a planning view/coordination model around runs.
-    - subject: Cross-Training Matrix
-      reason: The matrix appears to be a projection across individual Operational Qualification relationships rather than a consistency boundary; retain as a query/read model unless later business rules require matrix-level atomic changes.
+      prior_conclusion: No independent aggregate was justified before Phase 14 authority/history clarification.
+      superseded_by: aggregate.quality-verification.applicable-quality-target
+      reason: Phase 14 confirmed ManuFactor maintenance responsibility, salaried-management create/change authority, contextual applicability, and retained target-version history.
+  rejected_or_not_supported_as_separate_aggregates:
+    - {concept: Moisture Outcome, reason: Derived interpretation tied to Kiln Run and external ProTrack measurements; no independent command/invariant lifecycle.}
+    - {concept: Asset Condition, reason: State of Asset under current evidence.}
+    - {concept: Verification Result, reason: Produced by and belongs to Reliability Verification.}
+    - {concept: Replacement Option, reason: Exists within a Coverage Plan and has no independent lifecycle.}
+    - {concept: LTV Form Status, reason: State of an LTV instance rather than an independent consistency boundary.}
