@@ -1,13 +1,13 @@
 model_state: Strategic Stable / Tactical Candidate; Specification Phases 1-15 complete at current evidence level
 session_state: active-targeted-domain-rule-refinement
-session_refreshed_at: 2026-08-23T14:18:00-05:00
+session_refreshed_at: 2026-08-23T14:24:00-05:00
 current_phase: post-Phase-15 targeted domain-rule refinement
-last_completed: Post-Phase-15 hardening resolved ISSUE-0009 and completed explicit Asset lifecycle-state transition behavior
+last_completed: Post-Phase-15 hardening resolved ISSUE-0006 by modeling practical job-shadowing evidence and persistent-until-withdrawn qualification lifecycle
 current_focus: Continue narrowing genuine unresolved business rules; ask Mark only when a remaining rule cannot be derived from confirmed canonical evidence
 blocking_issues: []
 
 next_action: >
-  Continue from the four remaining open issues. Prefer repository/model evidence first. Ask Mark one high-value business question at a time only where the remaining rule is genuinely domain-specific and materially changes the model.
+  Continue from the three remaining open issues. Prefer repository/model evidence first. Ask Mark one high-value business question at a time only where the remaining rule is genuinely domain-specific and materially changes the model.
 
 startup_instructions:
   - Treat markstephenguy-bit/Manufactor-DDD as authoritative session state.
@@ -38,15 +38,15 @@ current_model_counts:
   aggregates: 14
   aggregate_root_entities: 14
   value_objects: 8
-  invariants: 29
-  commands: 31
-  domain_events: 31
+  invariants: 30
+  commands: 32
+  domain_events: 32
   policies: 3
   domain_services: 0
   repositories: 14
   factories: 0
   queries: 13
-  application_use_cases: 15
+  application_use_cases: 16
   context_relationships: 9
   integration_contracts: 9
 
@@ -58,25 +58,25 @@ post_phase15_hardening:
     - issue: ISSUE-0005
       result: >
         There is no deterministic Reliability Verification Result to Asset State mapping. A millwright records the finding; the maintenance supervisor decides whether to promote it; Asset Lifecycle owns any resulting state transition.
+    - issue: ISSUE-0006
+      result: >
+        Operational Qualification is supported by practical job evidence: the person shadows the current competent worker and is observed sufficiently for an authorized supervisor or designated trainer/SME to determine that the person is capable of doing the job. Course/LMS completion may support but does not establish qualification automatically. Once granted, qualification persists until explicitly withdrawn or superseded; elapsed time alone does not expire it. Withdrawal preserves prior evidence/history.
     - issue: ISSUE-0008
       result: >
         ProTrack does not record a Kiln Run/Charge identifier. Moisture data is recorded by lumber dimension, so Kiln Operations may analyze moisture statistically by thickness x width x length but must not attribute individual ProTrack measurements to a specific kiln run. The prior run-moisture query was replaced with query.kiln-operations.dimension-moisture-statistics.
     - issue: ISSUE-0009
       result: >
-        Asset Condition uses Operating, Degraded, and Down. Asset Lifecycle State uses In Service, Out of Service, and Retired. Functional condition and lifecycle position remain separate Value Objects. The previously dangling Change Asset Lifecycle State behavior is now represented by command.asset-lifecycle.change-lifecycle-state, event.asset-lifecycle.lifecycle-state-changed, and use-case.asset-lifecycle.change-lifecycle-state; accepted transitions preserve history and are not inferred from MP2 or Reliability Verification alone.
+        Asset Condition uses Operating, Degraded, and Down. Asset Lifecycle State uses In Service, Out of Service, and Retired. Functional condition and lifecycle position remain separate Value Objects. The previously dangling Change Asset Lifecycle State behavior is now represented explicitly; accepted transitions preserve history and are not inferred from MP2 or Reliability Verification alone.
     - issue: ISSUE-0011
       result: >
         No separate vacation-planning Aggregate is justified at current evidence level. Vacation coverage is a staffing need handled within Operational Coverage Plan unless future schedule-wide invariants establish a distinct consistency boundary.
   narrowed:
-    - issue: ISSUE-0006
-      result: Grant authority is already known; only evidence/review/expiration/withdrawal rules remain unresolved.
     - issue: ISSUE-0007
       result: Printing/issuance is modeled; only process-specific completion/approval/sign-off transitions remain unresolved.
     - issue: ISSUE-0012
       result: No-escalation disposition/closure with retained reason is supported; only independent closure after Nonconformity escalation remains unresolved.
 
 open_nonblocking_issues:
-  - ISSUE-0006: Operational Qualification evidence/review/expiration/withdrawal rules; grant authority is known
   - ISSUE-0007: process-specific LTV completion/approval/sign-off transition rules
   - ISSUE-0010: child Corrective Action identity and detailed CAPA closure rules
   - ISSUE-0012: independent Quality Concern closure rule after Nonconformity escalation
@@ -87,6 +87,8 @@ important_completed_business_decisions:
   - ProTrack moisture records are not traceable to individual Kiln Runs/Charges; they support statistical analysis by lumber dimension thickness x width x length only.
   - Project means a real Project using conventional project-management semantics.
   - Operational Qualification grant authority includes the employee supervisor or a designated trainer/SME.
+  - Operational Qualification evidence is practical job shadowing/observed capability with the current competent worker; LMS/course completion alone does not equal qualification.
+  - Operational Qualification remains valid until explicitly withdrawn or superseded; elapsed time alone does not expire it.
   - Workforce replacement selection is ultimately a supervisor judgment retained as business history; qualification and availability remain prerequisite inputs.
   - MP2 provides hierarchy and WR/WO transaction facts; ManuFactor owns richer Asset identity/condition/lifecycle/history semantics.
   - Asset Condition is Operating, Degraded, or Down; Asset Lifecycle State is In Service, Out of Service, or Retired.
@@ -104,11 +106,16 @@ canonical_files_to_use:
   - docs/ddd/queries/index.yaml
   - docs/ddd/application-use-cases/index.yaml
   - docs/ddd/application-use-cases/asset-lifecycle-state.yaml
+  - docs/ddd/application-use-cases/qualification-withdrawal.yaml
   - docs/ddd/aggregates/index.yaml
   - docs/ddd/commands/index.yaml
   - docs/ddd/commands/asset-lifecycle-state.yaml
+  - docs/ddd/commands/qualification-withdrawal.yaml
   - docs/ddd/domain-events/index.yaml
   - docs/ddd/domain-events/asset-lifecycle-state.yaml
+  - docs/ddd/domain-events/qualification-withdrawal.yaml
+  - docs/ddd/invariants/index.yaml
+  - docs/ddd/invariants/post-phase15-qualification-evidence.yaml
   - docs/ddd/value-objects/index.yaml
   - docs/ddd/policies/index.yaml
   - docs/ddd/context-map/context-map.yaml
@@ -117,4 +124,4 @@ canonical_files_to_use:
   - docs/ddd/issues/unresolved.yaml
 
 session_resume: >
-  Specification Phases 14 and 15 are complete. Post-Phase-15 hardening has reduced the unresolved registry from nine to four issues. Kiln/ProTrack moisture analysis is statistical by lumber dimension, not run-level traceability. Asset condition and lifecycle vocabularies are now controlled and separate, with explicit lifecycle-state transition behavior. Continue targeted rule refinement from canonical GitHub state; do not restart Phase 14 discovery or whole-map canonicalization.
+  Specification Phases 14 and 15 are complete. Post-Phase-15 hardening has reduced the unresolved registry from nine to three issues. Operational Qualification is now grounded in practical shadowing/observed capability and persists until explicit withdrawal/supersession. Continue targeted rule refinement from canonical GitHub state; do not restart Phase 14 discovery or whole-map canonicalization.
