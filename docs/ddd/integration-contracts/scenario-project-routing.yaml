@@ -1,0 +1,30 @@
+integration_contracts:
+  - id: contract.corrective-action-to-project-tracking
+    name: CAPA Corrective Task to Project Tracking
+    provider_context: bc.corrective-action
+    consumer_context: bc.project-tracking
+    purpose: Coordinate corrective work that the business has explicitly chosen to manage as a Project without merging Project lifecycle ownership into CAPA.
+    interaction_style: coordination-reference
+    published_model:
+      - Nonconformity identity
+      - Corrective Task identity and work requirement
+      - Relevant routing context/evidence
+    operations:
+      - Supply a corrective-task reference when the business recognizes the routed work as a Project
+      - Retain the Project reference in CAPA coordination history after Project creation/association
+    events: []
+    compatibility_policy: Project Tracking may create/manage a Project only under its own project-recognition rules; CAPA must not infer Project status/completion, and Project Tracking must not infer CAPA closure from Project completion.
+    translation_required: true
+    failure_semantics: If the work is not actually managed by the business as a Project, do not create a Project merely because the CAPA task is large or complex. If a Project is created, failure to resolve its reference must not fabricate Project or CAPA status.
+    ownership: Corrective Action owns the Nonconformity/CAPA lifecycle and corrective-task coordination; Project Tracking owns Project identity, plan, status, milestones/tasks, and completion.
+    status: candidate
+    provenance:
+      sources:
+        - type: scenario-validation
+          reference: SCENARIO-007 / SCENARIO-009, 2026-08-23
+          description: Realistic CAPA routing to work that is genuinely managed as a Project requires an explicit semantic boundary rather than an implicit reference.
+        - type: canonical-context
+          reference: docs/ddd/contexts/bc.corrective-action/context.yaml and docs/ddd/contexts/bc.project-tracking/context.yaml
+          description: Corrective Action routes execution to the owning work context while Project Tracking owns only actual business Projects and keeps Project completion distinct from CAPA closure.
+      confidence: high
+      status: candidate
