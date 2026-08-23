@@ -1,24 +1,26 @@
 model_state: Strategic Stable / Tactical Candidate; Specification Phases 1-15 complete at current evidence level
-session_state: scenario-validation-complete
-session_refreshed_at: 2026-08-23T18:31:00-05:00
-current_phase: post-scenario-validation stabilization decision
-last_completed: Ten realistic ManuFactor situations were executed end-to-end against the canonical DDD; all passed after two model refinements and no new domain-rule issue was required
-current_focus: Do not manufacture more scenarios or domain questions merely to continue discovery. Use new real mill situations, implementation feedback, or a deliberate tactical-stabilization review as the next evidence source.
+session_state: scenario-validation-batch2-complete
+session_refreshed_at: 2026-08-23T18:36:00-05:00
+current_phase: scenario-based DDD validation
+last_completed: Second ten-scenario batch (SCENARIO-011 through SCENARIO-020) completed; one model refinement and two genuine nonblocking lifecycle questions discovered
+current_focus: Resolve scenario-discovered temporal lifecycle rules before any Tactical Stable promotion; continue scenario validation only with deliberately new edge cases or real mill situations
 blocking_issues: []
-open_nonblocking_issues: []
+open_nonblocking_issues:
+  - ISSUE-0013
+  - ISSUE-0014
 
 next_action: >
-  Treat the ten-scenario validation suite as complete. Before future modeling, read this handoff, docs/ddd/CANONICAL-REGISTRY.yaml, docs/ddd/reports/validation-report.md, docs/ddd/reports/scenario-validation.md, and docs/ddd/issues/unresolved.yaml. New modeling work should come from a real new ManuFactor situation/gap, implementation feedback, or an explicit Tactical Stable promotion review.
+  Treat twenty-scenario validation as complete. Read docs/ddd/reports/scenario-validation.md, docs/ddd/reports/scenario-validation-batch2.md, docs/ddd/scenario-validation/SCENARIOS-011-020.yaml, docs/ddd/CANONICAL-REGISTRY.yaml, and the composed open-issue registry before further modeling. The next high-value domain question should resolve ISSUE-0013 or ISSUE-0014; do not invent their answers.
 
 startup_instructions:
   - Treat markstephenguy-bit/Manufactor-DDD as authoritative session state.
   - Read docs/ddd/SPECIFICATION.md before changing model semantics.
-  - Read docs/ddd/CANONICAL-REGISTRY.yaml before counting or validating tactical objects.
-  - Read docs/ddd/reports/scenario-validation.md and docs/ddd/scenario-validation/README.md before adding more scenarios.
-  - Read docs/ddd/reports/validation-report.md and docs/ddd/issues/unresolved.yaml before asking domain questions.
+  - Read docs/ddd/CANONICAL-REGISTRY.yaml before counting or validating tactical objects or open issues.
+  - Open issues are composed from docs/ddd/issues/unresolved.yaml plus docs/ddd/issues/scenario-validation-open.yaml.
+  - Read both scenario reports and scenario YAML files before adding new scenarios.
   - Do not reconstruct canonical state from chat when GitHub contains it.
   - Mark is the domain authority.
-  - Ask one high-value business question at a time only when new evidence exposes a genuinely material unresolved rule.
+  - Ask one high-value business question at a time only when a scenario exposes a genuinely material unresolved rule.
   - Preserve stable IDs unless modeled identity changes.
   - Do not equate departments, capabilities, applications, Subdomains, or Bounded Contexts.
   - Do not use ArchiMate as canonical DDD authority.
@@ -36,28 +38,31 @@ maturity:
   phase15: complete
   post_phase15_targeted_refinement: complete
   whole_model_consolidation: complete
-  scenario_validation: complete
-  current_open_issue_count: 0
+  scenario_validation_batch1: complete
+  scenario_validation_batch2: complete
+  scenario_count: 20
+  current_open_issue_count: 2
 
 scenario_validation:
   methodology: docs/ddd/scenario-validation/README.md
-  report: docs/ddd/reports/scenario-validation.md
-  results_file: docs/ddd/scenario-validation/SCENARIOS-002-010.yaml
-  completed_count: 10
+  batch1_report: docs/ddd/reports/scenario-validation.md
+  batch2_report: docs/ddd/reports/scenario-validation-batch2.md
+  batch1_results: docs/ddd/scenario-validation/SCENARIOS-002-010.yaml
+  batch2_results: docs/ddd/scenario-validation/SCENARIOS-011-020.yaml
   totals:
-    PASS: 8
-    PASS_WITH_MODEL_REFINEMENT: 2
-    DOMAIN_QUESTION_REQUIRED: 0
+    PASS: 15
+    PASS_WITH_MODEL_REFINEMENT: 3
+    DOMAIN_QUESTION_REQUIRED: 2
     MODEL_DEFECT_REMAINING: 0
-  refinements:
-    - SCENARIO-001 corrected stale Corrective Action effectiveness-verification text and stale resolved-policy notes.
-    - SCENARIO-007 edge variation / SCENARIO-009 boundary stress added explicit Corrective Action to Project Tracking relationship and integration contract for corrective work that the business genuinely manages as a Project.
-  new_domain_questions: 0
+  batch2_findings:
+    - SCENARIO-012 exposed ISSUE-0013: selected Operational Coverage Plan when qualification is withdrawn before coverage execution.
+    - SCENARIO-013 refined Asset Lifecycle so MP2 hierarchy restructuring does not silently replace established ManuFactor Asset identity.
+    - SCENARIO-019 exposed ISSUE-0014: Project cancellation/abandonment lifecycle after work begins.
 
 canonical_registry:
   manifest: docs/ddd/CANONICAL-REGISTRY.yaml
   note: >
-    Large baseline index files remain composed with canonical sidecars/overlays by stable ID. Scenario validation added one Context Map relationship and one Integration Contract. Count unique stable IDs across the complete manifest.
+    Large baseline index files remain composed with canonical sidecars/overlays by stable ID. Scenario validation adds explicit relationships/contracts, context refinements, and scenario-discovered issue sidecars where needed.
 
 current_model_counts:
   bounded_contexts: 10
@@ -76,47 +81,38 @@ current_model_counts:
   context_relationships: 10
   integration_contracts: 10
 
-scenario_validated_business_boundaries:
-  - Quality Concern, Quality Check, and Nonconformity remain distinct; failed checks do not automatically become Nonconformities.
-  - CAPA corrective work is task-based; routed execution remains externally owned; CAPA closure requires retained effectiveness verification.
-  - ProTrack moisture analysis is statistical by thickness x width x length and cannot fabricate kiln-run lineage.
-  - Workforce replacement requires current qualification plus availability and retained supervisor judgment.
-  - Operational Qualification is established by job shadowing/observed capability, persists until explicit withdrawal/supersession, and retains history.
-  - Reliability Verification findings do not directly mutate Asset state; maintenance supervisor promotion and Asset Lifecycle authority remain separate.
-  - Asset Condition and Asset Lifecycle State remain separate controlled concepts.
-  - LTV becomes Recorded only after Safety receipt, scan, and reliable match to the originating electronic record; LTV history is retained.
-  - Operations Record owns concrete structured-record gaps and correction/history semantics, not a generic catch-all form or analytics lifecycle.
-  - Project Tracking owns actual business Projects; routine tasks remain outside it; Project completion does not imply CAPA closure.
-  - Corrective work may be routed to Project Tracking only when the business genuinely recognizes/manages that work as a Project; CAPA and Project lifecycles remain separate.
-  - Environmental remains intentionally deferred until a concrete ManuFactor Environmental workflow/system gap is evidenced.
+open_issue_details:
+  - id: ISSUE-0013
+    question: What happens to an already-selected Operational Coverage Plan when the selected person's qualification is withdrawn before the coverage is used?
+    known: Withdrawn qualification is no longer current eligibility.
+    unknown: Whether coverage selection is automatically invalidated/reopened or requires an explicit supervisor reselection transition.
+  - id: ISSUE-0014
+    question: What is the Project cancellation/abandonment lifecycle after work has begun?
+    known: Project identity/history must be retained and Project lifecycle remains independently owned.
+    unknown: Exact cancellation/abandonment transition, authority, status, and retained evidence.
 
-resolved_targeted_issues:
-  - ISSUE-0004: explicit Nonconformity admission policy
-  - ISSUE-0005: no deterministic Reliability Result to Asset State mapping
-  - ISSUE-0006: qualification evidence and persistent-until-withdrawn lifecycle
-  - ISSUE-0007: LTV returned-paper scan/match/Recorded workflow and retained status history
-  - ISSUE-0008: ProTrack dimension-level statistics only; no kiln-run lineage
-  - ISSUE-0009: controlled Asset condition/lifecycle vocabularies and explicit lifecycle-state transition
-  - ISSUE-0010: CAPA corrective tasks plus effectiveness verification before closure
-  - ISSUE-0011: no separate vacation aggregate at current evidence level
-  - ISSUE-0012: Quality Concern retained identity/status/history
+scenario_validated_business_boundaries:
+  - Quality target changes do not silently rewrite historical Quality Check evaluation basis.
+  - Ambiguous target applicability blocks evaluation rather than selecting arbitrarily.
+  - ProTrack late data may change analytical projections but cannot create fabricated kiln-run lineage.
+  - Kiln Schedule revisions do not rewrite already-started Kiln Run execution history.
+  - LTV scan without a reliable originating-record match cannot transition to Recorded.
+  - Failed CAPA effectiveness verification keeps CAPA active even when all planned tasks were completed.
+  - Operations Record correction preserves source history even after downstream analytics consumed an earlier value.
+  - MP2 hierarchy restructuring changes external structural mapping, not established ManuFactor physical-asset identity by itself.
 
 canonical_files_to_use:
   - docs/ddd/SPECIFICATION.md
   - docs/ddd/CANONICAL-REGISTRY.yaml
   - docs/ddd/issues/unresolved.yaml
+  - docs/ddd/issues/scenario-validation-open.yaml
   - docs/ddd/reports/validation-report.md
   - docs/ddd/reports/scenario-validation.md
+  - docs/ddd/reports/scenario-validation-batch2.md
   - docs/ddd/scenario-validation/README.md
   - docs/ddd/scenario-validation/SCENARIO-001-quality-concern-to-capa.yaml
   - docs/ddd/scenario-validation/SCENARIOS-002-010.yaml
-  - docs/ddd/context-map/context-map.yaml
-  - docs/ddd/context-map/scenario-project-routing.yaml
-  - docs/ddd/integration-contracts/index.yaml
-  - docs/ddd/integration-contracts/scenario-project-routing.yaml
-
-historical_report_note: >
-  Phase-specific reports such as phase14-use-case-query-audit.md and phase15-integration-validation.md are historical completion snapshots and may show earlier counts/open-issue totals. Current state is validation-report.md plus scenario-validation.md, this handoff, and CANONICAL-REGISTRY.yaml.
+  - docs/ddd/scenario-validation/SCENARIOS-011-020.yaml
 
 session_resume: >
-  Specification Phases 1-15, targeted post-Phase-15 refinement, consolidation, and the initial ten-scenario operational validation suite are complete. All ten scenarios passed after two model refinements; no new unresolved domain question was created. Current model is Strategic Stable / Tactical Candidate, PASS WITH WARNINGS, with 10 Context Map relationships and 10 Integration Contracts. Future work should be driven by real new situations, implementation evidence, or a deliberate Tactical Stable review rather than continued abstract discovery.
+  Twenty realistic ManuFactor scenarios have been executed. The strategic model has survived without a confirmed context/aggregate defect. Scenario batch 2 surfaced two real temporal lifecycle questions (ISSUE-0013 and ISSUE-0014) and one Asset identity representation refinement. Current state is Strategic Stable / Tactical Candidate, PASS WITH WARNINGS. Resolve the two open rules before considering Tactical Stable promotion.
