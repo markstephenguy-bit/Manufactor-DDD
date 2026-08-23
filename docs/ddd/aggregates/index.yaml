@@ -72,17 +72,17 @@ aggregates:
     bounded_context: bc.quality-verification
     purpose: Preserve one suspected product-quality concern, its authorized triage history, disposition, and links to later formal quality records without equating intake with a Quality Check or Nonconformity.
     aggregate_root: Quality Concern
-    members: [Quality Concern, retained triage/disposition history, references to linked Quality Check or Nonconformity]
-    invariants: [Concern intake does not automatically create formal quality records; formal triage is restricted to confirmed roles; Nonconformity linkage does not silently close the concern; CAPA lifecycle remains externally owned.]
+    members: [Quality Concern, retained status/triage/disposition history, references to linked Quality Check or Nonconformity]
+    invariants: [Concern intake does not automatically create formal quality records; formal triage is restricted to confirmed roles; Nonconformity linkage does not destroy or replace the concern; CAPA lifecycle remains externally owned; status/history remains referenceable.]
     commands: [Record Quality Concern, Disposition Quality Concern, Link Quality Check to Concern, Link Nonconformity to Concern]
     domain_events: [QualityConcernRecorded, QualityConcernDispositioned, QualityCheckLinkedToConcern, NonconformityLinkedToConcern]
-    transaction_boundary: One concern's intake, authorized triage/disposition, and formal-record references remain coherent through the Quality Concern root.
+    transaction_boundary: One concern's intake, status, authorized triage/disposition, and formal-record references remain coherent through the Quality Concern root.
     external_references: [Quality Check, Nonconformity, employee/person reference]
     repository: repository.quality-verification.quality-concern
     creation_rules: [A concern is a sufficiently identifiable suspected quality issue; non-salaried intake reaches formal triage through the QC channel without specifying implementation.]
-    deletion_rules: [Retained concerns and disposition history are not destructively deleted; exact closure after escalation remains unresolved.]
+    deletion_rules: [Retained concerns and status/disposition history are not destructively deleted; active handling ends through retained status change.]
     status: candidate
-    provenance: {sources: [{type: domain-expert, reference: Phase 14 reconciliation, 2026-08-22, description: Quality Concern is a retained intake/triage record with lifecycle independent of Quality Check and Nonconformity.}], confidence: high, status: candidate}
+    provenance: {sources: [{type: domain-expert, reference: Phase 14 reconciliation and Mark direct 2026-08-23, description: Quality Concern is a retained intake/triage record whose identity/history survives status changes and Nonconformity escalation.}], confidence: high, status: candidate}
 
   - id: aggregate.quality-verification.quality-check
     name: Quality Check
@@ -121,19 +121,19 @@ aggregates:
   - id: aggregate.corrective-action.nonconformity
     name: Nonconformity
     bounded_context: bc.corrective-action
-    purpose: Coordinate one Nonconformity through correction, investigation, corrective-action routing, and closure without taking ownership of externally routed work.
+    purpose: Coordinate one Nonconformity through correction, investigation, corrective-task routing, effectiveness verification, and closure without taking ownership of externally routed work.
     aggregate_root: Nonconformity
-    members: [Nonconformity, Correction, Corrective Action coordination records, routing information, closure evidence]
-    invariants: [Only explicitly accepted findings enter this lifecycle; CAPA closure preserves distinction from external execution work; routed work status is not invented locally.]
-    commands: [Accept Nonconformity, Route Corrective Work, Close Nonconformity]
-    domain_events: [NonconformityAccepted, CorrectiveWorkRouted, NonconformityClosed]
-    transaction_boundary: State changes determining one Nonconformity's coherent CAPA lifecycle go through its root; external work executes separately.
+    members: [Nonconformity, Correction, Corrective Task records, routing information, effectiveness-verification evidence, closure evidence]
+    invariants: [Only explicitly accepted findings enter this lifecycle; corrective work is represented as tasks under the parent; routed work status is not invented locally; required corrective tasks must be complete; post-correction effectiveness must be verified before closure.]
+    commands: [Accept Nonconformity, Route Corrective Work, Complete Corrective Task, Verify Corrective Effectiveness, Close Nonconformity]
+    domain_events: [NonconformityAccepted, CorrectiveWorkRouted, CorrectiveTaskCompleted, CorrectiveEffectivenessVerified, NonconformityClosed]
+    transaction_boundary: State changes determining one Nonconformity's coherent CAPA lifecycle, including task completion and effectiveness verification, go through its root; external execution work remains separately owned.
     external_references: [Quality Concern, Quality Verification Result, Project, Maintenance Work, Safety finding]
     repository: repository.corrective-action.nonconformity
     creation_rules: [Requires a finding plus an explicit supported decision admitting it as a Nonconformity.]
     deletion_rules: [Closed/actioned Nonconformities remain historical records; destructive deletion is unsupported.]
     status: candidate
-    provenance: {sources: [{type: canonical-context, reference: docs/ddd/contexts/bc.corrective-action/context.yaml, description: Corrective Action owns the Nonconformity remediation/closure lifecycle.}], confidence: high, status: candidate}
+    provenance: {sources: [{type: canonical-context, reference: docs/ddd/contexts/bc.corrective-action/context.yaml, description: Corrective Action owns the Nonconformity remediation/closure lifecycle.}, {type: domain-expert, reference: Mark direct, 2026-08-23, description: Corrective work is tasks under the CAPA and closure requires verifying afterward that the correction worked.}], confidence: high, status: candidate}
 
   - id: aggregate.asset-lifecycle.asset
     name: Asset
@@ -216,36 +216,57 @@ aggregates:
     external_references: [Person, Job/Position, Learning Completion]
     repository: repository.training-qualification.qualification
     creation_rules: [Requires person, job/role, acceptable evidence, and grant by supervisor or designated trainer/SME.]
-    deletion_rules: [Qualification history is retained when later withdrawn/superseded; exact expiration/withdrawal semantics remain unresolved.]
+    deletion_rules: [Qualification history is retained when later withdrawn/superseded.]
     status: candidate
     provenance: {sources: [{type: domain-expert, reference: Phase 14 training reconciliation, 2026-08-22, description: Qualification is explicit retained evidence and may be granted by supervisor or designated trainer/SME.}], confidence: high, status: candidate}
 
   - id: aggregate.workforce-availability.coverage-plan
     name: Operational Coverage Plan
     bounded_context: bc.workforce-availability
-    purpose: Maintain a staffing need and the selected coverage for a defined operational time/job requirement consistently.
+    purpose: Keep one operational staffing need and its evaluated/selected replacement coverage consistent.
     aggregate_root: Operational Coverage Plan
-    members: [Operational Coverage Plan, Staffing Gap, Replacement Option references, retained supervisor selection]
-    invariants: [The staffing need/time/job remains explicit; selected replacement is qualified and available; coverage decisions do not rewrite HR/timekeeping or qualification source facts.]
-    commands: [Create Operational Coverage Plan, Select Replacement]
-    domain_events: [StaffingGapIdentified, ReplacementSelected]
-    transaction_boundary: Creating/selecting coverage for one staffing need validates referenced qualification/availability facts consistently at decision time and retains the supervisor decision.
-    external_references: [Person, Operational Qualification, HR/Timekeeping Absence Fact, Crew, Shift]
+    members: [Operational Coverage Plan, Staffing Gap, Replacement Option, selected replacement, retained decision evidence]
+    invariants: [A plan is anchored to an explicit staffing need; selected replacement is qualified and available; supervisor judgment is retained; external source facts are not rewritten.]
+    commands: [Create Operational Coverage Plan, Add Replacement Option, Select Replacement]
+    domain_events: [OperationalCoveragePlanCreated, ReplacementOptionAdded, ReplacementSelected]
+    transaction_boundary: One staffing need, its candidate evaluation, and final selected coverage remain coherent through the root.
+    external_references: [Person, Job/Position, Operational Qualification, availability/timekeeping facts]
     repository: repository.workforce-availability.coverage-plan
-    creation_rules: [Requires a defined staffing need in time/job/crew terms.]
-    deletion_rules: [Historical coverage decisions remain traceable after the staffing period; exact retention rules remain unresolved.]
+    creation_rules: [Requires a defined staffing gap/job/time need.]
+    deletion_rules: [Retained coverage decisions remain historical business records.]
     status: candidate
-    provenance: {sources: [{type: domain-expert, reference: Phase 14 workforce reconciliation, 2026-08-22, description: Qualification and availability are inputs; final ability-to-cover is supervisor judgment retained as record.}], confidence: high, status: candidate}
+    provenance: {sources: [{type: domain-expert, reference: Mark direct, 2026-08-10 through 2026-08-22, description: Replacement selection must combine qualification, availability, and retained supervisor judgment.}], confidence: high, status: candidate}
 
-aggregate_challenge_notes:
-  superseded_findings:
-    - concept: Applicable Quality Target
-      prior_conclusion: No independent aggregate was justified before Phase 14 authority/history clarification.
-      superseded_by: aggregate.quality-verification.applicable-quality-target
-      reason: Phase 14 confirmed ManuFactor maintenance responsibility, salaried-management create/change authority, contextual applicability, and retained target-version history.
-  rejected_or_not_supported_as_separate_aggregates:
-    - {concept: Moisture Outcome, reason: Derived interpretation tied to Kiln Run and external ProTrack measurements; no independent command/invariant lifecycle.}
-    - {concept: Asset Condition, reason: State of Asset under current evidence.}
-    - {concept: Verification Result, reason: Produced by and belongs to Reliability Verification.}
-    - {concept: Replacement Option, reason: Exists within a Coverage Plan and has no independent lifecycle.}
-    - {concept: LTV Form Status, reason: State of an LTV instance rather than an independent consistency boundary.}
+  - id: aggregate.safety-signoff.safety-signoff
+    name: Safety Sign-Off
+    bounded_context: bc.safety-signoff
+    purpose: Retain a discrete Safety Sign-Off lifecycle separately from LTV form-template/instance management where the business process requires an actual sign-off record.
+    aggregate_root: Safety Sign-Off
+    members: [Safety Sign-Off, sign-off evidence/history]
+    invariants: [Sign-Off requires the applicable safety evidence/process; LTV printing alone does not establish sign-off.]
+    commands: [Record Safety Sign-Off]
+    domain_events: [SafetySignOffRecorded]
+    transaction_boundary: One Safety Sign-Off and its required evidence remain coherent.
+    external_references: [Person, Safety requirement, LTV form instance where applicable]
+    repository: repository.safety-signoff.safety-signoff
+    creation_rules: [Requires a distinguishable safety sign-off occurrence and applicable evidence.]
+    deletion_rules: [Completed sign-off remains historical.]
+    status: candidate
+    provenance: {sources: [{type: domain-expert, reference: ISSUE-0002 and Phase 14 Safety reconciliation, description: Safety Sign-Off is a separate Safety responsibility from CAPA and Environmental Compliance.}], confidence: medium, status: candidate}
+
+  - id: aggregate.operations-record.project-action
+    name: Operational Project Action
+    bounded_context: bc.operations-record
+    purpose: Preserve a concrete operational action/record related to a Project without importing the Project lifecycle into Operations Record.
+    aggregate_root: Operational Project Action
+    members: [Operational Project Action, retained occurrence/history details]
+    invariants: [Project reference remains external; Operational Record does not determine Project status.]
+    commands: [Record Operational Project Action]
+    domain_events: [OperationalProjectActionRecorded]
+    transaction_boundary: One operational project-related occurrence and its retained evidence remain coherent.
+    external_references: [Project]
+    repository: repository.operations-record.project-action
+    creation_rules: [Represents a concrete operational occurrence related to a Project.]
+    deletion_rules: [Retained history is preserved.]
+    status: candidate
+    provenance: {sources: [{type: model-reconciliation, reference: Phase 14 Operations, description: Project tracking and Operations Record remain distinct despite cross-reference.}], confidence: medium, status: candidate}
