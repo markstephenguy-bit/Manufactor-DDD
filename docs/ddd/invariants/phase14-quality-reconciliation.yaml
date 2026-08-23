@@ -1,0 +1,108 @@
+invariants:
+  - id: invariant.quality-concern.no-automatic-formalization
+    name: Quality Concern Does Not Automatically Create Formal Quality Records
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.quality-concern
+    rule: Recording or reviewing a Quality Concern must not automatically create a Quality Check or Nonconformity.
+    reason: Concern intake, Quality Check, and Nonconformity are distinct lifecycle concepts; a check is optional and CAPA admission is explicit.
+    triggering_operations: [Record Quality Concern, Disposition Quality Concern, Link Quality Check to Concern, Link Nonconformity to Concern]
+    enforcement_boundary: Quality Concern aggregate and Quality Verification to Corrective Action boundary
+    failure_semantics: Retain the concern independently and require explicit commands/decisions for later formal records.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Concern intake creates neither a Quality Check nor Nonconformity automatically, and Quality Check is optional.
+      confidence: high
+      status: candidate
+
+  - id: invariant.quality-concern.authorized-triage
+    name: Formal Quality Concern Triage Requires Authorized Role
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.quality-concern
+    rule: Formal concern triage/promotion must be performed by management or a designated quality technician; non-salaried employee concerns enter through the QC channel.
+    reason: The domain-expert clarified who controls formal quality triage without defining the implementation of the QC intake channel.
+    triggering_operations: [Disposition Quality Concern, Link Quality Check to Concern, Link Nonconformity to Concern]
+    enforcement_boundary: Quality Concern aggregate
+    failure_semantics: Reject formal disposition/promotion when the acting authority is not supported by the confirmed role rule.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Management and designated quality technicians control formal triage/promotion; non-salaried employees route concerns through QC.
+      confidence: high
+      status: candidate
+
+  - id: invariant.quality-concern.promotion-does-not-close
+    name: Nonconformity Promotion Does Not Close Quality Concern
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.quality-concern
+    rule: Linking or promoting a concern to an accepted Nonconformity must not silently close the source Quality Concern.
+    reason: The two records retain independent lifecycles after escalation.
+    triggering_operations: [Link Nonconformity to Concern, Close Quality Concern]
+    enforcement_boundary: Quality Concern aggregate
+    failure_semantics: Preserve the concern as open unless a separate supported closure decision is made.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Phase 14 reconciliation, 2026-08-22
+          description: Quality Concern remains open when promoted to a Nonconformity unless a later independent closure rule is established.
+      confidence: high
+      status: candidate
+
+  - id: invariant.quality-target.contextual-applicability
+    name: Quality Target Has Explicit Contextual Applicability
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.applicable-quality-target
+    rule: A ManuFactor quality-target parameter must carry enough mill, machine, and process context to determine where the target is applicable.
+    reason: Target values differ by mill and by the machine/process path that produces the lumber.
+    triggering_operations: [Create Quality Target Parameter, Change Quality Target Parameter]
+    enforcement_boundary: Applicable Quality Target Parameter aggregate
+    failure_semantics: Reject an authoritative target configuration whose applicability is ambiguous.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: PHASE14-QUALITY-PARAMETERS
+          description: Applicable quality targets are ManuFactor parameters keyed by applicable context.
+      confidence: high
+      status: candidate
+
+  - id: invariant.quality-target.preserve-history
+    name: Preserve Historical Quality Target Applicability
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.applicable-quality-target
+    rule: Changing a quality-target parameter must preserve prior target versions or snapshots needed to interpret retained Quality Checks.
+    reason: Historical checks must remain interpretable against the target applicable when they were evaluated.
+    triggering_operations: [Change Quality Target Parameter, Retire Quality Target Parameter]
+    enforcement_boundary: Applicable Quality Target Parameter aggregate
+    failure_semantics: Reject changes that destroy the historical evaluation basis referenced by retained checks.
+    status: candidate
+    provenance:
+      sources:
+        - type: existing-model
+          reference: invariant.quality-check.preserve-evaluation-basis
+          description: Existing Quality Check invariants require historical evaluation basis to remain interpretable.
+      confidence: high
+      status: candidate
+
+  - id: invariant.quality-target.management-authority
+    name: Salaried Management Controls Quality Target Parameters
+    bounded_context: bc.quality-verification
+    aggregate: aggregate.quality-verification.applicable-quality-target
+    rule: Only salaried management may create or change ManuFactor-maintained quality-target parameters under the currently confirmed authority rule.
+    reason: Quality-target parameter authority was explicitly clarified by the domain expert.
+    triggering_operations: [Create Quality Target Parameter, Change Quality Target Parameter]
+    enforcement_boundary: Applicable Quality Target Parameter aggregate
+    failure_semantics: Reject parameter creation/change by an actor outside the confirmed authority set.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: PHASE14-QUALITY-PARAMETER-AUTHORITY
+          description: Salaried management may create/change quality-target parameters.
+      confidence: confirmed
+      status: candidate
