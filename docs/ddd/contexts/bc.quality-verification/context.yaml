@@ -7,24 +7,29 @@ model_statement: >
   maintained as a ManuFactor parameter for the applicable mill/machine/process path. The target is therefore
   part of ManuFactor's quality-verification model rather than an ad hoc external lookup performed at check time.
   Salaried management governs creation and change of these target parameters. A failed check is a verification
-  fact and is not automatically identical to a Corrective Action Nonconformity.
+  fact and is not automatically identical to a Corrective Action Nonconformity. A Quality Concern is a retained
+  historical record whose identity persists through status changes; escalation or later disposition changes its
+  status and references but does not destroy the original concern.
 responsibilities:
   - Maintain quality-target parameters needed for the relevant mill/machine/process contexts under salaried-management authority.
   - Determine which maintained target parameter applies to a given quality check.
   - Capture product measurements and checks.
   - Interpret measurements against applicable targets.
   - Retain verification results and evidence, including the target/basis used for evaluation.
+  - Retain Quality Concern identity, status history, disposition history, and links to later formal quality records for future reference.
 scope:
   - Product quality measurements
   - Quality-target parameter maintenance
   - Contextual target applicability by mill, machine, and process path
   - Quality check evaluation
   - Verification-result history
+  - Quality Concern status/history and retained formal-record references
 out_of_scope:
   - CAPA/root-cause/remediation lifecycle
   - Ownership of machine setup itself
   - Ownership of external market standards or SPIB governance
 owned_concepts:
+  - Quality Concern
   - Quality Check
   - Quality Measurement
   - Quality Verification Result
@@ -35,7 +40,10 @@ external_concepts:
   - Machine
   - Process path
   - External finished-size standard
+  - Corrective Action Nonconformity
 ubiquitous_language:
+  - quality concern
+  - concern status
   - quality target
   - quality parameter
   - quality check
@@ -50,12 +58,17 @@ business_rules:
   - A quality result must be evaluated against the maintained target applicable to its mill/machine/process context.
   - Verification evidence must preserve the measurement and the target/evaluation basis used at the time of the check.
   - A failed check does not become a Corrective Action Nonconformity without an explicit domain transition/rule.
+  - A Quality Concern retains the same identity across triage, escalation, disposition, and later status changes.
+  - Quality Concern records are not destructively deleted when their active handling ends; they change status and remain available for later reference.
+  - Linking or escalating a Quality Concern to a Nonconformity changes retained concern state/reference semantics but does not erase or replace the original Quality Concern.
+  - Exact status labels may be refined later, but status change rather than record destruction is the governing lifecycle rule.
 owner: unresolved
 domain_experts: [Mark]
 integration_surface:
   - References machine/process context from Operations or Asset Lifecycle as needed.
   - External standards or Lumber Division guidance may inform parameter values without becoming the runtime authority for each check.
   - May produce a finding consumed by Corrective Action when domain rules require it.
+  - Retains accepted Nonconformity references for historical Quality Concern traceability without owning CAPA lifecycle state.
 upstream_dependencies:
   - bc.asset-lifecycle
 downstream_consumers:
@@ -72,5 +85,8 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-22 parameter authority clarification
       description: Salaried management is authorized to create or change ManuFactor quality-target parameters.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-23 Quality Concern retention clarification
+      description: Quality records like concerns never die; they change status so the same retained record can be referenced later.
   confidence: high
   status: candidate
