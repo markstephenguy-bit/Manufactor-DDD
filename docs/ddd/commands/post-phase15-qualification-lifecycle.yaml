@@ -4,12 +4,12 @@ commands:
     bounded_context: bc.training-competency
     target_aggregate: aggregate.training-qualification.qualification
     intent: Explicitly end an established Operational Qualification while retaining the prior qualification and withdrawal history.
-    initiators: [employee supervisor, designated trainer or subject-matter expert]
+    initiators: [employee supervisor]
     input: [operational qualification identity, withdrawal reason, effective time]
-    preconditions: [The Operational Qualification exists and is currently valid; the actor is within confirmed qualification authority.]
+    preconditions: [The Operational Qualification exists and is currently valid; the actor is the responsible employee supervisor managing the qualification.]
     invariants_checked: [invariant.qualification.persists-until-withdrawn, invariant.qualification.withdrawal-preserves-history]
     possible_events: [event.training-qualification.operational-qualification-withdrawn]
-    failure_conditions: [Qualification does not exist; actor lacks authority; withdrawal would erase prior qualification/evidence history.]
+    failure_conditions: [Qualification does not exist; actor is not the responsible supervisor; withdrawal would erase prior qualification/evidence history.]
     idempotency_expectation: Repeating the same withdrawal against an already-withdrawn qualification must not create a second contradictory withdrawal fact.
     status: candidate
     provenance:
@@ -17,5 +17,8 @@ commands:
         - type: domain-expert
           reference: Mark direct, 2026-08-23 qualification lifecycle clarification
           description: Operational Qualification remains valid until someone explicitly withdraws it.
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23 scenario-012 clarification
+          description: The supervisor manages the qualification; withdrawal is not an independent external action surprising the coverage decision.
       confidence: high
       status: candidate
