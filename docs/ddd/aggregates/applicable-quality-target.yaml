@@ -13,12 +13,10 @@ invariants:
 commands:
   - Create Quality Target Parameter
   - Change Quality Target Parameter
-  - Retire Quality Target Parameter
 domain_events:
   - QualityTargetParameterCreated
   - QualityTargetParameterChanged
-  - QualityTargetParameterRetired
-transaction_boundary: Creating, changing, or retiring one contextual target parameter and its retained version history must remain consistent through this root.
+transaction_boundary: Creating or changing one contextual target parameter and its retained version history must remain consistent through this root.
 external_references:
   - Mill
   - Machine
@@ -30,7 +28,7 @@ creation_rules:
   - Creation authority is limited to salaried management under current evidence.
 deletion_rules:
   - A target version referenced by a retained Quality Check must remain historically resolvable.
-  - Retirement/supersession is preferred to destructive deletion once used.
+  - Exact retirement/supersession behavior remains future domain-rule work and is not modeled as a command yet.
 status: candidate
 provenance:
   sources:
