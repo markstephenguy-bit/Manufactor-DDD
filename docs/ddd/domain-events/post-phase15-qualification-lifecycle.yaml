@@ -1,0 +1,19 @@
+domain_events:
+  - id: event.training-qualification.operational-qualification-withdrawn
+    name: OperationalQualificationWithdrawn
+    bounded_context: bc.training-competency
+    owning_aggregate: aggregate.training-qualification.qualification
+    meaning: An authorized person explicitly ended a previously valid Operational Qualification while retaining its history.
+    trigger: Successful WithdrawOperationalQualification command.
+    payload_concepts: [Operational Qualification identity, person reference, job/role reference, withdrawal reason, actor, effective time]
+    consumers: [Training and Qualification views, contract.training-qualification-to-workforce-availability]
+    business_significance: Ends qualification prospectively without erasing the historical qualification decision or implying that elapsed time caused expiration.
+    ordering_requirements: Occurs after OperationalQualificationEstablished and at most once for the same effective withdrawal state unless later requalification creates a new valid qualification state.
+    status: candidate
+    provenance:
+      sources:
+        - type: domain-expert
+          reference: Mark direct, 2026-08-23 qualification lifecycle clarification
+          description: Operational Qualification remains valid until explicitly withdrawn.
+      confidence: high
+      status: candidate
