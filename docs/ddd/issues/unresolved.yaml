@@ -1,13 +1,4 @@
 issues:
-  - id: ISSUE-0005
-    title: What exact rule maps Reliability Verification results to Asset state?
-    description: Reliability Verification Result and Asset Condition/Lifecycle State are distinct. The exact Asset-domain transition rule remains unknown.
-    affected_objects: [bc.reliability-verification, bc.asset-lifecycle, aggregate.reliability-verification.verification, aggregate.asset-lifecycle.asset]
-    evidence: [invariant.verification.result-not-asset-condition, invariant.asset.state-change-records-history]
-    blocking: false
-    needed_input: domain-rule discovery
-    status: open
-
   - id: ISSUE-0006
     title: What evidence and rules establish, review, expire, or withdraw Operational Qualification?
     description: Grant authority is already confirmed as the employee's supervisor or a designated trainer/subject-matter expert. Learning completion is not automatically Operational Qualification. Exact rules for acceptable evidence, review, expiration, and withdrawal remain to be discovered.
@@ -37,9 +28,9 @@ issues:
 
   - id: ISSUE-0009
     title: What is the controlled Asset condition and lifecycle-state vocabulary?
-    description: Asset identity and state ownership are established, but the exact allowed condition/state vocabulary and transition policy remain tactical work.
+    description: Asset identity and state ownership are established, but the exact allowed condition/state vocabulary and transition policy remain tactical work. This is also the remaining unknown needed when a maintenance supervisor promotes a Reliability finding into an Asset-state change.
     affected_objects: [bc.asset-lifecycle, aggregate.asset-lifecycle.asset, value-object.asset-lifecycle.asset-condition, value-object.asset-lifecycle.lifecycle-state]
-    evidence: [invariant.asset.stable-identity, invariant.asset.state-change-records-history]
+    evidence: [invariant.asset.stable-identity, invariant.asset.state-change-records-history, bc.reliability-verification]
     blocking: false
     needed_input: domain-rule discovery
     status: open
@@ -55,9 +46,9 @@ issues:
 
   - id: ISSUE-0012
     title: What independent rule closes a Quality Concern after disposition or Nonconformity escalation?
-    description: Quality Concern is a retained independent lifecycle. Promotion/linkage to a Nonconformity explicitly does not close it automatically; the later closure decision/rule remains unknown.
+    description: Quality Concern is a retained independent lifecycle. A concern may be closed/dispositioned with retained reason when authorized review determines no formal escalation is justified. Promotion/linkage to a Nonconformity explicitly does not close it automatically; the independent closure rule after escalation remains unknown.
     affected_objects: [bc.quality-verification, aggregate.quality-verification.quality-concern]
-    evidence: [invariant.quality-concern.promotion-does-not-close, contract.corrective-action-to-quality-verification]
+    evidence: [invariant.quality-concern.promotion-does-not-close, contract.corrective-action-to-quality-verification, Phase 14 Quality reconciliation]
     blocking: false
     needed_input: domain-rule discovery
     status: open
@@ -83,6 +74,17 @@ resolved_issues:
     affected_objects: [bc.quality-verification, bc.corrective-action, aggregate.quality-verification.quality-check, aggregate.quality-verification.quality-concern, aggregate.corrective-action.nonconformity, policy.corrective-action.determine-nonconformity-admission]
     evidence: [invariant.quality-check.failure-not-nonconformity, invariant.nonconformity.explicit-acceptance, policy.corrective-action.determine-nonconformity-admission, Phase 14 Quality reconciliation]
     resolved_by: confirmed-domain-evidence-and-ISO-vocabulary-baseline
+    resolved_at: 2026-08-22
+    blocking: false
+    status: resolved
+
+  - id: ISSUE-0005
+    title: What exact rule maps Reliability Verification results to Asset state?
+    answer: There is no deterministic result-to-state mapping; maintenance-supervisor promotion is the decision gate, and Asset Lifecycle owns any resulting state transition.
+    resolution: A millwright-recorded finding or failed Reliability Verification remains a verification fact. The maintenance supervisor decides whether the finding is promoted into formal action or an Asset-state change; the Reliability Manager remains accountable for the reliability process. The actual allowed Asset condition/lifecycle state and transition selected after promotion remain governed by ISSUE-0009 rather than by Reliability Verification.
+    affected_objects: [bc.reliability-verification, bc.asset-lifecycle, aggregate.reliability-verification.verification, aggregate.asset-lifecycle.asset]
+    evidence: [bc.reliability-verification, invariant.verification.result-not-asset-condition, invariant.asset.state-change-records-history, contract.reliability-verification-to-asset-lifecycle]
+    resolved_by: confirmed-domain-evidence-audit
     resolved_at: 2026-08-22
     blocking: false
     status: resolved
