@@ -1,9 +1,9 @@
 model_state: Strategic Stable / Tactical Candidate; Specification Phases 1-15 complete at current evidence level
 session_state: ready-for-new-chatgpt-session
-session_refreshed_at: 2026-08-22T22:15:00-05:00
+session_refreshed_at: 2026-08-22T22:30:00-05:00
 current_phase: post-Phase-15 targeted domain-rule refinement
 last_completed: Specification Phase 15 — Integration Validation
-current_focus: Resolve explicit nonblocking tactical/domain-rule issues only when useful; do not restart completed whole-map discovery passes
+current_focus: Resolve explicit nonblocking tactical/domain-rule issues only when useful; do not restart completed Phase 14 discovery/canonicalization or another whole-map specification pass
 blocking_issues: []
 
 next_action: >
@@ -51,57 +51,66 @@ phase14_tactical_reconciliation:
   new_candidate_aggregates:
     - aggregate.quality-verification.quality-concern
     - aggregate.quality-verification.applicable-quality-target
-  new_candidate_commands: 6
-  new_candidate_domain_events: 6
-  new_candidate_invariants: 6
-  new_candidate_entities: 2
-  new_candidate_repositories: 2
+  quality_commands_added: 6
+  quality_domain_events_added: 6
+  quality_invariants_added: 6
+  quality_entities_added: 2
+  quality_repositories_added: 2
+  workforce_invariant_added:
+    - invariant.coverage.need-is-explicit
   rationale:
     quality_concern: >
       Phase 14 confirmed independent retained identity, triage/disposition history, authorized formal review, optional Quality Check linkage, and independent Nonconformity linkage. Exact closure after escalation remains unresolved and is not modeled as a command.
     applicable_quality_target: >
-      Phase 14 confirmed ManuFactor-maintained contextual target parameters plus salaried-management create/change authority and historical applicability requirements. This supersedes the earlier aggregate challenge note that lacked enough evidence for an independent consistency boundary.
+      Phase 14 confirmed ManuFactor-maintained contextual target parameters plus salaried-management create/change authority and historical applicability requirements. The canonical Aggregate index explicitly supersedes the earlier challenge conclusion that lacked enough evidence for an independent consistency boundary.
+    workforce_coverage: >
+      Coverage must be evaluated against an explicit staffing need/job/time context. Qualification and availability are prerequisite facts; final ability-to-cover selection remains supervisor judgment retained by Workforce Availability.
 
 phase15_result:
   status: complete-at-current-evidence
-  context_relationship_count: 10
-  integration_contract_count: 10
-  additions:
-    - rel.quality-concern-to-corrective-action / contract.quality-concern-to-corrective-action
-    - rel.corrective-action-to-quality-verification / contract.corrective-action-to-quality-verification
+  context_relationship_count: 9
+  integration_contract_count: 9
+  quality_boundaries:
+    - rel.quality-verification-to-corrective-action / contract.quality-verification-to-corrective-action covers both Quality Concern and Quality Check evidence for explicit Nonconformity admission evaluation.
+    - rel.corrective-action-to-quality-verification / contract.corrective-action-to-quality-verification provides accepted Nonconformity identity/reference for Quality Concern traceability only.
+  reconciliation:
+    - Redundant Phase 15 Quality Concern relationship/contract sidecars were removed after their semantics were merged into canonical indexes.
+    - Temporary Phase 14 command/event sidecars were removed after their objects were merged into canonical indexes.
+    - Workforce command/event/issue invariant references were normalized to canonical IDs.
+    - Phase 14 Repository records were normalized to the normative Repository schema using aggregate rather than aggregate_root.
   validation:
     - No direct cross-context Aggregate/Entity sharing was introduced.
     - No Shared Kernel is asserted.
     - Every cross-context interaction used by current canonical Phase 14 artifacts is represented through explicit relationship/contract semantics.
-    - Quality Concern -> Nonconformity is an explicit semantic translation, never automatic admission.
-    - Corrective Action remains authoritative for CAPA state; Quality Verification retains only cross-context traceability references.
+    - Quality Concern or failed Quality Check evidence never creates a Nonconformity automatically.
+    - Corrective Action remains authoritative for CAPA state; Quality Verification retains only its own quality records and cross-context traceability references.
 
 current_model_counts:
   bounded_contexts: 10
   aggregates: 14
   aggregate_root_entities: 14
   value_objects: 8
-  invariants: 28
-  commands: 29
-  domain_events: 27
+  invariants: 29
+  commands: 30
+  domain_events: 30
   policies: 2
   domain_services: 0
   repositories: 14
   factories: 0
   queries: 13
   application_use_cases: 14
-  context_relationships: 10
-  integration_contracts: 10
+  context_relationships: 9
+  integration_contracts: 9
 
 open_nonblocking_issues:
   - ISSUE-0004: failed Quality Check to Nonconformity exact admission rule
   - ISSUE-0005: Reliability Verification Result to Asset state exact transition rule
   - ISSUE-0006: Operational Qualification evidence/expiration/withdrawal rules; grant authority is known
-  - ISSUE-0007: process-specific LTV approval/sign-off transition rules
+  - ISSUE-0007: process-specific LTV completion/approval/sign-off transition rules
   - ISSUE-0008: Kiln Run to ProTrack moisture correlation identifiers/rules
   - ISSUE-0009: exact Asset condition/lifecycle-state vocabulary
-  - ISSUE-0010: child Corrective Action identity and CAPA closure rules
-  - ISSUE-0011: whether vacation planning needs a distinct aggregate
+  - ISSUE-0010: child Corrective Action identity and detailed CAPA closure rules
+  - ISSUE-0011: whether vacation planning needs a distinct Aggregate
   - ISSUE-0012: independent Quality Concern closure rule after disposition/escalation
 
 important_completed_business_decisions:
@@ -110,31 +119,33 @@ important_completed_business_decisions:
   - Project means a real Project using conventional project-management semantics.
   - Operational Qualification grant authority includes the employee supervisor or a designated trainer/SME.
   - Workforce replacement selection is ultimately a supervisor judgment retained as business history; qualification and availability remain prerequisite inputs.
-  - MP2 provides hierarchy and WR/WO transaction facts; ManuFactor owns richer asset identity/condition/lifecycle/history semantics.
+  - MP2 provides hierarchy and WR/WO transaction facts; ManuFactor owns richer Asset identity/condition/lifecycle/history semantics.
   - Reliability findings may be logged by a millwright; maintenance supervisor decides promotion; Reliability Manager is accountable.
   - Quality Concern, Quality Check, and Nonconformity are distinct lifecycle concepts.
   - Management/designated quality technicians control formal Quality Concern triage; non-salaried concerns route through the QC channel without inventing its implementation.
   - Quality Check is optional before Nonconformity; a failed check is not automatically a Nonconformity.
   - Applicable quality targets are ManuFactor-maintained contextual parameters; salaried management may create/change them.
   - CAPA belongs to Quality; the affected department's salaried Quality office owns the Nonconformity/CAPA lifecycle while routed execution remains externally owned.
-  - LTV is a controlled workflow record with exact template/version, applicability, completion/sign-off evidence, and workflow progression.
+  - LTV is a controlled workflow record with exact template/version, applicability, completion/sign-off evidence, and workflow progression; exact later transition rules remain ISSUE-0007.
   - Environmental remains a confirmed opportunity area but is deferred until concrete process gaps are identified.
 
 canonical_phase14_15_files:
   - docs/ddd/queries/index.yaml
   - docs/ddd/application-use-cases/index.yaml
-  - docs/ddd/aggregates/quality-concern.yaml
-  - docs/ddd/aggregates/applicable-quality-target.yaml
+  - docs/ddd/aggregates/index.yaml
+  - docs/ddd/commands/index.yaml
+  - docs/ddd/domain-events/index.yaml
   - docs/ddd/concepts/phase14-quality-reconciliation.yaml
   - docs/ddd/entities/phase14-quality-reconciliation.yaml
   - docs/ddd/invariants/phase14-quality-reconciliation.yaml
-  - docs/ddd/commands/phase14-quality-reconciliation.yaml
-  - docs/ddd/domain-events/phase14-quality-reconciliation.yaml
+  - docs/ddd/invariants/phase14-workforce-reconciliation.yaml
   - docs/ddd/repositories/phase14-quality-reconciliation.yaml
-  - docs/ddd/context-map/phase15-quality-concern.yaml
-  - docs/ddd/integration-contracts/phase15-quality-concern.yaml
+  - docs/ddd/context-map/context-map.yaml
+  - docs/ddd/integration-contracts/index.yaml
+  - docs/ddd/reports/phase14-use-case-query-audit.md
+  - docs/ddd/reports/phase15-integration-validation.md
   - docs/ddd/reports/validation-report.md
   - docs/ddd/issues/unresolved.yaml
 
 session_resume: >
-  Specification Phases 14 and 15 are complete at current evidence level. Do not reopen the Phase 14 subdomain interview or redo canonicalization. Continue only with targeted unresolved business-rule refinement or model hardening, using GitHub as source of truth and keeping cross-context authority explicit.
+  Specification Phases 14 and 15 are complete at current evidence level. Do not reopen the Phase 14 subdomain interview or redo canonicalization. Continue only with targeted unresolved business-rule refinement or tactical hardening, using GitHub as source of truth and keeping cross-context authority explicit.
