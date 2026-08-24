@@ -1,261 +1,106 @@
 phase: whole-ddd-reusable-component-discovery
-status: end-of-shift-implementation-seams-reconciled
+status: discovery-only-macro-service-pass
 updated_at: 2026-08-24
 semantic_authority: docs/ddd
+process_gate:
+  artifact: docs/development-architecture/component-discovery/discovery-completion-gate.md
+  rule: do-not-enter-ddd-driven-design-until-no-major-discovery-work-remains
+  exit_requires_mark_confirmation: true
+  design_oriented_artifacts_created_during_prior-drift: parked-do-not-advance
+
 architecture_evidence:
   - repository: markstephenguy-bit/Manufactor
-    role: current implementation evidence
+    role: current implementation evidence only
   - repository: markstephenguy-bit/ManuFactor-arch
-    role: current architecture substrate evidence
+    role: current architecture substrate evidence only
 
-artifacts:
-  candidate_component_map: docs/development-architecture/component-discovery/whole-ddd-component-map.md
-  implementation_boundary_reconciliation: docs/development-architecture/component-discovery/implementation-boundary-reconciliation.md
-  ddd_to_existing_component_mapping: docs/development-architecture/component-discovery/ddd-to-existing-component-mapping.md
-  port_capability_gap_analysis: docs/development-architecture/component-discovery/port-capability-gap-analysis.md
-  target_component_topology: docs/development-architecture/component-discovery/target-component-topology.md
-  end_of_shift_mes_data_lake_pass: docs/development-architecture/component-discovery/end-of-shift-mes-data-lake-pass.md
-  dotnet_boundary_fitness_spec: docs/development-architecture/component-discovery/dotnet-boundary-fitness-spec.md
-  end_of_shift_publication_contract: docs/development-architecture/component-discovery/end-of-shift-publication-contract.yaml
-  operations_form_evidence: docs/development-architecture/component-discovery/operations-record-form-evidence-2026-08-24.md
-  semantic_promotion_guardrail: docs/development-architecture/component-discovery/semantic-promotion-guardrail.md
-  end_of_shift_implementation_reconciliation: docs/development-architecture/component-discovery/end-of-shift-implementation-reconciliation.md
+current_objective: >
+  Complete a whole-DDD macro-service/reusable-component discovery pass across all 10
+  Bounded Contexts. Determine recurring responsibilities, consumers, overlaps,
+  decompositions, local-only helpers, source-authority implications, and major gaps.
+  Do not proceed into implementation/design shaping until this pass has no major work left.
 
-resolved_architecture_directions:
-  deployment:
-    decision: preserve-current-compact-multiprocess-topology
-    guardrail: bounded-context-does-not-imply-deployable
-    new_deployable_requires:
-      - independent-scaling-driver
-      - failure-isolation-driver
-      - security-boundary-driver
-      - incompatible-runtime-driver
-      - independently-managed-availability-driver
-  persistence:
-    decision: preserve-current-postgresql-and-normalized-database-approach
-    guardrail: physical-co-location-does-not-transfer-domain-ownership
-    ownership_classes:
-      - bounded-context-owned
-      - shared-technical-owned
-      - projection-read-owned
-      - external-source-copy-cache
-  transactions:
-    decision: follow-aggregate-consistency-boundaries
-    prohibited_default: cross-context-acid-transaction-because-tables-share-database
-  history:
-    decision: shared-postgresql-retained-history-mechanics
-    rejected_default: event-sourcing-only-because-history-is-common
-  identity_and_references:
-    decision: reuse-catalog-uuid-reference-thing-link-mechanics-first
-    guardrail: technical-resolution-does-not-own-domain-identity-meaning
-    mp2_asset_lifecycle_forcing_case: deferred-requires-deeper-discovery
-  evidence:
-    decision: reuse-storage-and-document-capabilities
-    guardrail: evidence-storage-does-not-decide-business-sufficiency
-  integration:
-    decision: shared-integration-runtime-plus-source-specific-translators-and-destination-adapters
-    first_concrete_next_forcing_case: end-of-shift-operations-form-to-mes-data-lake
-    cron_etl_current_state: host-shell-no-etl-job-implemented
-    analytics_port_current_state: marker-interface-no-publication-contract-implemented
-    guardrail: preserve-source-authority-and-never-fabricate-lineage
-  projections:
-    decision: distinguish-local-operational-cross-context-operational-and-analytical-reads
-    cross_context_composition: begin-as-in-process-application-read-pattern
-    end_of_shift_analytical_publication: operations-record-authority-with-analytics-etl-copy-to-mes-data-lake
-    guardrail: projection-does-not-create-write-authority
-  authorization:
-    decision: shared-login-profile-permission-enforcement-with-bc-owned-business-requirements
-    reconciliation_needed: architecture-substrate-still-describes-identity-permissions-as-ad-driven-while-current-implementation-plan-makes-profile-role-tier-manufactor-owned
-  workflow:
-    decision: existing-workflow-engine-is-orchestration-infrastructure
-    guardrail: domain-lifecycle-validity-remains-bounded-context-owned
-  target_topology:
-    decision: ten-domain-aligned-implementation-homes-plus-shared-technical-substrate
-    modules:
-      - implementation: AssetManagement
-        bounded_context: bc.asset-lifecycle
-      - implementation: Capa
-        bounded_context: bc.corrective-action
-      - implementation: KilnDrying
-        bounded_context: bc.kiln-operations
-      - implementation: OperationalReporting
-        bounded_context: bc.operations-record
-      - implementation: ProjectTracking
-        bounded_context: bc.project-tracking
-      - implementation: QualityVerification
-        bounded_context: bc.quality-verification
-        status: add-when-implementation-reaches-context
-      - implementation: Afal
-        bounded_context: bc.reliability-verification
-      - implementation: LtvForms
-        bounded_context: bc.safety-signoff
-      - implementation: Training
-        bounded_context: bc.training-competency
-      - implementation: Workforce
-        bounded_context: bc.workforce-availability
+required_macro_service_discovery_areas:
+  - identity-and-reference-resolution
+  - catalog-hierarchy-reference-data
+  - persistence-data-access
+  - retained-history-audit
+  - forms-structured-capture-mechanics
+  - evidence-documents-storage
+  - external-system-integration
+  - translation-anti-corruption-provenance
+  - analytics-data-lake-projection
+  - operational-read-composition
+  - authorization-responsibility
+  - rules-evaluation-mechanics
+  - workflow-orchestration
+  - routing-external-work-references
+  - notification-attention
+  - scheduling-jobs
+  - search
+  - printing-document-composition
+  - other-repeated-responsibilities-exposed-by-ddd
 
-operations_form_modeling:
-  classification:
-    first_hour_production_summary: operations-form
-    end_of_shift_report: operations-form
-  prohibited_inference: separate-domain-type-from-layout-fields-or-timing-alone
-  semantic_promotion_requires_one_or_more:
-    - distinct-business-meaning-or-identity
-    - distinct-lifecycle
-    - distinct-invariants
-    - distinct-authority
-    - distinct-state-ownership
-  population_strategy: pull-first-manual-by-exception
-  provenance_requirement: distinguish-pulled-calculated-manual-and-overridden-values-where-material
+candidate_evaluation_requirements:
+  - repeated-responsibility
+  - all-current-consuming-bounded-contexts
+  - three-materially-different-consumers-where-possible
+  - genuinely-shared-capability
+  - domain-meaning-that-must-remain-local
+  - existing-port-or-shared-service-coverage
+  - duplicate-or-overlap-check
+  - decomposition-check
+  - local-helper-versus-macro-service-check
+  - source-authority-and-provenance-impact
+  - major-evidence-gaps
+  - confidence-status
 
-existing_component_role_changes:
-  VehicleManagement:
-    target: feature-grouping-under-asset-lifecycle
-    prohibited: independent-asset-lifecycle-owner
-  InspectionsCalibration:
-    target: decompose-by-actual-semantic-owner-when-touched
-    prohibited: generic-verification-domain
-  ParameterProcessChange:
-    target: application-feature-only-where-concrete-use-case-remains
-    prohibited: universal-domain-change-owner
-  Environmental:
-    target: deferred-until-domain-evidence
-  Risk:
-    target: deferred-until-domain-evidence
-  CustomerComplaints:
-    target: deferred-until-domain-evidence
-  SupplierQuality:
-    target: deferred-or-map-only-if-future-domain-evidence-supports-it
+phase_exit_criteria:
+  - all-10-bounded-contexts-checked-against-macro-service-inventory
+  - every-candidate-has-explicit-consumer-map
+  - materially-different-consumers-compared-where-possible
+  - duplicate-and-overlapping-services-reconciled
+  - broad-services-decomposed-or-explicitly-justified
+  - superficial-structural-abstractions-rejected
+  - major-integration-and-source-authority-implications-identified
+  - no-major-reusable-capability-category-unexamined
+  - remaining-open-items-do-not-threaten-macro-service-map
+  - mark-confirms-no-major-discovery-work-remains
 
-high_confidence_reusable_capabilities:
-  - identity-reference-resolution-mechanics
-  - retained-history-audit-mechanics
-  - evidence-document-mechanics
-  - external-source-integration-provenance
-  - projection-query-read-composition
-  - authorization-responsibility-enforcement
-  - operations-form-mechanics-without-generic-form-domain-ownership
+parked_design_artifacts:
+  - docs/development-architecture/component-discovery/implementation-boundary-reconciliation.md
+  - docs/development-architecture/component-discovery/target-component-topology.md
+  - docs/development-architecture/component-discovery/dotnet-boundary-fitness-spec.md
+  - docs/development-architecture/component-discovery/end-of-shift-mes-data-lake-pass.md
+  - docs/development-architecture/component-discovery/end-of-shift-publication-contract.yaml
+  - docs/development-architecture/component-discovery/end-of-shift-implementation-reconciliation.md
+  - docs/development-architecture/component-discovery/end-of-shift-field-source-candidates.yaml
+  - docs/development-architecture/component-discovery/port-capability-gap-analysis.md
 
-constrained_candidates:
-  - effective-dated-parameter-mechanics
-  - work-routing-external-reference-mechanics
-  - workflow-state-machine-mechanics
+usable_discovery_artifacts:
+  - docs/development-architecture/component-discovery/whole-ddd-component-map.md
+  - docs/development-architecture/component-discovery/ddd-to-existing-component-mapping.md
+  - docs/development-architecture/component-discovery/operations-record-form-evidence-2026-08-24.md
+  - docs/development-architecture/component-discovery/semantic-promotion-guardrail.md
+  - docs/development-architecture/component-discovery/discovery-completion-gate.md
 
-material_architecture_gaps:
-  - cross-context-operational-read-composition-pattern
-  - identity-login-versus-manufactor-owned-profile-permission-record-synchronization
-  - end-of-shift-field-source-and-calculation-map
-  - end-of-shift-to-mes-data-lake-destination-contract-and-ingestion-details
-  - operations-form-persistence-and-application-model
-  - operations-form-field-provenance-and-override-representation
-  - operations-record-publication-read-export-seam
-  - publication-checkpoint-persistence
-  - actual-cronetl-job-orchestration
-  - future-external-reference-mapping-after-source-specific-discovery
-  - linked-document-and-evidence-integrity-completeness
-
-rejected_shared_domain_abstractions:
-  - generic-record
-  - generic-form-domain-aggregate
-  - generic-workflow-item
-  - generic-task
-  - generic-verification
-  - universal-enterprise-domain-entity
-  - universal-status
-  - universal-parameter-domain-model
-  - analytics-bounded-context-from-tooling
-
-implementation_fitness_rules:
-  - no-bc-per-deployable-assumption
-  - one-authoritative-writer-per-domain-state
-  - no-cross-context-direct-table-mutation
-  - no-cross-context-orm-write-navigation
-  - no-shared-transaction-from-physical-db-co-location
-  - preserve-source-authority-and-provenance
-  - never-fabricate-source-lineage
-  - structural-artifact-difference-does-not-prove-domain-type
-  - shared-mechanics-cannot-approve-domain-transitions
-  - read-composition-cannot-create-write-authority
-  - analytics-models-cannot-be-command-authority
-  - analytics-delivery-failure-cannot-rollback-valid-operations-record
-  - external-adapters-cannot-directly-perform-domain-decisions
-  - destination-client-cannot-leak-into-operations-record-domain
-  - cronetl-cannot-reference-operationalreporting-domain-or-infrastructure-internals
-  - analytics-etl-cannot-use-operationalreporting-persistence-entities-as-contracts
-  - source-revision-and-idempotency-must-survive-analytical-publication
-  - generalization-requires-materially-different-context-tests
-  - check-existing-ports-before-adding-capability
-  - physical-db-or-code-sharing-does-not-imply-semantic-ownership
-
-new_domain_evidence:
-  - date: 2026-08-24
-    source: Mark direct
-    statement: End-of-Shift Reporting needs to get into the MES data lake.
-    effect: makes-a-downstream-analytical-destination-concrete-for-operations-record
-  - date: 2026-08-24
-    source: Mark direct
-    statement: MP2 to Asset Lifecycle needs substantially more work before it is ready.
-    effect: removes-mp2-asset-lifecycle-as-first-reference-contract-forcing-case
-  - date: 2026-08-24
-    source: Mark-provided-current-report-forms
-    statement: First Hour Production Summary and End of Shift Report are current Diboll dry-end operations forms with overlapping field sets.
-    effect: supplies-concrete-operations-form-evidence-and-end-of-shift-payload-fields
-  - date: 2026-08-24
-    source: Mark direct
-    statement: First Hour and End of Shift are operations forms, not distinct types.
-    effect: corrects-overpromotion-from-form-variation-to-domain-type
-  - date: 2026-08-24
-    source: Mark direct
-    statement: Pull as many operations-form fields automatically as possible.
-    effect: establishes-pull-first-manual-by-exception-population-strategy
+concrete_use_case_rule: >
+  Concrete cases such as End-of-Shift Reporting may be used only to test whether a
+  candidate macro service actually generalizes. They must not become the primary
+  workstream during this phase unless Mark explicitly changes the phase.
 
 mp2_asset_lifecycle_readiness:
   status: discovery-required-before-contract-design
-  requires:
-    - inspect-real-mp2-hierarchy-and-identifiers
-    - distinguish-stable-from-mutable-identifiers
-    - understand-hierarchy-restructuring-behavior
-    - inspect-wr-wo-equipment-correlation
-    - establish-bootstrap-and-unmatched-identity-rules
-    - validate-field-level-source-authority
-    - define-mapping-history-only-after-source-evidence
-
-end_of_shift_mes_data_lake_readiness:
-  status: implementation-seams-defined-destination-and-field-sources-open
-  already_defined:
-    - operations-form-under-operations-record-not-separate-domain-type
-    - pull-first-manual-by-exception
-    - operations-record-remains-authoritative-for-submitted-form
-    - source-and-delivery-transactions-are-separate
-    - source-record-and-revision-provenance-required
-    - idempotent-retry-required
-    - analytics-etl-owns-delivery-checkpoint-mechanics
-    - current-cronetl-is-reusable-host-shell
-    - current-analytics-port-does-not-yet-supply-concrete-publication-contract
-    - current-operationalreporting-is-module-shell-before-domain-hardening
-  destination_facts_still_required:
-    - exact-mes-data-lake-platform
-    - endpoint-schema-or-dataset
-    - accepted-ingestion-method
-    - auth-and-network-path
-    - destination-upsert-idempotency-capability
-    - publication-trigger-or-latency-requirement
-  field_facts_still_required:
-    - source-kind-for-each-visible-field
-    - authoritative-source-for-each-pulled-field
-    - calculation-rules-for-derived-fields
-    - override-rules-for-pulled-or-calculated-fields
+  note: remains outside macro-service design until source-specific discovery is mature
 
 open_business_questions: []
 open_domain_contradictions: []
 
-next_architecture_work:
-  - build-candidate-field-source-map-for-end-of-shift-using-mes-protrack-reference-calculated-manual-categories-without-claiming-unverified-authority
-  - identify-which-current-external-source-evidence-can-support-that-map-and-which-needs-new-source-discovery
-  - define-publication-checkpoint-persistence-pattern-without-choosing-destination-driver
-  - define-operations-record-publication-read-export-seam-at-contract-level
-  - reconcile-ddd-derived-topology-into-manufactor-arch-authoritative-workbook-and-current-drawings-without-reviving-superseded-files
-  - reconcile-identity-permissions-source-description-in-architecture-substrate-with-current-implementation-truth
-  - define-cross-context-read-composition-contract-pattern-and-provenance-shape
-  - implement-dotnet-fitness-tests-after-spec-review-before-moving-domain-code
-  - keep-mp2-asset-lifecycle-in-discovery-required-state-until-real-source-analysis-is-complete
+next_work:
+  - build-whole-model-macro-service-inventory-from-ddd-and-current-port-substrate
+  - map-every-candidate-macro-service-to-all-10-bounded-contexts
+  - test-each-candidate-against-materially-different-contexts
+  - reconcile-overlaps-and-duplication-among-current-shared-services-and-ports
+  - identify-services-that-are-too-broad-or-not-really-shared
+  - identify-major-missing-macro-service-categories
+  - stop-before-design-and-review-completeness-with-mark
