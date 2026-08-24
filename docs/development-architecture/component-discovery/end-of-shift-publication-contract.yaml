@@ -4,6 +4,14 @@ purpose: >
   Define the minimum transport/publication contract shape for exporting authoritative
   End-of-Shift Operations Records toward the MES data lake without transferring domain ownership.
 
+evidence:
+  concrete_form_artifact: docs/development-architecture/component-discovery/operations-record-form-evidence-2026-08-24.md
+  report_type_confirmed: Dry End - End of Shift Report
+  related_distinct_record_type_confirmed: Dry End - First Hour Production Summary
+  rule: >
+    Shared field shape does not make these one generic report type. Each remains a distinct
+    Operations Record business type.
+
 source:
   bounded_context: bc.operations-record
   implementation_home: OperationalReporting
@@ -49,10 +57,81 @@ publication_envelope:
     - idempotency_key
     - schema_version
   payload:
-    status: business-fields-not-yet-frozen
+    status: concrete-field-set-known-source-provenance-not-yet-known
+    schema_name: end_of_shift_report
+    fields:
+      - name: business_date
+        label: Date
+        source_kind: unresolved
+      - name: crew
+        label: Crew
+        source_kind: unresolved
+      - name: shift
+        label: Shift
+        source_kind: unresolved
+      - name: safety_issues
+        label: Safety Issues
+        source_kind: unresolved
+      - name: scheduled_hours
+        label: Scheduled Hours
+        source_kind: unresolved
+      - name: board_feet_ran
+        label: BF Ran
+        source_kind: unresolved
+      - name: pieces
+        label: Pieces
+        source_kind: unresolved
+      - name: cars_unstacked
+        label: Cars Un-Stacked
+        source_kind: unresolved
+      - name: mbf_per_hour
+        label: MBF/Hour
+        source_kind: unresolved
+      - name: gap_percent
+        label: Gap
+        source_kind: unresolved
+      - name: rerun
+        label: Re Run
+        source_kind: unresolved
+      - name: trimmer_uptime_percent
+        label: Trimmer Uptime
+        source_kind: unresolved
+      - name: moisture_content_percent
+        label: Moisture Content
+        source_kind: unresolved
+      - name: standard_deviation
+        label: Standard Deviation
+        source_kind: unresolved
+      - name: too_wet_percent
+        label: Too Wet
+        source_kind: unresolved
+      - name: too_dry_percent
+        label: Too Dry
+        source_kind: unresolved
+      - name: cars_stacked
+        label: Cars Stacked
+        source_kind: unresolved
+      - name: comments
+        label: Comments
+        source_kind: unresolved
     rule: >
-      Payload must represent the concrete End-of-Shift Report type. Do not substitute a
-      generic Form or generic Operational Record payload for the business field contract.
+      Payload is the concrete End-of-Shift business schema. Do not substitute a generic Form or
+      generic Operational Record payload. Do not infer whether any field is manual, sourced,
+      calculated, copied, or defaulted until the current workflow/source is confirmed.
+
+field_provenance:
+  required_when_known: true
+  candidate_metadata_per_field:
+    - source_kind
+    - source_system
+    - source_record_or_query_reference
+    - observed_at
+    - calculated_by
+    - calculation_version
+    - entered_by
+  guardrail: >
+    Prepopulation or analytical reuse does not transfer source authority. ManuFactor may own the
+    submitted report while some constituent values remain attributable to external source facts.
 
 idempotency:
   proposed_key_components:
@@ -134,6 +213,12 @@ blocking_destination_facts:
   - destination-contract-schema
   - credentials-and-network-path
   - destination-idempotency-or-upsert-capability
+
+blocking_field-facts:
+  - source-kind-for-each-end-of-shift-field
+  - which-fields-are-user-entered-versus-prefilled
+  - calculation-rules-for-derived-fields-if-any
+  - correction-authority-per-field-if-source-derived-values-can-be-overridden
 
 nonblocking_architecture_work:
   - add-dotnet-boundary-fitness-tests
