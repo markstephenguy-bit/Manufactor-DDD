@@ -1,5 +1,5 @@
 phase: whole-ddd-reusable-component-discovery
-status: first-pass-reconciled-with-existing-architecture
+status: target-component-topology-defined
 updated_at: 2026-08-24
 semantic_authority: docs/ddd
 architecture_evidence:
@@ -11,6 +11,9 @@ architecture_evidence:
 artifacts:
   candidate_component_map: docs/development-architecture/component-discovery/whole-ddd-component-map.md
   implementation_boundary_reconciliation: docs/development-architecture/component-discovery/implementation-boundary-reconciliation.md
+  ddd_to_existing_component_mapping: docs/development-architecture/component-discovery/ddd-to-existing-component-mapping.md
+  port_capability_gap_analysis: docs/development-architecture/component-discovery/port-capability-gap-analysis.md
+  target_component_topology: docs/development-architecture/component-discovery/target-component-topology.md
 
 resolved_architecture_directions:
   deployment:
@@ -51,13 +54,58 @@ resolved_architecture_directions:
       - hr-timekeeping-to-workforce-availability
     guardrail: preserve-source-authority-and-never-fabricate-lineage
   projections:
-    decision: explicit-local-external-and-cross-context-read-projections
+    decision: distinguish-local-operational-cross-context-operational-and-analytical-reads
+    cross_context_composition: begin-as-in-process-application-read-pattern
     guardrail: projection-does-not-create-write-authority
   authorization:
-    decision: shared-identity-permission-enforcement-with-bc-owned-business-requirements
+    decision: shared-login-profile-permission-enforcement-with-bc-owned-business-requirements
+    reconciliation_needed: architecture-substrate-still-describes-identity-permissions-as-ad-driven-while-current-implementation-plan-makes-profile-role-tier-manufactor-owned
   workflow:
     decision: existing-workflow-engine-is-orchestration-infrastructure
     guardrail: domain-lifecycle-validity-remains-bounded-context-owned
+  target_topology:
+    decision: ten-domain-aligned-implementation-homes-plus-shared-technical-substrate
+    modules:
+      - implementation: AssetManagement
+        bounded_context: bc.asset-lifecycle
+      - implementation: Capa
+        bounded_context: bc.corrective-action
+      - implementation: KilnDrying
+        bounded_context: bc.kiln-operations
+      - implementation: OperationalReporting
+        bounded_context: bc.operations-record
+      - implementation: ProjectTracking
+        bounded_context: bc.project-tracking
+      - implementation: QualityVerification
+        bounded_context: bc.quality-verification
+        status: add-when-implementation-reaches-context
+      - implementation: Afal
+        bounded_context: bc.reliability-verification
+      - implementation: LtvForms
+        bounded_context: bc.safety-signoff
+      - implementation: Training
+        bounded_context: bc.training-competency
+      - implementation: Workforce
+        bounded_context: bc.workforce-availability
+
+existing_component_role_changes:
+  VehicleManagement:
+    target: feature-grouping-under-asset-lifecycle
+    prohibited: independent-asset-lifecycle-owner
+  InspectionsCalibration:
+    target: decompose-by-actual-semantic-owner-when-touched
+    prohibited: generic-verification-domain
+  ParameterProcessChange:
+    target: application-feature-only-where-concrete-use-case-remains
+    prohibited: universal-domain-change-owner
+  Environmental:
+    target: deferred-until-domain-evidence
+  Risk:
+    target: deferred-until-domain-evidence
+  CustomerComplaints:
+    target: deferred-until-domain-evidence
+  SupplierQuality:
+    target: deferred-or-map-only-if-future-domain-evidence-supports-it
 
 high_confidence_reusable_capabilities:
   - identity-reference-resolution-mechanics
@@ -71,6 +119,12 @@ constrained_candidates:
   - effective-dated-parameter-mechanics
   - work-routing-external-reference-mechanics
   - workflow-state-machine-mechanics
+
+material_architecture_gaps:
+  - cross-context-operational-read-composition-pattern
+  - identity-login-versus-manufactor-owned-profile-permission-record-synchronization
+  - external-reference-mapping-provenance-and-unresolved-state-as-concrete-adapters-require-it
+  - linked-document-and-evidence-integrity-completeness
 
 rejected_shared_domain_abstractions:
   - generic-record
@@ -92,6 +146,8 @@ implementation_fitness_rules:
   - never-fabricate-source-lineage
   - shared-mechanics-cannot-approve-domain-transitions
   - read-composition-cannot-create-write-authority
+  - analytics-models-cannot-be-command-authority
+  - external-adapters-cannot-directly-perform-domain-decisions
   - generalization-requires-materially-different-context-tests
   - check-existing-ports-before-adding-capability
   - physical-db-or-code-sharing-does-not-imply-semantic-ownership
@@ -100,7 +156,9 @@ open_business_questions: []
 open_domain_contradictions: []
 
 next_architecture_work:
-  - map-each-canonical-bounded-context-to-implementation-modules-and-existing-ports-without-forcing-one-to-one-correspondence
-  - identify-gaps-between-ddd-reusable-capabilities-and-current-port-contracts
-  - classify-current-architecture-components-that-conflict-with-or-duplicate-the-new-ddd-boundaries
-  - produce-target-component-topology-and-migration-impact-before-changing-implementation-code
+  - define-enforceable-component-boundary-and-dependency-fitness-specification-for-current-dotnet-solution
+  - reconcile-ddd-derived-topology-into-manufactor-arch-authoritative-workbook-and-current-drawings-without-reviving-superseded-files
+  - reconcile-identity-permissions-source-description-in-architecture-substrate-with-current-implementation-truth
+  - define-cross-context-read-composition-contract-pattern-and-provenance-shape
+  - define-reference-mapping-minimum-contract-using-asset-mp2-as-first-forcing-case
+  - do-not-change-implementation-domain-code-until-these-boundary-contracts-are-recorded
