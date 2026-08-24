@@ -1,0 +1,328 @@
+status: discovery-reconciliation
+updated_at: 2026-08-24
+design_gate: closed
+semantic_authority: docs/ddd
+source: ManuFactor-Architecture-Workbook.xlsx
+
+allowed_dispositions:
+  - keep
+  - reclassify
+  - constrain
+  - defer
+  - strike
+  - needs-canonical-ddd-mapping
+  - reconcile-contradiction
+
+ports:
+  - workbook_row: Storage
+    disposition: reclassify
+    target: capability.storage-under-documents-artifacts-evidence
+    reason: storage is a technical sub-capability, not a peer macro service
+  - workbook_row: Documents.Compose
+    disposition: reclassify
+    target: capability.document-compose-under-documents-artifacts-evidence
+    reason: rendering/composition mechanics only
+  - workbook_row: Printing
+    disposition: reclassify
+    target: capability.printing-under-documents-artifacts-evidence
+    reason: output mechanics only
+  - workbook_row: Data
+    disposition: keep
+    target: macro.data-state-persistence
+  - workbook_row: Catalog
+    disposition: constrain
+    target: macro.catalog-reference-hierarchy
+    reason: may own registry/reference/hierarchy mechanics but not generic domain lifecycle/persistence
+  - workbook_row: Rules
+    disposition: reclassify
+    target: capability.rules-evaluation
+    reason: runtime evaluation mechanics, not owner of BC business rules/invariants
+  - workbook_row: Integration
+    disposition: constrain
+    target: macro.integration-source-provenance
+    reason: current driver is MP2-specific but macro responsibility is broader source/destination acquisition and provenance
+  - workbook_row: Integration.Workflows
+    disposition: reclassify
+    target: capability.long-running-workflow-runtime
+    reason: Elsa is orchestration runtime; not a macro-service semantic boundary
+  - workbook_row: Identity.Permissions
+    disposition: reconcile-contradiction
+    target: macro.identity-access-responsibility
+    conflict:
+      ports_sheet: AD-via-DirectoryServicesWrapper
+      accepted_adr_117: ManuFactor-owned-role-tier-no-AD-groups
+    required_truth: accepted-ADR-and-current-implementation-evidence-control
+  - workbook_row: Analytics
+    disposition: keep
+    target: macro.analytics-projection-data-lake
+    constraint: analytics-etl-must-not-own-source-authority
+  - workbook_row: Intelligence
+    disposition: reclassify
+    target: optional-platform-capability
+    reason: not currently required by canonical DDD macro-service discovery
+  - workbook_row: Notification
+    disposition: keep
+    target: macro.notification-attention
+    constraint: business-escalation-and-accountability-remain-BC-owned
+  - workbook_row: Identity.Login
+    disposition: reclassify
+    target: authentication-subcapability-of-macro.identity-access-responsibility
+  - workbook_row: Realtime
+    disposition: reclassify
+    target: ambient-platform-transport
+  - workbook_row: Observability
+    disposition: reclassify
+    target: ambient-platform-concern
+    constraint: Observability.Audit-is-not-Retained-History
+  - workbook_row: Security
+    disposition: reclassify
+    target: ambient-platform-concern
+  - workbook_row: DevOps
+    disposition: reclassify
+    target: ambient-platform-concern
+  - workbook_row: Testing
+    disposition: reclassify
+    target: ambient-platform-concern
+  - workbook_row: Governance
+    disposition: reclassify
+    target: ambient-and-supporting-configuration-validation-policy
+    constraint: does-not-own-BC-business-authority
+
+missing_live_port_level_macro_responsibilities:
+  - macro.forms-structured-capture
+  - macro.retained-history
+  - macro.operational-read-composition
+  - macro.work-routing-external-reference
+
+components:
+  - workbook_row: LtvForms
+    disposition: needs-canonical-ddd-mapping
+    target_bounded_context: bc.safety-signoff
+    note: component-name-may-remain-implementation-evidence-but-semantics-come-from-LTV-Form-Management
+  - workbook_row: Afal
+    disposition: needs-canonical-ddd-mapping
+    target_bounded_context: bc.reliability-verification
+    note: AFAL-is-current-slice-not-entire-reliability-semantic-boundary
+  - workbook_row: OperationalReporting
+    disposition: needs-canonical-ddd-mapping
+    target_bounded_context: bc.operations-record
+    note: must-not-own-analytics-as-domain-semantics
+  - workbook_row: ParameterProcessChange
+    disposition: constrain
+    target: feature-or-application-mechanic-only-if-concrete-use-case-remains
+    prohibited: universal-change-domain-owner
+  - workbook_row: Capa
+    disposition: needs-canonical-ddd-mapping
+    target_bounded_context: bc.corrective-action
+  - workbook_row: Training
+    disposition: needs-canonical-ddd-mapping
+    target_bounded_context: bc.training-competency
+  - workbook_row: Workforce
+    disposition: needs-canonical-ddd-mapping
+    target_bounded_context: bc.workforce-availability
+  - workbook_row: AssetManagement
+    disposition: needs-canonical-ddd-mapping
+    target_bounded_context: bc.asset-lifecycle
+  - workbook_row: VehicleManagement
+    disposition: defer
+    target: feature-grouping-under-asset-lifecycle-if-useful
+    prohibited: independent-asset-domain-owner
+  - workbook_row: InspectionsCalibration
+    disposition: constrain
+    target: decompose-by-canonical-owner-when-touched
+    prohibited: generic-verification-domain
+  - workbook_row: Risk
+    disposition: defer
+    reason: no current canonical BC evidence
+  - workbook_row: Environmental
+    disposition: defer
+    reason: no concrete current ManuFactor environmental gap establishes active BC
+  - workbook_row: KilnDrying
+    disposition: needs-canonical-ddd-mapping
+    target_bounded_context: bc.kiln-operations
+  - workbook_row: ProjectTracking
+    disposition: needs-canonical-ddd-mapping
+    target_bounded_context: bc.project-tracking
+  - workbook_row: CustomerComplaints
+    disposition: defer
+    reason: already shelved and no canonical BC
+  - workbook_row: ReleaseOfProduct
+    disposition: strike
+    reason: workbook already says SAP responsibility
+
+missing_canonical_component_semantics:
+  - bounded_context: bc.quality-verification
+    disposition: needs-canonical-ddd-mapping
+    note: no clean current workbook component equivalent; do not substitute InspectionsCalibration
+
+catalog_entities:
+  - workbook_row: manufactor.thing
+    disposition: constrain
+    allowed: thin-technical-identity-link-anchor
+    prohibited:
+      - universal-enterprise-domain-entity
+      - universal-lifecycle-owner
+      - universal-status-owner
+  - workbook_row: LTV Template
+    disposition: constrain
+    canonical_owner: bc.safety-signoff
+    catalog_role: registration-reference-metadata-only
+  - workbook_row: LTV Printed Instance
+    disposition: constrain
+    canonical_owner: bc.safety-signoff
+    catalog_role: registration-reference-metadata-only
+  - workbook_row: AFAL record
+    disposition: constrain
+    canonical_owner: bc.reliability-verification
+  - workbook_row: CAPA item
+    disposition: constrain
+    canonical_owner: bc.corrective-action
+  - workbook_row: Asset Management Functional Slot
+    disposition: needs-canonical-ddd-mapping
+    canonical_owner: bc.asset-lifecycle
+    note: exact tactical relationship to canonical Asset model must be reconciled later, not inferred here
+  - workbook_row: Asset Management Physical Component
+    disposition: needs-canonical-ddd-mapping
+    canonical_owner: bc.asset-lifecycle
+  - workbook_row: Vehicle Fleet entry
+    disposition: defer
+    canonical_owner: bc.asset-lifecycle-if-retained-as-feature
+  - workbook_row: Risk record
+    disposition: defer
+  - workbook_row: Project record
+    disposition: constrain
+    canonical_owner: bc.project-tracking
+  - workbook_row: Environmental form/record
+    disposition: defer
+  - workbook_row: Mill hierarchy (Site/Area/Line/Cell)
+    disposition: keep
+    target: shared-reference-data
+    constraint: hierarchy-reference-does-not-own-domain-lifecycle
+  - workbook_row: Lockout Items
+    disposition: keep
+    target: shared-reference-data-used-by-LTV
+  - workbook_row: Shift Calendar & Crew
+    disposition: keep
+    target: shared-reference-data
+    constraint: reference-data-does-not-own-workforce-or-operations-decisions
+
+status_catalog:
+  base_values:
+    - Open
+    - InProgress
+    - Paused
+    - Closed
+    - Cancelled
+  disposition: constrain
+  allowed: technical-display-grouping-or-reporting-category-if-useful
+  prohibited:
+    - universal-domain-status-vocabulary
+    - universal-transition-rules
+    - forcing-BC-states-into-base-five-semantics
+  evidence_of_mismatch:
+    - AssetManagement.Scrapped-is-not-Cancelled
+    - Asset-condition-and-lifecycle-are-distinct-in-canonical-DDD
+    - Qualification-validity-and-withdrawal-have-own-semantics
+    - LTV.Recorded-has-own-semantics
+
+rules:
+  - workbook_row: LTV Template SSM approval circumstance
+    disposition: needs-canonical-ddd-mapping
+    note: current DDD authority/lifecycle must control; stale SSM-specific wording must not override it
+  - workbook_row: AFAL category-check
+    disposition: constrain
+    target: reliability-verification-local-rule-using-source-facts
+  - workbook_row: CAPA-vs-Project origination
+    disposition: constrain
+    target: canonical-corrective-action-and-project-tracking-boundaries
+  - workbook_row: CAPA routing (MP2 vs. native)
+    disposition: needs-canonical-ddd-mapping
+    target: macro.work-routing-external-reference-plus-bc.corrective-action
+  - workbook_row: InspectionsCalibration pass/fail audit criteria
+    disposition: defer
+    reason: stale-pre-DDD-component-semantics
+  - workbook_row: Calendar due-check evaluation
+    disposition: defer
+    reason: stale-pre-DDD-component-semantics
+  - workbook_row: Mill-condition threshold checks
+    disposition: defer
+    reason: stale-pre-DDD-component-semantics
+  - workbook_row: Thing Status Catalog transition guard
+    disposition: constrain
+    prohibited: universal-domain-transition-engine
+
+scheduled_triggered_actions:
+  - workbook_row: Calibration due-check
+    disposition: defer
+    reason: tied-to-stale-InspectionsCalibration-semantics
+  - workbook_row: MP2 work-order ingestion
+    disposition: constrain
+    target: macro.integration-source-provenance-plus-macro.scheduling-background-execution
+    note: MP2-to-Asset-specific contract remains discovery-required
+  - workbook_row: MSR lumber runtime threshold -> inspection required
+    disposition: defer
+    reason: stale-InspectionsCalibration-semantics
+  - workbook_row: Green-end lumber created -> dimension check required
+    disposition: defer
+    reason: stale-InspectionsCalibration-semantics
+  - workbook_row: Fault tolerance / process control
+    disposition: defer
+    reason: stale-cross-cutting-QMS-semantics
+  - workbook_row: Cross-process signaling transport
+    disposition: reclassify
+    target: technical-integration-and-background-execution-capability
+  - workbook_row: Checking products done while running
+    disposition: defer
+    reason: unresolved-old-component-evidence-not-needed-for-macro-service-map
+
+notifications:
+  - workbook_row: LTV Template SSM-approval-pending
+    disposition: reconcile-contradiction
+    note: notification-mechanic-valid-but-AD-group-recipient-authority-assumption-conflicts-with-app-owned-permissions-model
+  - workbook_row: CAPA verification-due
+    disposition: constrain
+    target: macro.notification-attention
+    business-recipient-rule: bc.corrective-action-owned
+  - workbook_row: InspectionsCalibration ready-to-assign
+    disposition: defer
+    reason: stale-pre-DDD-component-semantics
+
+wrappers:
+  general_disposition: keep-as-implementation-level-evidence-only
+  no_wrapper_creates_macro_service: true
+  notable:
+    SchedulingWrapper: macro.scheduling-background-execution
+    PowerAutomateWrapper: integration-or-work-routing-transport-candidate
+    AdomdWrapper: integration-or-analytics-source-adapter
+    DirectoryServicesWrapper: identity-directory-enrichment-not-permission-authority
+
+endpoints:
+  general_disposition: keep-as-driver-source-destination-evidence-only
+  no_endpoint_creates_macro_service: true
+  special_notes:
+    mes-aurora: integration/analytics-source-evidence-only
+    mp2-sqlserver: integration-source-evidence; asset-contract-remains-discovery-required
+    active-directory: authentication/directory-enrichment-source; not-app-permission-authority
+    ssas-*: analytical-source-adapters
+    sharepoint-powerapps: integration/work-routing-candidate
+    sap-erp-bi: external-source-toolbox-entry-no-active-canonical-component-need
+
+build_order:
+  disposition: constrain
+  note: implementation sequencing is pre-DDD architecture evidence and must not control macro-service or BC semantics
+  stale_or_reconciliation_needed:
+    - Phase_C Parameter/Process Change
+    - Phase_C1 CAPA blocked on Integration.Workflows-as-if-semantic-dependency
+    - Phase_E Standard Forms & Policies
+    - Phase_E1 Workforce blocked on Integration.Workflows-as-if-semantic-dependency
+    - Phase_B Operational Reporting framing must map to Operations Record
+
+solution_structure:
+  disposition: keep-as-current-implementation-evidence-only
+  constraint: project/process topology-does-not-define-macro-service-or-bounded-context-boundaries
+
+macro_service_discovery_result:
+  major_categories_undiscovered: 0
+  live_workbook_verification: complete
+  remaining_major_work_type: live-architecture-reconciliation
+  design_gate: closed
