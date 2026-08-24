@@ -8,15 +8,20 @@ model_statement: >
   represents a distinct business need with its own required fields and rules; the context must not
   collapse unrelated needs into one generic catch-all record. Confirmed Diboll dry-end examples include
   the First Hour Production Summary and End of Shift Report, which share several fields but remain distinct
-  business record types. The resulting record is authoritative for what was submitted and its retained
-  history, but not automatically for the lifecycle of equipment, people, Quality, Safety, or other referenced
-  concepts. Operations Record is not the Superset/grain analytics layer; captured records may subsequently
-  be made available to analytical grains and data-lake destinations alongside data sourced from other company systems.
+  business record types. For these reports, the design intent is pull-first, manual-by-exception: fields
+  should be populated from reliable authoritative source data or deterministic calculations wherever
+  practical, with manual entry reserved for facts that are not reliably available elsewhere. The resulting
+  record is authoritative for what was submitted and its retained history, but not automatically for the
+  lifecycle of equipment, people, Quality, Safety, or other referenced concepts. Operations Record is not
+  the Superset/grain analytics layer; captured records may subsequently be made available to analytical
+  grains and data-lake destinations alongside data sourced from other company systems.
 responsibilities:
   - Replace appropriate informal operational reporting workflows, such as email-based reporting, with structured retained records.
   - Model each operational form/record type from a distinct identified business need rather than as one generic record template.
   - Preserve correction and history semantics for ManuFactor-owned operational records.
   - Capture the business fields and rules needed by each specific operational reporting workflow.
+  - Prefer reliable source-system or deterministic calculated values over duplicate manual entry where those values are available.
+  - Preserve field-level source/provenance where material so pulled, calculated, and manually entered values remain distinguishable.
   - Make captured operational facts available for downstream analytical composition and data-lake publication without becoming the analytics/grain model itself.
   - Reference external domain concepts without absorbing their lifecycle ownership.
 scope:
@@ -24,11 +29,16 @@ scope:
   - Distinct form/record types corresponding to distinct operational needs
   - Confirmed Diboll dry-end record type: First Hour Production Summary
   - Confirmed Diboll dry-end record type: End of Shift Report
+  - Pull-first population of report fields from reliable external/native data where available
+  - Deterministic calculation of derived fields where the calculation basis is established
+  - Manual entry for facts that are not reliably available from an authoritative source
   - Form-based capture of operational information currently transmitted through informal channels such as email
   - Retained operational record history and corrections
   - Publication/exposure of captured facts for downstream analytical use, including End-of-Shift Reporting publication to the MES data lake
 out_of_scope:
   - A generic catch-all operational form intended to represent all operational reporting needs
+  - Inventing field values or source-system lineage when reliable source data is unavailable
+  - Treating convenient cached or analytical values as authoritative without preserving their actual source
   - Superset semantic models, analytical grains, dashboards, data-lake storage mechanics, or enterprise analytical composition
   - Wholesale ingestion of company data merely because it is available for analytics
   - Kiln scheduling and drying-process ownership
@@ -52,17 +62,24 @@ ubiquitous_language:
   - operational occurrence
   - First Hour Production Summary
   - End of Shift Report
+  - pulled value
+  - calculated value
+  - manual value
 business_rules:
   - A retained operational record must preserve what was reported and its correction/history semantics.
   - An Operations Record exists because ManuFactor is filling a structured operational-recording gap, not merely because the same data is useful analytically.
   - Each operational form/record type must correspond to a distinct identified business need and may have its own required fields, rules, and lifecycle details.
   - Structural similarity between First Hour Production Summary and End of Shift Report does not collapse them into one generic business record type.
+  - For First Hour Production Summary and End of Shift Report, use a reliable authoritative source or deterministic calculation instead of manual re-entry wherever practical.
+  - A pulled or calculated value must retain enough provenance to distinguish it from a manually entered value when that distinction matters for correction, audit, or troubleshooting.
+  - Source-system values must not be silently altered merely to make the report fit expected values; any user correction or override must remain distinguishable from the source value.
   - Referencing an external concept does not make Operations Record authoritative for that concept's lifecycle.
   - Making an Operations Record available to Superset, the MES data lake, or another analytical grain does not transfer record ownership to the analytics layer or destination.
 owner: unresolved
 domain_experts: [Mark]
 integration_surface:
   - References assets, personnel, Quality, Safety, and other operational subjects by identity or translated facts as needed.
+  - Consumes source-system facts needed to populate operational reports while preserving source authority and provenance.
   - Exposes captured operational facts for downstream analytical composition, including Superset grains and MES data-lake publication, while retaining source authority for ManuFactor-owned records.
 upstream_dependencies: []
 downstream_consumers:
@@ -86,6 +103,9 @@ provenance:
     - type: domain-expert
       reference: Mark-provided current Diboll dry-end report screenshots, 2026-08-24
       description: Confirms First Hour Production Summary and End of Shift Report as distinct current record types and provides their visible field sets.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-24 pull-first clarification
+      description: Wants as many End-of-Shift and related report fields pulled automatically as possible; manual entry should be minimized where reliable source data or deterministic calculations can supply the value.
     - type: existing-model
       reference: ManuFactor-arch Build Order Phase_B/B1
       description: Existing evidence supports operational reporting/capture candidates.
