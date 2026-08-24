@@ -1,17 +1,20 @@
 model_state: DDD Discovery Complete for Current Evidence; Strategic Stable / Tactical Candidate
 session_state: ddd-closure-complete
-session_refreshed_at: 2026-08-23T20:51:00-05:00
+session_refreshed_at: 2026-08-23T20:54:00-05:00
 current_phase: development-architecture/component-discovery-ready
-last_completed: DDD closure gate after twenty scenario validations and resolution of all scenario-discovered domain questions
+last_completed: DDD closure gate, repository synchronization, and next-session seed creation
 current_focus: Begin whole-model reusable component discovery only if it preserves Bounded Context semantics and ownership
 blocking_issues: []
 open_nonblocking_issues: []
 
+next_session_seed: docs/ddd/NEXT-SESSION-SEED.md
+
 next_action: >
-  Begin a whole-DDD reusable technical/component discovery pass across all current Bounded Contexts. The goal is to identify shared platform/application components that can serve multiple contexts without becoming shared domain models or collapsing Bounded Context boundaries. Feed any genuine domain contradiction discovered during architecture work back into the DDD as new evidence.
+  Start a new ChatGPT project session using docs/ddd/NEXT-SESSION-SEED.md. Begin a whole-DDD reusable technical/component discovery pass across all current Bounded Contexts. The goal is to identify shared platform/application components that can serve multiple contexts without becoming shared domain models or collapsing Bounded Context boundaries. Feed any genuine domain contradiction discovered during architecture work back into the DDD as new evidence.
 
 startup_instructions:
   - Treat markstephenguy-bit/Manufactor-DDD as authoritative semantic state.
+  - Read docs/ddd/NEXT-SESSION-SEED.md first in the next session.
   - Read docs/ddd/SPECIFICATION.md and docs/ddd/CANONICAL-REGISTRY.yaml before altering DDD semantics.
   - Read docs/ddd/reports/validation-report.md for the current closure assessment.
   - Both docs/ddd/issues/unresolved.yaml and docs/ddd/issues/scenario-validation-open.yaml currently contain no open issues.
@@ -81,6 +84,7 @@ next_phase_guardrail: >
   Component discovery is now permitted because the DDD is closed as the pre-development semantic baseline. Do not design one component per Bounded Context by default, and do not create generic shared components that absorb domain semantics. Discover recurring technical responsibilities across the whole model, test each proposed component against several Bounded Contexts, and preserve context-owned invariants and lifecycle rules.
 
 canonical_files_to_use:
+  - docs/ddd/NEXT-SESSION-SEED.md
   - docs/ddd/SPECIFICATION.md
   - docs/ddd/CANONICAL-REGISTRY.yaml
   - docs/ddd/reports/validation-report.md
@@ -90,4 +94,4 @@ canonical_files_to_use:
   - docs/ddd/issues/scenario-validation-open.yaml
 
 session_resume: >
-  The ManuFactor DDD is closed as discovery-complete for current evidence and is ready to serve as the semantic baseline for development architecture/component discovery. It remains Strategic Stable / Tactical Candidate because tactical implementation feedback may refine details. There are zero open domain-rule issues after twenty scenarios. Begin whole-model component discovery rather than further broad DDD questioning unless new evidence exposes a genuine domain contradiction.
+  The ManuFactor DDD is closed as discovery-complete for current evidence and is ready to serve as the semantic baseline for development architecture/component discovery. It remains Strategic Stable / Tactical Candidate because tactical implementation feedback may refine details. There are zero open domain-rule issues after twenty scenarios. Start the next session from docs/ddd/NEXT-SESSION-SEED.md and begin whole-model component discovery rather than further broad DDD questioning unless new evidence exposes a genuine domain contradiction.
