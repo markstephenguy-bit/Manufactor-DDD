@@ -100,25 +100,51 @@ Do not allow generic RBAC to replace rules such as salaried-management control o
 
 ---
 
-## 3. External reference mapping completeness
+## 3. End-of-Shift Reporting → MES data lake publication
 
-`Catalog`, UUIDs, and `thing_links` provide a good base, but the DDD requires more explicit behavior for integrations:
+This is now the preferred concrete integration forcing case.
 
-- external system/source namespace;
-- external source identifier;
-- ManuFactor/context reference where one exists;
-- mapping provenance;
-- mapping effective/history information when mappings change;
-- unresolved/ambiguous mapping state;
-- no guessed mapping silently persisted as fact.
+New domain-expert evidence establishes that End-of-Shift Reporting needs to get into the MES data lake. The canonical Operations Record context already supports downstream analytical composition while retaining authority for the submitted record and its correction history.
 
-Asset Lifecycle is the forcing case because ManuFactor Asset identity must survive MP2 hierarchy restructuring. The same infrastructure can later support other sources, but source-specific translation rules remain outside the shared mapper.
+The architecture must therefore prove:
 
-No new Port is required until the concrete contract shape demonstrates that `Catalog`/Data cannot provide this cleanly.
+- stable source record/revision identity;
+- explicit provenance;
+- idempotent delivery/replay;
+- correction-safe downstream representation;
+- separate domain and delivery transactions;
+- destination-specific adapter isolation;
+- delivery checkpoint and failure state;
+- no transfer of Operations Record write authority to Analytics or the data lake.
+
+The detailed forcing pass is recorded in `end-of-shift-mes-data-lake-pass.md`.
+
+This flow should test the existing `Data` + `Analytics.ETL` + scheduling/integration substrate before any new Port is introduced.
 
 ---
 
-## 4. Evidence storage completeness
+## 4. External reference mapping completeness — deferred from first forcing case
+
+`Catalog`, UUIDs, and `thing_links` remain a useful base for future external-reference mappings, but MP2 → Asset Lifecycle is **not ready** to define the generic contract.
+
+That integration requires substantially more work first, including:
+
+- inspection of the real MP2 asset/equipment hierarchy and identifiers;
+- identification of stable versus mutable identifiers;
+- understanding how hierarchy restructuring appears in MP2;
+- WR/WO correlation and equipment-reference behavior;
+- bootstrap rules for ManuFactor Asset identity;
+- unmatched and ambiguous cases;
+- field-by-field source authority;
+- mapping history/provenance only after the above is known.
+
+Therefore no generic external-reference mapper should be shaped from MP2 assumptions at this stage.
+
+The shared capability remains a candidate, but its contract must wait for sufficient concrete source evidence.
+
+---
+
+## 5. Evidence storage completeness
 
 Storage is already the correct shared capability. The DDD adds requirements that should be checked against the existing contract as contexts are implemented:
 
@@ -158,6 +184,8 @@ May own ETL, analytical projections, time-series/OLAP stores, and Superset integ
 
 Must not become the operational write model or the default mechanism for current cross-context application composition.
 
+For End-of-Shift Reporting specifically, Analytics may publish a downstream copy/projection to the MES data lake while Operations Record remains authoritative for the source report and correction history.
+
 ## `Data`
 
 May provide persistence mechanics.
@@ -181,6 +209,8 @@ Under this test, the current pass does **not** justify a large new Port expansio
 
 The strongest new architecture concept is **Cross-Context Read Composition**, and it should begin as an application/read pattern using existing contracts rather than as a new network service.
 
+The first concrete integration proof should be **End-of-Shift Reporting → MES data lake**, using the existing Analytics/ETL substrate unless the real destination contract proves a missing capability.
+
 ---
 
 # Result
@@ -191,7 +221,8 @@ Current actionable architecture gaps are:
 
 1. explicit cross-context application read composition;
 2. reconciliation of Identity.Login versus ManuFactor-owned Profile/permission authority;
-3. richer external-reference mapping/provenance behavior as real adapters are implemented;
-4. completion of evidence/document reference and integrity mechanics.
+3. concrete End-of-Shift Reporting → MES data lake publication contract and destination discovery;
+4. future external-reference mapping/provenance design after sufficient source-specific discovery, with MP2 → Asset Lifecycle explicitly deferred as a forcing case;
+5. completion of evidence/document reference and integrity mechanics.
 
 No domain contradiction was found. No new Bounded Context is required by these gaps.
