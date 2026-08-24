@@ -1,0 +1,257 @@
+status: candidate-discovery-map
+updated_at: 2026-08-24
+purpose: >
+  Guide pull-first implementation discovery for the Diboll dry-end End of Shift operations form.
+  Candidate source categories are hypotheses for investigation, not source-authority declarations.
+
+rules:
+  - pull-from-reliable-authoritative-source-where-practical
+  - calculate-deterministically-where-the-inputs-and-formula-are-established
+  - manual-entry-only-where-no-reliable-source-or-calculation-exists
+  - preserve-field-level-provenance-where-material
+  - never-promote-a-candidate-source-to-authority-without-verification
+  - preserve-original-source-value-when-a-user-overrides-a-pulled-or-calculated-value
+
+source_categories:
+  mes_process:
+    meaning: production/process facts likely available from MES or related process data
+    status: candidate-unverified
+  protrack_moisture:
+    meaning: moisture-meter statistics likely available from ProTrack or its database
+    status: candidate-unverified-for-this-form
+  operations_reference:
+    meaning: shift-calendar, crew, site, and scheduling/reference facts maintained or read by ManuFactor
+    status: partially-evidenced
+  calculated:
+    meaning: deterministic result computed from other verified inputs
+    status: formula-must-be-confirmed-per-field
+  manual:
+    meaning: human-entered narrative or fact not reliably available elsewhere
+    status: candidate
+
+fields:
+  business_date:
+    label: Date
+    candidate_sources: [operations_reference]
+    candidate_behavior: default-from-selected-shift-business-date
+    confidence: medium
+    verify:
+      - exact-business-date-rule-for-night-shifts
+      - whether-date-is-selected-or-derived
+
+  crew:
+    label: Crew
+    candidate_sources: [operations_reference]
+    candidate_behavior: pull-from-shift-calendar-and-crew-reference
+    confidence: high
+    verify:
+      - authoritative-crew-schedule-source
+      - crew-change-or-exception-handling
+
+  shift:
+    label: Shift
+    candidate_sources: [operations_reference]
+    candidate_behavior: pull-from-shift-calendar
+    confidence: high
+    verify:
+      - exact-shift-boundaries
+      - exception-or-overtime-shifts
+
+  safety_issues:
+    label: Safety Issues
+    candidate_sources: [manual]
+    candidate_behavior: human-entry-unless-a-real-safety-source-link-is-established
+    confidence: high
+    note: >
+      Do not auto-compose unrelated Safety records into this narrative merely because ManuFactor can read them.
+      A future reference/link may be useful, but the form field itself is currently treated as manual candidate.
+
+  scheduled_hours:
+    label: Scheduled Hours
+    candidate_sources: [operations_reference, calculated]
+    candidate_behavior: derive-from-scheduled-shift-duration-and-approved-schedule-exceptions-if-available
+    confidence: medium
+    verify:
+      - whether-current-value-is-clock-hours-or-production-scheduled-hours
+      - breaks-downtime-or-planned-stop-treatment
+
+  board_feet_ran:
+    label: BF Ran
+    candidate_sources: [mes_process]
+    candidate_behavior: pull-production-total-for-form-time-window
+    confidence: high
+    verify:
+      - exact-MES-field-or-grain
+      - time-window-and-shift-boundary
+      - whether-value-is-green-dry-or-finished-board-feet
+
+  pieces:
+    label: Pieces
+    candidate_sources: [mes_process]
+    candidate_behavior: pull-piece-count-for-form-time-window
+    confidence: high
+    verify:
+      - exact-source-field
+      - inclusion-exclusion-rules
+
+  cars_unstacked:
+    label: Cars Un-Stacked
+    candidate_sources: [mes_process, manual]
+    candidate_behavior: pull-if-process-data-exposes-reliable-count-otherwise-manual
+    confidence: low
+    verify:
+      - whether-unstacker-count-exists-in-MES-or-PLC-derived-data
+      - whether-operators-currently-count-this-manually
+
+  mbf_per_hour:
+    label: MBF/Hour
+    candidate_sources: [calculated, mes_process]
+    candidate_behavior: calculate-from-board-feet-and-confirmed-run-or-scheduled-time-unless-MES-has-authoritative-metric
+    confidence: medium
+    verify:
+      - exact-current-formula
+      - denominator-is-runtime-scheduled-hours-or-another-time-basis
+      - units-and-rounding
+
+  gap_percent:
+    label: Gap
+    candidate_sources: [mes_process, calculated]
+    candidate_behavior: pull-or-calculate-only-after-current-gap-definition-is-confirmed
+    confidence: low
+    verify:
+      - business-definition-of-gap
+      - source-inputs-and-formula
+
+  rerun:
+    label: Re Run
+    candidate_sources: [mes_process, manual]
+    candidate_behavior: pull-if-MES-has-reliable-rerun-count-otherwise-manual
+    confidence: low
+    verify:
+      - definition-and-unit
+      - MES-availability
+
+  trimmer_uptime_percent:
+    label: Trimmer Uptime
+    candidate_sources: [mes_process, calculated]
+    candidate_behavior: pull-process-uptime-or-calculate-from-authoritative-runtime-state-data
+    confidence: high
+    verify:
+      - exact-MES-or-process-source
+      - downtime-state-definition
+      - planned-downtime-treatment
+
+  moisture_content_percent:
+    label: Moisture Content
+    candidate_sources: [protrack_moisture]
+    candidate_behavior: pull-statistic-from-ProTrack-data-for-the-relevant-form-window-and-product-population
+    confidence: high
+    verify:
+      - exact-ProTrack-database-query
+      - aggregation-method
+      - relevant-dimension-product-filter
+      - form-time-window
+
+  standard_deviation:
+    label: Standard Deviation
+    candidate_sources: [protrack_moisture, calculated]
+    candidate_behavior: pull-ProTrack-statistic-if-stored-or-calculate-from-authoritative-moisture-readings
+    confidence: high
+    verify:
+      - stored-versus-calculated-in-current-process
+      - population-versus-sample-standard-deviation-rule
+      - filtering
+
+  too_wet_percent:
+    label: Too Wet
+    candidate_sources: [protrack_moisture, calculated]
+    candidate_behavior: pull-or-calculate-from-ProTrack-moisture-readings-and-confirmed-threshold
+    confidence: high
+    verify:
+      - threshold-definition
+      - dimension-or-product-specific-threshold
+      - denominator-and-filtering
+
+  too_dry_percent:
+    label: Too Dry
+    candidate_sources: [protrack_moisture, calculated]
+    candidate_behavior: pull-or-calculate-from-ProTrack-moisture-readings-and-confirmed-threshold
+    confidence: high
+    verify:
+      - threshold-definition
+      - dimension-or-product-specific-threshold
+      - denominator-and-filtering
+
+  cars_stacked:
+    label: Cars Stacked
+    candidate_sources: [mes_process, manual]
+    candidate_behavior: pull-if-stacker-or-MES-count-is-reliable-otherwise-manual
+    confidence: low
+    verify:
+      - whether-stacker-count-exists-in-process-data
+      - whether-current-number-is-manual
+
+  comments:
+    label: Comments
+    candidate_sources: [manual]
+    candidate_behavior: human-entered-narrative
+    confidence: high
+
+likely_first-hour-differences:
+  run_time_minutes:
+    label: Run Time (min)
+    candidate_sources: [mes_process, calculated]
+    confidence: medium
+    verify: [exact-runtime-definition]
+  product_running:
+    label: Product Running
+    candidate_sources: [mes_process, operations_reference]
+    confidence: medium
+    verify: [authoritative-product-source-at-first-hour]
+
+priority_source_discovery:
+  - name: MES/process-production-data
+    fields_likely_covered:
+      - board_feet_ran
+      - pieces
+      - trimmer_uptime_percent
+      - mbf_per_hour
+      - gap_percent
+      - rerun
+      - cars_unstacked
+      - cars_stacked
+    reason: largest-potential-reduction-in-manual-entry
+  - name: ProTrack-moisture-data
+    fields_likely_covered:
+      - moisture_content_percent
+      - standard_deviation
+      - too_wet_percent
+      - too_dry_percent
+    reason: cohesive-authoritative-measurement-source-candidate
+  - name: shift-calendar-and-crew-reference
+    fields_likely_covered:
+      - business_date
+      - crew
+      - shift
+      - scheduled_hours
+    reason: simple-repeatable-reference-population
+
+manual-by-exception-candidates:
+  - safety_issues
+  - comments
+  - any-production-field-whose-source-cannot-be-proven-reliable
+
+implementation_sequence:
+  - verify-MES-fields-and-grain-before-coding-source-adapter
+  - verify-ProTrack-query-and-threshold-semantics-before-coding-moisture-population
+  - confirm-shift-calendar-crew-source-and-business-date-rule
+  - confirm-calculation-formulas-and-rounding
+  - then-freeze-field-source-contracts-and-provenance-shape
+
+open_business_questions: []
+open_source-discovery_questions:
+  - exact-MES-field-map-and-time-grain
+  - exact-ProTrack-query-and-threshold-rules
+  - exact-shift-calendar-crew-authority
+  - formulas-for-mbf-per-hour-gap-and-any-other-derived-fields
+  - manual-override-rules
