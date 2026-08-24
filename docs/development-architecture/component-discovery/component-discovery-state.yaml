@@ -1,0 +1,106 @@
+phase: whole-ddd-reusable-component-discovery
+status: first-pass-reconciled-with-existing-architecture
+updated_at: 2026-08-24
+semantic_authority: docs/ddd
+architecture_evidence:
+  - repository: markstephenguy-bit/Manufactor
+    role: current implementation evidence
+  - repository: markstephenguy-bit/ManuFactor-arch
+    role: current architecture substrate evidence
+
+artifacts:
+  candidate_component_map: docs/development-architecture/component-discovery/whole-ddd-component-map.md
+  implementation_boundary_reconciliation: docs/development-architecture/component-discovery/implementation-boundary-reconciliation.md
+
+resolved_architecture_directions:
+  deployment:
+    decision: preserve-current-compact-multiprocess-topology
+    guardrail: bounded-context-does-not-imply-deployable
+    new_deployable_requires:
+      - independent-scaling-driver
+      - failure-isolation-driver
+      - security-boundary-driver
+      - incompatible-runtime-driver
+      - independently-managed-availability-driver
+  persistence:
+    decision: preserve-current-postgresql-and-normalized-database-approach
+    guardrail: physical-co-location-does-not-transfer-domain-ownership
+    ownership_classes:
+      - bounded-context-owned
+      - shared-technical-owned
+      - projection-read-owned
+      - external-source-copy-cache
+  transactions:
+    decision: follow-aggregate-consistency-boundaries
+    prohibited_default: cross-context-acid-transaction-because-tables-share-database
+  history:
+    decision: shared-postgresql-retained-history-mechanics
+    rejected_default: event-sourcing-only-because-history-is-common
+  identity_and_references:
+    decision: reuse-catalog-uuid-reference-thing-link-mechanics-first
+    guardrail: technical-resolution-does-not-own-domain-identity-meaning
+  evidence:
+    decision: reuse-storage-and-document-capabilities
+    guardrail: evidence-storage-does-not-decide-business-sufficiency
+  integration:
+    decision: shared-integration-runtime-plus-source-specific-translators
+    current_translators:
+      - mp2-to-asset-lifecycle
+      - protrack-to-kiln-operations
+      - learning-source-to-training-qualification
+      - hr-timekeeping-to-workforce-availability
+    guardrail: preserve-source-authority-and-never-fabricate-lineage
+  projections:
+    decision: explicit-local-external-and-cross-context-read-projections
+    guardrail: projection-does-not-create-write-authority
+  authorization:
+    decision: shared-identity-permission-enforcement-with-bc-owned-business-requirements
+  workflow:
+    decision: existing-workflow-engine-is-orchestration-infrastructure
+    guardrail: domain-lifecycle-validity-remains-bounded-context-owned
+
+high_confidence_reusable_capabilities:
+  - identity-reference-resolution-mechanics
+  - retained-history-audit-mechanics
+  - evidence-document-mechanics
+  - external-source-integration-provenance
+  - projection-query-read-composition
+  - authorization-responsibility-enforcement
+
+constrained_candidates:
+  - effective-dated-parameter-mechanics
+  - work-routing-external-reference-mechanics
+  - workflow-state-machine-mechanics
+
+rejected_shared_domain_abstractions:
+  - generic-record
+  - generic-workflow-item
+  - generic-task
+  - generic-verification
+  - universal-enterprise-domain-entity
+  - universal-status
+  - universal-parameter-domain-model
+  - analytics-bounded-context-from-tooling
+
+implementation_fitness_rules:
+  - no-bc-per-deployable-assumption
+  - one-authoritative-writer-per-domain-state
+  - no-cross-context-direct-table-mutation
+  - no-cross-context-orm-write-navigation
+  - no-shared-transaction-from-physical-db-co-location
+  - preserve-source-authority-and-provenance
+  - never-fabricate-source-lineage
+  - shared-mechanics-cannot-approve-domain-transitions
+  - read-composition-cannot-create-write-authority
+  - generalization-requires-materially-different-context-tests
+  - check-existing-ports-before-adding-capability
+  - physical-db-or-code-sharing-does-not-imply-semantic-ownership
+
+open_business_questions: []
+open_domain_contradictions: []
+
+next_architecture_work:
+  - map-each-canonical-bounded-context-to-implementation-modules-and-existing-ports-without-forcing-one-to-one-correspondence
+  - identify-gaps-between-ddd-reusable-capabilities-and-current-port-contracts
+  - classify-current-architecture-components-that-conflict-with-or-duplicate-the-new-ddd-boundaries
+  - produce-target-component-topology-and-migration-impact-before-changing-implementation-code
