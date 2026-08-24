@@ -1,5 +1,5 @@
 phase: whole-ddd-reusable-component-discovery
-status: discovery-only-macro-service-pass
+status: macro-service-categories-complete-live-architecture-reconciliation-remaining
 updated_at: 2026-08-24
 semantic_authority: docs/ddd
 process_gate:
@@ -13,59 +13,63 @@ architecture_evidence:
     role: current implementation evidence only
   - repository: markstephenguy-bit/ManuFactor-arch
     role: current architecture substrate evidence only
+    live_authoritative_artifact: ManuFactor-Architecture-Workbook.xlsx
+    connector_limitation: binary-workbook-not-directly-readable-through-current-github-text-connector
 
 current_objective: >
-  Complete a whole-DDD macro-service/reusable-component discovery pass across all 10
-  Bounded Contexts. Determine recurring responsibilities, consumers, overlaps,
-  decompositions, local-only helpers, source-authority implications, and major gaps.
-  Do not proceed into implementation/design shaping until this pass has no major work left.
+  Finish reconciliation of the normalized whole-DDD macro-service map against the live
+  ManuFactor architecture substrate. Category discovery and conceptual macro-service
+  boundaries are substantially complete. Do not enter implementation/design shaping.
 
-required_macro_service_discovery_areas:
-  - identity-and-reference-resolution
-  - catalog-hierarchy-reference-data
-  - persistence-data-access
-  - retained-history-audit
-  - forms-structured-capture-mechanics
-  - evidence-documents-storage
-  - external-system-integration
-  - translation-anti-corruption-provenance
-  - analytics-data-lake-projection
-  - operational-read-composition
-  - authorization-responsibility
-  - rules-evaluation-mechanics
-  - workflow-orchestration
-  - routing-external-work-references
-  - notification-attention
-  - scheduling-jobs
+normalized_macro_services:
+  domain_application_supporting:
+    - data-and-state-persistence
+    - catalog-reference-and-hierarchy
+    - forms-and-structured-capture
+    - documents-artifacts-and-evidence
+    - identity-access-and-responsibility
+    - integration-source-acquisition-and-provenance
+    - operational-query-and-read-composition
+    - analytics-projection-and-data-lake
+    - retained-history
+    - work-routing-and-external-reference-coordination
+    - notification-and-attention
+  platform:
+    - scheduling-and-background-execution
+
+supporting_capabilities_not_macro_services:
+  - long-running-workflow-runtime
+  - rules-evaluation
+  - storage
+  - documents-compose
+  - printing
   - search
-  - printing-document-composition
-  - other-repeated-responsibilities-exposed-by-ddd
+  - computation
+  - realtime
 
-candidate_evaluation_requirements:
-  - repeated-responsibility
-  - all-current-consuming-bounded-contexts
-  - three-materially-different-consumers-where-possible
-  - genuinely-shared-capability
-  - domain-meaning-that-must-remain-local
-  - existing-port-or-shared-service-coverage
-  - duplicate-or-overlap-check
-  - decomposition-check
-  - local-helper-versus-macro-service-check
-  - source-authority-and-provenance-impact
-  - major-evidence-gaps
-  - confidence-status
+ambient_platform_concerns:
+  - technical-audit
+  - observability
+  - security
+  - devops
+  - testing
+  - generic-configuration-governance
 
-phase_exit_criteria:
-  - all-10-bounded-contexts-checked-against-macro-service-inventory
-  - every-candidate-has-explicit-consumer-map
-  - materially-different-consumers-compared-where-possible
-  - duplicate-and-overlapping-services-reconciled
-  - broad-services-decomposed-or-explicitly-justified
-  - superficial-structural-abstractions-rejected
-  - major-integration-and-source-authority-implications-identified
-  - no-major-reusable-capability-category-unexamined
-  - remaining-open-items-do-not-threaten-macro-service-map
-  - mark-confirms-no-major-discovery-work-remains
+optional_platform_capabilities_outside_current_ddd_derived_macro_map:
+  - intelligence-ai
+
+usable_discovery_artifacts:
+  - docs/development-architecture/component-discovery/whole-ddd-component-map.md
+  - docs/development-architecture/component-discovery/whole-model-macro-service-map.md
+  - docs/development-architecture/component-discovery/macro-service-boundary-tests-pass1.md
+  - docs/development-architecture/component-discovery/macro-service-boundary-tests-pass2.md
+  - docs/development-architecture/component-discovery/current-architecture-macro-service-overlap-audit.md
+  - docs/development-architecture/component-discovery/macro-service-use-case-coverage-audit.md
+  - docs/development-architecture/component-discovery/macro-service-boundary-closure-pass.md
+  - docs/development-architecture/component-discovery/ddd-to-existing-component-mapping.md
+  - docs/development-architecture/component-discovery/operations-record-form-evidence-2026-08-24.md
+  - docs/development-architecture/component-discovery/semantic-promotion-guardrail.md
+  - docs/development-architecture/component-discovery/discovery-completion-gate.md
 
 parked_design_artifacts:
   - docs/development-architecture/component-discovery/implementation-boundary-reconciliation.md
@@ -77,30 +81,61 @@ parked_design_artifacts:
   - docs/development-architecture/component-discovery/end-of-shift-field-source-candidates.yaml
   - docs/development-architecture/component-discovery/port-capability-gap-analysis.md
 
-usable_discovery_artifacts:
-  - docs/development-architecture/component-discovery/whole-ddd-component-map.md
-  - docs/development-architecture/component-discovery/ddd-to-existing-component-mapping.md
-  - docs/development-architecture/component-discovery/operations-record-form-evidence-2026-08-24.md
-  - docs/development-architecture/component-discovery/semantic-promotion-guardrail.md
-  - docs/development-architecture/component-discovery/discovery-completion-gate.md
+resolved_discovery_findings:
+  - no-major-macro-service-category-missing-from-17-canonical-use-case-coverage
+  - forms-structured-capture-confirmed-as-narrow-technical-capture-macro-service
+  - retained-history-separated-from-technical-audit
+  - catalog-reference-boundary-excludes-domain-record-persistence-external-identity-translation-and-read-composition
+  - integration-and-analytics-separated-semantically-even-when-one-etl-flow-uses-both
+  - operational-read-composition-confirmed-as-distinct-macro-service-family
+  - identity-model-resolved-as-windows-authentication-plus-manufactor-profile-role-plus-bc-owned-business-authority
+  - work-routing-confirmed-as-shared-macro-service-while-workflow-runtime-remains-supporting-capability
+  - rules-rejected-as-macro-service-under-current-evidence
+  - notification-delivery-confirmed-while-escalation-meaning-remains-local
+  - scheduling-background-execution-classified-as-platform-macro-service
+
+major_current_architecture_reconciliation_findings:
+  - catalog-generic-entity-persistence-exceeds-confirmed-catalog-boundary
+  - manufactor-thing-and-thing-links-must-remain-technical-reference-link-mechanics
+  - historical-form-engine-spans-forms-documents-data-and-catalog
+  - integration-port-description-is-too-mp2-specific
+  - integration-and-analytics-overlap-at-etl-needs-taxonomy-reconciliation
+  - operational-read-composition-is-missing-from-current-port-taxonomy
+  - retained-history-is-missing-as-coherent-current-macro-service-family
+  - thing-status-catalog-must-not-create-universal-status-semantics
+  - integration-workflows-elsa-is-over-promoted-if-treated-as-macro-service
+  - rules-port-is-supporting-evaluation-capability-not-business-rule-owner
+  - identity-permissions-old-ad-driven-description-conflicts-with-current-profile-role-implementation
+  - storage-compose-printing-are-port-level-subcapabilities-not-peer-macro-services
+  - cron-jobs-cron-etl-are-platform-background-execution-mechanics
+
+phase_exit_criteria:
+  - all-10-bounded-contexts-checked-against-macro-service-inventory: satisfied
+  - every-candidate-has-explicit-consumer-map: satisfied
+  - materially-different-consumers-compared-where-possible: satisfied
+  - duplicate-and-overlapping-services-reconciled: conceptually-satisfied-live-architecture-verification-pending
+  - broad-services-decomposed-or-explicitly-justified: satisfied
+  - superficial-structural-abstractions-rejected: satisfied
+  - major-integration-and-source-authority-implications-identified: satisfied
+  - no-major-reusable-capability-category-unexamined: satisfied
+  - remaining-open-items-do-not-threaten-macro-service-map: pending-live-workbook-reconciliation
+  - mark-confirms-no-major-discovery-work-remains: pending
 
 concrete_use_case_rule: >
-  Concrete cases such as End-of-Shift Reporting may be used only to test whether a
-  candidate macro service actually generalizes. They must not become the primary
-  workstream during this phase unless Mark explicitly changes the phase.
+  Concrete cases may be used only to test macro-service generalization. They do not become
+  the primary workstream while the discovery gate is closed.
 
 mp2_asset_lifecycle_readiness:
   status: discovery-required-before-contract-design
-  note: remains outside macro-service design until source-specific discovery is mature
+  note: source-specific discovery remains separate from macro-service category discovery
 
 open_business_questions: []
 open_domain_contradictions: []
 
 next_work:
-  - build-whole-model-macro-service-inventory-from-ddd-and-current-port-substrate
-  - map-every-candidate-macro-service-to-all-10-bounded-contexts
-  - test-each-candidate-against-materially-different-contexts
-  - reconcile-overlaps-and-duplication-among-current-shared-services-and-ports
-  - identify-services-that-are-too-broad-or-not-really-shared
-  - identify-major-missing-macro-service-categories
-  - stop-before-design-and-review-completeness-with-mark
+  - reconcile-normalized-macro-service-map-against-live-manufactor-architecture-workbook
+  - classify-every-live-workbook-port-capability-component-row-as-macro-service-subcapability-ambient-or-domain-component
+  - identify-any-live-workbook-capabilities-not-present-in-text-snapshots
+  - verify-component-to-port-consumption-against-normalized-macro-service-consumer-map
+  - run-final-whole-model-macro-service-consistency-audit
+  - stop-before-design-and-review-discovery-completeness-with-mark
