@@ -1,5 +1,5 @@
 phase: whole-ddd-reusable-component-discovery
-status: macro-service-map-stable-live-workbook-verification-remaining
+status: macro-service-discovery-complete-live-architecture-reconciliation-active
 updated_at: 2026-08-24
 semantic_authority: docs/ddd
 process_gate:
@@ -14,17 +14,29 @@ architecture_evidence:
   - repository: markstephenguy-bit/ManuFactor-arch
     role: current architecture substrate evidence only
     declared_live_database: ManuFactor-Architecture-Workbook.xlsx
-    live_textual_substrate_reconciled:
-      - drawings/architecture_kernel.json
-      - drawings/taxonomy.json
-      - drawings/architecture.dsl
-      - drawings/constraints.json
-    connector_limitation: binary-workbook-visible-as-base64-but-not-yet-materialized-for-tabular-inspection
+    live_workbook_tabular_inspection: complete
+    inspected_workbook_sheets:
+      - Components
+      - Ports
+      - Wrappers
+      - Endpoints
+      - Layers
+      - Status Catalog Mappings
+      - Scheduled & Triggered Actions
+      - Notifications
+      - Rules
+      - Catalog Entities
+      - Decisions (ADRs)
+      - Build Order
+      - Solution Structure
+      - Taxonomy
+      - Constraints & Assumptions
 
 current_objective: >
-  Complete discovery verification of the stable normalized macro-service map against the live
-  ManuFactor architecture database. Conceptual category discovery, consumer coverage, overlap
-  testing, and live textual-substrate reconciliation are complete. Do not enter implementation/design shaping.
+  Reconcile the stable whole-DDD macro-service map into a semantically safe interpretation
+  of the live ManuFactor architecture database. Macro-service category discovery and live
+  workbook verification are complete. Do not enter implementation/design shaping while the
+  remaining live-architecture reconciliation defects are unresolved.
 
 normalized_macro_services:
   domain_application_supporting:
@@ -75,6 +87,9 @@ usable_discovery_artifacts:
   - docs/development-architecture/component-discovery/live-substrate-macro-service-reconciliation.md
   - docs/development-architecture/component-discovery/live-component-macro-service-consumption-audit.md
   - docs/development-architecture/component-discovery/macro-service-duplication-overlap-audit.md
+  - docs/development-architecture/component-discovery/live-workbook-macro-service-reconciliation.md
+  - docs/development-architecture/component-discovery/final-macro-service-consistency-audit.md
+  - docs/development-architecture/component-discovery/live-workbook-reconciliation-ledger.yaml
   - docs/development-architecture/component-discovery/ddd-to-existing-component-mapping.md
   - docs/development-architecture/component-discovery/operations-record-form-evidence-2026-08-24.md
   - docs/development-architecture/component-discovery/semantic-promotion-guardrail.md
@@ -91,7 +106,10 @@ parked_design_artifacts:
   - docs/development-architecture/component-discovery/port-capability-gap-analysis.md
 
 resolved_discovery_findings:
-  - no-major-macro-service-category-missing-from-17-canonical-use-case-coverage
+  - all-10-bounded-contexts-checked-against-macro-service-inventory
+  - all-17-canonical-application-use-cases-checked
+  - no-major-macro-service-category-missing
+  - no-workbook-only-capability-forces-new-macro-service-category
   - forms-structured-capture-confirmed-as-narrow-technical-capture-macro-service
   - retained-history-separated-from-technical-audit
   - catalog-reference-boundary-excludes-domain-record-persistence-external-identity-translation-and-read-composition
@@ -102,46 +120,34 @@ resolved_discovery_findings:
   - rules-rejected-as-macro-service-under-current-evidence
   - notification-delivery-confirmed-while-escalation-meaning-remains-local
   - scheduling-background-execution-classified-as-platform-macro-service
-  - live-architect-kernel-prospective-shared-service-test-aligns-with-whole-ddd-consumer-testing
-  - live-architect-kernel-no-duplicate-capability-rule-applied-to-normalized-map
-  - live-taxonomy-root-does-not-imply-ddd-derived-macro-service
-  - live-component-level-service-arrows-are-positive-but-not-exhaustive-consumption-evidence
-  - no-new-major-macro-service-category-exposed-by-live-textual-substrate
-  - normalized-macro-service-map-survives-final-conceptual-duplication-overlap-audit
+  - live-workbook-ports-classified-by-level
+  - live-workbook-wrappers-and-endpoints-fit-existing-macro-services-or-ambient-capabilities
+  - live-workbook-component-port-links-are-positive-but-not-exhaustive-consumption-evidence
+  - normalized-macro-service-map-survives-live-workbook-duplication-overlap-audit
 
-major_current_architecture_reconciliation_findings:
-  - live-shared-services-api-mirrors-many-taxonomy-roots-that-are-subcapabilities-or-ambient-platform-concerns-not-macro-services
-  - catalog-generic-entity-persistence-exceeds-confirmed-catalog-boundary
-  - manufactor-thing-and-thing-links-must-remain-technical-reference-link-mechanics
-  - historical-form-engine-spans-forms-documents-data-and-catalog
-  - general-integration-source-acquisition-provenance-responsibility-is-obscured-by-integration-workflows-and-analytics-etl
-  - integration-and-analytics-overlap-at-etl-needs-taxonomy-reconciliation
-  - operational-read-composition-is-missing-from-current-live-shared-service-list
-  - retained-history-is-missing-as-coherent-current-macro-service-family
-  - forms-structured-capture-is-missing-as-coherent-current-macro-service-family
-  - work-routing-external-reference-coordination-is-spread-across-direct-component-coupling-links-and-workflow-mechanics
-  - thing-status-catalog-must-not-create-universal-status-semantics
-  - integration-workflows-elsa-is-over-promoted-if-treated-as-macro-service
-  - rules-governance-validation-are-supporting-evaluation-mechanics-not-business-rule-owners
-  - identity-permissions-old-ad-driven-description-conflicts-with-current-profile-role-implementation
-  - storage-compose-printing-are-subcapabilities-not-peer-macro-services
-  - cron-jobs-cron-etl-integration-jobs-and-batch-execution-must-not-become-duplicate-scheduling-services
-  - live-business-component-map-still-contains-pre-ddd-or-deferred-components-and-unsupported-direct-couplings
-  - canonical-quality-verification-has-no-clean-live-business-component-equivalent
-  - live-component-service-arrows-materially-underexpress-canonical-macro-service-consumption
+remaining_major_reconciliation_defects:
+  - identity-permissions-live-workbook-contradiction:
+      ports_sheet: AD-via-DirectoryServicesWrapper
+      accepted_adr_117: ManuFactor-owned-role-tier-no-AD-groups
+  - thing-status-catalog-risks-universal-domain-status-semantics
+  - catalog-entities-forms-reference-wording-risks-generic-domain-ownership
+  - pre-ddd-components-rules-actions-remain-in-live-workbook
+  - forms-retained-history-operational-read-composition-and-work-routing-not-coherently-represented-in-live-port-table
+  - canonical-quality-verification-has-no-clean-live-component-equivalent
 
 phase_exit_criteria:
   - all-10-bounded-contexts-checked-against-macro-service-inventory: satisfied
   - every-candidate-has-explicit-consumer-map: satisfied
   - materially-different-consumers-compared-where-possible: satisfied
-  - duplicate-and-overlapping-services-reconciled: conceptually-satisfied
+  - duplicate-and-overlapping-services-reconciled: satisfied-at-conceptual-macro-service-level
   - broad-services-decomposed-or-explicitly-justified: satisfied
   - superficial-structural-abstractions-rejected: satisfied
   - major-integration-and-source-authority-implications-identified: satisfied
   - no-major-reusable-capability-category-unexamined: satisfied
   - live-textual-architecture-substrate-reconciled: satisfied
-  - live-workbook-tabular-inventory-reconciled: pending
-  - remaining-open-items-do-not-threaten-macro-service-map: likely-satisfied-but-held-open-until-live-workbook-verification
+  - live-workbook-tabular-inventory-reconciled: satisfied
+  - remaining-open-items-do-not-threaten-macro-service-category-map: satisfied
+  - live-architecture-semantic-contradictions-reconciled: pending
   - mark-confirms-no-major-discovery-work-remains: pending
 
 concrete_use_case_rule: >
@@ -156,9 +162,11 @@ open_business_questions: []
 open_domain_contradictions: []
 
 next_work:
-  - materialize-or-export-live-ManuFactor-Architecture-Workbook-for-tabular-inspection
-  - classify-every-live-workbook-component-port-wrapper-technology-endpoint-row-as-macro-service-subcapability-ambient-or-domain-component
-  - identify-any-workbook-only-capabilities-not-visible-in-live-textual-substrate
-  - verify-workbook-component-to-port-assignments-against-normalized-macro-service-consumer-map
-  - produce-final-gate-readiness-report
-  - stop-before-design-and-review-discovery-completeness-with-mark
+  - reconcile-identity-permissions-contradiction-in-live-architecture-source
+  - constrain-thing-status-catalog-to-technical-category-display-mechanics-not-domain-semantics
+  - reconcile-catalog-entities-catalog-forms-data-reference-wording-with-canonical-ownership
+  - reconcile-pre-ddd-component-rule-action-rows-against-canonical-ddd
+  - acknowledge-missing-live-port-representation-for-forms-history-read-composition-and-work-routing-without-designing-implementation
+  - acknowledge-canonical-quality-verification-gap-in-live-component-inventory-without-designing-implementation
+  - run-final-live-architecture-semantic-consistency-check
+  - stop-before-design-and-review-discovery-completion-gate-with-mark
