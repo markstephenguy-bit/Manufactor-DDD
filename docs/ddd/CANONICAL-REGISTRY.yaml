@@ -15,7 +15,7 @@ unresolved_issue_registry:
   baseline: docs/ddd/issues/unresolved.yaml
   unresolved_issue_additions:
     - docs/ddd/issues/scenario-validation-open.yaml
-  current_open_issue_count: 2
+  current_open_issue_count: 0
 
 registries:
   aggregates:
