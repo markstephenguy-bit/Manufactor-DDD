@@ -1,5 +1,5 @@
 phase: whole-ddd-reusable-component-discovery
-status: macro-service-discovery-complete-live-architecture-reconciliation-active
+status: broad-ddd-macro-service-shoring-active
 updated_at: 2026-08-24
 semantic_authority: docs/ddd
 process_gate:
@@ -11,14 +11,17 @@ process_gate:
 working_method:
   mode: broad-brush-first
   rule: >
-    Work at the whole-system and macro-service level first. Do not drill into row-level,
-    field-level, contract-level, endpoint-level, persistence-level, or implementation-level
-    detail unless a broad macro-service boundary cannot be resolved without it.
+    Work at the whole-system and macro-service level first. The immediate purpose is to shore up
+    the shared service families and make the interaction between the canonical DDD and those
+    services explicit. Do not drill into row-level, field-level, contract-level, endpoint-level,
+    persistence-level, or implementation-level detail unless a broad macro-service boundary cannot
+    be resolved without it.
   preferred_unit_of_analysis:
     - macro-service-family
+    - bounded-context-to-service-interaction
     - whole-system-capability
-    - bounded-context-consumer-group
     - major-overlap-or-gap
+    - semantic-ownership-boundary
   defer_until_later:
     - row-by-row-workbook-cleanup
     - field-source-mapping
@@ -35,42 +38,29 @@ architecture_evidence:
     role: current architecture substrate evidence only
     declared_live_database: ManuFactor-Architecture-Workbook.xlsx
     live_workbook_tabular_inspection: complete
-    inspected_workbook_sheets:
-      - Components
-      - Ports
-      - Wrappers
-      - Endpoints
-      - Layers
-      - Status Catalog Mappings
-      - Scheduled & Triggered Actions
-      - Notifications
-      - Rules
-      - Catalog Entities
-      - Decisions (ADRs)
-      - Build Order
-      - Solution Structure
-      - Taxonomy
-      - Constraints & Assumptions
 
 current_objective: >
-  Reconcile the stable whole-DDD macro-service map into a semantically safe interpretation
-  of the live ManuFactor architecture database using broad brush strokes. Macro-service category
-  discovery and live workbook verification are complete. Do not enter implementation/design shaping.
+  Shore up the macro-service landscape in broad strokes and validate how every canonical Bounded
+  Context interacts with those services. Resolve only major service-family boundaries, overlaps,
+  missing responsibilities, and ownership risks. Do not enter implementation/design shaping.
 
 normalized_macro_services:
-  domain_application_supporting:
+  foundation:
     - data-and-state-persistence
     - catalog-reference-and-hierarchy
+    - identity-access-and-responsibility
+    - retained-history
+  interaction_capture:
     - forms-and-structured-capture
     - documents-artifacts-and-evidence
-    - identity-access-and-responsibility
+    - notification-and-attention
+  integration_coordination:
     - integration-source-acquisition-and-provenance
+    - work-routing-and-external-reference-coordination
+  read_knowledge:
     - operational-query-and-read-composition
     - analytics-projection-and-data-lake
-    - retained-history
-    - work-routing-and-external-reference-coordination
-    - notification-and-attention
-  platform:
+  platform_execution:
     - scheduling-and-background-execution
 
 supporting_capabilities_not_macro_services:
@@ -91,14 +81,15 @@ ambient_platform_concerns:
   - testing
   - generic-configuration-governance
 
-optional_platform_capabilities_outside_current_ddd_derived_macro_map:
-  - intelligence-ai
+broad_interaction_artifact:
+  - docs/development-architecture/component-discovery/ddd-macro-service-interaction-map.md
 
 resolved_discovery_findings:
   - all-10-bounded-contexts-checked-against-macro-service-inventory
   - all-17-canonical-application-use-cases-checked
   - no-major-macro-service-category-missing
   - no-workbook-only-capability-forces-new-macro-service-category
+  - ddd-remains-semantic-center-and-macro-services-own-reusable-mechanics-only
   - forms-structured-capture-confirmed-as-narrow-technical-capture-macro-service
   - retained-history-separated-from-technical-audit
   - catalog-reference-boundary-excludes-domain-record-persistence-external-identity-translation-and-read-composition
@@ -109,18 +100,15 @@ resolved_discovery_findings:
   - rules-rejected-as-macro-service-under-current-evidence
   - notification-delivery-confirmed-while-escalation-meaning-remains-local
   - scheduling-background-execution-classified-as-platform-macro-service
-  - live-workbook-ports-classified-by-level
-  - live-workbook-wrappers-and-endpoints-fit-existing-macro-services-or-ambient-capabilities
-  - live-workbook-component-port-links-are-positive-but-not-exhaustive-consumption-evidence
-  - normalized-macro-service-map-survives-live-workbook-duplication-overlap-audit
 
-remaining_major_reconciliation_defects:
-  - identity-permissions-live-workbook-contradiction
-  - thing-status-catalog-risks-universal-domain-status-semantics
-  - catalog-entities-forms-reference-wording-risks-generic-domain-ownership
-  - pre-ddd-components-rules-actions-remain-in-live-workbook
-  - forms-retained-history-operational-read-composition-and-work-routing-not-coherently-represented-in-live-port-table
-  - canonical-quality-verification-has-no-clean-live-component-equivalent
+remaining_broad_brush_service_work:
+  - shore-up-integration-vs-operational-read-vs-analytics-boundary
+  - shore-up-catalog-reference-vs-domain-ownership-vs-external-identity-mapping-boundary
+  - shore-up-data-vs-retained-history-vs-technical-audit-boundary
+  - shore-up-forms-vs-documents-evidence-vs-workflow-runtime-boundary
+  - shore-up-work-routing-vs-externally-owned-work-lifecycle-boundary
+  - confirm-live-architecture-can-be-interpreted-under-these-broad-service-families-without-new-major-category
+  - final-whole-system-semantic-consistency-check
 
 phase_exit_criteria:
   - all-10-bounded-contexts-checked-against-macro-service-inventory: satisfied
@@ -131,14 +119,13 @@ phase_exit_criteria:
   - superficial-structural-abstractions-rejected: satisfied
   - major-integration-and-source-authority-implications-identified: satisfied
   - no-major-reusable-capability-category-unexamined: satisfied
-  - live-textual-architecture-substrate-reconciled: satisfied
   - live-workbook-tabular-inventory-reconciled: satisfied
-  - remaining-open-items-do-not-threaten-macro-service-category-map: satisfied
-  - live-architecture-semantic-contradictions-reconciled: pending
+  - broad-ddd-to-service-interaction-map-complete: satisfied
+  - remaining-major-service-boundary-groups-shored-up: pending
   - mark-confirms-no-major-discovery-work-remains: pending
 
 concrete_use_case_rule: >
-  Concrete cases may be used only to test macro-service generalization. They do not become
+  Concrete cases may be used only to test broad macro-service generalization. They do not become
   the primary workstream while the discovery gate is closed.
 
 mp2_asset_lifecycle_readiness:
@@ -149,8 +136,8 @@ open_business_questions: []
 open_domain_contradictions: []
 
 next_work:
-  - reconcile-the-live-architecture-at-the-macro-service-family-level
-  - collapse-stale-or-conflicting-live-capabilities-into-a-small-number-of-broad-reconciliation-decisions
-  - avoid-row-level-cleanup-until-broad-decisions-are-settled
+  - resolve-the-five-remaining-broad-service-boundary-groups
+  - test-each-boundary-group-against-the-ddd-as-a-whole
+  - avoid-row-level-cleanup-until-broad-service-boundaries-are-settled
   - run-final-whole-system-semantic-consistency-check
   - stop-before-design-and-review-discovery-completion-gate-with-mark
