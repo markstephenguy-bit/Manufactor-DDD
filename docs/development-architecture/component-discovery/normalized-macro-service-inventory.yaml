@@ -1,0 +1,444 @@
+status: discovery-candidate
+updated_at: 2026-08-24
+design_gate: closed
+semantic_authority: docs/ddd
+
+bounded_contexts:
+  - bc.asset-lifecycle
+  - bc.corrective-action
+  - bc.kiln-operations
+  - bc.operations-record
+  - bc.project-tracking
+  - bc.quality-verification
+  - bc.reliability-verification
+  - bc.safety-signoff
+  - bc.training-competency
+  - bc.workforce-availability
+
+macro_services:
+  - id: macro.data-state-persistence
+    name: Data & State Persistence Services
+    classification: domain-application-supporting
+    confidence: high
+    consumers:
+      - bc.asset-lifecycle
+      - bc.corrective-action
+      - bc.kiln-operations
+      - bc.operations-record
+      - bc.project-tracking
+      - bc.quality-verification
+      - bc.reliability-verification
+      - bc.safety-signoff
+      - bc.training-competency
+      - bc.workforce-availability
+    current_architecture_mechanisms:
+      - Data
+    owns_technically:
+      - durable-persistence-mechanics
+      - context-owned-record-read-write-plumbing
+      - transaction-and-concurrency-support
+    must_not_own:
+      - aggregate-invariants
+      - lifecycle-meaning
+      - cross-context-write-authority
+
+  - id: macro.catalog-reference-hierarchy
+    name: Catalog, Reference & Hierarchy Services
+    classification: domain-application-supporting
+    confidence: high
+    consumers:
+      - bc.asset-lifecycle
+      - bc.corrective-action
+      - bc.kiln-operations
+      - bc.operations-record
+      - bc.project-tracking
+      - bc.quality-verification
+      - bc.reliability-verification
+      - bc.safety-signoff
+      - bc.training-competency
+      - bc.workforce-availability
+    current_architecture_mechanisms:
+      - Catalog
+      - manufactor.thing
+      - thing_links
+      - Data.Reference
+    owns_technically:
+      - stable-internal-technical-reference
+      - subject-lookup
+      - hierarchy-navigation
+      - typed-cross-link
+      - technical-registration-indexing
+    must_not_own:
+      - generic-domain-entity-persistence
+      - external-system-identity-translation
+      - operational-read-composition
+      - universal-thing-semantics
+      - universal-status-semantics
+    reconciliation_needed:
+      - current-catalog-entity-generic-definition-storage-exceeds-boundary
+
+  - id: macro.forms-structured-capture
+    name: Forms & Structured Capture Services
+    classification: domain-application-supporting
+    confidence: high
+    directly_evidenced_consumers:
+      - bc.operations-record
+      - bc.safety-signoff
+      - bc.reliability-verification
+    current_architecture_mechanisms:
+      - historical-Form-Engine-concept
+      - Data
+      - Catalog
+      - Documents.Compose
+      - Storage
+    owns_technically:
+      - structured-field-presentation
+      - structured-value-capture
+      - reusable-field-control-behavior
+      - technical-value-source-provenance-presentation
+      - common-capture-shell
+    must_not_own:
+      - generic-form-domain-aggregate
+      - universal-form-lifecycle
+      - ltv-template-domain-semantics
+      - operations-record-domain-semantics
+      - reliability-verification-domain-semantics
+      - generic-approval
+      - generic-completion
+      - evidence-sufficiency
+    reconciliation_needed:
+      - historical-form-engine-spans-multiple-macro-services
+
+  - id: macro.documents-artifacts-evidence
+    name: Documents, Artifacts & Evidence Services
+    classification: domain-application-supporting
+    confidence: high
+    directly_evidenced_consumers:
+      - bc.corrective-action
+      - bc.quality-verification
+      - bc.reliability-verification
+      - bc.safety-signoff
+      - bc.training-competency
+    supporting_consumers:
+      - bc.asset-lifecycle
+      - bc.operations-record
+      - bc.project-tracking
+    current_architecture_mechanisms:
+      - Storage
+      - Documents.Compose
+      - Printing
+    owns_technically:
+      - artifact-storage-retrieval
+      - document-composition
+      - scan-upload
+      - printing-output
+      - integrity-metadata
+      - evidence-reference
+    must_not_own:
+      - evidence-sufficiency
+      - domain-transition-authority
+      - document-business-meaning
+
+  - id: macro.identity-access-responsibility
+    name: Identity, Access & Responsibility Services
+    classification: domain-application-supporting
+    confidence: high
+    consumers:
+      - bc.asset-lifecycle
+      - bc.corrective-action
+      - bc.kiln-operations
+      - bc.operations-record
+      - bc.project-tracking
+      - bc.quality-verification
+      - bc.reliability-verification
+      - bc.safety-signoff
+      - bc.training-competency
+      - bc.workforce-availability
+    current_architecture_mechanisms:
+      - Identity.Login
+      - Identity.Permissions
+      - ManuFactor-Profile
+    authority_layers:
+      authentication_identity: Windows-enterprise-authentication
+      application_profile_role: ManuFactor-Profile
+      business_action_authority: owning-bounded-context
+    owns_technically:
+      - authenticated-actor-identity
+      - application-profile-resolution
+      - app-role-and-grant-facts
+      - responsibility-metadata-inputs
+      - shared-enforcement-hooks
+    must_not_own:
+      - context-specific-business-authority-decisions
+    reconciliation_needed:
+      - old-identity-permissions-ad-driven-description
+
+  - id: macro.integration-source-provenance
+    name: Integration, Source Acquisition & Provenance Services
+    classification: domain-application-supporting
+    confidence: high
+    consumers:
+      - bc.asset-lifecycle
+      - bc.kiln-operations
+      - bc.operations-record
+      - bc.reliability-verification
+      - bc.training-competency
+      - bc.workforce-availability
+    supporting_consumers:
+      - bc.corrective-action
+      - bc.project-tracking
+      - bc.quality-verification
+      - bc.safety-signoff
+    current_architecture_mechanisms:
+      - Integration
+      - source-specific-wrappers
+      - Cron-ETL
+    owns_technically:
+      - endpoint-interaction
+      - acquisition-publication-execution
+      - retry-checkpoint
+      - source-destination-provenance
+      - observed-extracted-published-time
+      - source-reference
+      - adapter-health
+      - explicit-unavailable-unresolved-state
+    must_not_own:
+      - source-system-authority
+      - domain-interpretation
+      - fabricated-lineage
+      - universal-external-data-model
+    reconciliation_needed:
+      - current-Integration-port-is-too-mp2-specific
+      - separate-source-acquisition-from-analytics-transformation
+
+  - id: macro.operational-read-composition
+    name: Operational Query & Read Composition Services
+    classification: domain-application-supporting
+    confidence: high
+    directly_evidenced_consumers:
+      - bc.asset-lifecycle
+      - bc.corrective-action
+      - bc.kiln-operations
+      - bc.quality-verification
+      - bc.reliability-verification
+      - bc.training-competency
+      - bc.workforce-availability
+    supporting_consumers:
+      - bc.operations-record
+      - bc.project-tracking
+      - bc.safety-signoff
+    current_architecture_mechanisms:
+      - no-clean-current-port
+      - Data-queries-partial
+      - Catalog-partial
+      - Integration-partial
+    owns_technically:
+      - compose-current-read-results
+      - preserve-contribution-provenance
+      - preserve-freshness
+      - represent-missing-stale-unresolved-contributions
+    must_not_own:
+      - domain-writes
+      - composite-source-of-truth
+      - analytical-grain-ownership
+    reconciliation_needed:
+      - missing-from-current-port-taxonomy
+
+  - id: macro.analytics-projection-data-lake
+    name: Analytics, Projection & Data-Lake Services
+    classification: domain-application-supporting
+    confidence: high
+    directly_evidenced_consumers:
+      - bc.kiln-operations
+      - bc.operations-record
+      - bc.workforce-availability
+    supporting_consumers:
+      - bc.asset-lifecycle
+      - bc.corrective-action
+      - bc.project-tracking
+      - bc.quality-verification
+      - bc.reliability-verification
+      - bc.training-competency
+    current_architecture_mechanisms:
+      - Analytics
+      - ClickHouse
+      - TimescaleDB
+      - Superset
+      - Analytics.ETL
+    owns_technically:
+      - analytical-transformation
+      - analytical-projection
+      - historical-aggregation
+      - olap-time-series
+      - analytical-refresh-retention-query
+      - bi-dashboard-consumption
+    must_not_own:
+      - source-acquisition-authority
+      - operational-source-records
+      - command-authority
+      - current-operational-read-composition
+    reconciliation_needed:
+      - etl-overlap-with-integration
+
+  - id: macro.retained-history
+    name: Retained History Services
+    classification: domain-application-supporting
+    confidence: high
+    consumers:
+      - bc.asset-lifecycle
+      - bc.corrective-action
+      - bc.kiln-operations
+      - bc.operations-record
+      - bc.project-tracking
+      - bc.quality-verification
+      - bc.reliability-verification
+      - bc.safety-signoff
+      - bc.training-competency
+      - bc.workforce-availability
+    current_architecture_mechanisms:
+      - scattered-context-persistence
+      - no-clean-current-port
+    owns_technically:
+      - revision-sequence-support
+      - correction-supersession-linkage
+      - actor-time-reason-provenance-support
+      - historical-retrieval-mechanics
+      - immutable-historical-reference-support
+    must_not_own:
+      - allowed-domain-transitions
+      - state-vocabulary
+      - domain-event-meaning
+      - universal-lifecycle-model
+    reconciliation_needed:
+      - missing-as-coherent-current-macro-service
+
+  - id: macro.work-routing-external-reference
+    name: Work Routing & External Reference Coordination Services
+    classification: domain-application-supporting
+    confidence: high
+    directly_evidenced_consumers:
+      - bc.corrective-action
+      - bc.reliability-verification
+      - bc.project-tracking
+    supporting_consumers:
+      - bc.asset-lifecycle
+      - bc.quality-verification
+    current_architecture_mechanisms:
+      - thing_links
+      - Integration
+      - Integration.Workflows
+    owns_technically:
+      - destination-reference
+      - routing-correlation
+      - acknowledgement-when-available
+      - local-routing-reference-history
+      - explicit-external-state-uncertainty
+    must_not_own:
+      - generic-work-domain
+      - generic-task-domain
+      - external-work-execution-state
+      - capa-project-maintenance-lifecycle
+
+  - id: macro.notification-attention
+    name: Notification & Attention Services
+    classification: domain-application-supporting
+    confidence: high
+    directly_evidenced_consumers:
+      - bc.corrective-action
+      - bc.project-tracking
+      - bc.quality-verification
+      - bc.reliability-verification
+      - bc.safety-signoff
+      - bc.workforce-availability
+    supporting_consumers:
+      - bc.asset-lifecycle
+      - bc.kiln-operations
+      - bc.operations-record
+      - bc.training-competency
+    current_architecture_mechanisms:
+      - Notification
+    owns_technically:
+      - message-delivery
+      - delivery-retry
+      - channel-resolution
+      - delivery-result
+      - reusable-notification-template-mechanics
+    must_not_own:
+      - escalation-business-meaning
+      - severity
+      - business-due-date
+      - accountability
+      - acknowledgement-domain-effects
+
+  - id: macro.scheduling-background-execution
+    name: Scheduling & Background Execution Services
+    classification: platform
+    confidence: high
+    consumers:
+      - macro.integration-source-provenance
+      - macro.analytics-projection-data-lake
+      - macro.notification-attention
+      - other-technical-jobs-as-evidenced
+    current_architecture_mechanisms:
+      - Cron-Jobs
+      - Cron-ETL
+      - Hangfire
+      - background-workers
+    owns_technically:
+      - execute-now-later-recurring
+      - technical-job-retry-resume
+      - job-checkpoint
+      - duplicate-execution-control
+      - execution-health
+    must_not_own:
+      - kiln-business-schedule
+      - project-schedule-semantics
+      - workforce-vacation-scheduling
+      - domain-deadline-meaning
+      - automatic-domain-transitions
+
+supporting_capabilities:
+  - id: capability.long-running-workflow-runtime
+    current_mechanisms: [Integration.Workflows, Elsa]
+    status: not-macro-service
+  - id: capability.rules-evaluation
+    current_mechanisms: [Rules]
+    status: not-macro-service
+  - id: capability.storage
+    current_mechanisms: [Storage]
+    parent_macro_service: macro.documents-artifacts-evidence
+  - id: capability.document-compose
+    current_mechanisms: [Documents.Compose]
+    parent_macro_service: macro.documents-artifacts-evidence
+  - id: capability.printing
+    current_mechanisms: [Printing]
+    parent_macro_service: macro.documents-artifacts-evidence
+  - id: capability.search
+    status: subcapability-not-independent-macro-service
+  - id: capability.computation
+    status: subcapability-not-independent-macro-service
+  - id: capability.realtime
+    status: platform-transport-not-domain-macro-service
+
+ambient_platform_concerns:
+  - technical-audit
+  - observability
+  - security
+  - devops
+  - testing
+  - generic-configuration-governance
+
+excluded_from_current_ddd_derived_macro_map:
+  - intelligence-ai
+
+category_coverage:
+  canonical_application_use_cases_checked: 17
+  missing_major_macro_service_categories: 0
+
+remaining_major_discovery_work:
+  - reconcile-against-live-ManuFactor-Architecture-Workbook.xlsx
+  - reclassify-live-workbook-capabilities-under-normalized-taxonomy
+  - identify-live-workbook-capabilities-not-present-in-text-snapshots
+  - verify-live-component-to-port-consumption-against-consumer-map
+  - final-whole-model-consistency-audit
+  - mark-confirmation-before-gate-exit
