@@ -1,24 +1,25 @@
 status: candidate
 updated_at: 2026-08-24
 purpose: >
-  Define the minimum transport/publication contract shape for exporting authoritative
-  End-of-Shift Operations Records toward the MES data lake without transferring domain ownership.
+  Define the minimum transport/publication contract shape for exporting the authoritative
+  End-of-Shift operations form record toward the MES data lake without transferring domain ownership.
 
 evidence:
   concrete_form_artifact: docs/development-architecture/component-discovery/operations-record-form-evidence-2026-08-24.md
-  report_type_confirmed: Dry End - End of Shift Report
-  related_distinct_record_type_confirmed: Dry End - First Hour Production Summary
+  confirmed_operations_form: Dry End - End of Shift Report
+  related_operations_form: Dry End - First Hour Production Summary
   rule: >
-    Shared field shape does not make these one generic report type. Each remains a distinct
-    Operations Record business type.
+    First Hour Production Summary and End of Shift Report are operations forms within Operations Record,
+    not distinct domain record types. Shared field/form mechanics may therefore be reused without
+    inventing separate domain types.
 
 source:
   bounded_context: bc.operations-record
   implementation_home: OperationalReporting
   authoritative_for:
-    - submitted-end-of-shift-record
+    - submitted-end-of-shift-form-record
     - correction-history
-    - record-business-fields-and-rules
+    - operations-form-business-fields-and-rules
 
 destination:
   name: MES data lake
@@ -39,7 +40,7 @@ destination:
 publication_envelope:
   source_system: ManuFactor
   source_context: Operations Record
-  record_type: End-of-Shift Report
+  form_name: End-of-Shift Report
   required_identity_fields:
     - operational_record_id
     - source_revision_id
@@ -58,7 +59,7 @@ publication_envelope:
     - schema_version
   payload:
     status: concrete-field-set-known-source-provenance-not-yet-known
-    schema_name: end_of_shift_report
+    schema_name: end_of_shift_operations_form
     fields:
       - name: business_date
         label: Date
@@ -115,9 +116,18 @@ publication_envelope:
         label: Comments
         source_kind: unresolved
     rule: >
-      Payload is the concrete End-of-Shift business schema. Do not substitute a generic Form or
-      generic Operational Record payload. Do not infer whether any field is manual, sourced,
-      calculated, copied, or defaulted until the current workflow/source is confirmed.
+      Payload is the concrete End-of-Shift operations-form schema. Do not infer whether any field
+      is manual, sourced, calculated, copied, or defaulted until the current workflow/source is confirmed.
+
+field_population_policy:
+  rule: pull-first-manual-by-exception
+  source_preference:
+    - reliable-authoritative-source
+    - deterministic-calculation-from-established-source-data
+    - manual-entry-when-no-trustworthy-source-exists
+  manual_override_rule: >
+    If source-derived values may be overridden, the original source value and the override must remain
+    distinguishable with actor/time/reason provenance.
 
 field_provenance:
   required_when_known: true
@@ -131,7 +141,7 @@ field_provenance:
     - entered_by
   guardrail: >
     Prepopulation or analytical reuse does not transfer source authority. ManuFactor may own the
-    submitted report while some constituent values remain attributable to external source facts.
+    submitted operations-form record while some constituent values remain attributable to external source facts.
 
 idempotency:
   proposed_key_components:
@@ -205,7 +215,7 @@ architecture_guardrails:
   - source-provenance-is-retained
   - correction-history-is-not-silently-destroyed
   - no-invented-cross-system-lineage
-  - transport-envelope-generality-does-not-create-generic-record-domain-model
+  - operations-form-mechanics-do-not-create-separate-domain-record-types
 
 blocking_destination_facts:
   - what-the-mes-data-lake-actually-is
@@ -216,7 +226,7 @@ blocking_destination_facts:
 
 blocking_field-facts:
   - source-kind-for-each-end-of-shift-field
-  - which-fields-are-user-entered-versus-prefilled
+  - which-fields-can-be-pulled-versus-manual-only
   - calculation-rules-for-derived-fields-if-any
   - correction-authority-per-field-if-source-derived-values-can-be-overridden
 
