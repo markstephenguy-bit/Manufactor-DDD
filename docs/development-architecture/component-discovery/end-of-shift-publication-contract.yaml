@@ -1,0 +1,149 @@
+status: candidate
+updated_at: 2026-08-24
+purpose: >
+  Define the minimum transport/publication contract shape for exporting authoritative
+  End-of-Shift Operations Records toward the MES data lake without transferring domain ownership.
+
+source:
+  bounded_context: bc.operations-record
+  implementation_home: OperationalReporting
+  authoritative_for:
+    - submitted-end-of-shift-record
+    - correction-history
+    - record-business-fields-and-rules
+
+destination:
+  name: MES data lake
+  implementation_status: destination-discovery-required
+  must_verify:
+    - exact-platform-or-store
+    - endpoint-or-database
+    - schema-or-table-or-topic-or-object-path
+    - owning-team
+    - authentication-method
+    - accepted-ingestion-mechanism
+    - direct-write-versus-intermediate-ingestion-service
+  do_not_assume:
+    - that-mes_lum-read-only-aurora-is-the-destination
+    - that-manufactor-clickhouse-data-lake-is-the-same-thing
+    - that-direct-database-write-is-supported
+
+publication_envelope:
+  source_system: ManuFactor
+  source_context: Operations Record
+  record_type: End-of-Shift Report
+  required_identity_fields:
+    - operational_record_id
+    - source_revision_id
+    - mill_or_site_id
+    - shift_id
+    - business_date
+  required_provenance_fields:
+    - source_recorded_at
+    - source_corrected_at_if_applicable
+    - published_at
+    - source_application
+    - source_context
+  required_delivery_fields:
+    - publication_id
+    - idempotency_key
+    - schema_version
+  payload:
+    status: business-fields-not-yet-frozen
+    rule: >
+      Payload must represent the concrete End-of-Shift Report type. Do not substitute a
+      generic Form or generic Operational Record payload for the business field contract.
+
+idempotency:
+  proposed_key_components:
+    - operational_record_id
+    - source_revision_id
+    - destination_contract_version
+  rule: retries-must-not-create-indistinguishable-duplicate-business-records
+
+correction_semantics:
+  source_rule: corrections-preserve-history
+  destination_requirement: >
+    Downstream representation must distinguish revisions/corrections. A latest-state
+    materialization may exist for analytics, but it is a projection rather than source truth.
+
+transaction_boundary:
+  source_record_commit:
+    coupled_to_destination_delivery: false
+  analytical_delivery:
+    independently_retryable: true
+
+publication_state:
+  ownership: analytics-etl-mechanics
+  candidate_states:
+    - pending
+    - delivered
+    - retryable-failure
+    - manual-attention
+    - superseded
+  guardrail: >
+    These are technical delivery states and must not become Operations Record domain lifecycle
+    states unless future business evidence explicitly establishes that rule.
+
+trigger:
+  status: unresolved-technical-or-business-timing-detail
+  candidates_not_yet_selected:
+    - on-submit
+    - on-finalize-or-close
+    - scheduled-batch
+    - change-driven-publication
+  rule: do-not-lock-until-real-end-of-shift-workflow-and-destination-ingestion-needs-are-confirmed
+
+delivery_mechanism:
+  status: unresolved
+  candidates_not_yet_selected:
+    - scheduled-etl
+    - outbox-driven-etl
+    - api-push
+    - destination-database-load
+    - file-or-object-drop
+    - queue-or-event
+  rule: choose-from-real-destination-capability-not-framework-preference
+
+checkpointing:
+  required: true
+  minimum_fields:
+    - publication_id
+    - operational_record_id
+    - source_revision_id
+    - destination_identity
+    - attempt_count
+    - last_attempt_at
+    - delivered_at
+    - outcome
+    - error_summary_if_failed
+
+architecture_guardrails:
+  - operations-record-remains-authoritative-writer
+  - analytics-etl-does-not-mutate-operations-record-domain-state
+  - destination-outage-does-not-rollback-valid-source-record
+  - destination-client-does-not-leak-into-operational-reporting-domain
+  - source-provenance-is-retained
+  - correction-history-is-not-silently-destroyed
+  - no-invented-cross-system-lineage
+  - transport-envelope-generality-does-not-create-generic-record-domain-model
+
+blocking_destination_facts:
+  - what-the-mes-data-lake-actually-is
+  - accepted-ingestion-protocol
+  - destination-contract-schema
+  - credentials-and-network-path
+  - destination-idempotency-or-upsert-capability
+
+nonblocking_architecture_work:
+  - add-dotnet-boundary-fitness-tests
+  - define-publication-checkpoint-persistence-pattern
+  - keep-source-and-delivery-transactions-separated
+  - prepare-operational-reporting-read-export-contract-seam
+  - preserve-revision-and-provenance-fields
+
+mp2_asset_lifecycle:
+  forcing_case_status: deferred
+  reason: >
+    Requires deeper discovery of real MP2 identity, hierarchy, restructuring, WR/WO correlation,
+    unmatched cases, and authority before an external-reference mapping contract can be trusted.
