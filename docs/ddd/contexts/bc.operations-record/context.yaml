@@ -9,24 +9,24 @@ model_statement: >
   collapse unrelated needs into one generic catch-all record. The resulting record is authoritative
   for what was submitted and its retained history, but not automatically for the lifecycle of equipment,
   people, Quality, Safety, or other referenced concepts. Operations Record is not the Superset/grain
-  analytics layer; captured records may subsequently be made available to analytical grains alongside
-  data sourced from other company systems.
+  analytics layer; captured records may subsequently be made available to analytical grains and data-lake
+  destinations alongside data sourced from other company systems.
 responsibilities:
   - Replace appropriate informal operational reporting workflows, such as email-based reporting, with structured retained records.
   - Model each operational form/record type from a distinct identified business need rather than as one generic record template.
   - Preserve correction and history semantics for ManuFactor-owned operational records.
   - Capture the business fields and rules needed by each specific operational reporting workflow.
-  - Make captured operational facts available for downstream analytical composition without becoming the analytics/grain model itself.
+  - Make captured operational facts available for downstream analytical composition and data-lake publication without becoming the analytics/grain model itself.
   - Reference external domain concepts without absorbing their lifecycle ownership.
 scope:
   - Structured operational reporting/capture where a real system gap exists
   - Distinct form/record types corresponding to distinct operational needs
   - Form-based capture of operational information currently transmitted through informal channels such as email
   - Retained operational record history and corrections
-  - Publication/exposure of captured facts for downstream analytical use
+  - Publication/exposure of captured facts for downstream analytical use, including End-of-Shift Reporting publication to the MES data lake
 out_of_scope:
   - A generic catch-all operational form intended to represent all operational reporting needs
-  - Superset semantic models, analytical grains, dashboards, or enterprise analytical composition
+  - Superset semantic models, analytical grains, dashboards, data-lake storage mechanics, or enterprise analytical composition
   - Wholesale ingestion of company data merely because it is available for analytics
   - Kiln scheduling and drying-process ownership
   - Project lifecycle management
@@ -40,6 +40,7 @@ external_concepts:
   - Nonconformity
   - Safety finding
   - Analytical grain
+  - MES data lake
 ubiquitous_language:
   - Operational Record
   - operational reporting
@@ -51,15 +52,16 @@ business_rules:
   - An Operations Record exists because ManuFactor is filling a structured operational-recording gap, not merely because the same data is useful analytically.
   - Each operational form/record type must correspond to a distinct identified business need and may have its own required fields, rules, and lifecycle details.
   - Referencing an external concept does not make Operations Record authoritative for that concept's lifecycle.
-  - Making an Operations Record available to Superset or another analytical grain does not transfer record ownership to the analytics layer.
+  - Making an Operations Record available to Superset, the MES data lake, or another analytical grain does not transfer record ownership to the analytics layer or destination.
 owner: unresolved
 domain_experts: [Mark]
 integration_surface:
   - References assets, personnel, Quality, Safety, and other operational subjects by identity or translated facts as needed.
-  - Exposes captured operational facts for downstream analytical composition, including Superset grains, while retaining source authority for ManuFactor-owned records.
+  - Exposes captured operational facts for downstream analytical composition, including Superset grains and MES data-lake publication, while retaining source authority for ManuFactor-owned records.
 upstream_dependencies: []
 downstream_consumers:
   - analytical composition / Superset grains where applicable
+  - MES data lake for End-of-Shift Reporting
 status: candidate
 provenance:
   sources:
@@ -72,6 +74,9 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-22 distinct-record clarification
       description: Each operational form is a distinct business need that should be recorded within the Operations Record context rather than represented by one generic catch-all form.
+    - type: domain-expert
+      reference: Mark direct, 2026-08-24 End-of-Shift downstream clarification
+      description: End-of-Shift Reporting needs to get into the MES data lake; this is a downstream publication requirement and does not transfer ownership of the source record.
     - type: existing-model
       reference: ManuFactor-arch Build Order Phase_B/B1
       description: Existing evidence supports operational reporting/capture candidates, but specific record types require business validation before being treated as canonical examples.
