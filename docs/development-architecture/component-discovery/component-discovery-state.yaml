@@ -8,6 +8,26 @@ process_gate:
   exit_requires_mark_confirmation: true
   design_oriented_artifacts_created_during_prior-drift: parked-do-not-advance
 
+working_method:
+  mode: broad-brush-first
+  rule: >
+    Work at the whole-system and macro-service level first. Do not drill into row-level,
+    field-level, contract-level, endpoint-level, persistence-level, or implementation-level
+    detail unless a broad macro-service boundary cannot be resolved without it.
+  preferred_unit_of_analysis:
+    - macro-service-family
+    - whole-system-capability
+    - bounded-context-consumer-group
+    - major-overlap-or-gap
+  defer_until_later:
+    - row-by-row-workbook-cleanup
+    - field-source-mapping
+    - implementation-seams
+    - endpoint-contracts
+    - persistence-shapes
+    - detailed-workflow-design
+    - source-specific-integration-contract-design
+
 architecture_evidence:
   - repository: markstephenguy-bit/Manufactor
     role: current implementation evidence only
@@ -34,9 +54,8 @@ architecture_evidence:
 
 current_objective: >
   Reconcile the stable whole-DDD macro-service map into a semantically safe interpretation
-  of the live ManuFactor architecture database. Macro-service category discovery and live
-  workbook verification are complete. Do not enter implementation/design shaping while the
-  remaining live-architecture reconciliation defects are unresolved.
+  of the live ManuFactor architecture database using broad brush strokes. Macro-service category
+  discovery and live workbook verification are complete. Do not enter implementation/design shaping.
 
 normalized_macro_services:
   domain_application_supporting:
@@ -75,36 +94,6 @@ ambient_platform_concerns:
 optional_platform_capabilities_outside_current_ddd_derived_macro_map:
   - intelligence-ai
 
-usable_discovery_artifacts:
-  - docs/development-architecture/component-discovery/whole-ddd-component-map.md
-  - docs/development-architecture/component-discovery/whole-model-macro-service-map.md
-  - docs/development-architecture/component-discovery/macro-service-boundary-tests-pass1.md
-  - docs/development-architecture/component-discovery/macro-service-boundary-tests-pass2.md
-  - docs/development-architecture/component-discovery/current-architecture-macro-service-overlap-audit.md
-  - docs/development-architecture/component-discovery/macro-service-use-case-coverage-audit.md
-  - docs/development-architecture/component-discovery/macro-service-boundary-closure-pass.md
-  - docs/development-architecture/component-discovery/normalized-macro-service-inventory.yaml
-  - docs/development-architecture/component-discovery/live-substrate-macro-service-reconciliation.md
-  - docs/development-architecture/component-discovery/live-component-macro-service-consumption-audit.md
-  - docs/development-architecture/component-discovery/macro-service-duplication-overlap-audit.md
-  - docs/development-architecture/component-discovery/live-workbook-macro-service-reconciliation.md
-  - docs/development-architecture/component-discovery/final-macro-service-consistency-audit.md
-  - docs/development-architecture/component-discovery/live-workbook-reconciliation-ledger.yaml
-  - docs/development-architecture/component-discovery/ddd-to-existing-component-mapping.md
-  - docs/development-architecture/component-discovery/operations-record-form-evidence-2026-08-24.md
-  - docs/development-architecture/component-discovery/semantic-promotion-guardrail.md
-  - docs/development-architecture/component-discovery/discovery-completion-gate.md
-
-parked_design_artifacts:
-  - docs/development-architecture/component-discovery/implementation-boundary-reconciliation.md
-  - docs/development-architecture/component-discovery/target-component-topology.md
-  - docs/development-architecture/component-discovery/dotnet-boundary-fitness-spec.md
-  - docs/development-architecture/component-discovery/end-of-shift-mes-data-lake-pass.md
-  - docs/development-architecture/component-discovery/end-of-shift-publication-contract.yaml
-  - docs/development-architecture/component-discovery/end-of-shift-implementation-reconciliation.md
-  - docs/development-architecture/component-discovery/end-of-shift-field-source-candidates.yaml
-  - docs/development-architecture/component-discovery/port-capability-gap-analysis.md
-
 resolved_discovery_findings:
   - all-10-bounded-contexts-checked-against-macro-service-inventory
   - all-17-canonical-application-use-cases-checked
@@ -126,9 +115,7 @@ resolved_discovery_findings:
   - normalized-macro-service-map-survives-live-workbook-duplication-overlap-audit
 
 remaining_major_reconciliation_defects:
-  - identity-permissions-live-workbook-contradiction:
-      ports_sheet: AD-via-DirectoryServicesWrapper
-      accepted_adr_117: ManuFactor-owned-role-tier-no-AD-groups
+  - identity-permissions-live-workbook-contradiction
   - thing-status-catalog-risks-universal-domain-status-semantics
   - catalog-entities-forms-reference-wording-risks-generic-domain-ownership
   - pre-ddd-components-rules-actions-remain-in-live-workbook
@@ -162,11 +149,8 @@ open_business_questions: []
 open_domain_contradictions: []
 
 next_work:
-  - reconcile-identity-permissions-contradiction-in-live-architecture-source
-  - constrain-thing-status-catalog-to-technical-category-display-mechanics-not-domain-semantics
-  - reconcile-catalog-entities-catalog-forms-data-reference-wording-with-canonical-ownership
-  - reconcile-pre-ddd-component-rule-action-rows-against-canonical-ddd
-  - acknowledge-missing-live-port-representation-for-forms-history-read-composition-and-work-routing-without-designing-implementation
-  - acknowledge-canonical-quality-verification-gap-in-live-component-inventory-without-designing-implementation
-  - run-final-live-architecture-semantic-consistency-check
+  - reconcile-the-live-architecture-at-the-macro-service-family-level
+  - collapse-stale-or-conflicting-live-capabilities-into-a-small-number-of-broad-reconciliation-decisions
+  - avoid-row-level-cleanup-until-broad-decisions-are-settled
+  - run-final-whole-system-semantic-consistency-check
   - stop-before-design-and-review-discovery-completion-gate-with-mark
