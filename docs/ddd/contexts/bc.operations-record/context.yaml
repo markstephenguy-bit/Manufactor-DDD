@@ -6,11 +6,12 @@ model_statement: >
   Operations Record owns structured transactional capture for operational information that would
   otherwise be handled through informal mechanisms such as email. Each operational form/record type
   represents a distinct business need with its own required fields and rules; the context must not
-  collapse unrelated needs into one generic catch-all record. The resulting record is authoritative
-  for what was submitted and its retained history, but not automatically for the lifecycle of equipment,
-  people, Quality, Safety, or other referenced concepts. Operations Record is not the Superset/grain
-  analytics layer; captured records may subsequently be made available to analytical grains and data-lake
-  destinations alongside data sourced from other company systems.
+  collapse unrelated needs into one generic catch-all record. Confirmed Diboll dry-end examples include
+  the First Hour Production Summary and End of Shift Report, which share several fields but remain distinct
+  business record types. The resulting record is authoritative for what was submitted and its retained
+  history, but not automatically for the lifecycle of equipment, people, Quality, Safety, or other referenced
+  concepts. Operations Record is not the Superset/grain analytics layer; captured records may subsequently
+  be made available to analytical grains and data-lake destinations alongside data sourced from other company systems.
 responsibilities:
   - Replace appropriate informal operational reporting workflows, such as email-based reporting, with structured retained records.
   - Model each operational form/record type from a distinct identified business need rather than as one generic record template.
@@ -21,6 +22,8 @@ responsibilities:
 scope:
   - Structured operational reporting/capture where a real system gap exists
   - Distinct form/record types corresponding to distinct operational needs
+  - Confirmed Diboll dry-end record type: First Hour Production Summary
+  - Confirmed Diboll dry-end record type: End of Shift Report
   - Form-based capture of operational information currently transmitted through informal channels such as email
   - Retained operational record history and corrections
   - Publication/exposure of captured facts for downstream analytical use, including End-of-Shift Reporting publication to the MES data lake
@@ -47,10 +50,13 @@ ubiquitous_language:
   - operational form
   - operational record type
   - operational occurrence
+  - First Hour Production Summary
+  - End of Shift Report
 business_rules:
   - A retained operational record must preserve what was reported and its correction/history semantics.
   - An Operations Record exists because ManuFactor is filling a structured operational-recording gap, not merely because the same data is useful analytically.
   - Each operational form/record type must correspond to a distinct identified business need and may have its own required fields, rules, and lifecycle details.
+  - Structural similarity between First Hour Production Summary and End of Shift Report does not collapse them into one generic business record type.
   - Referencing an external concept does not make Operations Record authoritative for that concept's lifecycle.
   - Making an Operations Record available to Superset, the MES data lake, or another analytical grain does not transfer record ownership to the analytics layer or destination.
 owner: unresolved
@@ -77,8 +83,11 @@ provenance:
     - type: domain-expert
       reference: Mark direct, 2026-08-24 End-of-Shift downstream clarification
       description: End-of-Shift Reporting needs to get into the MES data lake; this is a downstream publication requirement and does not transfer ownership of the source record.
+    - type: domain-expert
+      reference: Mark-provided current Diboll dry-end report screenshots, 2026-08-24
+      description: Confirms First Hour Production Summary and End of Shift Report as distinct current record types and provides their visible field sets.
     - type: existing-model
       reference: ManuFactor-arch Build Order Phase_B/B1
-      description: Existing evidence supports operational reporting/capture candidates, but specific record types require business validation before being treated as canonical examples.
+      description: Existing evidence supports operational reporting/capture candidates.
   confidence: high
   status: candidate
