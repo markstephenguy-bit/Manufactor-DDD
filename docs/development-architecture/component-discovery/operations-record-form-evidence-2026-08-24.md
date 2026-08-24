@@ -1,18 +1,18 @@
-# Dry-End Operational Report Form Evidence
+# Dry-End Operations Form Evidence
 
 **Status:** Direct domain evidence for Operations Record and architecture contract refinement  
 **Date received:** 2026-08-24  
-**Source:** Mark-provided screenshots of current Diboll Lumber Operation dry-end reports  
-**Authority:** Evidence of current report types/field labels only. This artifact does not infer field source systems, calculations, validation rules, or ownership beyond what the forms themselves demonstrate.
+**Source:** Mark-provided screenshots of current Diboll Lumber Operation dry-end forms  
+**Authority:** Evidence of current operations forms and visible field labels only. This artifact does not infer field source systems, calculations, validation rules, or ownership beyond what the forms themselves demonstrate.
 
-## Confirmed report types
+## Confirmed operations forms
 
-The screenshots establish at least two distinct operational report types in the Diboll dry-end workflow:
+The screenshots establish two current **operations forms** in the Diboll dry-end workflow:
 
 1. **Dry End - First Hour Production Summary**
 2. **Dry End - End of Shift Report**
 
-They share many field labels but are not to be collapsed into a generic report type merely because of structural overlap. They are separate business report types within the canonical `bc.operations-record` Bounded Context.
+These are not distinct Operations Record types. They are operations forms within the canonical `bc.operations-record` Bounded Context. Their overlapping structure is therefore expected and may be reused technically without inventing separate domain types for each form.
 
 ## Shared header/context fields visible on both forms
 
@@ -56,12 +56,13 @@ They share many field labels but are not to be collapsed into a generic report t
 
 ## Structural observations supported by the forms
 
-- The two record types have a common operational-report shell: date, crew, shift, safety issues, comments, and a production metric body.
+- Both are operations forms using a common operational-report shell: date, crew, shift, safety issues, comments, and a production metric body.
 - The metric bodies overlap heavily but are not identical.
 - `First Hour Production Summary` includes `Run Time (min)` and `Product Running`.
 - `End of Shift Report` includes `Scheduled Hours` and `Re Run`.
-- The current forms present production, throughput, moisture, uptime, and narrative/safety information together as one business report.
-- The forms show enough concrete structure to define an End-of-Shift publication payload shape without inventing a generic `OperationalRecordPayload` contract.
+- The current forms present production, throughput, moisture, uptime, and narrative/safety information together.
+- Their common shape is a valid candidate for shared form mechanics; differences in fields remain form-specific configuration/behavior.
+- The forms show enough concrete structure to define an End-of-Shift publication payload without claiming End-of-Shift is a separate domain record type.
 
 ## Provenance intentionally unresolved
 
@@ -75,21 +76,21 @@ The screenshots do **not** establish whether each field is:
 - defaulted from reference data such as shift calendar/crew;
 - or some combination of these.
 
-Therefore, every field's `source_kind`, `source_system`, `calculation`, `entry_authority`, and `correction_authority` remain unresolved until the current report-generation workflow is inspected or Mark supplies that information.
+Mark's current direction is **pull-first, manual-by-exception**: populate as many fields as practical from reliable authoritative sources or deterministic calculations, and use manual entry only where a trustworthy source is unavailable.
 
-This is especially important because a future ManuFactor form may prepopulate externally sourced values while still owning the submitted End-of-Shift record. Prepopulation does not transfer source authority for the originating fact, and submission does not imply ManuFactor generated every value itself.
+Therefore, every field's `source_kind`, `source_system`, `calculation`, `entry_authority`, and `correction_authority` remain unresolved until the current report-generation workflow/source data is inspected.
 
 ## Architecture consequence
 
 The End-of-Shift publication contract should separate:
 
-1. **record identity/provenance** — ManuFactor Operations Record identity, revision, business date, crew, shift, site;
-2. **business payload** — the concrete End-of-Shift fields listed above;
+1. **record/form identity and provenance** — ManuFactor Operations Record identity/revision plus form identity, business date, crew, shift, site;
+2. **business payload** — the End-of-Shift form fields listed above;
 3. **field provenance where material** — source/derivation metadata once known;
 4. **publication/delivery metadata** — idempotency, schema version, attempts, destination result.
 
-The transport contract may be reusable, but the End-of-Shift business payload remains a named concrete schema.
+The transport contract may be reusable, and the form mechanism may be reusable, without creating separate domain record types for First Hour and End of Shift.
 
 ## DDD consequence
 
-This evidence strengthens the existing `Operations Record` boundary. It does not create a new Bounded Context and does not justify a generic Form/Report domain abstraction. Both confirmed report types are examples of the canonical rule that each operational record type corresponds to a distinct business need with its own field set and rules.
+This evidence strengthens the existing `Operations Record` boundary. It does not create a new Bounded Context and does not establish First Hour Production Summary or End of Shift Report as distinct domain types. They are confirmed **operations forms** handled by Operations Record.
