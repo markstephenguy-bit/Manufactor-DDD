@@ -1,5 +1,5 @@
 phase: whole-ddd-reusable-component-discovery
-status: target-component-topology-defined
+status: next-pass-end-of-shift-integration-forcing-case-defined
 updated_at: 2026-08-24
 semantic_authority: docs/ddd
 architecture_evidence:
@@ -14,6 +14,9 @@ artifacts:
   ddd_to_existing_component_mapping: docs/development-architecture/component-discovery/ddd-to-existing-component-mapping.md
   port_capability_gap_analysis: docs/development-architecture/component-discovery/port-capability-gap-analysis.md
   target_component_topology: docs/development-architecture/component-discovery/target-component-topology.md
+  end_of_shift_mes_data_lake_pass: docs/development-architecture/component-discovery/end-of-shift-mes-data-lake-pass.md
+  dotnet_boundary_fitness_spec: docs/development-architecture/component-discovery/dotnet-boundary-fitness-spec.md
+  end_of_shift_publication_contract: docs/development-architecture/component-discovery/end-of-shift-publication-contract.yaml
 
 resolved_architecture_directions:
   deployment:
@@ -42,20 +45,23 @@ resolved_architecture_directions:
   identity_and_references:
     decision: reuse-catalog-uuid-reference-thing-link-mechanics-first
     guardrail: technical-resolution-does-not-own-domain-identity-meaning
+    mp2_asset_lifecycle_forcing_case: deferred-requires-deeper-discovery
   evidence:
     decision: reuse-storage-and-document-capabilities
     guardrail: evidence-storage-does-not-decide-business-sufficiency
   integration:
-    decision: shared-integration-runtime-plus-source-specific-translators
-    current_translators:
+    decision: shared-integration-runtime-plus-source-specific-translators-and-destination-adapters
+    current_known_source_translators:
       - mp2-to-asset-lifecycle
       - protrack-to-kiln-operations
       - learning-source-to-training-qualification
       - hr-timekeeping-to-workforce-availability
+    first_concrete_next_forcing_case: end-of-shift-reporting-to-mes-data-lake
     guardrail: preserve-source-authority-and-never-fabricate-lineage
   projections:
     decision: distinguish-local-operational-cross-context-operational-and-analytical-reads
     cross_context_composition: begin-as-in-process-application-read-pattern
+    end_of_shift_analytical_publication: operations-record-authority-with-analytics-etl-copy-to-mes-data-lake
     guardrail: projection-does-not-create-write-authority
   authorization:
     decision: shared-login-profile-permission-enforcement-with-bc-owned-business-requirements
@@ -123,7 +129,8 @@ constrained_candidates:
 material_architecture_gaps:
   - cross-context-operational-read-composition-pattern
   - identity-login-versus-manufactor-owned-profile-permission-record-synchronization
-  - external-reference-mapping-provenance-and-unresolved-state-as-concrete-adapters-require-it
+  - end-of-shift-to-mes-data-lake-destination-contract-and-ingestion-details
+  - future-external-reference-mapping-after-source-specific-discovery
   - linked-document-and-evidence-integrity-completeness
 
 rejected_shared_domain_abstractions:
@@ -147,18 +154,61 @@ implementation_fitness_rules:
   - shared-mechanics-cannot-approve-domain-transitions
   - read-composition-cannot-create-write-authority
   - analytics-models-cannot-be-command-authority
+  - analytics-delivery-failure-cannot-rollback-valid-operations-record
   - external-adapters-cannot-directly-perform-domain-decisions
+  - destination-client-cannot-leak-into-operations-record-domain
+  - source-revision-and-idempotency-must-survive-analytical-publication
   - generalization-requires-materially-different-context-tests
   - check-existing-ports-before-adding-capability
   - physical-db-or-code-sharing-does-not-imply-semantic-ownership
+
+new_domain_evidence:
+  - date: 2026-08-24
+    source: Mark direct
+    statement: End-of-Shift Reporting needs to get into the MES data lake.
+    effect: makes-a-downstream-analytical-destination-concrete-for-operations-record
+  - date: 2026-08-24
+    source: Mark direct
+    statement: MP2 to Asset Lifecycle needs substantially more work before it is ready.
+    effect: removes-mp2-asset-lifecycle-as-first-reference-contract-forcing-case
+
+mp2_asset_lifecycle_readiness:
+  status: discovery-required-before-contract-design
+  requires:
+    - inspect-real-mp2-hierarchy-and-identifiers
+    - distinguish-stable-from-mutable-identifiers
+    - understand-hierarchy-restructuring-behavior
+    - inspect-wr-wo-equipment-correlation
+    - establish-bootstrap-and-unmatched-identity-rules
+    - validate-field-level-source-authority
+    - define-mapping-history-only-after-source-evidence
+
+end_of_shift_mes_data_lake_readiness:
+  status: architecture-contract-shaped-destination-details-open
+  already_defined:
+    - operations-record-remains-authoritative
+    - source-and-delivery-transactions-are-separate
+    - source-record-and-revision-provenance-required
+    - idempotent-retry-required
+    - analytics-etl-owns-delivery-checkpoint-mechanics
+  destination_facts_still_required:
+    - exact-mes-data-lake-platform
+    - endpoint-schema-or-dataset
+    - accepted-ingestion-method
+    - auth-and-network-path
+    - destination-upsert-idempotency-capability
+    - exact-end-of-shift-payload-fields
+    - publication-trigger-or-latency-requirement
 
 open_business_questions: []
 open_domain_contradictions: []
 
 next_architecture_work:
-  - define-enforceable-component-boundary-and-dependency-fitness-specification-for-current-dotnet-solution
+  - compare-current-analytics-etl-port-contract-against-end-of-shift-publication-contract
+  - inspect-current-cronetl-and-analytics-implementation-seams-for-reuse
+  - define-publication-checkpoint-persistence-pattern-without-choosing-destination-driver
   - reconcile-ddd-derived-topology-into-manufactor-arch-authoritative-workbook-and-current-drawings-without-reviving-superseded-files
   - reconcile-identity-permissions-source-description-in-architecture-substrate-with-current-implementation-truth
   - define-cross-context-read-composition-contract-pattern-and-provenance-shape
-  - define-reference-mapping-minimum-contract-using-asset-mp2-as-first-forcing-case
-  - do-not-change-implementation-domain-code-until-these-boundary-contracts-are-recorded
+  - implement-dotnet-fitness-tests-after-spec-review-before-moving-domain-code
+  - keep-mp2-asset-lifecycle-in-discovery-required-state-until-real-source-analysis-is-complete
