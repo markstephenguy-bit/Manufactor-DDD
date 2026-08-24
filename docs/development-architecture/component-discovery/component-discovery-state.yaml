@@ -1,5 +1,5 @@
 phase: whole-ddd-reusable-component-discovery
-status: next-pass-end-of-shift-integration-forcing-case-defined
+status: end-of-shift-implementation-seams-reconciled
 updated_at: 2026-08-24
 semantic_authority: docs/ddd
 architecture_evidence:
@@ -17,6 +17,9 @@ artifacts:
   end_of_shift_mes_data_lake_pass: docs/development-architecture/component-discovery/end-of-shift-mes-data-lake-pass.md
   dotnet_boundary_fitness_spec: docs/development-architecture/component-discovery/dotnet-boundary-fitness-spec.md
   end_of_shift_publication_contract: docs/development-architecture/component-discovery/end-of-shift-publication-contract.yaml
+  operations_form_evidence: docs/development-architecture/component-discovery/operations-record-form-evidence-2026-08-24.md
+  semantic_promotion_guardrail: docs/development-architecture/component-discovery/semantic-promotion-guardrail.md
+  end_of_shift_implementation_reconciliation: docs/development-architecture/component-discovery/end-of-shift-implementation-reconciliation.md
 
 resolved_architecture_directions:
   deployment:
@@ -51,12 +54,9 @@ resolved_architecture_directions:
     guardrail: evidence-storage-does-not-decide-business-sufficiency
   integration:
     decision: shared-integration-runtime-plus-source-specific-translators-and-destination-adapters
-    current_known_source_translators:
-      - mp2-to-asset-lifecycle
-      - protrack-to-kiln-operations
-      - learning-source-to-training-qualification
-      - hr-timekeeping-to-workforce-availability
-    first_concrete_next_forcing_case: end-of-shift-reporting-to-mes-data-lake
+    first_concrete_next_forcing_case: end-of-shift-operations-form-to-mes-data-lake
+    cron_etl_current_state: host-shell-no-etl-job-implemented
+    analytics_port_current_state: marker-interface-no-publication-contract-implemented
     guardrail: preserve-source-authority-and-never-fabricate-lineage
   projections:
     decision: distinguish-local-operational-cross-context-operational-and-analytical-reads
@@ -94,6 +94,20 @@ resolved_architecture_directions:
       - implementation: Workforce
         bounded_context: bc.workforce-availability
 
+operations_form_modeling:
+  classification:
+    first_hour_production_summary: operations-form
+    end_of_shift_report: operations-form
+  prohibited_inference: separate-domain-type-from-layout-fields-or-timing-alone
+  semantic_promotion_requires_one_or_more:
+    - distinct-business-meaning-or-identity
+    - distinct-lifecycle
+    - distinct-invariants
+    - distinct-authority
+    - distinct-state-ownership
+  population_strategy: pull-first-manual-by-exception
+  provenance_requirement: distinguish-pulled-calculated-manual-and-overridden-values-where-material
+
 existing_component_role_changes:
   VehicleManagement:
     target: feature-grouping-under-asset-lifecycle
@@ -120,6 +134,7 @@ high_confidence_reusable_capabilities:
   - external-source-integration-provenance
   - projection-query-read-composition
   - authorization-responsibility-enforcement
+  - operations-form-mechanics-without-generic-form-domain-ownership
 
 constrained_candidates:
   - effective-dated-parameter-mechanics
@@ -129,12 +144,19 @@ constrained_candidates:
 material_architecture_gaps:
   - cross-context-operational-read-composition-pattern
   - identity-login-versus-manufactor-owned-profile-permission-record-synchronization
+  - end-of-shift-field-source-and-calculation-map
   - end-of-shift-to-mes-data-lake-destination-contract-and-ingestion-details
+  - operations-form-persistence-and-application-model
+  - operations-form-field-provenance-and-override-representation
+  - operations-record-publication-read-export-seam
+  - publication-checkpoint-persistence
+  - actual-cronetl-job-orchestration
   - future-external-reference-mapping-after-source-specific-discovery
   - linked-document-and-evidence-integrity-completeness
 
 rejected_shared_domain_abstractions:
   - generic-record
+  - generic-form-domain-aggregate
   - generic-workflow-item
   - generic-task
   - generic-verification
@@ -151,12 +173,15 @@ implementation_fitness_rules:
   - no-shared-transaction-from-physical-db-co-location
   - preserve-source-authority-and-provenance
   - never-fabricate-source-lineage
+  - structural-artifact-difference-does-not-prove-domain-type
   - shared-mechanics-cannot-approve-domain-transitions
   - read-composition-cannot-create-write-authority
   - analytics-models-cannot-be-command-authority
   - analytics-delivery-failure-cannot-rollback-valid-operations-record
   - external-adapters-cannot-directly-perform-domain-decisions
   - destination-client-cannot-leak-into-operations-record-domain
+  - cronetl-cannot-reference-operationalreporting-domain-or-infrastructure-internals
+  - analytics-etl-cannot-use-operationalreporting-persistence-entities-as-contracts
   - source-revision-and-idempotency-must-survive-analytical-publication
   - generalization-requires-materially-different-context-tests
   - check-existing-ports-before-adding-capability
@@ -171,6 +196,18 @@ new_domain_evidence:
     source: Mark direct
     statement: MP2 to Asset Lifecycle needs substantially more work before it is ready.
     effect: removes-mp2-asset-lifecycle-as-first-reference-contract-forcing-case
+  - date: 2026-08-24
+    source: Mark-provided-current-report-forms
+    statement: First Hour Production Summary and End of Shift Report are current Diboll dry-end operations forms with overlapping field sets.
+    effect: supplies-concrete-operations-form-evidence-and-end-of-shift-payload-fields
+  - date: 2026-08-24
+    source: Mark direct
+    statement: First Hour and End of Shift are operations forms, not distinct types.
+    effect: corrects-overpromotion-from-form-variation-to-domain-type
+  - date: 2026-08-24
+    source: Mark direct
+    statement: Pull as many operations-form fields automatically as possible.
+    effect: establishes-pull-first-manual-by-exception-population-strategy
 
 mp2_asset_lifecycle_readiness:
   status: discovery-required-before-contract-design
@@ -184,29 +221,39 @@ mp2_asset_lifecycle_readiness:
     - define-mapping-history-only-after-source-evidence
 
 end_of_shift_mes_data_lake_readiness:
-  status: architecture-contract-shaped-destination-details-open
+  status: implementation-seams-defined-destination-and-field-sources-open
   already_defined:
-    - operations-record-remains-authoritative
+    - operations-form-under-operations-record-not-separate-domain-type
+    - pull-first-manual-by-exception
+    - operations-record-remains-authoritative-for-submitted-form
     - source-and-delivery-transactions-are-separate
     - source-record-and-revision-provenance-required
     - idempotent-retry-required
     - analytics-etl-owns-delivery-checkpoint-mechanics
+    - current-cronetl-is-reusable-host-shell
+    - current-analytics-port-does-not-yet-supply-concrete-publication-contract
+    - current-operationalreporting-is-module-shell-before-domain-hardening
   destination_facts_still_required:
     - exact-mes-data-lake-platform
     - endpoint-schema-or-dataset
     - accepted-ingestion-method
     - auth-and-network-path
     - destination-upsert-idempotency-capability
-    - exact-end-of-shift-payload-fields
     - publication-trigger-or-latency-requirement
+  field_facts_still_required:
+    - source-kind-for-each-visible-field
+    - authoritative-source-for-each-pulled-field
+    - calculation-rules-for-derived-fields
+    - override-rules-for-pulled-or-calculated-fields
 
 open_business_questions: []
 open_domain_contradictions: []
 
 next_architecture_work:
-  - compare-current-analytics-etl-port-contract-against-end-of-shift-publication-contract
-  - inspect-current-cronetl-and-analytics-implementation-seams-for-reuse
+  - build-candidate-field-source-map-for-end-of-shift-using-mes-protrack-reference-calculated-manual-categories-without-claiming-unverified-authority
+  - identify-which-current-external-source-evidence-can-support-that-map-and-which-needs-new-source-discovery
   - define-publication-checkpoint-persistence-pattern-without-choosing-destination-driver
+  - define-operations-record-publication-read-export-seam-at-contract-level
   - reconcile-ddd-derived-topology-into-manufactor-arch-authoritative-workbook-and-current-drawings-without-reviving-superseded-files
   - reconcile-identity-permissions-source-description-in-architecture-substrate-with-current-implementation-truth
   - define-cross-context-read-composition-contract-pattern-and-provenance-shape
